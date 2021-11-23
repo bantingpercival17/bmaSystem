@@ -23,6 +23,7 @@ use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
 use App\Models\User;
+use App\Report\StudentListReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -290,6 +291,15 @@ class AdministratorController extends Controller
     {
         Excel::import(new ImportsStudentSection($_request->_data_1, $_request->_data_2), $_request->file('_file'));
         return back()->with('message', 'Successfully Upload Section ');
+    }
+    public function section_report_list(Request $_request)
+    {
+        $_report = new StudentListReport();
+        return $_report->student_section_list([
+            'course_id' => Crypt::decrypt($_request->_c),
+            'year_level' => Crypt::decrypt($_request->_l),
+            'academic_id' => Crypt::decrypt($_request->_a)
+        ]);
     }
     /*  Class */
 
