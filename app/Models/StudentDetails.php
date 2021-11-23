@@ -37,9 +37,10 @@ class StudentDetails extends Model
     {
         return $this->hasOne(StudentAccount::class, 'student_id');
     }
-    public function section(/* $_section */)
+    public function section($_academic)
     {
-        return $this->hasOne(StudentSection::class, 'student_id')/* ->where('section_id', $_section) */;
+        return $this->hasOne(StudentSection::class, 'student_id')->select('student_sections.id', 'student_sections.student_id', 'student_sections.section_id')
+            ->join('sections', 'sections.id', 'student_sections.section_id')->where('sections.academic_id', $_academic)->where('student_sections.is_removed',false);
     }
 
     /* Grading Query */

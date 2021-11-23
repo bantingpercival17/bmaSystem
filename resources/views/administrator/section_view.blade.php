@@ -56,14 +56,13 @@
                                     <td>{{ strtoupper($_data->last_name . ', ' . $_data->first_name) }}</td>
                                     <td>{{ $_data->year_level . '/C' }}</td>
                                     <td>
-                                        @if ($_student_section = $_data->section)
+                                        @if ($_student_section = $_data->section($_section->academic_id)->first())
                                             <span
                                                 class="badge badge-success">{{ $_student_section->section->section_name }}</span>
                                         @else
                                             <a href="/administrator/classes/section/add?_cs={{ Crypt::encrypt($_section->id) }}&_student={{ Crypt::encrypt($_data->id) }}"
                                                 class="btn btn-info">ADD</a>
                                         @endif
-
                                     </td>
                                 </tr>
                             @endforeach
@@ -88,10 +87,10 @@
                 <h3 class="card-title"><span class="text-muted"><b>STUDENT LISTS</b></span></h3>
                 <div class="card-tools">
                     <div class="row">
-                        <form action="/administrator/classes/section?_cs={{ Crypt::encrypt($_section->id) }}"
-                            class="col-md" method="get">
+                        <form action="/administrator/classes/section?" class="col-md" method="get">
                             <div class="form-group ">
-                                <input type="text" class="form-control" placeholder="e.i. Juan, Carlos">
+                                <input type="text" class="form-control" placeholder="e.i. Juan, Carlos" name="_student">
+                                <input type="hidden" name="_cs" value="{{ Crypt::encrypt($_section->id) }}">
                             </div>
                         </form>
                         <div class="col-md">
@@ -118,7 +117,8 @@
                                     <td>{{ $_data->account->student_number }}</td>
                                     <td>{{ strtoupper($_data->last_name . ', ' . $_data->first_name) }}</td>
                                     <td>
-                                        @if ($_student_section = $_data->section($_section->id)->first())
+                                        @if ($_student_section = $_data->section($_section->academic_id)->first())
+                                            
                                             <a href="/administrator/classes/section/remove?_cs={{ Crypt::encrypt($_student_section->id) }}&_student={{ Crypt::encrypt($_data->id) }}"
                                                 class="btn btn-danger">REMOVE</a>
                                         @else

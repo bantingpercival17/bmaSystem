@@ -213,7 +213,7 @@ class AdministratorController extends Controller
     public function classes_view()
     {
         $_course = CourseOffer::where('is_removed', false)->get();
-        $_academic = AcademicYear::where('is_removed', false)->get();
+        $_academic = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
         return view('administrator.classess_view', compact('_course', '_academic'));
     }
     public function classes_store(Request $_request)
@@ -232,19 +232,21 @@ class AdministratorController extends Controller
     }
     public function class_section_view(Request $_request)
     {
-        $_section = Crypt::decrypt($_request->_cs);
-        $_section = Section::find($_section);
-        // $_students = StudentSection::where('section_id', $_section->id)->where('is_removed', false)->get();
+        $_section = Section::find(Crypt::decrypt($_request->_cs)); // Get Section Details
         $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
             ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
             ->join('student_accounts as sa', 'sa.student_id', 'student_details.id')
-            ->where(['ss.section_id' => $_section->id, 'ss.is_removed' => false]);
+            /* ->orderBy('student_details.last_name', 'asc') */
+            ->where(['ss.section_id' => $_section->id, 'ss.is_removed' => false]); // Get All the Student in a Section
+
         $_students = $_request->_student
             ? $_students
-            ->where('student_details.last_name', 'like', '%' . $_request->student)
-            ->orderBy('sa.student_number', 'ASC')
+            ->where('student_details.last_name', 'like', '%' . $_request->_student."%")
+            ->orderBy('student_details.last_name', 'ASC')
             ->get()
-            : $_students->orderBy('sa.student_number', 'ASC')->get();
+            : $_students->orderBy('student_details.last_name', 'ASC')->get();
+
+
         $_student_enrollment = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'ea.year_level')
             ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
             ->join('student_accounts as sa', 'sa.student_id', 'student_details.id')
