@@ -80,21 +80,21 @@
                                                 $_row = 0;
                                             @endphp
                                             @foreach ($_staff->subjects_handles as $_subject)
-                                                @if ($_row < 4)
-                                                    @php
-                                                        $_link = '/teacher/grade-reports/instructor?_form=' . request()->input('_form') . '&_period=' . request()->input('_period') . '&_academic=' . request()->input('_academic') . '&_subject=' . Crypt::encrypt($_subject->id);
-                                                        if ($_subject_style = $_subject->submitted_grade(request()->input('_form'), request()->input('_period'))) {
-                                                            $_status = $_subject_style->is_approved === 1 ? ['success', 'fa-thumbs-up'] : ($_subject_style->is_approved === 0 ? ['danger', 'fa-thumbs-down'] : ['info', 'fa-eye']);
-                                                        } else {
-                                                            $_status = ['secondary', 'fa-eye-slash'];
-                                                        }
-                                                        $_row += 1;
-                                                    @endphp
-                                                    <a href="{{ $_link }}"
-                                                        class="btn btn-app bg-{{ $_status[0] }}">
-                                                        <i class="fas {{ $_status[1] }}"></i>
-                                                        {{ $_subject->curriculum_subject->subject->subject_code . ' - ' . $_subject->section->section_name }}
-                                                    </a>
+                                                @php
+                                                    $_link = '/teacher/grade-reports/instructor?_form=' . request()->input('_form') . '&_period=' . request()->input('_period') . '&_academic=' . request()->input('_academic') . '&_subject=' . Crypt::encrypt($_subject->id);
+                                                    if ($_subject_style = $_subject->submitted_grade(request()->input('_form'), request()->input('_period'))) {
+                                                        $_status = $_subject_style->is_approved === 1 ? ['success', 'fa-thumbs-up'] : ($_subject_style->is_approved === 0 ? ['danger', 'fa-thumbs-down'] : ['info', 'fa-eye']);
+                                                    } else {
+                                                        $_status = ['secondary', 'fa-eye-slash'];
+                                                    }
+                                                    $_row += 1;
+                                                @endphp
+                                                <a href="{{ $_link }}" class="btn btn-app bg-{{ $_status[0] }}">
+                                                    <i class="fas {{ $_status[1] }}"></i>
+                                                    {{ $_subject->curriculum_subject->subject->subject_code . ' - ' . $_subject->section->section_name }}
+                                                </a>
+                                                @if ($_row <= 3)
+
                                                 @else
                                                     @php
                                                         $_row = 0;

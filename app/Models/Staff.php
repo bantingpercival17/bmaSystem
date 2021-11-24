@@ -25,7 +25,9 @@ class Staff extends Model
     }
     public function subjects_handles()
     {
-        return $this->hasMany(SubjectClass::class, 'staff_id')->where('academic_id', Crypt::decrypt(request()->input('_academic')));
+        return $this->hasMany(SubjectClass::class, 'staff_id')
+            ->where('academic_id', Crypt::decrypt(request()->input('_academic')))
+            ->where('is_removed', false);
     }
 
     // Staff Attendance

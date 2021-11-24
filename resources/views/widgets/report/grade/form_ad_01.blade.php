@@ -146,7 +146,7 @@
                                 {{ $_final > 0 ? number_format($_final, 2) : '' }}
                             </th>
                             <th>
-                                {{ $_final > 0 ? number_format($_student->percentage_grade($_final), 2) : '' }}
+                                {{ $_final > 0 ? number_format($_student->percentage_grade(number_format($_final, 2)), 2) : '' }}
                             </th>
                         </tr>
                     @endforeach

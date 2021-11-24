@@ -32,7 +32,10 @@ class TeacherController extends Controller
 
         $_academic = AcademicYear::where('is_active', 1)->first();
         // Select * from subject_classes where staff_id = ? and academic_id = ? 
-        $_subject = SubjectClass::where('staff_id', $_staff->id)->where('academic_id', $_academic->id)->get();
+        $_subject = SubjectClass::where('staff_id', $_staff->id)
+            ->where('academic_id', $_academic->id)
+            ->where('is_removed', false)
+            ->get();
         return view('teacher.dashboard', compact('_subject'));
     }
     public function subject_grading_view(Request $_request)
@@ -42,6 +45,7 @@ class TeacherController extends Controller
             ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
             ->where('ss.section_id', $_subject->section_id)
             ->orderBy('student_details.last_name', 'ASC')
+            ->where('ss.is_removed', false)
             ->get();
         if ($_request->_preview) {
             $_report = new GradingSheetReport($_students, $_subject);
@@ -128,6 +132,7 @@ class TeacherController extends Controller
             ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
             ->where('ss.section_id', $_subject->section_id)
             ->orderBy('student_details.last_name', 'ASC')
+            ->where('ss.is_removed', false)
             ->get();
         $_report = new GradingSheetReport($_students, $_subject);
         return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();

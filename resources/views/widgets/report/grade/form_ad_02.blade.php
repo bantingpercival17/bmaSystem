@@ -38,7 +38,7 @@
                                 {{ $_final > 0 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
-                                <b> {{ $_final > 0 ? number_format($_student->percentage_grade($_final), 2) : '' }}</b>
+                                <b> {{ $_final > 0 ? number_format($_student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
                             <td class="text-center">
                                 @php
@@ -47,7 +47,7 @@
                                 {{ $_final > 49 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
-                                <b> {{ $_final > 49 ? number_format($_student->percentage_grade($_final), 2) : '' }}</b>
+                                <b> {{ $_final > 49 ? number_format($_student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
                             <td class="text-center">
                                 <b>

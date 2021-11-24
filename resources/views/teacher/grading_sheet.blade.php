@@ -9,7 +9,7 @@
     </ol>
 @endsection
 @section('css')
-   {{--  <style>
+    {{-- <style>
         thead {
             display: table;
             width: calc(100% - 17px);
@@ -61,6 +61,9 @@
                     @if ($_subject_data = $_subject->submitted_grade('ad1', request()->input('_period')))
 
                         @if ($_subject_data->is_approved === 1)
+                            @php
+                                $_grade_status = 'disabled';
+                            @endphp
                             <div class="row">
                                 <div class="col-md">
                                     <p>
@@ -81,6 +84,9 @@
                                 </div>
                             </div>
                         @elseif($_subject_data->is_approved === 0)
+                            @php
+                                $_grade_status = '';
+                            @endphp
                             <div class="row">
                                 <div class="col-md-12">
                                     <form action="/teacher/subjects/grade-submission" method="post">
@@ -135,6 +141,9 @@
                             </div>
 
                         @else
+                            @php
+                                $_grade_status = 'disabled';
+                            @endphp
                             <p>
                                 <small>GRADE SUBMISSION STATUS:</small> <span class="text-muted"><b>FOR
                                         CHECKING</b></span>
@@ -144,6 +153,9 @@
                             </p>
                         @endif
                     @else
+                        @php
+                            $_grade_status = '';
+                        @endphp
                         <form action="/teacher/subjects/grade-submission" method="post">
                             <input type="hidden" name="_subject" value="{{ Crypt::encrypt($_subject->id) }}">
                             <input type="hidden" name="_period" value="{{ request()->input('_period') }}">
@@ -175,13 +187,13 @@
 
                                 <div class="custom-file">
                                     <input type="hidden" name="_section" value="{{ Crypt::encrypt($_subject->id) }}">
-                                    <input type="file" class="custom-file-input" id="customFile" name="_file_grade"
-                                        required>
+                                    <input type="file" class="custom-file-input" id="customFile" name="_file_grade" required
+                                        {{ $_grade_status }}>
                                     <label class="custom-file-label" for="customFile">Choose file</label>
                                 </div>
                             </div>
                             <div class="form-group col-md-3">
-                                <button type="submit" class="btn btn-success">UPLOAD</button>
+                                <button type="submit" class="btn btn-success" {{ $_grade_status }}>UPLOAD</button>
                             </div>
                         </div>
                     </form>
@@ -229,7 +241,8 @@
                                             @endphp
                                             <input type="text" class="score-cell" style="width: 38px; font-size:12px"
                                                 value="{{ $_score }}" data-student="{{ $_student->id }}"
-                                                data-category="{{ $col[1] . $i }}" data-section="{{ $_subject->id }}">
+                                                data-category="{{ $col[1] . $i }}" data-section="{{ $_subject->id }}"
+                                                {{ $_grade_status }}>
                                         </th>
                                     @endfor
 
@@ -259,8 +272,10 @@
                 '_period': "{{ request()->input('_period') }}",
                 '_score': $(this).val(),
             };
-
-            if (event.keyCode == 9 || event.keyCode == 13) {
+            if (_data['_score'] > 100) {
+                toastr.error("Invalid Score input")
+                $(this).val('');
+            } else {
                 if (event.keyCode == 13) {
                     _grade_save(_data)
                 }
