@@ -114,7 +114,6 @@ $_department = request()->input('_d') ? Crypt::decrypt(request()->input('_d')) :
                                                                                 @foreach ($_subject->section($_academic->id)->get() as $_section)
                                                                                     <tr>
                                                                                         <td class="text-muted">
-                                                                                            {{ $_section->id }}
                                                                                             {{ $_section->section->section_name }}
                                                                                         </td>
                                                                                         <td class="text-muted">

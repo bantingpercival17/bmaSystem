@@ -91,8 +91,29 @@
                             @if ($_subject_status = $_subject->submitted_grade(request()->input('_form'), request()->input('_period')))
 
                                 @if ($_subject_status->is_approved === 1)
-                                    <label for="" class="text-muted">FORM STATUS : </label>
-                                    <label class="text-success">APPROVED </label>
+                                    <div class="row">
+                                        <div class="col-md">
+                                            <label for="" class="text-muted">FORM STATUS : </label>
+                                            <label class="text-success">APPROVED </label>
+                                        </div>
+                                        <div class="col-md">
+                                            <form action="/teacher/grade-reports" method="post">
+                                                @csrf
+                                                <input type="hidden" name="_submission"
+                                                    value="{{ Crypt::encrypt($_subject_data->id) }}">
+                                                <input type="hidden" name="_status" value="0">
+                                                <div class="row">
+                                                    <div class="form-group col-md">
+                                                        <button type="submit"
+                                                            class="btn btn-warning btn-block">REVISION</button>
+                                                    </div>
+                                                    <input type="hidden" name="_comments" value="For Grade revision.">
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-md">
                                             <label class="text-muted">VERIFY DATE: </label>
