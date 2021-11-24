@@ -22,6 +22,7 @@ Route::prefix('administrator')->group(function () {
     Route::post('/subjects', [AdministratorController::class, 'subject_store']); // Store New Subjects
     Route::get('/subjects/class', [AdministratorController::class, 'subject_class']); // Subject Class View
     Route::post('/subjects/class', [AdministratorController::class, 'subject_class_store']); // Store Subject Class
+    Route::get('/subjects/class/removed', [AdministratorController::class, 'subject_class_remove']); // Removed Subject Class
     Route::post('/subjects-handle', [AdministratorController::class, 'subject_import']); // Import Subject Handle
     /* Subject and Curriculum Routes */
     /* Classes and Sections */

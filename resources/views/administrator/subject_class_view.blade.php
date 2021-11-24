@@ -75,7 +75,6 @@ $_department = request()->input('_d') ? Crypt::decrypt(request()->input('_d')) :
                                             </thead>
                                             <tbody>
                                                 @if ($_subject = $_course_view->course_subject([$curriculum->id, $_level, $_academic->semester]))
-
                                                     @foreach ($_subject as $_subject)
                                                         <tr data-widget="expandable-table" aria-expanded="false">
                                                             <td>{{ $_subject->subject_code }}</td>
@@ -84,7 +83,8 @@ $_department = request()->input('_d') ? Crypt::decrypt(request()->input('_d')) :
                                                                 @if ($_subject->section($_academic->id)->count() > 0)
                                                                     @foreach ($_subject->section($_academic->id)->get() as $_section)
                                                                         <span class="badge badge-info">
-                                                                            {{ $_section->section->section_name }}
+                                                                            {{ $_section->section->section_name }} <br>[
+                                                                            {{ $_section->staff->first_name . ' ' . $_section->staff->last_name }}]
                                                                         </span>
                                                                     @endforeach
                                                                 @else
@@ -101,56 +101,38 @@ $_department = request()->input('_d') ? Crypt::decrypt(request()->input('_d')) :
                                                             <td colspan="5">
                                                                 <div class="p-0">
                                                                     <table class="table table-hover">
-                                                                        <tbody>
+                                                                        <thead>
                                                                             <tr>
-                                                                                <td>
-                                                                                    <form
-                                                                                        action="/administrator/subjects/class"
-                                                                                        method="post">
-                                                                                        @csrf
-                                                                                        <input type="hidden" name="_subject"
-                                                                                            value="{{ $_subject->id }}">
-                                                                                        <input type="hidden"
-                                                                                            name="_curriculum"
-                                                                                            value="{{ $curriculum->id }}">
-                                                                                        <input type="hidden"
-                                                                                            name="_academic"
-                                                                                            value="{{ $_academic->id }}">
-                                                                                        <div class="form-group row">
-                                                                                            <div class=" col-md-6">
-                                                                                                <select name="_teacher"
-                                                                                                    class="form-control">
-                                                                                                    @foreach ($_teacher as $teacher)
-                                                                                                        <option
-                                                                                                            value="{{ $teacher->staff->id }}">
-                                                                                                            {{ $teacher->name }}
-                                                                                                        </option>
-                                                                                                    @endforeach
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div class=" col-md-4">
-                                                                                                <select name="_section"
-                                                                                                    class="form-control">
-                                                                                                    @if ($_course_view->section([$_academic->id, $_level]))
-                                                                                                        @foreach ($_course_view->section([$_academic->id, $_level])->get() as $_section)
-                                                                                                            <option
-                                                                                                                value="{{ $_section->id }}">
-                                                                                                                {{ $_section->section_name }}
-                                                                                                            </option>
-                                                                                                        @endforeach
-                                                                                                    @endif
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div class="col-md-2">
-                                                                                                <button
-                                                                                                    class="btn btn-info"
-                                                                                                    type="submit"><i
-                                                                                                        class="fa fa-plus"></i></button>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </form>
-                                                                                </td>
+                                                                                <th>LEVEL & SECTION</th>
+                                                                                <th>TEACHER HANDLED</th>
+                                                                                <th>ACTION</th>
                                                                             </tr>
+                                                                        </thead>
+                                                                        <tbody>
+
+                                                                            @if ($_subject->section($_academic->id)->count() > 0)
+                                                                                @foreach ($_subject->section($_academic->id)->get() as $_section)
+                                                                                    <tr>
+                                                                                        <td class="text-muted">
+                                                                                            {{ $_section->id }}
+                                                                                            {{ $_section->section->section_name }}
+                                                                                        </td>
+                                                                                        <td class="text-muted">
+                                                                                            {{ $_section->staff->first_name . ' ' . $_section->staff->last_name }}
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <a href="/administrator/subjects/class/removed?_c={{ Crypt::encrypt($_section->id) }}"
+                                                                                                class="btn btn-danger">
+                                                                                                <i
+                                                                                                    class="fa fa-minus"></i>
+                                                                                            </a>
+                                                                                        </td>
+                                                                                    </tr>
+
+                                                                                @endforeach
+                                                                            @endif
+                                                                            @include('widgets.forms')
+                                                                            @yield('subject-class-form')
                                                                         </tbody>
                                                                     </table>
                                                                 </div>

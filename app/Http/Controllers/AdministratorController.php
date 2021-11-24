@@ -205,6 +205,13 @@ class AdministratorController extends Controller
         SubjectClass::create($_subject_class_detail);
         return back()->with('message', 'Successfully Created Subject Classes!');
     }
+    public function subject_class_remove(Request $_request)
+    {
+        $_subject_class = SubjectClass::find(Crypt::decrypt($_request->_c));
+        $_subject_class->is_removed = 1;
+        $_subject_class->save();
+        return back()->with('message', 'Successfully Removed Subject Classes!');
+    }
     public function subject_import(Request $_request)
     {
         $_academic = AcademicYear::find(Crypt::decrypt($_request->_academic));
@@ -242,7 +249,7 @@ class AdministratorController extends Controller
 
         $_students = $_request->_student
             ? $_students
-            ->where('student_details.last_name', 'like', '%' . $_request->_student."%")
+            ->where('student_details.last_name', 'like', '%' . $_request->_student . "%")
             ->orderBy('student_details.last_name', 'ASC')
             ->get()
             : $_students->orderBy('student_details.last_name', 'ASC')->get();
