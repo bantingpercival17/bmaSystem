@@ -598,12 +598,7 @@
         function table_data() {
             $.get('/executive/fetch-attendance', function(respond) {
                 $('.table-body-100').empty()
-                console.log(respond);
-
                 respond._data.forEach(data => {
-                    /* 
-                                        var time_in_timestamp = Date.parse(data.time_in)
-                                        var time_in = new Date(time_in_timestamp*1000); */
                     var time_out = data.time_out != null ? data.time_out : '-';
                     $('.table-body-100').append(
                         "<tr>" +
