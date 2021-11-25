@@ -141,7 +141,6 @@ $_department = request()->input('_d') ? Crypt::decrypt(request()->input('_d')) :
                                                                                     value="{{ $_academic->id }}">
                                                                                 <tr>
                                                                                     <td>
-                                                                                        {{ $_subject }}
                                                                                         <select name="_teacher"
                                                                                             class="form-control">
                                                                                             @foreach ($_teacher as $teacher)

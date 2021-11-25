@@ -13,7 +13,12 @@ class EmployeeController extends Controller
 
     public function qr_scanner()
     {
-        return view('employee.scanner');
+        $_employees = Staff::select('staff.id', 'staff.user_id', 'staff.first_name', 'staff.last_name', 'staff.department', 'ea.staff_id', 'ea.description', 'ea.created_at')
+            ->leftJoin('employee_attendances as ea', 'ea.staff_id', 'staff.id')
+            ->where('ea.created_at', 'like', '%' . now()->format('Y-m-d') . '%')
+            ->groupBy('staff.id')
+            ->orderBy('ea.updated_at', 'desc')->get();
+        return view('employee.scanner', compact('_employees'));
     }
     public function scanner($_data)
     {
@@ -65,10 +70,11 @@ class EmployeeController extends Controller
 
     public function view(Request $_request)
     {
-       /*  $_employees = Staff::select('staff.id', 'staff.user_id', 'staff.first_name', 'staff.last_name', 'staff.department', 'ea.staff_id', 'ea.description', 'ea.created_at')
-            ->leftJoin('employee_attendances as ea', 'ea.staff_id', 'staff.id')           
-            ->orderBy('ea.updated_at', 'desc') ->groupBy('ea.staff_id')->get(); */
-            $_employees = Staff::all();
+        $_employees = Staff::select('staff.id', 'staff.user_id', 'staff.first_name', 'staff.last_name', 'staff.department', 'ea.staff_id', 'ea.description', 'ea.created_at')
+            ->leftJoin('employee_attendances as ea', 'ea.staff_id', 'staff.id')
+            ->groupBy('staff.id')
+            ->orderBy('ea.updated_at', 'desc')->get();
+        //$_employees = Staff::all();
         return view('administrator.employee.attendance', compact('_employees'));
     }
 }
