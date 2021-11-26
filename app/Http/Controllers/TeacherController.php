@@ -41,12 +41,27 @@ class TeacherController extends Controller
     public function subject_grading_view(Request $_request)
     {
         $_subject = SubjectClass::find(Crypt::decrypt($_request->_s));
-        $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
-            ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
-            ->where('ss.section_id', $_subject->section_id)
-            ->orderBy('student_details.last_name', 'ASC')
-            ->where('ss.is_removed', false)
-            ->get();
+        $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
+
+        //return $_subject->academic_id;
+        if ($_subject_code == 'BRDGE') {
+            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
+                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
+                ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
+                ->where('ea.academic_id', $_subject->academic_id)
+                ->where('ss.section_id', $_subject->section_id)
+                ->where('ea.bridging_program','with')
+                ->orderBy('student_details.last_name', 'ASC')
+                ->where('ss.is_removed', false)
+                ->get();
+        } else {
+            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
+                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
+                ->where('ss.section_id', $_subject->section_id)
+                ->orderBy('student_details.last_name', 'ASC')
+                ->where('ss.is_removed', false)
+                ->get();
+        }
         if ($_request->_preview) {
             $_report = new GradingSheetReport($_students, $_subject);
             return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
