@@ -19,20 +19,6 @@
     <!-- Toastr -->
     <link rel="stylesheet" href="{{ asset('assets/plugins/toastr/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugins/bs-stepper/css/bs-stepper.min.css') }}">
-    <style>
-        #preview {
-            width: 490px;
-
-        }
-
-        @media only screen and (max-width:1000px) {
-            #preview {
-                width: 100%;
-
-            }
-        }
-
-    </style>
 </head>
 
 <body class="hold-transition layout-top-nav">
@@ -47,15 +33,10 @@
                 </a>
                 <span class="float-rigth">
                     <span class="brand-text font-weight-light real-time h5">{{ date('M  d, Y h:m a') }}</span>
-                    {{-- <span class="text-muted h3"><b>DATE AND TIME: </b></span> <span class="h2 text-success">
-                        <b>{{ date('M d,Y h:m:s a') }}</b></span> --}}
                 </span>
             </div>
         </nav>
-
-        <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
             <div class="content-header">
                 <div class="container">
                     <div class="row mb-2">
@@ -69,36 +50,9 @@
             <div class="container">
 
                 <div class="row">
-                    <div class=" col-lg-6 col-md-12 col-xs-12">
+                    <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header">
-                                <video id="preview"></video>
-                            </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <img src="{{ asset('/assets/img/staff/avatar.png') }}" alt="user-avatar"
-                                            class="img-circle img-fluid  image">
-                                    </div>
-                                    <div class="col-6">
-                                        <span class="text-muted  h4">
-                                            <small> <b class="text-status">TIME</b></small>
-                                        </span><br>
-                                        <span class="text-success h3">
-                                            <b class="text-time">TIME IN / TIME OUT</b><br>
-
-                                        </span><br>
-                                        <span class="text-info h5">
-                                            <b class="text-name">NAME OF EMPLOYEE</b><br>
-
-                                        </span>
-                                        <span class="text-muted  h5">
-                                            <small> <b class="text-department">OFFICE DEPARTMENT</b></small>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            {{-- <div class="card-body">
                                 <div class="bs-stepper">
                                     <div class="bs-stepper-header" role="tablist">
                                         <div class="step" data-target="#tab-container-1">
@@ -148,16 +102,11 @@
                                                 <div class="row">
                                                     <div class="col-md-7">
                                                         <div class="form-group">
-                                                            <label for="" class="text-muted">FULL
-                                                                NAME</label>
-                                                            <span
-                                                                class="form-control full-name">{{ old('name') }}</span>
-                                                            <input type="hidden" class="form-control full-name"
-                                                                placeholder="Employee Name" name="name"
-                                                                value="{{ old('name') }}">
-                                                            <input type="hidden" name="employee" class="employee"
-                                                                value="{{ old('employee') }}">
-                                                            @error('employee')
+                                                            
+                                                            <label for="" class="text-muted">EMAIL </label>
+                                                            <input type="text" name="email" class="form-control" placeholder=""
+                                                                value="{{ old('email') }}">
+                                                            @error('email')
                                                                 <small class="text-danger h6"><b>
                                                                         {{ $message }}</b></small>
                                                             @enderror
@@ -306,97 +255,20 @@
                                     </div>
 
                                 </div>
-                            </div> --}}
+                            </div>
                         </div>
 
                     </div>
-                    <div class=" col-xs-6 col-md-6 col-xs-12">
-
-                        <div class="card">
-                            <div class="card-header">
-                                <p class="h4 text-success"><b>Attendance List</b></p>
-                            </div>
-                            <div class="card">
-                                <table class="table table-head-fixed text-nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th>EMPLOYEE</th>
-                                            <th>TIME IN</th>
-                                            <th>TIME OUT</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="table-body-100">
-                                        @if ($_employees->count() > 0)
-                                            @foreach ($_employees as $_data)
-                                                <tr>
-                                                    <td>
-                                                        <span class="text-muted">
-                                                            {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}<br>
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        @if ($_data->staff_id)
-                                                            @if ($_data->daily_attendance)
-                                                                <span class="text-muted">
-                                                                    {{ date_format(date_create($_data->daily_attendance->time_in), 'h:i:s a') }}
-                                                                </span>
-                                                            @else
-                                                                <span class="h4 text-muted">
-                                                                    -
-                                                                </span>
-                                                            @endif
-                                                        @else
-                                                            <span class="h4 text-muted">
-                                                                -
-                                                            </span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if ($_data->staff_id)
-                                                            @if ($_data->daily_attendance)
-                                                                @if ($_data->daily_attendance->time_out != null)
-                                                                    <span class="text-muted">
-                                                                        {{ date_format(date_create($_data->daily_attendance->time_out), 'h:i:s a') }}
-                                                                    </span>
-                                                                @else
-                                                                    <span class="h4 text-muted">
-                                                                        -
-                                                                    </span>
-                                                                @endif
-
-                                                            @else
-                                                                <span class="h4 text-muted">
-                                                                    -
-                                                                </span>
-                                                            @endif
-                                                        @else
-                                                            <span class="h4 text-muted">
-                                                                -
-                                                            </span>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @else
-                                            <tr>
-                                                <td colspan="3"><b>No Data</b></td>
-                                            </tr>
-                                        @endif
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="col-md-6">
                     </div>
                 </div>
 
             </div>
         </div>
-        <footer class="main-footer">
-
+        {{-- <footer class="main-footer">
             <strong><a href="https://adminlte.io">bma.edu.ph</a>.</strong> All rights
             reserved.
-        </footer>
+        </footer> --}}
     </div>
 
     <!-- jQuery -->
@@ -411,9 +283,9 @@
     <script src="{{ asset('js/moments.js') }}"></script>
     <script>
         // BS-Stepper Init
-        /*  document.addEventListener('DOMContentLoaded', function() {
-             window.stepper = new Stepper(document.querySelector('.bs-stepper'))
-         }) */
+        document.addEventListener('DOMContentLoaded', function() {
+            window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+        })
     </script>
     <script src="{{ asset('/js/instascan.min.js') }}"></script>
     <script type="text/javascript">
@@ -422,129 +294,6 @@
             $('.real-time').text(currentDate)
             /*   table_data(); */
         }, 500);
-        var audio_success = new Audio("{{ asset('assets/audio/beep-07a.mp3') }}");
-        var audio_erroe = new Audio("{{ asset('assets/audio/beep-10.mp3') }}");
-        //document.getElementById('mySound').play();
-        var scanner = new Instascan.Scanner({
-            video: document.getElementById('preview'),
-            scanPeriod: 5,
-            mirror: true
-        });
-        scanner.addListener('scan', function(content) {
-            scan_qr_code_v2(content)
-
-        });
-        Instascan.Camera.getCameras().then(function(cameras) {
-            if (cameras.length > 0) {
-                scanner.start(cameras[0]);
-                $('[name="options"]').on('change', function() {
-                    if ($(this).val() == 1) {
-                        if (cameras[0] != "") {
-                            scanner.start(cameras[0]);
-                        } else {
-                            alert('No Front camera found!');
-                        }
-                    } else if ($(this).val() == 2) {
-                        if (cameras[1] != "") {
-                            scanner.start(cameras[1]);
-                        } else {
-                            alert('No Back camera found!');
-                        }
-                    }
-                });
-            } else {
-                console.error('No cameras found.');
-                alert('No cameras found.');
-            }
-        }).catch(function(e) {
-            console.error(e);
-            //alert(e);
-        });
-
-        function table_data() {
-            $.get('/executive/fetch-attendance', function(respond) {
-                $('.table-body-100').empty()
-                if (respond._data.length == 0) {
-                    $('.table-body-100').append(
-                        "<tr>" +
-                        "<td colspan='3'> <b> No Data </b> </td>" +
-                        "</tr>"
-                    );
-                } else {
-                    respond._data.forEach(data => {
-                        var time_out = data.time_out != null ? data.time_out : '-';
-
-                        $('.table-body-100').append(
-                            "<tr>" +
-                            "<td>" + data.first_name + " " + data.last_name + "</td>" +
-                            "<td>" + data.time_in + "</td>" +
-                            "<td>" + time_out + "</td>" +
-
-                            "</tr>"
-                        );
-                    });
-                }
-            });
-        }
-
-        function scan_qr_code_v2(_data) {
-            $.get('scan-code-v2/' + _data, function(data) {
-                audio_success.play()
-                console.log(data._data)
-                if (data._data.respond == 200) {
-                    toastr.success(data._data.message, 'Time In!')
-                    employee_details(data._data)
-                }
-                if (data._data.respond == 404) {
-                    toastr.error(data._data.message, 'Error!')
-                    clear_details()
-                }
-            }).fail(function() {
-                toastr.error('Invalid QR Code.', 'Error!')
-                audio_erroe.play()
-                clear_details()
-            })
-            table_data()
-        }
-
-        function employee_details(_data) {
-            $('.text-status').text(_data.data.time_status);
-            $('.text-time').text(_data.data.time)
-            $('.text-name').text(_data.data.name);
-            $('.text-department').text(_data.data.department)
-            $('.image').attr('src', "/assets/img/staff/"+_data.data.image)
-            //$('.image').attr('src', "{{ asset('/assets/img/staff/"+_data.data.image+"') }}")
-        }
-
-        function clear_details() {
-            $('.text-status').text("TIME");
-            $('.text-time').text('TIME IN / TIME OUT')
-            $('.text-name').text("NAME OF EMPLOYEE");
-            $('.text-department').text('OFFICE DEPARTMENT')
-            $('.image').attr('src', "{{ asset('/assets/img/staff/avatar.png') }}")
-        }
-
-        function scan_qr_code(_data) {
-            //console.log(_data)
-            $.get('scan-code/' + _data, function(data) {
-                $('.full-name').text(data._data.last_name + "" + data._data.first_name)
-                $('.full-name').val(data._data.last_name + "" + data._data.first_name)
-                $('.employee').val(data._data.id)
-                console.log(data._status.respond)
-                if (data._status.respond == 'time-in') {
-                    toastr.success('Welcome ' + data._data.first_name, 'Time In!')
-                } else {
-                    toastr.success('Ingat ' + data._data.first_name, 'Time Out!')
-                }
-
-            }).fail(function() {
-                toastr.error('Invalid QR Code.', 'Error!')
-                $('.full-name').text('')
-                $('.full-name').val('')
-                $('.employee').val('')
-            });
-            table_data()
-        }
     </script>
 </body>
 

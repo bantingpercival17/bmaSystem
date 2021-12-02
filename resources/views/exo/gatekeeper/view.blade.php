@@ -21,29 +21,19 @@
                         <th>EMPLOYEE</th>
                         <th>TIME IN</th>
                         <th>TIME OUT</th>
-                        <th>HEALTH</th>
+                        {{-- <th>HEALTH</th> --}}
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($_employees as $_data)
                         <tr>
-                            <td style="text-align: center; width:70px" class="text-center"> @php
-                                if (file_exists(public_path('assets/img/staff/' . strtolower(str_replace(' ', '_', $_data->user->name)) . '.jpg'))) {
-                                    $_image = strtolower(str_replace(' ', '_', $_data->user->name)) . '.jpg';
-                                } else {
-                                    $_image = 'avatar.png';
-                                }
-                            @endphp
-                                <div class="image">
-                                    <img src="{{ asset('/assets/img/staff/' . $_image) }}" class="img-circle elevation-2"
-                                        alt="User Image" width="100px">
-                                </div>
+                            <td style=" width:70px" class="">
                                 <span class="text-info h5">
                                     <b> {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}</b><br>
 
                                 </span>
-                                <span class="text-muted">
-                                    <b>{{ $_data->department }}</b>
+                                <span class="text-muted ">
+                                    <small> <b>{{ $_data->department }}</b></small>
                                 </span>
                             </td>
                             <td class="text-center">
@@ -52,7 +42,7 @@
                                 @if ($_data->staff_id)
                                     @if ($_data->daily_attendance)
                                         <span class="h4 text-info">
-                                            {{ date_format(date_create($_data->daily_attendance->time_in), 'h:i:s a'); /*->format('h:i:s a') */ }}
+                                            {{ date_format(date_create($_data->daily_attendance->time_in), 'h:i:s a') }}
                                         </span>
                                     @else
                                         <span class="h4 text-info">
@@ -68,13 +58,16 @@
                             <td class="text-center">
                                 @if ($_data->daily_attendance)
                                     <span class="h4 text-info">
-                                        {{ $_data->daily_attendance->time_out }}
-                                        {{-- {{ date_format(date_create($_data->daily_attendance->time_out), 'h:i:s a') }} --}}
+                                        @if ($_data->daily_attendance->time_out)
+                                            {{ date_format(date_create($_data->daily_attendance->time_out), 'h:i:s a') }}
+                                        @else
+                                            -
+                                        @endif
                                     </span>
                                 @endif
 
                             </td>
-                            <td>
+                            {{-- <td>
                                 @if ($_data->description)
                                     @php
                                         $_health = json_decode($_data->description);
@@ -124,7 +117,7 @@
                                         -
                                     </span>
                                 @endif
-                            </td>
+                            </td> --}}
                         </tr>
                     @endforeach
                 </tbody>

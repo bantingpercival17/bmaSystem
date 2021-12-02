@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -17,10 +18,14 @@ require __DIR__ . '/auth.php';
 Route::get('/', [Controller::class, 'index']);
 Route::get('/setup', [Controller::class, 'setup']);
 Route::post('/setup', [Controller::class, 'setup_store']);
-
+Route::get('/attendance', [EmployeeController::class, 'attendance_form_view']);
+Route::post('/attendance', [EmployeeController::class, 'attendance_generate_qr']);
 require __DIR__ . '/custom-route/administrator.php'; // Administrator Route
 require __DIR__ . '/custom-route/administrative.php'; // Administrative Route
 require __DIR__ . '/custom-route/accounting.php'; // Accounting Route
 require __DIR__ . '/custom-route/teacher.php'; // Teacher Route
 require __DIR__ . '/custom-route/executive.php'; // Teacher Route
-
+Route::prefix('employee')->group(function () {
+    Route::get('/attendance', [EmployeeController::class, 'attendance_view']);
+    Route::post('/attendance', [EmployeeController::class, 'attendance_store']);
+});

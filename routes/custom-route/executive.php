@@ -9,6 +9,7 @@ Route::prefix('executive')->group(function () {
     Route::get('/attendance', [ExecutiveOfficeController::class, 'index']); // Dashboard View
     Route::get('/attendance-checker', [EmployeeController::class, 'qr_scanner']);
     Route::get('/scan-code/{data}', [EmployeeController::class, 'scanner']);
+    Route::get('/scan-code-v2/{data}', [EmployeeController::class, 'scanner_v2']);
     Route::post('/attendance', [EmployeeController::class, 'store']);
     Route::get('/fetch-attendance', [ExecutiveOfficeController::class, 'json_attendance']);
 });

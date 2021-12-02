@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
@@ -38,5 +39,9 @@ class Staff extends Model
     public function daily_attendance()
     {
         return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('created_at', 'like', '%' . date('Y-m-d') . '%')->latest();
+    }
+    public function attendance_list()
+    {
+        return $this->hasMany(EmployeeController::class, 'staff_id');
     }
 }

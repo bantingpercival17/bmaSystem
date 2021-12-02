@@ -36,6 +36,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-8">
+                                    <a href="/attendance">Employee Attendance</a>
                                     <div class="icheck-primary">
                                         <input type="checkbox" id="remember">
                                         <label for="remember">

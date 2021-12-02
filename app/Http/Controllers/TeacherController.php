@@ -50,7 +50,7 @@ class TeacherController extends Controller
                 ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
                 ->where('ea.academic_id', $_subject->academic_id)
                 ->where('ss.section_id', $_subject->section_id)
-                ->where('ea.bridging_program','with')
+                ->where('ea.bridging_program', 'with')
                 ->orderBy('student_details.last_name', 'ASC')
                 ->where('ss.is_removed', false)
                 ->get();
@@ -67,6 +67,7 @@ class TeacherController extends Controller
             return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
         } else {
             $_columns = [['QUIZZES', 'Q', 10], ['ORAL EXAM', 'O', 5], ['R W - OUTPUT', 'R', 10], [request()->input('_period'),  strtoupper(request()->input('_period')[0]) . 'E', 1]];
+            return $_subject->curriculum_subject->subject->laboratory_hours;
             if ($_subject->curriculum_subject->subject->laboratory_hours > 0) {
                 $_columns[] =  ['Scientific and Technical Experiments Demonstrations of Competencies Acquired', 'A', 10];
             }

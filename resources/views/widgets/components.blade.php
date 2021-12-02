@@ -24,7 +24,7 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                                this.closest('form').submit();"> <i
+                                                                    this.closest('form').submit();"> <i
                                 class="fas fa-sign-out-alt mr-2"></i>
                             Sign
                             Out</a>
@@ -76,6 +76,7 @@
             <nav class="mt-2">
                 @include('widgets.page_sidebar')
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    @yield('employee-side')
                     @if (Auth::user()->roles[0]['id'] == 1) {{-- Super Admin --}}
                         @yield('administrator-side')
                     @endif
