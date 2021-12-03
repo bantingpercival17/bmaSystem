@@ -431,6 +431,7 @@
             mirror: true
         });
         scanner.addListener('scan', function(content) {
+            table_data()
             scan_qr_code_v2(content)
 
         });
@@ -461,6 +462,27 @@
             //alert(e);
         });
 
+
+        function scan_qr_code_v2(_data) {
+            table_data()
+            $.get('scan-code-v2/' + _data, function(data) {
+                audio_success.play()
+                if (data._data.respond == 200) {
+                    toastr.success(data._data.message, 'Time In!')
+                    employee_details(data._data)
+                }
+                if (data._data.respond == 404) {
+                    toastr.error(data._data.message, 'Error!')
+                    clear_details()
+                }
+            }).fail(function() {
+                toastr.error('Invalid QR Code.', 'Error!')
+                audio_erroe.play()
+                clear_details()
+            })
+
+        }
+
         function table_data() {
             $.get('/executive/fetch-attendance', function(respond) {
                 $('.table-body-100').empty()
@@ -487,33 +509,12 @@
             });
         }
 
-        function scan_qr_code_v2(_data) {
-            $.get('scan-code-v2/' + _data, function(data) {
-                audio_success.play()
-                console.log(data._data)
-                if (data._data.respond == 200) {
-                    toastr.success(data._data.message, 'Time In!')
-                    employee_details(data._data)
-                }
-                if (data._data.respond == 404) {
-                    toastr.error(data._data.message, 'Error!')
-                    clear_details()
-                }
-            }).fail(function() {
-                toastr.error('Invalid QR Code.', 'Error!')
-                audio_erroe.play()
-                clear_details()
-            })
-            table_data()
-        }
-
         function employee_details(_data) {
             $('.text-status').text(_data.data.time_status);
             $('.text-time').text(_data.data.time)
             $('.text-name').text(_data.data.name);
             $('.text-department').text(_data.data.department)
-            $('.image').attr('src', "/assets/img/staff/"+_data.data.image)
-            //$('.image').attr('src', "{{ asset('/assets/img/staff/"+_data.data.image+"') }}")
+            $('.image').attr('src', "/assets/img/staff/" + _data.data.image)
         }
 
         function clear_details() {
@@ -522,28 +523,6 @@
             $('.text-name').text("NAME OF EMPLOYEE");
             $('.text-department').text('OFFICE DEPARTMENT')
             $('.image').attr('src', "{{ asset('/assets/img/staff/avatar.png') }}")
-        }
-
-        function scan_qr_code(_data) {
-            //console.log(_data)
-            $.get('scan-code/' + _data, function(data) {
-                $('.full-name').text(data._data.last_name + "" + data._data.first_name)
-                $('.full-name').val(data._data.last_name + "" + data._data.first_name)
-                $('.employee').val(data._data.id)
-                console.log(data._status.respond)
-                if (data._status.respond == 'time-in') {
-                    toastr.success('Welcome ' + data._data.first_name, 'Time In!')
-                } else {
-                    toastr.success('Ingat ' + data._data.first_name, 'Time Out!')
-                }
-
-            }).fail(function() {
-                toastr.error('Invalid QR Code.', 'Error!')
-                $('.full-name').text('')
-                $('.full-name').val('')
-                $('.employee').val('')
-            });
-            table_data()
         }
     </script>
 </body>

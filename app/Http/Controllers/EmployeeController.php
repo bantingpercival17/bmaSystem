@@ -131,7 +131,7 @@ class EmployeeController extends Controller
                     $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe' . $_staff->staff->first_name . "!", 'data' => $_staff_details);
                 } else {
                     $_description = json_decode($_data['description']);
-                    $_staff_details = array(
+                    $_staff_ = array(
                         'staff_id' => $_staff->id,
                         'description' => json_encode(array(
                             'body_temprature' => $_description->body_temprature,
@@ -143,8 +143,9 @@ class EmployeeController extends Controller
                         )),
                         'time_in' => date('Y-m-d H:i:s'),
                     );
-                    EmployeeAttendance::create($_staff_details);
+                    EmployeeAttendance::create($_staff_);
                     //$_staff_details = json_encode($_staff_details);
+                    $_staff_details['time_status'] = 'TIME IN';
                     $_data = array('respond' => '200', 'message' => 'Welcome' . $_staff->staff->first_name . "!", 'data' => $_staff_details);
                 }
             } else {
