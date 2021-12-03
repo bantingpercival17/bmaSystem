@@ -67,8 +67,8 @@ class TeacherController extends Controller
             return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
         } else {
             $_columns = [['QUIZZES', 'Q', 10], ['ORAL EXAM', 'O', 5], ['R W - OUTPUT', 'R', 10], [request()->input('_period'),  strtoupper(request()->input('_period')[0]) . 'E', 1]];
-            return $_subject->curriculum_subject->subject->laboratory_hours;
-            if ($_subject->curriculum_subject->subject->laboratory_hours > 0) {
+            $_subject_code = $_subject->curriculum_subject->subject->subject_code;
+            if ($_subject->curriculum_subject->subject->laboratory_hours > 0 && $_subject_code !=  str_contains($_subject_code, 'P.E.')) {
                 $_columns[] =  ['Scientific and Technical Experiments Demonstrations of Competencies Acquired', 'A', 10];
             }
 
