@@ -315,6 +315,14 @@ class AdministratorController extends Controller
     {
         return view('administrator.enrollment.view');
     }
+
+
+    // Employee
+    public function employee_profile(Request $_request)
+    {
+        $_staff = Staff::find(Crypt::decrypt($_request->_e));
+        return view('administrator.employee.view', compact('_staff'));
+    }
     public function qr_generator($_data)
     {
         $_employee = Staff::find($_data);

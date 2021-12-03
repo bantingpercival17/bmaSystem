@@ -42,8 +42,9 @@
                                     <div class="card-body pt-0">
                                         <div class="row">
                                             <div class="col-7">
-                                                <h2 class="lead"><b>{{ $_data->first_name ." ". $_data->last_name }}</b></h2>
-                                                <p class="h6">{{ $_data->job_description}}</p>
+                                                <h2 class="lead">
+                                                    <b>{{ $_data->first_name . ' ' . $_data->last_name }}</b></h2>
+                                                <p class="h6">{{ $_data->job_description }}</p>
                                                 <p class="text-muted text-sm"><b>Role</b>
                                                     <br>
                                                     @foreach ($_data->user->roles as $role)
@@ -71,9 +72,11 @@
                                     </div>
                                     <div class="card-footer">
                                         <div class="text-right">
-                                            <a href="/administrator/qr-code/{{ $_data->id }}"  class="btn btn-sm btn-secondary"><i class="fas fa-qrcode"></i></a>
+                                            <a href="/administrator/qr-code/{{ $_data->id }}"
+                                                class="btn btn-sm btn-secondary"><i class="fas fa-qrcode"></i></a>
                                             <button class="btn btn-sm btn-info"><i class="fa fa-unlock"></i> </button>
-                                            <a href="#" class="btn btn-sm btn-primary">
+                                            <a href="/administrator/accounts/view?_e={{ Crypt::encrypt($_data->id) }}"
+                                                class="btn btn-sm btn-primary">
                                                 <i class="fas fa-user"></i> View Profile
                                             </a>
 
@@ -84,7 +87,7 @@
                         @endforeach
                     </div>
 
-                   
+
                 </div>
             </div>
         </div>
@@ -114,7 +117,7 @@
                                 <label for="">Job Description</label>
                                 <input type="text" class="form-control" name="job_description">
                             </div>
-                            
+
                         </div>
                         <div class="row">
                             <div class="form-group col">
@@ -143,7 +146,7 @@
                             <div class="form-group col">
                                 <label for="">Department</label>
                                 @php
-                                    $_department = ['ADMINISTRATIVE','ICT', 'REGISTRAR', 'ACCOUNTING', 'OBTO', 'ACADEMIC', 'MARINE TRANSPORTATION', 'MARINE ENGINEERING', 'SENIOR HIGH SCHOOL','EXO'];
+                                    $_department = ['ADMINISTRATIVE', 'ICT', 'REGISTRAR', 'ACCOUNTING', 'OBTO', 'ACADEMIC', 'MARINE TRANSPORTATION', 'MARINE ENGINEERING', 'SENIOR HIGH SCHOOL', 'EXO'];
                                 @endphp
                                 <select name="department" id="" class="form-control">
                                     <option value="-">Select Department</option>

@@ -37,9 +37,6 @@ Route::prefix('administrator')->group(function () {
     /* Enrollment */
     Route::get('/enrollment', [AdministratorController::class, 'enrollment_view']); // Enrollment View
 
-
-
-
     // Paymongo 
     Route::get('/paymongo', [PaymongoApi::class, 'view']); // Enrollment View
 
@@ -48,4 +45,7 @@ Route::prefix('administrator')->group(function () {
 
     // Employee 
     Route::get('/attendance', [EmployeeController::class, 'view']); // Attendance View
+
+    // Employee
+    Route::get('/accounts/view', [AdministratorController::class, 'employee_profile']);
 });
