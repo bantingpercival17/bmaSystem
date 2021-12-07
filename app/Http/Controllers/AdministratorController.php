@@ -51,8 +51,8 @@ class AdministratorController extends Controller
     {
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_course = CourseOffer::where('is_removed', false)->get();
-        $_students = StudentDetails::where('is_removed', false)->paginate(10);
-        return view('administrator.student_view', compact('_academics', '_course', '_students'));
+        $_students = StudentDetails::where('is_removed', false)->orderBy('last_name','asc')->paginate(10);
+        return view('administrator.student.view', compact('_academics', '_course', '_students'));
     } /* View Student  */
 
     public function student_imports(Request $_request)

@@ -56,18 +56,21 @@
         <div class="col-md-8">
             @if ($_students->count() > 0)
                 @foreach ($_students as $_student)
-                    <a href="/administrator/students/view?_s={{ Crypt::encrypt($_student->id) }}">
-                        <div class="card card-primary">
-                            <div class="card-body box-profile">
-                                <span class="text-success"><b>{{ $_student->account->student_number }}</b></span>
+
+                    <div class="card card-primary">
+                        <div class="card-body box-profile">
+                            <span class="text-success"><b>{{ $_student->account->student_number }}</b></span>
+                            <a href="/administrator/students/view?_s={{ Crypt::encrypt($_student->id) }}">
                                 <h4 class="text-info">
                                     <b> | {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }} </b>
                                 </h4>
-                                <label
-                                    class="text-muted">{{ $_student->enrollment_assessment->course->course_name }}</label>
-                            </div>
+                            </a>
+                            <span class="text-success"><b>{{ $_student->account->campus_email }}</b></span><br>
+                            <label
+                                class="text-muted">{{ $_student->enrollment_assessment->course->course_name }}</label>
                         </div>
-                    </a>
+                    </div>
+
 
                 @endforeach
 
