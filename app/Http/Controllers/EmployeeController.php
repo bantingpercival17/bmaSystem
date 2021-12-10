@@ -195,10 +195,10 @@ class EmployeeController extends Controller
         $_data = json_encode($_staff_details);
         $_data = base64_encode($_data);
         //return $_staff_details;
-        // return redirect()->with('qr-code', Crypt::encrypt($_request->employee));
+        return back()/* redirect() */->with('qr-code', $_data );
         //return view('employee.generate_qr_code', compact('_staff_details'));
-        $pdf =  PDF::loadView("employee.qr_generate", compact('_data'));
+        /*  $pdf =  PDF::loadView("employee.qr_generate", compact('_data'));
         $file_name = strtoupper('Qr code generate:');
-        return $pdf->setPaper([0, 0, 285.00, 250.00], 'landscape')->stream($file_name . '.pdf');
+        return $pdf->setPaper([0, 0, 285.00, 250.00], 'landscape')->stream($file_name . '.pdf'); */
     }
 }

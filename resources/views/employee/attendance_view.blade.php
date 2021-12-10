@@ -1,5 +1,5 @@
 @extends('app')
-@section('page-mode', 'dark-mode')
+{{-- @section('page-mode', 'dark-mode') --}}
 @section('page-title', 'Attendances')
 @section('css')
     <link rel="stylesheet" href="{{ asset('assets/plugins/bs-stepper/css/bs-stepper.min.css') }}">
