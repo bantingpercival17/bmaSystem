@@ -8,9 +8,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     public function qr_scanner()
     {
@@ -106,12 +112,13 @@ class EmployeeController extends Controller
     }
     public function scanner_v2($_data)
     {
-        $_data = Crypt::decrypt($_data); // Data
+        $_data = base64_decode($_data); // Data
+        $_data = json_decode($_data);
         $_date = date('Y-m-d'); // Date Now
-        $_email = $_data['email']; // Email 
-        $_time_in = date_create($_data['time_in']);
+        $_email = $_data[0]; // Email 
+        $_time_in = date_create($_data[2]);
         $_time_in =   date_format($_time_in, "Y-m-d");
-        $_staff = User::select('staff.id')->join('staff', 'staff.user_id', 'users.id')->where('email', $_data['email'])->first(); // Get Staff
+        $_staff = User::select('staff.id')->join('staff', 'staff.user_id', 'users.id')->where('email', $_data[0])->first(); // Get Staff
         if ($_date == $_time_in) {
             if ($_staff) {
                 $_attendance = EmployeeAttendance::where('staff_id', $_staff->id)
@@ -130,14 +137,14 @@ class EmployeeController extends Controller
                     //$_staff_details = json_encode($_staff_details);
                     $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe' . $_staff->staff->first_name . "!", 'data' => $_staff_details);
                 } else {
-                    $_description = json_decode($_data['description']);
+                    $_description = json_decode($_data[1]);
                     $_staff_ = array(
                         'staff_id' => $_staff->id,
                         'description' => json_encode(array(
-                            'body_temprature' => $_description->body_temprature,
-                            'have_any' => $_description->have_any,
-                            'experience' => $_description->experience,
-                            'positive' => $_description->positive,
+                            'body_temprature' => $_description[0],
+                            'have_any' => $_description[1],
+                            'experience' => $_description[2],
+                            'positive' => $_description[3],
                             'gatekeeper_in' => Auth::user()->name
 
                         )),
@@ -174,18 +181,24 @@ class EmployeeController extends Controller
             'question3' => 'required'
         ]);
         $_staff_details = array(
-            'email' => $_request->employee,
-            'description' => json_encode(array(
-                'body_temprature' => $_request->body_temp,
-                'have_any' => $_request->question1,
-                'experience' => $_request->question2,
-                'positive' => $_request->question3,
+            $_request->employee,
+            json_encode(array(
+                $_request->body_temp,
+                $_request->question1,
+                $_request->question2,
+                $_request->question3,
 
             )),
-            'time_in' => date('Y-m-d H:i:s'),
+            date('Y-m-d H:i:s'),
         );
+        //return base64_encode($_staff_details);
+        $_data = json_encode($_staff_details);
+        $_data = base64_encode($_data);
         //return $_staff_details;
-        return redirect()->back()->with('qr-code', Crypt::encrypt($_staff_details));
+        // return redirect()->with('qr-code', Crypt::encrypt($_request->employee));
         //return view('employee.generate_qr_code', compact('_staff_details'));
+        $pdf =  PDF::loadView("employee.qr_generate", compact('_data'));
+        $file_name = strtoupper('Qr code generate:');
+        return $pdf->setPaper([0, 0, 285.00, 250.00], 'landscape')->stream($file_name . '.pdf');
     }
 }

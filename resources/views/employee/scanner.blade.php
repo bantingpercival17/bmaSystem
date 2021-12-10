@@ -73,6 +73,15 @@
                         <div class="card">
                             <div class="card-header">
                                 <video id="preview"></video>
+                                <div class="btn-group btn-group-smaill btn-group-toggle mb-5" data-toggle="buttons">
+                                    <label class="btn btn-primary btn-small active">
+                                        <input type="radio" name="options" value="1" autocomplete="off" checked> Front
+                                        Camera
+                                    </label>
+                                    <label class="btn btn-secondary btn-small">
+                                        <input type="radio" name="options" value="2" autocomplete="off"> Back Camera
+                                    </label>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -432,6 +441,7 @@
         });
         scanner.addListener('scan', function(content) {
             table_data()
+
             scan_qr_code_v2(content)
 
         });
@@ -466,12 +476,14 @@
         function scan_qr_code_v2(_data) {
             table_data()
             $.get('scan-code-v2/' + _data, function(data) {
-                audio_success.play()
+
                 if (data._data.respond == 200) {
                     toastr.success(data._data.message, 'Time In!')
+                    audio_success.play()
                     employee_details(data._data)
                 }
                 if (data._data.respond == 404) {
+                    audio_erroe.play()
                     toastr.error(data._data.message, 'Error!')
                     clear_details()
                 }
