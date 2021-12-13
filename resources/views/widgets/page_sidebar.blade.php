@@ -1,5 +1,9 @@
 @section('employee-side')
-    <li class="nav-item ">
+    @php
+    $_role = 'employee';
+    $_array_link = [['Dashboard', 'fa-tachometer-alt', $_role . '/dashboard'], ['Enrollment', 'fa-clipboard', $_role . '/enrollment'], ['Student', 'fa-users', $_role . '/students'], ['Accounts', 'fa-users', $_role . '/accounts'], ['Attendance', 'fa-clock', $_role . '/attendance'], ['Subjects', 'fa-clipboard-list', $_role . '/subjects'], ['Section', 'fa-chalkboard-teacher', $_role . '/classes'], ['Paymongo', 'fa-money-bill-alt', $_role . '/paymongo']];
+    @endphp
+    <li class="nav-item {{ Request::is($_role . '/*') ? 'menu-open' : '' }}  ">
         <a href="/" class="nav-link">
             <i class="nav-icon fas fa-user"></i>
             <p>
@@ -35,7 +39,7 @@
     $_role = 'administrator';
     $_array_link = [['Dashboard', 'fa-tachometer-alt', $_role . '/dashboard'], ['Enrollment', 'fa-clipboard', $_role . '/enrollment'], ['Student', 'fa-users', $_role . '/students'], ['Accounts', 'fa-users', $_role . '/accounts'], ['Attendance', 'fa-clock', $_role . '/attendance'], ['Subjects', 'fa-clipboard-list', $_role . '/subjects'], ['Section', 'fa-chalkboard-teacher', $_role . '/classes'], ['Paymongo', 'fa-money-bill-alt', $_role . '/paymongo']];
     @endphp
-    <li class="nav-item ">
+    <li class="nav-item {{ Request::is($_role . '/*') ? 'menu-open' : '' }} ">
         <a href="/" class="nav-link">
             <i class="nav-icon fas fa-briefcase"></i>
             <p>
@@ -47,7 +51,7 @@
             @foreach ($_array_link as $_nav_item)
                 <li class="nav-item">
                     <a href="/{{ $_nav_item[2] }}"
-                        class="nav-link  {{ Request::is("/".$_nav_item[2] . '/*') ? 'active' : '' }}">
+                        class="nav-link  {{ Request::is($_nav_item[2]) || Request::is('/' . $_nav_item[2] . '/*') ? 'active' : '' }}">
                         <i class="nav-icon  fas {{ $_nav_item[1] }}"></i>
                         <p>
                             {{ Request::is($_nav_item[2] . '/*') }}
@@ -60,31 +64,63 @@
     </li>
 
 @endsection
-
-@section('administrator-side-v1')
+@section('administrative-side')
     @php
-    $_role = 'administrator';
-    $_array_link = [['Dashboard', 'fa-tachometer-alt', $_role . '/dashboard'], ['Enrollment', 'fa-clipboard', $_role . '/enrollment'], ['Student', 'fa-user', $_role . '/students'], ['Accounts', 'fa-users', $_role . '/accounts'], ['Attendance', 'fa-clock', $_role . '/attendance'], ['Subjects', 'fa-clipboard-list', $_role . '/subjects'], ['Section', 'fa-chalkboard-teacher', $_role . '/classes'], ['Paymongo', 'fa-money-bill-alt', $_role . '/paymongo']];
+    $_role = 'administrative';
+    $_array_link = [['Dashboard', 'fa-tachometer-alt', $_role . '/dashboard'], ['Attendace', 'fa-clock', $_role . '/attendance']];
     @endphp
-    @foreach ($_array_link as $_nav_item)
-        <li class="nav-item">
-            <a href="/{{ $_nav_item[2] }}" class="nav-link  {{ Request::is($_nav_item[2] . '/*') ? 'active' : '' }}">
-                <i class="nav-icon  fas {{ $_nav_item[1] }}"></i>
-                <p>
-                    {{ $_nav_item[0] }}
-                </p>
-            </a>
-        </li>
-    @endforeach
-
-    {{-- <li class="nav-item">
-        <a href="/administrator/examination" class="nav-link active">
-            <i class="nav-icon  fas fa-file"></i>
+    <li class="nav-item  {{ Request::is($_role . '/*') ? 'menu-open' : '' }} ">
+        <a href="/" class="nav-link">
+            <i class="nav-icon fas fa-briefcase"></i>
             <p>
-                Examination
+                {{ ucwords($_role) }}
+                <i class="right fas fa-angle-left"></i>
             </p>
         </a>
-    </li> --}}
+        <ul class="nav nav-treeview">
+            @foreach ($_array_link as $_nav_item)
+                <li class="nav-item">
+                    <a href="/{{ $_nav_item[2] }}"
+                        class="nav-link  {{ Request::is($_nav_item[2]) || Request::is($_nav_item[2] . '/*') ? 'active' : '' }}">
+                        <i class="nav-icon  fas {{ $_nav_item[1] }}"></i>
+                        <p>
+                            {{ $_nav_item[0] }}
+                        </p>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </li>
+@endsection
+
+
+@section('registrar-side')
+    @php
+    $_role = 'registrar';
+    $_array_link = [['Dashboard', 'fa-tachometer-alt', $_role . '/dashboard'], ['Applicants', 'fa-users', $_role . '/applicants'], ['Enrollment', 'fa-users', $_role . '/enrollment'], ['Student Profiles', 'fa-users', $_role . '/student-porfile'], ['Section', 'fa-chalkboard-teacher', $_role . '/sections'], ['Subjects', 'fa-copy', $_role . '/subjects']];
+    @endphp
+    <li class="nav-item  {{ Request::is($_role . '/*') ? 'menu-open' : '' }} ">
+        <a href="/" class="nav-link">
+            <i class="nav-icon fas fa-briefcase"></i>
+            <p>
+                {{ ucwords($_role) }}
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            @foreach ($_array_link as $_nav_item)
+                <li class="nav-item">
+                    <a href="/{{ $_nav_item[2] }}"
+                        class="nav-link  {{ Request::is($_nav_item[2]) || Request::is($_nav_item[2] . '/*') ? 'active' : '' }}">
+                        <i class="nav-icon  fas {{ $_nav_item[1] }}"></i>
+                        <p>
+                            {{ $_nav_item[0] }}
+                        </p>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </li>
 @endsection
 
 @section('accounting-side')
