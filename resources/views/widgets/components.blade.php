@@ -81,7 +81,7 @@
                         @yield('administrator-side')
                     @endif
                     @if (Auth::user()->roles[0]['id'] == 2)
-                        @yield('administrator-side')
+                        @yield('administrative-side')
                     @endif
                     @if (Auth::user()->roles[0]['id'] == 3) {{-- Registrar Sidebar --}}
                         @yield('registrar-side')
