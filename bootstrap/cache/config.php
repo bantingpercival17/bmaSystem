@@ -3,7 +3,7 @@
   array (
     'name' => 'Baliwag Maritime Academy, Inc.',
     'env' => 'local',
-    'debug' => false,
+    'debug' => true,
     'url' => 'https://bma.edu.ph',
     'asset_url' => NULL,
     'timezone' => 'Asia/Manila',

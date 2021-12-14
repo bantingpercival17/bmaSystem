@@ -7,13 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title-report')</title>
     <style>
-        @page {
-            margin: 100px 25px;
-        }
-
+         @page{margin: 0.1in 0.1in 0.9in 0.1in;}
         * {
             padding: 0;
-            margin: 0;
             font-family: "Times New Roman", Times, serif;
         }
 
@@ -34,12 +30,13 @@
         }
 
         footer {
-            position: absolute;
-            bottom: 15px;
-            left: 0px;
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
             right: 0px;
-            text-align: center
+            justify-content: center;
         }
+
         .content-1 {
             position: relative;
             top: 1.3in;
@@ -166,14 +163,31 @@
                 <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
     </header>
     @yield('content')
-    <footer>
+   {{--  <footer>
         <label><i>This is a system generated report
                 @php
                     date_default_timezone_set('Asia/Manila');
                     echo date('m/d/Y h:m:s');
                 @endphp @ @yield('department')</i></label>
-    </footer>
+    </footer> --}}
+    <footer>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>
+                        <small>
+                            GENERATED DATE: @php
+                                date_default_timezone_set('Asia/Manila');
+                                echo date('m/d/Y h:m:s');
+                            @endphp
+                        </small>
+                    </td>
+                    <td><small>GENERATE BY: {{ strtoupper(Auth::user()->name) }}</small></td>
 
+                </tr>
+            </tbody>
+        </table>
+    </footer>
 </body>
 
 </html>

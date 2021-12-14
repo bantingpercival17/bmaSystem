@@ -11,27 +11,25 @@
     <div class="card">
         <div class="card-body">
             <div class="text-success h4"><b>Generate Attendane Report</b></div>
-            <form action="/administrative/attedance/report" method="post">
+            <form action="/administrative/attendance/report" method="get">
                 <div class="row">
-                    <div class="col-4">
-                        <a href="/administrative/attendance/report?r_view=daily" class="btn btn-info btn-block"> <i class="fa fa-print"></i> Daily Attendance
-                            Report</a>
-                    </div>
-                    <div class="col-4">
-                        <a href="/administrative/attendance/report?r_view=weekly" class="btn btn-info btn-block"> <i class="fa fa-print"></i>  Weekly Attendance
-                            Report</a>
-                    </div>
-                    {{-- <div class="form-group col-md-5">
+
+                    <div class="form-group col-md-5">
                         <label for="" class="text-muted">Start Date</label>
-                        <input type="date" class="form-control" name="start_date">
+                        <input type="date" class="form-control" name="start_date" required>
                     </div>
                     <div class="form-group col-md-5">
                         <label for="" class="text-muted">End Date</label>
-                        <input type="date" class="form-control" name="end_date">
+                        <input type="date" class="form-control" name="end_date" required>
                     </div>
+                    <input type="hidden" name="r_view" value="weekly">
                     <div class="form-group col-md-2">
-                        <button class="btn btn-success">Generate</button>
-                    </div> --}}
+                        <a href="/administrative/attendance/report?r_view=daily" class="btn btn-info btn-block"> <i
+                                class="fa fa-print"></i> Daily Attendance</a>
+                        {{-- <a href="/administrative/attendance/report?r_view=weekly" class="btn btn-info btn-block"> <i
+                            class="fa fa-print"></i> GENERATE </a> --}}
+                        <button class="btn btn-success btn-block"> <i class="fa fa-print"></i> Generate</button>
+                    </div>
 
                 </div>
             </form>

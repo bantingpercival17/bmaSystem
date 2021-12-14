@@ -44,4 +44,8 @@ class Staff extends Model
     {
         return $this->hasMany(EmployeeController::class, 'staff_id');
     }
+    public function date_attendance($_date)
+    {
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('created_at', 'like', '%' . $_date . '%')->first();
+    }
 }

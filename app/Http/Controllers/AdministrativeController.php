@@ -26,6 +26,6 @@ class AdministrativeController extends Controller
     public function attendance_report(Request $_request)
     {
         $_report = new AttendanceSheetReport();
-        return $_request->r_view == 'daily' ? $_report->daily_report() : "";
+        return $_request->r_view == 'daily' ? $_report->daily_report() : $_report->daily_time_record_report($_request->start_date,$_request->end_date);
     }
 }
