@@ -9,6 +9,28 @@
 @endsection
 @section('page-content')
     <div class="card">
+        <div class="card-body">
+            <div class="text-success h4"><b>Generate Attendane Report</b></div>
+            <form action="/administrative/attedance/report" method="post">
+                <div class="row">
+
+                    <div class="form-group col-md-5">
+                        <label for="" class="text-muted">Start Date</label>
+                        <input type="date" class="form-control" name="start_date">
+                    </div>
+                    <div class="form-group col-md-5">
+                        <label for="" class="text-muted">End Date</label>
+                        <input type="date" class="form-control" name="end_date">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <button class="btn btn-success">Generate</button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card">
         <div class="card-header">
             <h3 class="card-title"><span class="text-muted"><b>ATTENDANCE MONITORING</b></span></h3>
             {{-- <div class="card-tools">
