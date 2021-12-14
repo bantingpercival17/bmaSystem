@@ -119,47 +119,47 @@ class EmployeeController extends Controller
         $_time_in = date_create($_data[2]);
         $_time_in =   date_format($_time_in, "Y-m-d");
         $_staff = User::select('staff.id')->join('staff', 'staff.user_id', 'users.id')->where('email', $_data[0])->first(); // Get Staff
-        if ($_date == $_time_in) {
-            if ($_staff) {
-                $_attendance = EmployeeAttendance::where('staff_id', $_staff->id)
-                    ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first();
-                $_staff_details = array(
-                    'name' => strtoupper(trim($_staff->staff->user->name)),
-                    'department' => $_staff->staff->department,
-                    'time_status' => 'TIME IN',
-                    'time' =>  date('H:i:s'),
-                    'image' =>  strtolower(str_replace(' ', '_', $_staff->staff->user->name)) . '.jpg',
-                );
-                if ($_attendance) {
-                    $_attendance->time_out = now();
-                    $_attendance->save();
-                    $_staff_details['time_status'] = 'TIME OUT';
-                    //$_staff_details = json_encode($_staff_details);
-                    $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe' . $_staff->staff->first_name . "!", 'data' => $_staff_details);
-                } else {
-                    $_description = json_decode($_data[1]);
-                    $_staff_ = array(
-                        'staff_id' => $_staff->id,
-                        'description' => json_encode(array(
-                            'body_temprature' => $_description[0],
-                            'have_any' => $_description[1],
-                            'experience' => $_description[2],
-                            'positive' => $_description[3],
-                            'gatekeeper_in' => Auth::user()->name
-
-                        )),
-                        'time_in' => date('Y-m-d H:i:s'),
-                    );
-                    EmployeeAttendance::create($_staff_);
-                    //$_staff_details = json_encode($_staff_details);
-                    $_staff_details['time_status'] = 'TIME IN';
-                    $_data = array('respond' => '200', 'message' => 'Welcome' . $_staff->staff->first_name . "!", 'data' => $_staff_details);
-                }
-            } else {
-                $_data = array('respond' => '404', 'message' => 'Invalid Email');
-            }
+       /*  if ($_date == $_time_in) {
         } else {
             $_data = array('respond' => '404', 'message' => 'Invalid Date Encode');
+        } */
+        if ($_staff) {
+            $_attendance = EmployeeAttendance::where('staff_id', $_staff->id)
+                ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first();
+            $_staff_details = array(
+                'name' => strtoupper(trim($_staff->staff->user->name)),
+                'department' => $_staff->staff->department,
+                'time_status' => 'TIME IN',
+                'time' =>  date('H:i:s'),
+                'image' =>  strtolower(str_replace(' ', '_', $_staff->staff->user->name)) . '.jpg',
+            );
+            if ($_attendance) {
+                $_attendance->time_out = now();
+                $_attendance->save();
+                $_staff_details['time_status'] = 'TIME OUT';
+                //$_staff_details = json_encode($_staff_details);
+                $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe' . $_staff->staff->first_name . "!", 'data' => $_staff_details);
+            } else {
+                $_description = json_decode($_data[1]);
+                $_staff_ = array(
+                    'staff_id' => $_staff->id,
+                    'description' => json_encode(array(
+                        'body_temprature' => $_description[0],
+                        'have_any' => $_description[1],
+                        'experience' => $_description[2],
+                        'positive' => $_description[3],
+                        'gatekeeper_in' => Auth::user()->name
+
+                    )),
+                    'time_in' => date('Y-m-d H:i:s'),
+                );
+                EmployeeAttendance::create($_staff_);
+                //$_staff_details = json_encode($_staff_details);
+                $_staff_details['time_status'] = 'TIME IN';
+                $_data = array('respond' => '200', 'message' => 'Welcome' . $_staff->staff->first_name . "!", 'data' => $_staff_details);
+            }
+        } else {
+            $_data = array('respond' => '404', 'message' => 'Invalid Email');
         }
         return compact('_data');
     }
@@ -195,9 +195,9 @@ class EmployeeController extends Controller
         $_data = json_encode($_staff_details);
         $_data = base64_encode($_data);
         //return $_staff_details;
-        return back()/* redirect() */->with('qr-code', $_data );
+        return back()/* redirect() */->with('qr-code', $_data);
         //return view('employee.generate_qr_code', compact('_staff_details'));
-         /* $pdf =  PDF::loadView("employee.qr_generate", compact('_data'));
+        /* $pdf =  PDF::loadView("employee.qr_generate", compact('_data'));
         $file_name = strtoupper('Qr code generate:');
         return $pdf->setPaper([0, 0, 285.00, 250.00], 'landscape')->stream($file_name . '.pdf'); */
     }
