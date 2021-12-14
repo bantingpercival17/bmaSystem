@@ -44,8 +44,8 @@
             <tbody>
                 @foreach ($_employees as $_employee)
                     <tr>
-                        <td>{{ strtoupper($_employee->department) }}</td>
                         <td>{{ strtoupper($_employee->first_name . ' ' . $_employee->last_name) }}</td>
+                        <td>{{ strtoupper($_employee->department) }}</td>
                         <td>
                             @if ($_employee->daily_attendance)
                                 {{ date_format(date_create($_employee->daily_attendance->time_in), 'h:i:s a') }}
@@ -56,7 +56,11 @@
                         </td>
                         <td>
                             @if ($_employee->daily_attendance)
-                                {{ date_format(date_create($_employee->daily_attendance->time_out), 'h:i:s a') }}
+                               @if ($_employee->daily_attendance->time_out)
+                               {{ date_format(date_create($_employee->daily_attendance->time_out), 'h:i:s a') }}
+                               @else
+                                   -
+                               @endif
                             @else
                                 -
                             @endif
