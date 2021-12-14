@@ -40,6 +40,13 @@
             right: 0px;
             text-align: center
         }
+        .content-1 {
+            position: relative;
+            top: 1.3in;
+            margin-right: 25px;
+            margin-left: 25px;
+
+        }
 
         .content {
             position: relative;
@@ -118,6 +125,30 @@
             font-size: 12px;
         }
 
+        .attendance-table {
+            font-family: "Times New Roman", Times, serif;
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid rgb(0, 0, 0);
+            margin-top: 10px
+        }
+
+        .attendance-table td,
+        .attendance-table th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+            border: 1px solid rgb(0, 0, 0);
+            font-size: 12px;
+
+        }
+
+        .attendance-table th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+
         .form-code {
             font-family: "Times New Roman", Times, serif;
             font-size: 12px;
@@ -132,7 +163,7 @@
 
     <header>
         <span class="form-code">BMA FORM @yield('form-code')<span>
-        <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
+                <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
     </header>
     @yield('content')
     <footer>

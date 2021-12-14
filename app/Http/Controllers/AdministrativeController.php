@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Staff;
+use App\Report\AttendanceSheetReport;
 use Illuminate\Http\Request;
 
 class AdministrativeController extends Controller
@@ -21,5 +22,10 @@ class AdministrativeController extends Controller
             //->orderBy('ea.updated_at', 'desc')
             ->get();
         return view('administrative.attendance.view', compact('_employees'));
+    }
+    public function attendance_report(Request $_request)
+    {
+        $_report = new AttendanceSheetReport();
+        return $_request->r_view == 'daily' ? $_report->daily_report() : "";
     }
 }
