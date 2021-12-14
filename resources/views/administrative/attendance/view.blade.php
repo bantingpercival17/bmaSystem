@@ -26,8 +26,6 @@
                     <div class="form-group col-md-2">
                         <a href="/administrative/attendance/report?r_view=daily" class="btn btn-info btn-block"> <i
                                 class="fa fa-print"></i> Daily Attendance</a>
-                        {{-- <a href="/administrative/attendance/report?r_view=weekly" class="btn btn-info btn-block"> <i
-                            class="fa fa-print"></i> GENERATE </a> --}}
                         <button class="btn btn-success btn-block"> <i class="fa fa-print"></i> Generate</button>
                     </div>
 
