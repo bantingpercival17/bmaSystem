@@ -118,24 +118,26 @@ class EmployeeController extends Controller
         $_email = $_data[0]; // Email 
         $_time_in = date_create($_data[2]);
         $_time_in =   date_format($_time_in, "Y-m-d");
+
         $_staff = User::select('staff.id')->join('staff', 'staff.user_id', 'users.id')->where('email', $_data[0])->first(); // Get Staff
+        $_staff = Staff::select('staff.id','staff.user_id')->join('users', 'users.id', 'staff.user_id')->where('users.email', $_data[0])->first(); // Get Staff Id
         if ($_date == $_time_in) {
             if ($_staff) {
                 $_attendance = EmployeeAttendance::where('staff_id', $_staff->id)
                     ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first();
                 $_staff_details = array(
-                    'name' => strtoupper(trim($_staff->staff->user->name)),
-                    'department' => $_staff->staff->department,
+                    'name' => strtoupper(trim($_staff->user->name)),
+                    'department' => $_staff->user->staff->department,
                     'time_status' => 'TIME IN',
                     'time' =>  date('H:i:s'),
-                    'image' =>  strtolower(str_replace(' ', '_', $_staff->staff->user->name)) . '.jpg',
+                    'image' =>  strtolower(str_replace(' ', '_', $_staff->user->name)) . '.jpg',
                 );
                 if ($_attendance) {
                     $_attendance->time_out = now();
                     $_attendance->save();
                     $_staff_details['time_status'] = 'TIME OUT';
                     //$_staff_details = json_encode($_staff_details);
-                    $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe' . $_staff->staff->first_name . "!", 'data' => $_staff_details);
+                    $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe ' . $_staff->user->staff->first_name . "!", 'data' => $_staff_details);
                 } else {
                     $_description = json_decode($_data[1]);
                     $_staff_ = array(

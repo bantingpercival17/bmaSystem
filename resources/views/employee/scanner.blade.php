@@ -87,7 +87,7 @@
                         </div>
 
                     </div>
-                    <div class=" col-xs-6 col-md-6 col-xs-12">
+                    <div class=" col-xs col-md col-xs-12">
 
                         <div class="card">
                             <div class="card-body">
@@ -235,7 +235,7 @@
         });
         scanner.addListener('scan', function(content) {
             table_data()
-
+            //alert(content)
             scan_qr_code_v2(content)
 
         });
@@ -272,7 +272,7 @@
             $.get('scan-code-v2/' + _data, function(data) {
 
                 if (data._data.respond == 200) {
-                    toastr.success(data._data.message, 'Time In!')
+                    toastr.success(data._data.message, data._data.data.time_status)
                     audio_success.play()
                     employee_details(data._data)
                 }
