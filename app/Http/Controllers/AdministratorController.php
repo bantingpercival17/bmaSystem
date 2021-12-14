@@ -119,8 +119,8 @@ class AdministratorController extends Controller
 
     public function account_upload_profile(Request $_request)
     {
-        $_staff = User::find($_request->_id);
-        $_file_image_name = strtolower(trim(str_replace(' ', '_', $_staff->name))) . '.jpg';
+        $_staff = Staff::find($_request->_id);
+        $_file_image_name = strtolower(trim(str_replace(' ', '_', $_staff->user->name))) . '.jpg';
         $_request->validate([
             '_file' => 'mimes:doc,pdf,docx,zip,jpeg,png,jpg,gif,svg',
         ]);
