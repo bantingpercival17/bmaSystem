@@ -44,8 +44,9 @@ Route::prefix('administrator')->group(function () {
     // QR Code
     Route::get('/qr-code/{data}', [AdministratorController::class, 'qr_generator']);
 
-    // Employee 
-    Route::get('/attendance', [EmployeeController::class, 'view']); // Attendance View
+    // Attendance
+    Route::get('/attendance', [AdministratorController::class, 'attendance_view']); // Attendance View
+    Route::get('/attendance/report', [AdministratorController::class, 'attendance_report']); // Attendance Report
 
     // Employee
     Route::get('/accounts/view', [AdministratorController::class, 'employee_profile']);

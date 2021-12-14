@@ -23,6 +23,7 @@ use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
 use App\Models\User;
+use App\Report\AttendanceSheetReport;
 use App\Report\StudentListReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -301,13 +302,6 @@ class AdministratorController extends Controller
     }
     public function section_remove(Request $_request)
     {
-        /* StudentSection::create([
-            'student_id' => Crypt::decrypt($_request->_student),
-            'section_id' => Crypt::decrypt($_request->_cs),
-            'created_by' => Auth::user()->name,
-            'is_removed' => 0,
-        ]); */
-        // return Crypt::decrypt($_request->_cs);
         StudentSection::find(Crypt::decrypt($_request->_cs))->update(['is_removed' => 1]);
         $_section = StudentSection::find(Crypt::decrypt($_request->_cs));
         return back()->with('message', 'Successfully Removed to ' . $_section->section->section_name);
@@ -348,5 +342,18 @@ class AdministratorController extends Controller
         $pdf = PDF::loadView("employee.qr_generate", compact('_employee'));
         $file_name = strtoupper('Qr code generate: ' . $_data);
         return $pdf->setPaper([0, 0, 285.00, 250.00], 'landscape')->stream($file_name . '.pdf');
+    }
+
+    // Attendance
+    public function attendance_view()
+    {
+        $_employees = Staff::orderBy('staff.department', 'asc')
+            ->orderBy('staff.last_name', 'asc')->get();
+        return view('administrator.employee.attendance', compact('_employees'));
+    }
+    public function attendance_report(Request $_request)
+    {
+        $_report = new AttendanceSheetReport();
+        return $_request->r_view == 'daily' ? $_report->daily_report() : $_report->daily_time_record_report($_request->start_date, $_request->end_date);
     }
 }
