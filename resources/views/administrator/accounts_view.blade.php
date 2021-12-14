@@ -43,7 +43,8 @@
                                         <div class="row">
                                             <div class="col-7">
                                                 <h2 class="lead">
-                                                    <b>{{ $_data->first_name . ' ' . $_data->last_name }}</b></h2>
+                                                    <b>{{ $_data->first_name . ' ' . $_data->last_name }}</b>
+                                                </h2>
                                                 <p class="h6">{{ $_data->job_description }}</p>
                                                 <p class="text-muted text-sm"><b>Role</b>
                                                     <br>
@@ -72,6 +73,7 @@
                                     </div>
                                     <div class="card-footer">
                                         <div class="text-right">
+
                                             <a href="/administrator/qr-code/{{ $_data->id }}"
                                                 class="btn btn-sm btn-secondary"><i class="fas fa-qrcode"></i></a>
                                             <button class="btn btn-sm btn-info"><i class="fa fa-unlock"></i> </button>
@@ -79,8 +81,25 @@
                                                 class="btn btn-sm btn-primary">
                                                 <i class="fas fa-user"></i> View Profile
                                             </a>
-
                                         </div>
+                                        <p></p>
+                                        <form action="/administrator/accounts/profile-picture" method="post"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="input-group input-group-sm">
+                                                <input type="hidden" name="_id" value="{{ $_data->id }}">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input" id="customFile"
+                                                        name="_file" required>
+                                                    <label class="custom-file-label" for="customFile">Choose
+                                                        file</label>
+                                                </div>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-info btn-sm" type="submit"><i
+                                                            class="fa fa-upload"></i></button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

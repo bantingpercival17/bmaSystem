@@ -51,7 +51,7 @@ class AdministratorController extends Controller
     {
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_course = CourseOffer::where('is_removed', false)->get();
-        $_students = StudentDetails::where('is_removed', false)->orderBy('last_name','asc')->paginate(10);
+        $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
         return view('administrator.student.view', compact('_academics', '_course', '_students'));
     } /* View Student  */
 
@@ -115,6 +115,24 @@ class AdministratorController extends Controller
 
             return back()->with('message', 'Successfully Created Account');
         }
+    }
+
+    public function account_upload_profile(Request $_request)
+    {
+        $_staff = User::find($_request->_id);
+        $_file_image_name = strtolower(trim(str_replace(' ', '_', $_staff->name))) . '.jpg';
+        $_request->validate([
+            '_file' => 'mimes:doc,pdf,docx,zip,jpeg,png,jpg,gif,svg',
+        ]);
+        if ($file = $_request->hasFile('_file')) {
+
+            $file = $_request->file('_file');
+            //$fileName = $file->getClientOriginalName();
+            $destinationPath = public_path() . '/assets/img/staff';
+            $file->move($destinationPath,   $_file_image_name);
+            return back()->with('message', 'Successfully Upload image');
+        }
+        // return $_file_image_name;
     }
     /* /Accounts */
 

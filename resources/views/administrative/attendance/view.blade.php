@@ -13,8 +13,15 @@
             <div class="text-success h4"><b>Generate Attendane Report</b></div>
             <form action="/administrative/attedance/report" method="post">
                 <div class="row">
-
-                    <div class="form-group col-md-5">
+                    <div class="col-4">
+                        <a href="/administrative/attendance/report?r_view=daily" class="btn btn-info btn-block"> <i class="fa fa-print"></i> Daily Attendance
+                            Report</a>
+                    </div>
+                    <div class="col-4">
+                        <a href="/administrative/attendance/report?r_view=weekly" class="btn btn-info btn-block"> <i class="fa fa-print"></i>  Weekly Attendance
+                            Report</a>
+                    </div>
+                    {{-- <div class="form-group col-md-5">
                         <label for="" class="text-muted">Start Date</label>
                         <input type="date" class="form-control" name="start_date">
                     </div>
@@ -24,7 +31,7 @@
                     </div>
                     <div class="form-group col-md-2">
                         <button class="btn btn-success">Generate</button>
-                    </div>
+                    </div> --}}
 
                 </div>
             </form>
