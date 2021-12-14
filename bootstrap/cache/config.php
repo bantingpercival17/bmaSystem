@@ -1,16 +1,16 @@
 <?php return array (
   'app' => 
   array (
-    'name' => 'Baliwag Maritime Academy, Inc.',
+    'name' => 'Laravel',
     'env' => 'local',
-    'debug' => false,
-    'url' => 'https://bma.edu.ph',
+    'debug' => true,
+    'url' => 'http://localhost',
     'asset_url' => NULL,
     'timezone' => 'Asia/Manila',
     'locale' => 'en',
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
-    'key' => 'base64:a+RK1JnwxoA+ts76I/7AKaHm479FggwGRreQfsNNxnQ=',
+    'key' => 'base64:hNpeVE/bLLat9TdTtTCfEgDVhvDBcKVDLbBt2gbFyOU=',
     'cipher' => 'AES-256-CBC',
     'providers' => 
     array (
@@ -189,7 +189,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/framework/cache/data',
+        'path' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -233,7 +233,7 @@
         'driver' => 'octane',
       ),
     ),
-    'prefix' => 'baliwag_maritime_academy_inc_cache',
+    'prefix' => 'laravel_cache',
   ),
   'cors' => 
   array (
@@ -272,7 +272,7 @@
       array (
         'driver' => 'sqlite',
         'url' => NULL,
-        'database' => 'bma.system.v2',
+        'database' => 'bma.system',
         'prefix' => '',
         'foreign_key_constraints' => true,
       ),
@@ -282,7 +282,7 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'bma.system.v2',
+        'database' => 'bma.system',
         'username' => 'root',
         'password' => '',
         'unix_socket' => '',
@@ -302,7 +302,7 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'bma.system.v2',
+        'database' => 'bma.system',
         'username' => 'root',
         'password' => '',
         'charset' => 'utf8',
@@ -317,7 +317,7 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'bma.system.v2',
+        'database' => 'bma.system',
         'username' => 'root',
         'password' => '',
         'charset' => 'utf8',
@@ -332,7 +332,7 @@
       'options' => 
       array (
         'cluster' => 'redis',
-        'prefix' => 'baliwag_maritime_academy_inc_database_',
+        'prefix' => 'laravel_database_',
       ),
       'default' => 
       array (
@@ -358,10 +358,10 @@
     'orientation' => 'portrait',
     'defines' => 
     array (
-      'font_dir' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/fonts/',
-      'font_cache' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/fonts/',
-      'temp_dir' => '/tmp',
-      'chroot' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem',
+      'font_dir' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\fonts/',
+      'font_cache' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\fonts/',
+      'temp_dir' => 'C:\\Users\\BMA_SE~1\\AppData\\Local\\Temp',
+      'chroot' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem',
       'enable_font_subsetting' => false,
       'pdf_backend' => 'CPDF',
       'default_media_type' => 'screen',
@@ -475,7 +475,7 @@
     ),
     'temporary_files' => 
     array (
-      'local_path' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/framework/laravel-excel',
+      'local_path' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\framework/laravel-excel',
       'remote_disk' => NULL,
       'remote_prefix' => NULL,
       'force_resync_remote' => NULL,
@@ -489,13 +489,13 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/app',
+        'root' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\app',
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/app/public',
-        'url' => 'https://bma.edu.ph/storage',
+        'root' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\app/public',
+        'url' => 'http://localhost/storage',
         'visibility' => 'public',
       ),
       's3' => 
@@ -512,7 +512,7 @@
     ),
     'links' => 
     array (
-      '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/public/storage' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/app/public',
+      'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\public\\storage' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\app/public',
     ),
   ),
   'flare' => 
@@ -723,13 +723,13 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/logs/laravel.log',
+        'path' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\logs/laravel.log',
         'level' => 'debug',
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/logs/laravel.log',
+        'path' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
       ),
@@ -780,7 +780,7 @@
       ),
       'emergency' => 
       array (
-        'path' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/logs/laravel.log',
+        'path' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\logs/laravel.log',
       ),
     ),
   ),
@@ -792,11 +792,11 @@
       'smtp' => 
       array (
         'transport' => 'smtp',
-        'host' => 'smtp.googlemail.com',
-        'port' => '587',
-        'encryption' => 'tls',
-        'username' => 'support@bma.edu.ph',
-        'password' => 'bma.support',
+        'host' => 'mailhog',
+        'port' => '1025',
+        'encryption' => NULL,
+        'username' => NULL,
+        'password' => NULL,
         'timeout' => NULL,
         'auth_mode' => NULL,
       ),
@@ -829,15 +829,15 @@
     ),
     'from' => 
     array (
-      'address' => 'no-relpy@bma.edu.ph',
-      'name' => 'Baliwag Maritime Academy, Inc.',
+      'address' => NULL,
+      'name' => 'Laravel',
     ),
     'markdown' => 
     array (
       'theme' => 'default',
       'paths' => 
       array (
-        0 => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/resources/views/vendor/mail',
+        0 => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\resources\\views/vendor/mail',
       ),
     ),
   ),
@@ -904,7 +904,7 @@
       2 => '127.0.0.1',
       3 => '127.0.0.1:8000',
       4 => '::1',
-      5 => 'bma.edu.ph',
+      5 => 'localhost',
     ),
     'expiration' => NULL,
     'middleware' => 
@@ -938,7 +938,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/framework/sessions',
+    'files' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -947,7 +947,7 @@
       0 => 2,
       1 => 100,
     ),
-    'cookie' => 'baliwag_maritime_academy_inc_session',
+    'cookie' => 'laravel_session',
     'path' => '/',
     'domain' => NULL,
     'secure' => NULL,
@@ -971,8 +971,8 @@
   array (
     'paths' => 
     array (
-      0 => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/resources/views',
+      0 => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\resources\\views',
     ),
-    'compiled' => '/home/bma-server/Downloads/BMA SYSTEM DEVELOPER/bmaSystem/storage/framework/views',
+    'compiled' => 'C:\\Users\\BMA_SERVER\\Documents\\BMA SYSTEM\\bma_portal\\bmaSystem\\storage\\framework\\views',
   ),
 );
