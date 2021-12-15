@@ -24,7 +24,7 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                                                    this.closest('form').submit();"> <i
+                                                                                        this.closest('form').submit();"> <i
                                 class="fas fa-sign-out-alt mr-2"></i>
                             Sign
                             Out</a>
@@ -89,6 +89,9 @@
                         @endif
                         @if ($role->id == 4) {{-- Accounting Sidebar --}}
                             @yield('accounting-side')
+                        @endif
+                        @if ($role->id == 5) {{-- Accounting Sidebar --}}
+                            @yield('onboard-side')
                         @endif
                         @if ($role->id == 6) {{-- Teacher Sidebar --}}
                             @yield('teacher-side')

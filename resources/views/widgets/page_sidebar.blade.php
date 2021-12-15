@@ -228,7 +228,34 @@
 
 @endsection
 
-
+@section('onboard-side')
+    @php
+    $_role = 'onboard';
+    $_array_link = [['Dashboard', 'fa-tachometer-alt', $_role . '/dashboard'], ['Midship Man', 'fa-users', $_role . '/midship-man'], ['On-board Training', 'fa-users', $_role . '/shipboard-training']];
+    @endphp
+    <li class="nav-item  {{ Request::is($_role . '/*') ? 'menu-open' : '' }} ">
+        <a href="/" class="nav-link">
+            <i class="nav-icon fas fa-briefcase"></i>
+            <p>
+                {{ ucwords($_role) }}
+                <i class="right fas fa-angle-left"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            @foreach ($_array_link as $_nav_item)
+                <li class="nav-item">
+                    <a href="/{{ $_nav_item[2] }}"
+                        class="nav-link  {{ Request::is($_nav_item[2]) || Request::is($_nav_item[2] . '/*') ? 'active' : '' }}">
+                        <i class="nav-icon  fas {{ $_nav_item[1] }}"></i>
+                        <p>
+                            {{ $_nav_item[0] }}
+                        </p>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </li>
+@endsection
 
 @section('executive-side')
     @php
