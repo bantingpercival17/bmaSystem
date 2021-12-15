@@ -16,6 +16,7 @@ Route::prefix('administrator')->group(function () {
     Route::get('/accounts', [AdministratorController::class, 'account_view']); // View Accounts
     Route::post('/accounts', [AdministratorController::class, 'account_store']); // Store Account
     Route::post('/accounts/profile-picture', [AdministratorController::class, 'account_upload_profile']);
+    Route::post('/accounts/role', [AdministratorController::class, 'account_roles_store']);
     /* Subject and Curriculum Routes */
     Route::get('/subjects', [AdministratorController::class, 'subject_view']); // Subject Curriculum
     Route::post('/curriculum', [AdministratorController::class, 'curriculum_store']); // Store a Curriculum

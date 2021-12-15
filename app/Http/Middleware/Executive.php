@@ -17,6 +17,12 @@ class Executive
      */
     public function handle(Request $request, Closure $next)
     {
-        return Auth::user()->roles[0]['id'] == 8 ? $next($request) : redirect('/');
+        $_status = false;
+        foreach (Auth::user()->roles as $key => $role) {
+            if ($role->id == 8) {
+                $_status = true;
+            }
+        }
+        return $_status ? $next($request) : redirect('/');
     }
 }

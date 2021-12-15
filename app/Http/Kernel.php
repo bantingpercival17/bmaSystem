@@ -70,5 +70,7 @@ class Kernel extends HttpKernel
         'accounting' => \App\Http\Middleware\Accounting::class,
         'teacher' => \App\Http\Middleware\Teacher::class,
         'executive' => \App\Http\Middleware\Executive::class,
+        'onboard' => \App\Http\Middleware\OnboardTraining::class,
+        'maintenance' => \App\Http\Middleware\Maintenance::class,
     ];
 }

@@ -169,7 +169,7 @@
     $_array_link = [['Subject', 'fa-clipboard-list', $_role . '/subjects'], ['Previous Subject', 'fa-clipboard', $_role . '/previous-subjects'] /* , ['Section', 'fa-chalkboard-teacher', $_role . '/sections'] */];
 
     @endphp
-    <li class="nav-item ">
+    <li class="nav-item  {{ Request::is($_role . '/*') ? 'menu-open' : '' }} ">
         <a href="/" class="nav-link">
             <i class="nav-icon fas fa-briefcase"></i>
             <p>
@@ -181,7 +181,7 @@
             @foreach ($_array_link as $_nav_item)
                 <li class="nav-item">
                     <a href="/{{ $_nav_item[2] }}"
-                        class="nav-link  {{ Request::is($_nav_item[2] . '/*') ? 'active' : '' }}">
+                        class="nav-link  {{ Request::is($_nav_item[2]) || Request::is($_nav_item[2] . '/*') ? 'active' : '' }}">
                         <i class="nav-icon  fas {{ $_nav_item[1] }}"></i>
                         <p>
                             {{ $_nav_item[0] }}
@@ -190,7 +190,6 @@
                 </li>
             @endforeach
         </ul>
-
     </li>
     @if ($_position == 'Department Head' || $_position == 'DEPARTMENT HEAD')
         <li class="nav-item">

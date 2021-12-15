@@ -50,6 +50,40 @@
                     </div>
                 </div>
             </div>
+
+        </div>
+        <div class="col-lg-3 col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <label for="" class="text-muted"><b>ADD ROLES</b></label>
+                    <div class="card-tools">
+                        <form action="/administrator/accounts/role" method="post">
+                            @csrf
+                            <div class="input-group input-group-sm">
+                                <input type="hidden" name="id" value="{{ $_staff->user->id }}">
+                                <div class="custom-file">
+                                    <select name="_role" id="" class="form-control">
+                                        @foreach ($_roles as $role)
+                                            <option value="{{ $role->id }}">{{ $role->display_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="input-group-append">
+                                    <button class="btn btn-info btn-sm" type="submit"><i
+                                            class="fas fa-plus"></i></button>
+                                </div>
+
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    @foreach ($_staff->user->roles as $item)
+                        <span class="badge badge-info"> {{ $item->display_name }}</span>
+                    @endforeach
+                </div>
+            </div>
         </div>
     </div>
 @endsection

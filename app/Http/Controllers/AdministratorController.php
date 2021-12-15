@@ -75,7 +75,6 @@ class AdministratorController extends Controller
     public function account_view()
     {
         $_employees = Staff::orderBy('last_name', 'asc')->get();
-        //$_accounts = User::join('staff', 'staff.user_id', 'users.id')->orderBy('staff.last_name', 'asc')->get();
         $_role = Role::all();
         return view('administrator.accounts_view', compact('_employees', '_role'));
     }
@@ -134,6 +133,12 @@ class AdministratorController extends Controller
             return back()->with('message', 'Successfully Upload image');
         }
         // return $_file_image_name;
+    }
+    public function account_roles_store(Request $_request)
+    {
+        $_user = User::find($_request->id);
+        $_user->attachRole($_request->_role);
+        return back()->with('message', 'Successfuly Added a new Role');
     }
     /* /Accounts */
 
@@ -333,7 +338,8 @@ class AdministratorController extends Controller
     public function employee_profile(Request $_request)
     {
         $_staff = Staff::find(Crypt::decrypt($_request->_e));
-        return view('administrator.employee.view', compact('_staff'));
+        $_roles = Role::all();
+        return view('administrator.employee.view', compact('_staff', '_roles'));
     }
     public function qr_generator($_data)
     {

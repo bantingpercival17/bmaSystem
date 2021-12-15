@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Administrative
+class OnboardTraining
 {
     /**
      * Handle an incoming request.
@@ -19,7 +19,7 @@ class Administrative
     {
         $_status = false;
         foreach (Auth::user()->roles as $key => $role) {
-            if ($role->id == 2) {
+            if ($role->id == 5) {
                 $_status = true;
             }
         }

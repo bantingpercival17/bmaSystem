@@ -24,7 +24,7 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                                    this.closest('form').submit();"> <i
+                                                                                    this.closest('form').submit();"> <i
                                 class="fas fa-sign-out-alt mr-2"></i>
                             Sign
                             Out</a>
@@ -77,24 +77,26 @@
                 @include('widgets.page_sidebar')
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     @yield('employee-side')
-                    @if (Auth::user()->roles[0]['id'] == 1) {{-- Super Admin --}}
-                        @yield('administrator-side')
-                    @endif
-                    @if (Auth::user()->roles[0]['id'] == 2)
-                        @yield('administrative-side')
-                    @endif
-                    @if (Auth::user()->roles[0]['id'] == 3) {{-- Registrar Sidebar --}}
-                        @yield('registrar-side')
-                    @endif
-                    @if (Auth::user()->roles[0]['id'] == 4) {{-- Accounting Sidebar --}}
-                        @yield('accounting-side')
-                    @endif
-                    @if (Auth::user()->roles[0]['id'] == 6) {{-- Teacher Sidebar --}}
-                        @yield('teacher-side')
-                    @endif
-                    @if (Auth::user()->roles[0]['id'] == 8) {{-- Executive Sidebar --}}
-                        @yield('executive-side')
-                    @endif
+                    @foreach (Auth::user()->roles as $role)
+                        @if ($role->id == 1) {{-- Super Admin --}}
+                            @yield('administrator-side')
+                        @endif
+                        @if ($role->id == 2)
+                            @yield('administrative-side')
+                        @endif
+                        @if ($role->id == 3) {{-- Registrar Sidebar --}}
+                            @yield('registrar-side')
+                        @endif
+                        @if ($role->id == 4) {{-- Accounting Sidebar --}}
+                            @yield('accounting-side')
+                        @endif
+                        @if ($role->id == 6) {{-- Teacher Sidebar --}}
+                            @yield('teacher-side')
+                        @endif
+                        @if ($role->id == 8) {{-- Executive Sidebar --}}
+                            @yield('executive-side')
+                        @endif
+                    @endforeach
                 </ul>
             </nav>
         </div>
