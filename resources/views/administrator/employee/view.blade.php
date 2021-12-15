@@ -14,12 +14,19 @@
 @endsection
 @section('page-content')
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-lg-9 col-md-12">
             <div class="callout callout-success">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-3 col-xs-12 text-center">
-                            <img class="img-circle elevation-2" src="http://20.0.0.120:90/img/midship-man.jpg"
+                            @php
+                                if (file_exists(public_path('assets/img/staff/' . strtolower(str_replace(' ', '_', $_staff->user->name)) . '.jpg'))) {
+                                    $_image = strtolower(str_replace(' ', '_', $_staff->user->name)) . '.jpg';
+                                } else {
+                                    $_image = 'avatar.png';
+                                }
+                            @endphp
+                            <img class="img-circle elevation-2" src="{{ asset('/assets/img/staff/' . $_image) }}"
                                 alt="User Avatar" height="120px">
 
                         </div>

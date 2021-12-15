@@ -119,7 +119,7 @@ class EmployeeController extends Controller
         $_time_in = date_create($_data[2]);
         $_time_in =   date_format($_time_in, "Y-m-d");
 
-        $_staff = User::select('staff.id')->join('staff', 'staff.user_id', 'users.id')->where('email', $_data[0])->first(); // Get Staff
+        //$_staff = User::select('staff.id')->join('staff', 'staff.user_id', 'users.id')->where('email', $_data[0])->first(); // Get Staff
         $_staff = Staff::select('staff.id','staff.user_id')->join('users', 'users.id', 'staff.user_id')->where('users.email', $_data[0])->first(); // Get Staff Id
         if ($_date == $_time_in) {
             if ($_staff) {
