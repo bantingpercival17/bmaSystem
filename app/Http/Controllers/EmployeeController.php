@@ -151,9 +151,8 @@ class EmployeeController extends Controller
                         'time_in' => date('Y-m-d H:i:s'),
                     );
                     EmployeeAttendance::create($_staff_);
-                    //$_staff_details = json_encode($_staff_details);
                     $_staff_details['time_status'] = 'TIME IN';
-                    $_data = array('respond' => '200', 'message' => 'Welcome' . $_staff->staff->first_name . "!", 'data' => $_staff_details);
+                    $_data = array('respond' => '200', 'message' => 'Welcome' . $_staff->user->staff->first_name . "!", 'data' => $_staff_details);
                 }
             } else {
                 $_data = array('respond' => '404', 'message' => 'Invalid Email');
