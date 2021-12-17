@@ -21,7 +21,8 @@ Route::prefix('registrar')->group(function () {
     // Enrollment
 
     // Student Profile
-
+    Route::get('/student-porfile', [RegistrarController::class, 'student_list_view']); // Student List View
+    Route::get('/students/view', [RegistrarController::class, 'student_profile_view']);
 
     // Section 
     Route::get('/sections', [RegistrarController::class, 'section_view']); // Section View

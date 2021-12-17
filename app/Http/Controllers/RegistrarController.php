@@ -7,6 +7,7 @@ use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\CurriculumSubject;
 use App\Models\Section;
+use App\Models\StudentDetails;
 use App\Models\Subject;
 use App\Models\SubjectClass;
 use App\Models\User;
@@ -118,7 +119,37 @@ class RegistrarController extends Controller
     }
 
 
+    // Student
+    public function student_list_view(Request $_request)
+    {
+        $_academics = AcademicYear::where('is_removed', false)->get();
+        $_course = CourseOffer::where('is_removed', false)->get();
 
+        if ($_request->_course  || $_request->_academic || $_request->_student) {
+            $_student = explode(',', $_request->_student);
+            $_count = count($_student);
+            if ($_count > 1) {
+                $_students = StudentDetails::where('is_removed', false)
+                    ->where('last_name', 'like', "%" . $_student[0] . "%")
+                    ->where('first_name', 'like', "%" . $_student[1] . "%")
+                    ->orderBy('last_name', 'asc')->get();
+            } else {
+                $_students = StudentDetails::where('is_removed', false)
+                    ->where('last_name', 'like', "%" . $_student[0] . "%")
+                    ->orderBy('last_name', 'asc')->get();
+            }
+        } else {
+
+            $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
+        }
+        return view('registrar.student.view', compact('_academics', '_course', '_students'));
+    }
+    public function student_profile_view(Request $_request)
+    {
+        $_student = StudentDetails::find(base64_decode($_request->_s));
+        $_course = CourseOffer::where('is_removed', false)->get();
+        return view('registrar.student.student_profile', compact('_student', '_course'));
+    }
 
 
     // Section Panel 
