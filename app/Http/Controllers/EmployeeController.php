@@ -129,13 +129,13 @@ class EmployeeController extends Controller
                     'time_status' => 'TIME IN',
                     'time' =>  date('H:i:s'),
                     'image' =>  strtolower(str_replace(' ', '_', $_staff->user->name)) . '.jpg',
-                    'link' => '/assets/audio/' . trim(strtolower($_staff->user->staff->first_name)) . '-good-morning.mp3'
+                    'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim($_staff->user->staff->first_name)))) . '-good-morning.mp3'
                 );
                 if ($_attendance) {
                     $_attendance->time_out = now();
                     $_attendance->save();
                     $_staff_details['time_status'] = 'TIME OUT';
-                    $_staff_details['link'] = '/assets/audio/' . trim(strtolower($_staff->user->staff->first_name)) . '-good-bye.mp3';
+                    $_staff_details['link'] = '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim($_staff->user->staff->first_name)))) . '-good-bye.mp3';
                     //$_staff_details = json_encode($_staff_details);
                     $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe ' . $_staff->user->staff->first_name . "!", 'data' => $_staff_details);
                 } else {

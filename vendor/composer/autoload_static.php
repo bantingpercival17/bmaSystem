@@ -724,6 +724,7 @@ class ComposerStaticInitad9a3fefd2e4c6a7edf47485ac1509a3
         'App\\Models\\CurriculumSubject' => __DIR__ . '/../..' . '/app/Models/CurriculumSubject.php',
         'App\\Models\\Department' => __DIR__ . '/../..' . '/app/Models/Department.php',
         'App\\Models\\DeploymentAssesment' => __DIR__ . '/../..' . '/app/Models/DeploymentAssesment.php',
+        'App\\Models\\Documents' => __DIR__ . '/../..' . '/app/Models/Documents.php',
         'App\\Models\\EducationalDetails' => __DIR__ . '/../..' . '/app/Models/EducationalDetails.php',
         'App\\Models\\EmployeeAttendance' => __DIR__ . '/../..' . '/app/Models/EmployeeAttendance.php',
         'App\\Models\\EnrollmentAssessment' => __DIR__ . '/../..' . '/app/Models/EnrollmentAssessment.php',
