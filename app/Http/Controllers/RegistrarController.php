@@ -126,18 +126,8 @@ class RegistrarController extends Controller
         $_course = CourseOffer::where('is_removed', false)->get();
 
         if ($_request->_course  || $_request->_academic || $_request->_student) {
-            $_student = explode(',', $_request->_student);
-            $_count = count($_student);
-            if ($_count > 1) {
-                $_students = StudentDetails::where('is_removed', false)
-                    ->where('last_name', 'like', "%" . $_student[0] . "%")
-                    ->where('first_name', 'like', "%" . $_student[1] . "%")
-                    ->orderBy('last_name', 'asc')->get();
-            } else {
-                $_students = StudentDetails::where('is_removed', false)
-                    ->where('last_name', 'like', "%" . $_student[0] . "%")
-                    ->orderBy('last_name', 'asc')->get();
-            }
+            $_student_detials = new StudentDetails();
+            $_students = $_request->_cadet ? $_student_detials->student_search($_request->_cadet) : [];
         } else {
 
             $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);

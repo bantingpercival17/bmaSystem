@@ -273,8 +273,12 @@
 
                 if (data._data.respond == 200) {
                     toastr.success(data._data.message, data._data.data.time_status)
+
                     audio_success.play()
                     employee_details(data._data)
+                    var file_name = data._data.data.link
+                    var audio_custom = new Audio(file_name);
+                    audio_custom.play()
                 }
                 if (data._data.respond == 404) {
                     audio_erroe.play()

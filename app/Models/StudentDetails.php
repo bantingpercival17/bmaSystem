@@ -40,9 +40,27 @@ class StudentDetails extends Model
     public function section($_academic)
     {
         return $this->hasOne(StudentSection::class, 'student_id')->select('student_sections.id', 'student_sections.student_id', 'student_sections.section_id')
-            ->join('sections', 'sections.id', 'student_sections.section_id')->where('sections.academic_id', $_academic)->where('student_sections.is_removed',false);
+            ->join('sections', 'sections.id', 'student_sections.section_id')->where('sections.academic_id', $_academic)->where('student_sections.is_removed', false);
     }
 
+    /* Student Search Query */
+    public function student_search($_data)
+    {
+        $_student = explode(',', $_data);
+        $_count = count($_student);
+        //$_students = 
+        if ($_count > 1) {
+            $_students = StudentDetails::where('is_removed', false)
+                ->where('last_name', 'like', "%" . $_student[0] . "%")
+                ->where('first_name', 'like', "%" . $_student[1] . "%")
+                ->orderBy('last_name', 'asc')->get();
+        } else {
+            $_students = StudentDetails::where('is_removed', false)
+                ->where('last_name', 'like', "%" . $_student[0] . "%")
+                ->orderBy('last_name', 'asc')->get();
+        }
+        return $_students;
+    }
     /* Grading Query */
     public function subject_score($_data)
     {

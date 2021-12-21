@@ -12,10 +12,10 @@
         <div class="col-md-7">
             <div class="callout callout-success">
                 @php
-                    $_course = $_cadet ? $_cadet->current_enrolled_status_obto->courseOffer : '';
+                    # $_course = $_cadet ? $_cadet->current_enrolled_status_obto->course : '';
                     $_student_name = $_cadet ? strtoupper($_cadet->last_name . ', ' . $_cadet->first_name . ' ' . $_cadet->middle_name) : 'COMPLETE NAME';
-                    $_student_no = $_cadet ? $_cadet->user->client_code . ' | ' . $_course->course_code : 'STUDENT NUMBER';
-                    $_profile = $_cadet ? ($_course->department === 'COLLEGE' ? '/img/1x1 COLLEGE/' . $_cadet->user->client_code . '.png' : '/img/1x1 SHS/' . $_cadet->user->client_code . '.jpg') : '/img/midship-man.jpg';
+                    $_student_no = $_cadet ? $_cadet->account->student_name /*  . ' | ' . $_course->course_code */ : 'STUDENT NUMBER';
+                    #$_profile = $_cadet ? ($_course->department === 'COLLEGE' ? '/img/1x1 COLLEGE/' . $_cadet->user->client_code . '.png' : '/img/1x1 SHS/' . $_cadet->user->client_code . '.jpg') : '/img/midship-man.jpg';
                 @endphp
                 <div class="container">
                     <div class="row">
@@ -25,7 +25,7 @@
                             <h5 class="{{ $_cadet ? 'text-success' : 'text-muted' }}"><b>{{ $_student_no }}</b></h5>
                         </div>
                         <div class="col-md-3">
-                            <img class="img-circle elevation-2" src="{{ url($_profile) }}" alt="User Avatar"
+                            <img class="img-circle elevation-2" src="{{ url('$_profile') }}" alt="User Avatar"
                                 height="120px">
                         </div>
                     </div>
@@ -277,16 +277,24 @@
                                     @endphp
                                     <li class="nav-item">
                                         <div class="nav-link text-muted">
-                                            <div class="float-right form-group clearfix">
-                                                <div class="icheck-success d-inline">
-                                                    <input type="checkbox" class="btn-training"
-                                                        id="checkboxSuccess-{{ $_certificate->id }}"
-                                                        data-train-id="{{ $_certificate->id }}"
-                                                        data-cadet={{ $_cadet->id }} {{ $_cstatus ? 'checked' : '' }}>
-                                                    <label for="checkboxSuccess-{{ $_certificate->id }}">
-                                                    </label>
+                                            @if (!$_cstatus)
+                                                <div class="float-right form-group clearfix">
+                                                    <form action="/onboard/midship-man/certificates" method="post">
+                                                        @csrf
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="text" class="form-control" name="_cer_code">
+                                                            <input type="hidden" name="_cadet"
+                                                                value="{{ base64_encode($_cadet->id) }}">
+                                                            <input type="hidden" name="_certificate"
+                                                                value="{{ base64_encode($_certificate->id) }}">
+                                                            <span class="input-group-append">
+                                                                <button type="submit"
+                                                                    class="btn btn-info btn-flat">Submit</button>
+                                                            </span>
+                                                        </div>
+                                                    </form>
                                                 </div>
-                                            </div>
+                                            @endif
                                             <b
                                                 class=" {{ $_cstatus ? 'text-success' : '' }}">{{ $_certificate->training_name }}</b>
                                             <br>
@@ -303,7 +311,7 @@
                                                 <p class="small">
                                                     <i>APPROVED BY: </i>
                                                     <span class="badge badge-success">
-                                                        {{ ucwords(strtolower($_cstatus->admin->name)) }}
+                                                        {{ ucwords(strtolower($_cstatus->staff->user->name)) }}
                                                     </span>
                                                     |
                                                     <i>APPROVED DATE: </i>
@@ -339,21 +347,21 @@
         <div class="col-md-5">
             <div class="card">
                 <div class="card-body">
-                    <form role="form">
+                    <form role="form" action="/onboard/midship-man">
                         <input type="text" class="form-control text-code input-search"
                             placeholder="Search e.i Dela Cruz, Juan" data-container="search-container"
                             data-component="panel" data-url="/onboard/student/search/"
-                            data-link="/onboard/cadets?search_data=">
+                            data-link="/onboard/cadets?search_data=" name="_cadet">
                     </form>
                 </div>
             </div>
             {{-- {{ $_data ? $_data->links() : '' }} --}}
             <div class="search-container">
 
-                @if ($_data)
-                    @foreach ($_data as $data)
-                        <a href="?search_data={{ $data->id }}" class="btn btn-outline-success btn-block"
-                            style="text-decoration: none">{{ strtoupper($data->last_name . ', ' . $data->first_name) . ' | ' . $data->user->client_code }}</a>
+                @if ($_students)
+                    @foreach ($_students as $data)
+                        <a href="?search_data={{ base64_encode($data->id) }}" class="btn btn-outline-success btn-block"
+                            style="text-decoration: none">{{ strtoupper($data->last_name . ', ' . $data->first_name) . ' | ' . $data->account->student_number }}</a>
                     @endforeach
                 @else
                     <a href="" class="btn btn-outline-success btn-block" style="text-decoration: none">NO STUDENT</a>
