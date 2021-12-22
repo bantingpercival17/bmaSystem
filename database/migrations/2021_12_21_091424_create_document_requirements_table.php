@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDeploymentAssesmentsTable extends Migration
+class CreateDocumentRequirementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,16 @@ class CreateDeploymentAssesmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('deployment_assesments', function (Blueprint $table) {
+        Schema::create('document_requirements', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('student_id')->nullable();
+            $table->unsignedBigInteger('document_id');
+            $table->foreign('document_id')->references('id')->on('documents');
+            $table->unsignedBigInteger('student_id');
             $table->foreign('student_id')->references('id')->on('student_details');
-            $table->unsignedBigInteger('agency_id')->nullable();
-            $table->foreign('agency_id')->references('id')->on('shipping_agencies');
+            $table->string('document_path');
+            $table->string('document_comment')->nullable();
+            $table->string('document_status');
+            $table->text('file_path');
             $table->unsignedBigInteger('staff_id')->nullable();
             $table->foreign('staff_id')->references('id')->on('staff');
             $table->boolean('is_removed');
@@ -33,6 +37,6 @@ class CreateDeploymentAssesmentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('deployment_assesments');
+        Schema::dropIfExists('document_requirements');
     }
 }

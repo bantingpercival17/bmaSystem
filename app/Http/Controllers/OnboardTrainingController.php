@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Auth;
 
 class OnboardTrainingController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('onboard');
+    }
     public function index()
     {
         return view('onboardtraining.dashboard.view');

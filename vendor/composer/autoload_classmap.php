@@ -58,6 +58,7 @@ return array(
     'App\\Models\\CurriculumSubject' => $baseDir . '/app/Models/CurriculumSubject.php',
     'App\\Models\\Department' => $baseDir . '/app/Models/Department.php',
     'App\\Models\\DeploymentAssesment' => $baseDir . '/app/Models/DeploymentAssesment.php',
+    'App\\Models\\DocumentRequirements' => $baseDir . '/app/Models/DocumentRequirements.php',
     'App\\Models\\Documents' => $baseDir . '/app/Models/Documents.php',
     'App\\Models\\EducationalDetails' => $baseDir . '/app/Models/EducationalDetails.php',
     'App\\Models\\EmployeeAttendance' => $baseDir . '/app/Models/EmployeeAttendance.php',
