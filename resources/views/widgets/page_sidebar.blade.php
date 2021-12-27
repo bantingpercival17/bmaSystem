@@ -66,7 +66,7 @@
 @section('administrative-side')
     @php
     $_role = 'administrative';
-    $_array_link = [['Dashboard', 'fa-tachometer-alt', $_role . '/dashboard'], ['Attendace', 'fa-clock', $_role . '/attendance']];
+    $_array_link = [['Dashboard', 'fa-tachometer-alt', $_role . '/dashboard'], ['Attendace', 'fa-clock', $_role . '/attendance'],['Employees', 'fa-users', $_role . '/employees'],];
     @endphp
     <li class="nav-item  {{ Request::is($_role . '/*') ? 'menu-open' : '' }} ">
         <a href="/" class="nav-link">

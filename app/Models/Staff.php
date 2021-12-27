@@ -24,6 +24,15 @@ class Staff extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function profile_pic($_data)
+    {
+        if (file_exists(public_path('assets/img/staff/' . strtolower(str_replace(' ', '_', $_data->user->name)) . '.jpg'))) {
+            $_image = strtolower(str_replace(' ', '_', $_data->user->name)) . '.jpg';
+        } else {
+            $_image = 'avatar.png';
+        }
+        return $_image;
+    }
     public function subjects_handles()
     {
         return $this->hasMany(SubjectClass::class, 'staff_id')
@@ -42,7 +51,7 @@ class Staff extends Model
     }
     public function attendance_list()
     {
-        return $this->hasMany(EmployeeController::class, 'staff_id');
+        return $this->hasMany(EmployeeAttendance::class, 'staff_id');
     }
     public function date_attendance($_date)
     {

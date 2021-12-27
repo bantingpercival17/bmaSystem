@@ -38,4 +38,17 @@ class AdministrativeController extends Controller
         $_report = new AttendanceSheetReport();
         return $_request->r_view == 'daily' ? $_report->daily_report() : $_report->daily_time_record_report($_request->start_date, $_request->end_date);
     }
+
+
+    /* Employee */
+    public function employees_view()
+    {
+        $_employees = Staff::orderBy('last_name', 'asc')->get();
+        return view('administrative.employee.view', compact('_employees'));
+    }
+    public function employees_profile_view(Request $_request)
+    {
+        $_staff = Staff::find(base64_decode($_request->_e));
+        return view('administrative.employee.profile', compact('_staff'));
+    }
 }

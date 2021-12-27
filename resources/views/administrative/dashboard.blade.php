@@ -15,7 +15,7 @@
 
                     <div class="info-box-content">
                         <span class="info-box-text"><b class="text-muted">
-                            Daily Health Check</b></span>
+                                Daily Health Check</b></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
