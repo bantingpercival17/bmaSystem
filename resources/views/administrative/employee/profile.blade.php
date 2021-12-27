@@ -38,7 +38,7 @@
                                             <small class="text-muted">TIME IN</small>
                                             <br>
                                             @if ($_staff->daily_attendance)
-                                                <span class="h4 text-info">
+                                                <span class="h6 text-info">
                                                     {{ date_format(date_create($_staff->daily_attendance->time_in), 'h:i:s a') }}
                                                 </span>
                                             @else
@@ -51,7 +51,7 @@
                                             <small class="text-muted">TIME OUT</small>
                                             <br>
                                             @if ($_staff->daily_attendance)
-                                                <span class="h4 text-info">
+                                                <span class="h6 text-info">
                                                     @if ($_staff->daily_attendance->time_out)
                                                         {{ date_format(date_create($_staff->daily_attendance->time_out), 'h:i:s a') }}
                                                     @else
