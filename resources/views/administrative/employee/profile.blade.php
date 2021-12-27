@@ -34,9 +34,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <small class="text-muted">TIME IN</small>
-                                            <br>
+                                        <div class="col-md-12">
+                                            <small class="text-muted">TIME IN : </small>
                                             @if ($_staff->daily_attendance)
                                                 <span class="h6 text-info">
                                                     {{ date_format(date_create($_staff->daily_attendance->time_in), 'h:i:s a') }}
@@ -47,9 +46,8 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        <div class="col-md-6">
-                                            <small class="text-muted">TIME OUT</small>
-                                            <br>
+                                        <div class="col-md-12">
+                                            <small class="text-muted">TIME OUT : </small>
                                             @if ($_staff->daily_attendance)
                                                 <span class="h6 text-info">
                                                     @if ($_staff->daily_attendance->time_out)
