@@ -28,7 +28,7 @@ class RedirectIfAuthenticated
         }
 
         return $next($request); */
-       
+
         $redirectTo = "";
         if (Auth::guard($guards)->check()) {
             $_auth = Auth::user()->roles[0]['id'];
@@ -39,6 +39,7 @@ class RedirectIfAuthenticated
             $redirectTo = $_auth == 4 ? '/accounting' : $redirectTo;
             $redirectTo = $_auth == 5 ? '/onboard' : $redirectTo;
             $redirectTo = $_auth == 6 ? '/teacher' : $redirectTo;
+            $redirectTo = $_auth == 7 ? '/maintenance' : $redirectTo;
             $redirectTo = $_auth == 8 ? '/executive' : $redirectTo;
             return redirect($redirectTo);
         }

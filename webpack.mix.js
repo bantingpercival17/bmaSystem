@@ -16,3 +16,30 @@ mix.js('resources/js/app.js', 'public/js').postCss('resources/css/app.css', 'pub
     require('tailwindcss'),
     require('autoprefixer'),
 ]);
+
+mix.styles([
+    'resources/assets/css/core/libs.min.css',
+    'resources/assets/css/gigz.min.css',
+    'resources/assets/css/custom.min.css',
+    'resources/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css'
+], 'public/css/app-1.css').js([
+    /* <!-- Library Bundle Script --> */
+    "resources/assets/js/core/libs.min.js",
+    /* <!-- External Library Bundle Script --> */
+    "resources/assets/js/core/external.min.js",
+    /* <!-- Widgetchart Script --> */
+    "resources/assets/js/charts/widgetcharts.js",
+    /* <!-- mapchart Script --> */
+    "resources/assets/js/charts/vectore-chart.js",
+    "resources/assets/js/charts/dashboard.js",
+    /* <!-- fslightbox Script --> */
+    "resources/assets/js/plugins/fslightbox.js",
+    /* <!-- GSAP Animation --> */
+    "resources/assets/vendor/gsap/gsap.min.js",
+    "resources/assets/vendor/gsap/ScrollTrigger.min.js",
+    "resources/assets/js/gsap-init.js",
+    /* <!-- Form Wizard Script --> */
+    "resources/assets/js/plugins/form-wizard.js",
+    /* <!-- App Script --> */
+    "resources/assets/js/gigz.js",
+], 'public/js/app-1.js');
