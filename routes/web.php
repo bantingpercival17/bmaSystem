@@ -34,6 +34,7 @@ Route::prefix('employee')->group(function () {
 
 
 Route::prefix('maintenance')->group(function () {
+    Route::get('/', [EmployeeController::class, 'attendance_view']);
     Route::get('/attendance', [EmployeeController::class, 'attendance_view']);
     Route::post('/attendance', [EmployeeController::class, 'attendance_store']);
 });
