@@ -28,7 +28,7 @@ require __DIR__ . '/custom-route/teacher.php'; // Teacher Route
 require __DIR__ . '/custom-route/executive.php'; // Executive Route
 require __DIR__ . '/custom-route/onboard.php'; // Onboard Route
 Route::prefix('employee')->group(function () {
-    Route::get('/attendance', [EmployeeController::class, 'attendance_view']);
+    Route::get('/attendance', [EmployeeController::class, 'attendance_view'])->name('employee.attendance');
     Route::post('/attendance', [EmployeeController::class, 'attendance_store']);
 });
 

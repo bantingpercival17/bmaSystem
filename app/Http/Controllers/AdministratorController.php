@@ -48,11 +48,19 @@ class AdministratorController extends Controller
     }
 
     /* Students */
-    public function student_view()
+    public function student_view(Request $_request)
     {
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_course = CourseOffer::where('is_removed', false)->get();
-        $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
+        if ($_request->_course  || $_request->_academic || $_request->_student) {
+            $_student_detials = new StudentDetails();
+            $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : [];
+        } else {
+
+            $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
+        }
+        //return $_students;
+        //$_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
         return view('administrator.student.view', compact('_academics', '_course', '_students'));
     } /* View Student  */
 
@@ -60,15 +68,14 @@ class AdministratorController extends Controller
     {
         $_files = json_decode(file_get_contents($_request->file('_file')));
         $_student_model = new StudentDetails();
-        //return dd($_files);
         foreach ($_files as $key => $_file) {
-            $_student = StudentAccount::where('student_number', $_file->student_details->student_number)->first();
+            /*  $_student = StudentAccount::where('student_number', $_file->student_details->student_number)->first();
             if (!$_student) {
                 $_student_model->student_single_file_import($_file);
-            }
-        }
-        //$_student_model->student_single_file_import($_file);
-        return back();
+            } */
+            $_student_model->upload_student_details($_file);
+        } 
+        return back()->with('message', 'Successfully Upload Student Details');
     }
 
     /* Accounts */

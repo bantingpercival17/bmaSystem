@@ -5,12 +5,12 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PaymongoApi;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/dashboard', [AdministratorController::class, 'index']); // Dashboard
+Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
 Route::prefix('administrator')->group(function () {
-    Route::get('/', [AdministratorController::class, 'index']);
-    Route::get('/dashboard', [AdministratorController::class, 'index']); // Dashboard
+    Route::get('/', [AdministratorController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
     /* Students */
-    Route::get('/students', [AdministratorController::class, 'student_view']); // View Students
+    Route::get('/students', [AdministratorController::class, 'student_view'])->name('admin.students'); // View Students
     Route::post('/students/imports', [AdministratorController::class, 'student_imports']); // Import Student Details
     /* Accounts */
     Route::get('/accounts', [AdministratorController::class, 'account_view']); // View Accounts
@@ -37,7 +37,7 @@ Route::prefix('administrator')->group(function () {
     Route::get('/classes/section/report', [AdministratorController::class, 'section_report_list']); // List of Student Per Section
     /* Classes and Sections */
     /* Enrollment */
-    Route::get('/enrollment', [AdministratorController::class, 'enrollment_view']); // Enrollment View
+    Route::get('/enrollment', [AdministratorController::class, 'enrollment_view'])->name('admin.enrollment'); // Enrollment View
 
     // Paymongo 
     Route::get('/paymongo', [PaymongoApi::class, 'view']); // Enrollment View

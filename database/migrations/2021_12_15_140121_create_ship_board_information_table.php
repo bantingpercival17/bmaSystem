@@ -22,7 +22,7 @@ class CreateShipBoardInformationTable extends Migration
             $table->string('vessel_type');
             $table->string('sbt_batch');
             $table->string('shipping_company');
-            $table->string('company_group');
+            $table->string('shipboard_status');
             $table->date('embarked');
             $table->date('disembarked')->nullable();
             $table->integer('number_days')->nullable();
