@@ -131,46 +131,7 @@ $_title = 'Shipboard Monitoring';
                         <hr>
                         <div class="card-body">
                             <div class="header-title d-flex justify-content-between">
-                                <span class="h5 text-primary fw-bolder">Training Book Record</span>
-                            </div>
-                            @include('layouts.icon-main')
-                            <div class="swiper swiper-container mySwiper position-relative">
-                                <div class="swiper-button-next1">
-                                    @yield('icon-left')
-                                </div>
-                                <div class="swiper-wrapper row-cols-2 row-cols-lg-5 list-inline">
-                                    @foreach ($_midshipman->shipboard_journals('trb')->get() as $_journal)
-                                        <div class="swiper-slide">
-                                            <div class="text-center">
-                                                <div class="card-body ">
-                                                    <a
-                                                        href="{{ route('onboard.journal') }}?_j={{ base64_encode($_journal->id) }}">
-                                                        <i
-                                                            class="icon {{ $_journal->is_approved == 1 ? 'text-primary' : ($_journal->is_approved == 2 ? 'text-danger' : 'text-muted') }}">
-                                                            @yield('icon-document')
-                                                        </i>
-
-                                                        <h6 class="text-muted mt-3">
-                                                            {{ date('F - Y', strtotime($_journal->month)) }}
-                                                        </h6>
-                                                    </a>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-
-                                </div>
-                                <div class="swiper-button-prev1">
-                                    @yield('icon-right')
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="card-body">
-                            <div class="header-title d-flex justify-content-between">
-                                <span class="h5 text-primary fw-bolder">Journal Book</span>
+                                <span class="h5 text-primary fw-bolder">NARATIVE REPORT</span>
                             </div>
                             @include('layouts.icon-main')
                             <div class="swiper swiper-container mySwiper position-relative">

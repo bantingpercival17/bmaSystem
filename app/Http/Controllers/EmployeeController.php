@@ -129,13 +129,13 @@ class EmployeeController extends Controller
                     'time_status' => 'TIME IN',
                     'time' =>  date('H:i:s'),
                     'image' =>  strtolower(str_replace(' ', '_', $_staff->user->name)) . '.jpg',
-                    'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim($_staff->user->staff->first_name)))) . '-good-morning.mp3'
+                    'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/','-',$_staff->user->staff->first_name))))) . '-good-morning.mp3'
                 );
                 if ($_attendance) {
                     $_attendance->time_out = now();
                     $_attendance->save();
                     $_staff_details['time_status'] = 'TIME OUT';
-                    $_staff_details['link'] = '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim($_staff->user->staff->first_name)))) . '-good-bye.mp3';
+                    $_staff_details['link'] = '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/','-',$_staff->user->staff->first_name))))) . '-good-bye.mp3';
                     //$_staff_details = json_encode($_staff_details);
                     $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe ' . $_staff->user->staff->first_name . "!", 'data' => $_staff_details);
                 } else {
@@ -160,7 +160,15 @@ class EmployeeController extends Controller
                 $_data = array('respond' => '404', 'message' => 'Invalid Email');
             }
         } else {
-            $_data = array('respond' => '404', 'message' => 'Invalid Date Encode');
+            $_staff_details = array(
+                'name' => strtoupper(trim($_staff->user->name)),
+                'department' => $_staff->user->staff->department,
+                'time_status' => 'invalid qr code',
+                'time' =>  date('H:i:s'),
+                'image' =>  '',
+                'link' => '/assets/audio/expired_qr_code.mp3'
+            );
+            $_data = array('respond' => '404', 'message' => 'Qr Code is Expired', 'data' => $_staff_details);
         }
 
         return compact('_data');
@@ -197,10 +205,7 @@ class EmployeeController extends Controller
         $_data = json_encode($_staff_details);
         $_data = base64_encode($_data);
         //return $_staff_details;
+         return view('employee.generate_qr_code', compact('_data'));
         return back()/* redirect() */->with('qr-code', $_data);
-        //return view('employee.generate_qr_code', compact('_staff_details'));
-        /* $pdf =  PDF::loadView("employee.qr_generate", compact('_data'));
-        $file_name = strtoupper('Qr code generate:');
-        return $pdf->setPaper([0, 0, 285.00, 250.00], 'landscape')->stream($file_name . '.pdf'); */
     }
 }
