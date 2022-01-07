@@ -18,9 +18,10 @@ class CreateShipboardJournalsTable extends Migration
             $table->unsignedBigInteger('student_id');
             $table->foreign('student_id')->references('id')->on('student_details');
             $table->string('month');
-            $table->string('remark');
+            $table->string('remark')->nullable();
             $table->text('file_links');
             $table->string('journal_type');
+            $table->string('feedback')->nullable();
             $table->integer('is_approved')->nullable();
             $table->unsignedBigInteger('staff_id')->nullable();
             $table->foreign('staff_id')->references('id')->on('staff');
