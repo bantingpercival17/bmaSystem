@@ -62,11 +62,16 @@
         <div class="res-hide row m-0 align-items-center vh-100">
 
             <div class="col-lg-7 d-md-block d-none p-0">
-                <img src="{{ asset('assets/image/bma-building.png') }}" class="img-fluid gradient-main vh-100"
+                <img src="{{ asset('resources\image/BMA BUILDING.gif') }}" class="img-fluid gradient-main vh-100"
                     alt="images">
             </div>
             <div class="col-lg-5 pb-0">
                 <div class="card-body auth-padding">
+                    <center>
+                        <img src="{{ asset('assets/image/bma-logo-1.png') }}"
+                            class="center img-fluid avatar avatar-100 rounded-circle" alt="images">
+
+                    </center>
                     <h2 class="mb-2 text-center"><b>BMA PORTAL</b></h2>
                     <p class="text-center">SIGN IN</p>
                     <form method="POST" action="{{ route('login') }}">

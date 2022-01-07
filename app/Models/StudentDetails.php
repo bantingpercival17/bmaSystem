@@ -29,7 +29,17 @@ class StudentDetails extends Model
         "is_removed"
     ];
 
-
+    public function profile_pic($_data)
+    {
+        $_formats = ['.jpeg', '.jpg', '.png'];
+        $_path = 'http://bma.edu.ph/img/student-picture/';
+        //$_path = 'assets/image/student-picture/';
+        $_image = "http://bma.edu.ph/img/student-picture/midship-man.jpg";
+        foreach ($_formats as $format) {
+            $_image = @fopen($_path . $_data->student_number . $format, 'r') ? $_path . $_data->student_number . $format : $_image;
+        }
+        return $_image;
+    }
     public function enrollment_assessment()
     {
         return $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->orderBy('id', 'desc');
@@ -146,6 +156,18 @@ class StudentDetails extends Model
         }
         return $_percentage;
     }
+
+    /* Shipboard Model */
+
+    public function shipboard_training()
+    {
+        return $this->hasOne(ShipBoardInformation::class, 'student_id');
+    }
+    public function shipboard_journals($_data)
+    {
+        return $this->hasMany(ShipboardJournal::class, 'student_id')->where('journal_type', $_data)->where('is_removed', false)->orderBy('month', 'Asc');
+    }
+
     public function student_single_file_import($_student)
     {
         echo "<b>" . $_student->student_details->last_name . ", " . $_student->student_details->first_name . "</b> <br>";

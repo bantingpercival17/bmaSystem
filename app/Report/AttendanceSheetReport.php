@@ -41,4 +41,12 @@ class AttendanceSheetReport
         $file_name = "Daily Attendance: "; // With Date now
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
+    public function health_check()
+    {
+        $_employees = Staff::orderBy('staff.department', 'asc')
+            ->orderBy('staff.last_name', 'asc')->get();
+        $pdf = PDF::loadView("widgets.report.employee.health_check_report", compact('_employees'));
+        $file_name = "Health Check: "; // With Date now
+        return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
+    }
 }

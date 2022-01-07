@@ -74,7 +74,7 @@ class AdministratorController extends Controller
                 $_student_model->student_single_file_import($_file);
             } */
             $_student_model->upload_student_details($_file);
-        } 
+        }
         return back()->with('message', 'Successfully Upload Student Details');
     }
 
@@ -367,6 +367,9 @@ class AdministratorController extends Controller
     public function attendance_report(Request $_request)
     {
         $_report = new AttendanceSheetReport();
-        return $_request->r_view == 'daily' ? $_report->daily_report() : $_report->daily_time_record_report($_request->start_date, $_request->end_date);
+        $_report_pdf = $_request->r_view == 'daily' ? $_report->daily_report() : $_report->daily_time_record_report($_request->start_date, $_request->end_date);
+        $_report_pdf = $_request->r_view == 'health_check' ? $_report->health_check() : $_report_pdf;
+
+        return $_report_pdf;
     }
 }

@@ -1,4 +1,4 @@
-@extends('app')
+@extends('layouts.app-main')
 @section('page-title', 'Midshipman')
 @section('page-navigation')
     <ol class="breadcrumb ">

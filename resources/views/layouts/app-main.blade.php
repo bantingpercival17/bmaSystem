@@ -69,7 +69,7 @@
 
     <!-- App Script -->
     <script src="{{ asset('resources/js/gigz.js') }}" defer></script>
-
+    @yield('js')
 </body>
 
 </html>

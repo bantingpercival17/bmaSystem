@@ -49,6 +49,10 @@ class Staff extends Model
     {
         return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('created_at', 'like', '%' . date('Y-m-d') . '%')->latest();
     }
+    public function daily_attendance_report()
+    {
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('created_at', 'like', '%' . request()->input('_date') . '%')->latest();
+    }
     public function attendance_list()
     {
         return $this->hasMany(EmployeeAttendance::class, 'staff_id');

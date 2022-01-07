@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ShipboardJournal;
 use App\Models\StudentDetails;
 use App\Models\StudentTraining;
 use App\Models\TrainingCertificates;
@@ -46,5 +47,18 @@ class OnboardTrainingController extends Controller
         StudentTraining::create($_certificate);
         //SubjectClass::create($_subject_class_detail);
         return back()->with('message', 'Successfully Added Certificates!');
+    }
+    public function onboard_training_view(Request $_request)
+    {
+        $_midshipman = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
+        $_shipboard_monitoring = ShipboardJournal::select('student_id')->where('is_approved', null)->groupBy('student_id')->where('is_removed', false)->get();
+        return view('onboardtraining.shipboard.view', compact('_midshipman', '_shipboard_monitoring'));
+    }
+    public function  onboard_journal_view(Request $_request)
+    {
+        $_journal = ShipboardJournal::find(base64_decode($_request->_j));
+        $_midshipman = $_journal->student;
+
+        return view('onboardtraining.shipboard.document', compact('_midshipman', '_journal'));
     }
 }

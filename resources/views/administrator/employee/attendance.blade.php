@@ -11,6 +11,7 @@
         <div class="card-header">
             <h3 class="card-title"><span class="text-muted"><b>ATTENDANCE MONITORING</b></span></h3>
             <form action="/administrator/attendance/report" method="get">
+
                 <label for="" class="text-muted">Generate Attendane Report</label>
                 <div class="row">
 
@@ -24,12 +25,36 @@
                     </div>
                     <input type="hidden" name="r_view" value="weekly">
                     <div class="form-group col-md-2">
-                        <a href="/administrator/attendance/report?r_view=daily" class="btn btn-info btn-block"> <i
-                                class="fa fa-print"></i> Daily Attendance</a>
                         <button class="btn btn-success btn-block"> <i class="fa fa-print"></i> Generate</button>
                     </div>
 
                 </div>
+            </form>
+            <form action="/administrator/attendance/report" method="get">
+                <label for="" class="form-label">DAILY ATTENDANCE</label>
+                <div class="row">
+                    <div class="form-group col-md-8">
+                        <input type="date" class="form-control" name="_date" value="{{ now() }}">
+                        <input type="hidden" name="r_view" value="daily">
+                    </div>
+                    <div class="col-md">
+                        <button type="submit" class="btn btn-info btn-block"><i class="fa fa-print"></i>Generate</button>
+                    </div>
+                </div>
+
+            </form>
+            <form action="/administrator/attendance/report" method="get">
+                <label for="" class="form-label">HEALTH CHECK MONITORING</label>
+                <div class="row">
+                    <div class="form-group col-md-8">
+                        <input type="date" class="form-control" name="_date" value="{{ now() }}">
+                        <input type="hidden" name="r_view" value="health_check">
+                    </div>
+                    <div class="col-md">
+                        <button type="submit" class="btn btn-info btn-block"><i class="fa fa-print"></i>Generate</button>
+                    </div>
+                </div>
+
             </form>
         </div>
         <div class="card-body p-0">

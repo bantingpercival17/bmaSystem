@@ -1053,7 +1053,7 @@
                             'role_id' => 1,
                             'role_name' => 'Administrator',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Enrollment', 'admin.enrollment'],['Students','admin.students']],
+                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Enrollment', 'admin.enrollment'], ['Students', 'admin.students']],
                         ],
                         [
                             'role_id' => 2,
@@ -1077,7 +1077,7 @@
                             'role_id' => 5,
                             'role_name' => 'Onboard Training',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'administrative.dashboard'], ['Enrollment', 'admin.enrollment']],
+                            'role_routes' => [['Dashboard', 'onboard.dashboard'], ['Midshipman', 'onboard.midshipman'], ['Shipboard', 'onboard.shipboard']],
                         ],
                         [
                             'role_id' => 6,
@@ -1105,8 +1105,9 @@
                         @if ($_item['role_id'] == 0)
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="collapse"
-                                    href="#{{ strtolower($_item['role_name']) }}" role="button" aria-expanded="false"
-                                    aria-controls="{{ strtolower($_item['role_name']) }}">
+                                    href="#{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}" role="button"
+                                    aria-expanded="false"
+                                    aria-controls="{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}">
                                     <i class="icon">
                                         @include('layouts.icon-main')
                                         @yield($_item['role_icon'])
@@ -1121,7 +1122,8 @@
                                         </svg>
                                     </i>
                                 </a>
-                                <ul class="sub-nav collapse" id="{{ strtolower($_item['role_name']) }}"
+                                <ul class="sub-nav collapse"
+                                    id="{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}"
                                     data-bs-parent="#sidebar-menu">
                                     @foreach ($_item['role_routes'] as $_route)
                                         <li class="nav-item">
@@ -1148,8 +1150,9 @@
                             @if ($_item['role_id'] == $role->id)
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="collapse"
-                                        href="#{{ strtolower($_item['role_name']) }}" role="button" aria-expanded="false"
-                                        aria-controls="{{ strtolower($_item['role_name']) }}">
+                                        href="#{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}"
+                                        role="button" aria-expanded="false"
+                                        aria-controls="{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}">
                                         <i class="icon">
                                             @include('layouts.icon-main')
                                             @yield($_item['role_icon'])
@@ -1164,7 +1167,8 @@
                                             </svg>
                                         </i>
                                     </a>
-                                    <ul class="sub-nav collapse" id="{{ strtolower($_item['role_name']) }}"
+                                    <ul class="sub-nav collapse"
+                                        id="{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}"
                                         data-bs-parent="#sidebar-menu">
                                         @foreach ($_item['role_routes'] as $_route)
                                             <li class="nav-item">
