@@ -283,11 +283,16 @@
                 if (data._data.respond == 404) {
                     audio_erroe.play()
                     toastr.error(data._data.message, 'Error!')
+                    var file_name = data._data.data.link
+                    var audio_custom = new Audio(file_name);
+                    audio_custom.play()
                     clear_details()
                 }
             }).fail(function() {
                 toastr.error('Invalid QR Code.', 'Error!')
                 audio_erroe.play()
+                var audio_custom = new Audio("{{ asset('assets/audio/invalid_qr_code_1.mp3') }}");
+                audio_custom.play()
                 clear_details()
             })
 
