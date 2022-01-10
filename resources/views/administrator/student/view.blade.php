@@ -3,13 +3,6 @@
 $_title = 'Students';
 @endphp
 @section('page-title', 'Students')
-@section('page-navigation')
-    <ol class="breadcrumb ">
-        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-        <li class="breadcrumb-item active">Students</li>
-
-    </ol>
-@endsection
 @section('beardcrumb-content')
     <li class="breadcrumb-item active" aria-current="page">
         <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none"
@@ -22,29 +15,20 @@ $_title = 'Students';
 @endsection
 @section('page-content')
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-5">
             <form action="" method="get" class="card">
                 <div class="card-body">
-                    <label for="" class="text-muted h5">| SEARCH STUDENT</label>
+                    <label class="text-muted h5">| SEARCH STUDENT</label>
                     <div class="form-group">
-                        <label for="" class="text-success">COURSE</label>
-                        <select name="_course" id="" class="form-control">
+                        <small class="text-primary">COURSE</small>
+                        <select name="_course" id="" class="form-select">
                             @foreach ($_course as $course)
                                 <option value="{{ $course->id }}">{{ $course->course_name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="" class="text-success">ACADEMIC</label>
-                        <select name="_academic" id="" class="form-control">
-                            @foreach ($_academics as $data)
-                                <option value="{{ $data->id }}">{{ $data->school_year . ' | ' . $data->semester }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="" class="text-success">STUDENT NAME</label>
+                        <small class="text-primary">STUDENT NAME</small>
                         <input type="text" class="form-control" name="_student">
 
 
@@ -57,24 +41,24 @@ $_title = 'Students';
                 enctype="multipart/form-data">
                 @csrf
                 <div class="card-body">
-                    <label for="" class="text-muted h5">| IMPORT STUDENT DETAILS</label>
+                    <label class="text-muted h5">| IMPORT STUDENT DETAILS</label>
                     <div class="form-group">
-                        <label for="" class="text-success">ATTACH FILE</label>
+                        <label class="text-success">ATTACH FILE</label>
                         <input type="file" class="form-control" name="_file">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">IMPORT</button>
                 </div>
             </form>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-7">
             @if (count($_students) > 0)
                 @foreach ($_students as $_student)
 
-                    <div class="card card-primary">
+                    {{-- <div class="card card-primary">
                         <div class="card-body box-profile">
                             <span
                                 class="text-success"><b>{{ $_student->account ? $_student->account->student_number : '-' }}</b></span>
-                            <a href="/administrator/students/view?_s={{ Crypt::encrypt($_student->id) }}">
+                            <a href="/administrator/students/view?_s={{ base64_encode($_student->id) }}">
                                 <h4 class="text-info">
                                     <b> | {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }} </b>
                                 </h4>
@@ -84,15 +68,41 @@ $_title = 'Students';
                             <label
                                 class="text-muted">{{ $_student->enrollment_assessment->course->course_name }}</label>
                         </div>
-                    </div>
+                    </div> --}}
+                    @if ($_student)
+                        <a href="/administrator/students/view?_s={{ /* base64_encode */($_student->id) }}">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <span><b>{{ $_student->account ? $_student->account->student_number : '-' }}</b></span>
+                                            <div class="mt-2">
+                                                <h2 class="counter" style="visibility: visible;">
+                                                    {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <div>
+                                            <span>{{ $_student->account ? $_student->account->campus_email : '-' }}</span>
+                                            <br>
+                                            <span
+                                                class="badge bg-primary">{{ $_student->enrollment_assessment->course->course_name }}</span>
 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    @endif
 
                 @endforeach
 
             @else
                 <div>
                     <div class="card card-primary">
-                        <div class="card-body box-profile">
+                        <div class="card-body">
                             <div class="___class_+?24___">
                                 <h4 class="text-muted">| No Such Data</h4>
                             </div>

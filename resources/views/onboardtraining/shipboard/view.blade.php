@@ -139,12 +139,12 @@ $_title = 'Shipboard Monitoring';
                                     @yield('icon-left')
                                 </div>
                                 <div class="swiper-wrapper row-cols-2 row-cols-lg-4 list-inline">
-                                    @foreach ($_midshipman->shipboard_journals('journal')->get() as $_journal)
+                                    @foreach ($_midshipman->narative_report as $_journal)
                                         <div class="swiper-slide">
                                             <div class="text-center">
                                                 <div class="card-body ">
                                                     <a
-                                                        href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->id) }}">
+                                                        href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->month) }}">
                                                         <i class="icon text-muted">
                                                             @yield('icon-document')
                                                         </i>

@@ -55,6 +55,9 @@ $_title = 'Shipboard Monitoring';
 
     <div class="row">
         <div class="col-md-6">
+            @foreach ($_journals as $_journal)
+                
+            @endforeach
             <div class="card">
                 <div class="card-header">
                     <p class="card-title h4 text-primary "><b>{{ strtoupper($_journal->journal_type) }}</b></p>

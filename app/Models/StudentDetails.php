@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -166,6 +167,10 @@ class StudentDetails extends Model
     public function shipboard_journals($_data)
     {
         return $this->hasMany(ShipboardJournal::class, 'student_id')->where('journal_type', $_data)->where('is_removed', false)->orderBy('month', 'Asc');
+    }
+    public function narative_report()
+    {
+        return $this->hasMany(ShipboardJournal::class, 'student_id')->select('month', DB::raw('count(*) as total'))->groupBy('month');
     }
 
     public function student_single_file_import($_student)

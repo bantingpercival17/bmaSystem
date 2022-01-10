@@ -1083,7 +1083,7 @@
                             'role_id' => 6,
                             'role_name' => 'Teacher',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'administrative.dashboard'], ['Enrollment', 'admin.enrollment']],
+                            'role_routes' => [['Subjects', 'teacher.subject-list'], ['Previous Subject', 'teacher.previous-subjects']],
                         ],
                         [
                             'role_id' => 7,
