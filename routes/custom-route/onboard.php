@@ -13,4 +13,6 @@ Route::prefix('onboard')->group(function () {
 
     Route::get('/shipboard-monitoring', [OnboardTrainingController::class, 'onboard_training_view'])->name('onboard.shipboard'); // Midship Man Profile
     Route::get('/shiboard-monitoring/journal', [OnboardTrainingController::class, 'onboard_journal_view'])->name('onboard.journal'); // Journal View
+    Route::get('/shiboard-monitoring/narative/approved', [OnboardTrainingController::class, 'onboard_narative_approved'])->name('onboard.narative-report-approved'); // Approved Narative report
+    Route::post('/shiboard-monitoring/narative/disapproved',[OnboardTrainingController::class,'onboard_narative_disapproved'])->name('onboard.narative-report-disapproved');
 });

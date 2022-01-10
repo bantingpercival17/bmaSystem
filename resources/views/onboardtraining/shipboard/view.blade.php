@@ -3,13 +3,6 @@
 $_title = 'Shipboard Monitoring';
 @endphp
 @section('page-title', $_title)
-@section('page-navigation')
-    <ol class="breadcrumb ">
-        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-        <li class="breadcrumb-item active"> Midshipman</li>
-
-    </ol>
-@endsection
 @section('beardcrumb-content')
     <li class="breadcrumb-item active" aria-current="page">
         <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none"
