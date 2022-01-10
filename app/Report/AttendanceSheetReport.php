@@ -47,6 +47,6 @@ class AttendanceSheetReport
             ->orderBy('staff.last_name', 'asc')->get();
         $pdf = PDF::loadView("widgets.report.employee.health_check_report", compact('_employees'));
         $file_name = "Health Check: "; // With Date now
-        return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 }

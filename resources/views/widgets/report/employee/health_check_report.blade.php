@@ -11,10 +11,7 @@
         <table class="attendance-table">
             <thead>
                 <tr>
-                    <th>DEPARTMENT</th>
                     <th>NAME</th>
-                    <th width="100">TIME-IN</th>
-                    <th width="100">TIME-OUT</th>
                     <th width="100">TEMPERATURE</th>
                     <th>MEDICAL STATUS</th>
 
@@ -24,26 +21,6 @@
                 @foreach ($_employees as $_employee)
                     <tr>
                         <td>{{ strtoupper($_employee->first_name . ' ' . $_employee->last_name) }}</td>
-                        <td>{{ strtoupper($_employee->department) }}</td>
-                        <td>
-                            @if ($_employee->daily_attendance_report)
-                                {{ date_format(date_create($_employee->daily_attendance_report->time_in), 'h:i:s a') }}
-                            @else
-                                -
-                            @endif
-
-                        </td>
-                        <td>
-                            @if ($_employee->daily_attendance_report)
-                                @if ($_employee->daily_attendance_report->time_out)
-                                    {{ date_format(date_create($_employee->daily_attendance_report->time_out), 'h:i:s a') }}
-                                @else
-                                    -
-                                @endif
-                            @else
-                                -
-                            @endif
-                        </td>
                         <td>
                             @php
                                 $_description = $_employee->daily_attendance_report ? json_decode($_employee->daily_attendance_report->description) : '-';
