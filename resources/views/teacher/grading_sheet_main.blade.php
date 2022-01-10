@@ -1,4 +1,4 @@
-@extends('app')
+@extends('layouts.app-main')
 @section('page-title', 'Previous Subjects')
 @section('page-navigation')
     <ol class="breadcrumb ">
@@ -7,22 +7,6 @@
             {{ $_subject->section->section_name . ' | ' . $_subject->curriculum_subject->subject->subject_code }}</li>
 
     </ol>
-@endsection
-@section('css')
-    {{-- <style>
-        thead {
-            display: table;
-            width: calc(100% - 17px);
-        }
-
-        tbody {
-            display: block;
-            max-height: 300px;
-            overflow-y: scroll;
-           
-        }
-
-    </style> --}}
 @endsection
 @section('page-content')
     <div class="card">
