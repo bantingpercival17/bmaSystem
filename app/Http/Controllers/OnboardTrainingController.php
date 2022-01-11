@@ -51,6 +51,32 @@ class OnboardTrainingController extends Controller
         //SubjectClass::create($_subject_class_detail);
         return back()->with('message', 'Successfully Added Certificates!');
     }
+    public function onboard_info_store(Request $_request)
+    {
+        $_request->validate([
+            'company_name' => 'string | required',
+            '_ship_name' => 'string | required',
+            '_type_vessel' => 'string | required',
+            '_ship' => 'string | required',
+            '_company_group' => 'string | required',
+            '_sbt_batch' => 'string | required',
+            '_embarked' => 'date | required',
+        ]);
+
+        $_shipboard_info = array(
+            'student_id' => $_request->_student_id,
+            'company_name' => $_request->company_name,
+            'vessel_name' => $_request->_ship_name,
+            'vessel_type' => $_request->_type_vessel,
+            'shipping_company' => $_request->_ship,
+            'company_group' => $_request->_company_group,
+            'sbt_batch' => $_request->_sbt_batch,
+            'embarked' => $_request->_embarked,
+            'disembarked' => $_request->_disemabarke ?: ''
+        );
+        ShipBoardInformation::create($_shipboard_info);
+        return back();
+    }
     public function onboard_training_view(Request $_request)
     {
         $_midshipman = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];

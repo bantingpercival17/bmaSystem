@@ -1127,7 +1127,7 @@
                                     data-bs-parent="#sidebar-menu">
                                     @foreach ($_item['role_routes'] as $_route)
                                         <li class="nav-item">
-                                            <a class="nav-link {{ request()->routeIs($_route[1]) ? 'active' : '' }}"
+                                            <a class="nav-link {{ Request::is($_route[1]) || Request::is($_route[1] . '/*') ? 'active' : '' }}"
                                                 href="{{ route($_route[1]) }}">
                                                 <i class="icon">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24"
