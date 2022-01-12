@@ -181,11 +181,12 @@ class EmployeeController extends Controller
         $_staff = Auth::user()->staff;
         $_attendance = EmployeeAttendance::where('staff_id', $_staff->id)->get();
         //return $_attendance;
-        if (Auth::user()->email == 'p.banting@bma.edu.ph') {
+        return view('employee.attendance_view_main', compact('_attendance'));
+        /* if (Auth::user()->email == 'p.banting@bma.edu.ph') {
             return view('employee.attendance_view_main', compact('_attendance'));
         } else {
             return view('employee.attendance_view', compact('_attendance'));
-        }
+        } */
     }
     public function attendance_store(Request $_request)
     {
