@@ -30,7 +30,9 @@ require __DIR__ . '/custom-route/onboard.php'; // Onboard Route
 Route::prefix('employee')->group(function () {
     Route::get('/attendance', [EmployeeController::class, 'attendance_view'])->name('employee.attendance');
     Route::post('/attendance', [EmployeeController::class, 'attendance_store']);
-    //Route::post('/attendance/qr_code', [EmployeeController::class, 'attendance_generate_qr']);
+    Route::post('/attendance/qr_code', [EmployeeController::class, 'attendance_generate_qr']);
+    Route::post('/attendance/qr_code/download', [EmployeeController::class, 'download_qr_code'])->name('employee.download-qrcode');
+    Route::post('/attendance/wfh', [EmployeeController::class, 'attendance_wfh'])->name('employee.work-from-home');
 });
 
 

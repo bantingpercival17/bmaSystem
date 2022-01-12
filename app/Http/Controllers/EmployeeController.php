@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class EmployeeController extends Controller
 {
@@ -179,7 +181,11 @@ class EmployeeController extends Controller
         $_staff = Auth::user()->staff;
         $_attendance = EmployeeAttendance::where('staff_id', $_staff->id)->get();
         //return $_attendance;
-        return view('employee.attendance_view', compact('_attendance'));
+        if (Auth::user()->email == 'p.banting@bma.edu.ph') {
+            return view('employee.attendance_view_main', compact('_attendance'));
+        } else {
+            return view('employee.attendance_view', compact('_attendance'));
+        }
     }
     public function attendance_store(Request $_request)
     {
@@ -202,7 +208,7 @@ class EmployeeController extends Controller
             date('Y-m-d H:i:s'),
         );
         //return base64_encode($_staff_details);
-        $_email = User::where('email', $_request->employee)->first();
+        /*   $_email = User::where('email', $_request->employee)->first();
         EmployeeAttendance::create(array(
             'staff_id' => $_email->staff->id,
             'description' => json_encode(array(
@@ -214,11 +220,48 @@ class EmployeeController extends Controller
 
             )),
             'time_in' => date('Y-m-d H:i:s'),
-        ));
+        )); */
         $_data = json_encode($_staff_details);
         $_data = base64_encode($_data);
-        //return $_staff_details;
         return view('employee.generate_qr_code', compact('_data'));
-        return back()/* redirect() */->with('qr-code', $_data);
+        //return back()/* redirect() */->with('qr-code', $_data);
+    }
+    public function download_qr_code(Request $_request)
+    {
+        $headers    = array('Content-Type' => 'png');
+        $type       = 'png';
+        $image      = QrCode::format($type)
+            ->size(200)->errorCorrection('H')
+            ->generate($_request->_data);
+
+        $imageName = 'qr-code';
+        Storage::disk('public')->put($imageName, $image);
+
+        return response()->download('storage/' . $imageName, $imageName . '.' . $type, $headers);
+    }
+    public function attendance_wfh(Request $_request)
+    {
+        $_data = base64_decode($_request->_data); // Data
+        $_data = json_decode($_data);
+        $_staff = Staff::select('staff.id', 'staff.user_id')->join('users', 'users.id', 'staff.user_id')->where('users.email', $_data[0])->first(); // Get Staff Id
+        $_description = json_decode($_data[1]);
+        $_staff_ = array(
+            'staff_id' => $_staff->id,
+            'description' => json_encode(array(
+                'body_temprature' => $_description[0],
+                'have_any' => $_description[1],
+                'experience' => $_description[2],
+                'positive' => $_description[3],
+                'gatekeeper_in' => Auth::user()->name
+
+            )),
+        );
+        $_date = date('Y-m-d'); // Date Now 
+        $_time_in = date_create($_data[2]);
+        $_time_in =   date_format($_time_in, "Y-m-d");
+        if ($_date == $_time_in) {
+            EmployeeAttendance::create($_staff_);
+            return back()->with('success', 'Stay Safe at Home');
+        }
     }
 }

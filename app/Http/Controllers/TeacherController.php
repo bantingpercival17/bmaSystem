@@ -36,7 +36,11 @@ class TeacherController extends Controller
             ->where('academic_id', $_academic->id)
             ->where('is_removed', false)
             ->get();
-        return view('teacher.dashboard', compact('_subject'));
+        if (Auth::user()->email == 'k.j.cruz@bma.edu.ph') {
+            return view('teacher\dashboard\dasboard-main', compact('_subject'));
+        } else {
+            return view('teacher.dashboard', compact('_subject'));
+        }
     }
     public function subject_grading_view(Request $_request)
     {
