@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('onboard')->group(function () {
     Route::get('/', [OnboardTrainingController::class, 'index'])->name('onboard.dashboard'); // Dashboard View
     Route::get('/dashboard', [OnboardTrainingController::class, 'index'])->name('onboard.dashboard'); // Dashboard View
+    Route::get('/embarked-monitoring', [OnboardTrainingController::class, 'embarked_monitoring_view'])->name('onboard.embarked-list'); // Embarked View
+
+
     Route::get('/midship-man', [OnboardTrainingController::class, 'midshipman_view'])->name('onboard.midshipman'); // Midship Man Profile
     Route::post('/midship-man/shipboard-training', [OnboardTrainingController::class, 'onboard_info_store'])->name('onboard.onboard-info-store');
     Route::post('/midship-man/shipboard-training-update', [OnboardTrainingController::class, 'onboard_info_store'])->name('onboard.onboard-info-update');

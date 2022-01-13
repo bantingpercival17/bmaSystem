@@ -30,7 +30,7 @@ $_title = 'Midshipman';
                             </h4>
                             <p class="card-text">
                                 <span>STUDENT NUMBER: <b>
-                                        {{ $_midshipman ? $_midshipman->account->student_number : '-' }}</b></span>
+                                        {{ $_midshipman ? ($_midshipman->account ? $_midshipman->account->student_number : '-' ) : '-' }}</b></span>
                                 <br>
                                 <span>COURE: <b>
                                         {{ $_midshipman ? $_midshipman->enrollment_assessment->course->course_name : '-' }}</b></span>
@@ -50,112 +50,6 @@ $_title = 'Midshipman';
                         <div class="card-body">
                             @if ($_midshipman->shipboard_training)
                                 @if (request()->input('edit') == true)
-                                    {{-- <form action="/onboard/cadets/shipboard-training-update" method="post">
-                                        @csrf
-                                        <input type="hidden" name="_ship_details" value="{{ $_cadet->shipboard->id }}">
-                                        <div class="form-group">
-                                            <div class="row">
-
-                                                <div class="col-md">
-                                                    <label for="" class="text-muted text-xs">COMPANY NAME</label>
-                                                    <input type="text" class="form-control" name="company_name"
-                                                        value="{{ $_cadet->shipboard->company_name }}">
-
-                                                    @error('company_name')
-                                                        <span class="invalid-feedback text-danger" role="alert">
-                                                            <small> <b>{{ $message }}</b> </small>
-                                                        </span>
-                                                    @enderror
-                                                </div>
-                                                <div class="col-md">
-                                                    <label for="" class="text-muted text-xs">NAME OF SHIP</label>
-                                                    <input type="text" class="form-control" name="_ship_name"
-                                                        value="{{ $_cadet->shipboard->vessel_name }}">
-                                                    @error('_ship_name')
-                                                        <span class="invalid-feedback text-danger" role="alert">
-                                                            <small> <b>{{ $message }}</b> </small>
-                                                        </span>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md">
-                                                    <label for="" class="text-muted text-xs">VESSEL TYPE</label>
-                                                    <select name="_type_vessel" class="form-control"
-                                                        value="{{ old('_type_vessel') }}">
-                                                        <option value="CONTAINER VESSEL"
-                                                            {{ $_cadet->shipboard->vessel_type == 'CONTAINER VESSEL' ? 'selected' : '' }}>
-                                                            CONTAINER VESSEL</option>
-                                                        <option value="GENERAL CARGO"
-                                                            {{ $_cadet->shipboard->vessel_type == 'GENERAL CARGO' ? 'selected' : '' }}>
-                                                            GENERAL CARGO</option>
-                                                        <option value="TANKER"
-                                                            {{ $_cadet->shipboard->vessel_type == 'TANKER' ? 'selected' : '' }}>
-                                                            TANKER</option>
-                                                    </select>
-                                                    @error('_type_vessel')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="" class="text-muted text-xs">FOR/DOM.</label>
-                                                    <select name="_ship" id="" class="form-control">
-                                                        <option value="foreign"
-                                                            {{ $_cadet->shipboard->shipping_company == 'foreign' ? 'selected' : '' }}>
-                                                            Foreign Ship</option>
-                                                        <option value="domestic"
-                                                            {{ $_cadet->shipboard->shipping_company == 'domestic' ? 'selected' : '' }}>
-                                                            Domestic Ship</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="" class="text-muted text-xs">STATUS</label>
-                                                    <select name="_company_group" id="" class="form-control">
-                                                        <option value="com"
-                                                            {{ $_cadet->shipboard->company_group == 'com' ? 'selected' : '' }}>
-                                                            COM</option>
-                                                        <option value="inc"
-                                                            {{ $_cadet->shipboard->company_group == 'inc' ? 'selected' : '' }}>
-                                                            INC</option>
-                                                        <option value="on going"
-                                                            {{ $_cadet->shipboard->company_group == 'on going' ? 'selected' : '' }}>
-                                                            ON GOING</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <label for="" class="text-muted text-xs">OBT BATCH</label>
-                                                    <input type="text" class="form-control" name="_sbt_batch"
-                                                        value="{{ $_cadet->shipboard->sbt_batch }}">
-                                                    @error('_sbt_batch')
-                                                        <span class="invalid-feedback text-danger" role="alert">
-                                                            <small> <b>{{ $message }}</b> </small>
-                                                        </span>
-                                                    @enderror
-                                                </div>
-                                                <div class="col-md">
-                                                    <label for="" class="text-muted text-xs">DATE OF EMBARKED</label>
-                                                    <input class="form-control" type="date" name="_embarked"
-                                                        value="{{ $_cadet->shipboard->embarked }}" max="2021-12-31"
-                                                        min="2000-12-21">
-                                                    @error('_embarked')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                                <div class="col-md">
-                                                    <label for="" class="text-muted text-xs">DATE OF DISEMBARKED</label>
-                                                    <input class="form-control" type="date" name="_disemabarke"
-                                                        value="{{ $_cadet->shipboard->disembarked }}" max="2021-12-31"
-                                                        min="2000-12-21">
-                                                    @error('_disemabarke')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-info float-right">UPDATE</button>
-                                    </form> --}}
                                     <form action="{{ route('onboard.onboard-info-update') }}" method="post">
                                         @csrf
                                         <input type="hidden" name="_student_id" value="{{ $_midshipman->id }}">
@@ -238,8 +132,8 @@ $_title = 'Midshipman';
                                             </div>
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
-                                                <input class="form-control" type="date" name="_embarked"
-                                                   max="2021-12-31" min="2000-12-21"
+                                                <input class="form-control" type="date" name="_embarked" max="2021-12-31"
+                                                    min="2000-12-21"
                                                     value="{{ $_midshipman->shipboard_training->embarked }}">
                                                 @error('_embarked')
                                                     <div class="text-danger">{{ $message }}</div>
