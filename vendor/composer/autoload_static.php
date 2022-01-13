@@ -744,6 +744,7 @@ class ComposerStaticInitad9a3fefd2e4c6a7edf47485ac1509a3
         'App\\Models\\ShippingAgencies' => __DIR__ . '/../..' . '/app/Models/ShippingAgencies.php',
         'App\\Models\\Staff' => __DIR__ . '/../..' . '/app/Models/Staff.php',
         'App\\Models\\StudentAccount' => __DIR__ . '/../..' . '/app/Models/StudentAccount.php',
+        'App\\Models\\StudentClearance' => __DIR__ . '/../..' . '/app/Models/StudentClearance.php',
         'App\\Models\\StudentDetails' => __DIR__ . '/../..' . '/app/Models/StudentDetails.php',
         'App\\Models\\StudentSection' => __DIR__ . '/../..' . '/app/Models/StudentSection.php',
         'App\\Models\\StudentTraining' => __DIR__ . '/../..' . '/app/Models/StudentTraining.php',

@@ -18,24 +18,9 @@
 </head>
 
 <body class=" ">
-    <!-- loader Start -->
-    <div id="loading">
-        <div class="loader ">
-            <div class="loader-body word-spacing">
-                <h1 class="loader-title fw-bold">BMA PORTAL</h1>
-            </div>
-        </div>
-    </div>
-    <!-- loader END -->
 
     @if (Auth::user())
-        @include('layouts.navigation-main')
-        @yield('side-navigation')
         <main class="main-content">
-            <div class="position-relative">
-
-                @yield('navigation')
-            </div>
             @if (request()->url('teacher/subject/*'))
                 @yield('page-content')
             @else

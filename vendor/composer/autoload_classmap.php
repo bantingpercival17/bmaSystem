@@ -78,6 +78,7 @@ return array(
     'App\\Models\\ShippingAgencies' => $baseDir . '/app/Models/ShippingAgencies.php',
     'App\\Models\\Staff' => $baseDir . '/app/Models/Staff.php',
     'App\\Models\\StudentAccount' => $baseDir . '/app/Models/StudentAccount.php',
+    'App\\Models\\StudentClearance' => $baseDir . '/app/Models/StudentClearance.php',
     'App\\Models\\StudentDetails' => $baseDir . '/app/Models/StudentDetails.php',
     'App\\Models\\StudentSection' => $baseDir . '/app/Models/StudentSection.php',
     'App\\Models\\StudentTraining' => $baseDir . '/app/Models/StudentTraining.php',

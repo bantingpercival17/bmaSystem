@@ -172,7 +172,10 @@ class StudentDetails extends Model
     {
         return $this->hasMany(ShipboardJournal::class, 'student_id')->select('month', DB::raw('count(*) as total'))->groupBy('month');
     }
-
+    public function clearance($_data)
+    {
+        return $this->hasOne(StudentClearance::class, 'student_id')->where('subject_class_id', $_data)->where('is_removed', false)->first();
+    }
     public function student_single_file_import($_student)
     {
         echo "<b>" . $_student->student_details->last_name . ", " . $_student->student_details->first_name . "</b> <br>";

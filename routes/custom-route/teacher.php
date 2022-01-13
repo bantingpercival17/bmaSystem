@@ -5,11 +5,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('teacher')->group(function () {
     Route::get('/', [TeacherController::class, 'index'])->name('teacher.subject-list');
-    Route::get('/subjects', [TeacherController::class, 'index'])->name('teacher.subject-list'); // Subject View
+    Route::get('/subjects', [TeacherController::class, 'index'])->name('teacher.subject-list'); // Subject List View
+    Route::get('/subjects/view', [TeacherController::class, 'subject_class_view'])->name('teacher.subject-view');
     Route::get('/subjects/grading-sheet', [TeacherController::class, 'subject_grading_view'])->name('teacher.grading-sheet'); // Subject Grading Sheet View
+    Route::get('/subjects/grading-sheet-frame', [TeacherController::class, 'subject_grading_main_view'])->name('teacher.grading-sheet-main'); // Subject Grading Sheet View
+
     Route::post('/subjects/grade-submission', [TeacherController::class, 'subject_grade_submission']); // Subject Submission
     Route::get('/previous-subjects', [TeacherController::class, 'subject_view'])->name('teacher.previous-subjects'); // Previous Subjects Per Academic Year
-
+    /* E-Clearance */
+    Route::post('/subjects/e-clearance', [TeacherController::class, 'student_e_clearance'])->name('teacher.e-clearance');
     Route::get('/grading-sheet/store', [TeacherController::class, 'grade_store']); // Store a Score per Subjects Class and Students
 
     Route::get('/grade-reports', [TeacherController::class, 'submission_view']); // Grade Submission View

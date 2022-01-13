@@ -1,20 +1,12 @@
-@extends('layouts.app-main')
-@section('page-title', 'Previous Subjects')
-@section('page-navigation')
-    <ol class="breadcrumb ">
-        <li class="breadcrumb-item"><a href="/teacher/prevoius-subjects">Previous Subjects</a></li>
-        <li class="breadcrumb-item active">
-            {{ $_subject->section->section_name . ' | ' . $_subject->curriculum_subject->subject->subject_code }}</li>
-
-    </ol>
-@endsection
+@extends('layouts.grading-layout')
 @section('page-content')
     <div class="card">
         <div class="card-header">
             <h3 class="card-title"><b>GRADING SHEET</b></h3>
             <br>
             <div class="row">
-                <p for="" class="text-muted col-md-8"><span>SUBJECT:</span>
+                <p for="" class="text-muted col-md-8"><span><small><b>SUBJECT:</b></small></span>
+                    <br>
                     <span class="h6"><b>{{ $_subject->curriculum_subject->subject->subject_name }}</b></span>
                 </p>
                 <p for="" class="text-muted col-md-4"><span>UNITS:</span>
@@ -26,11 +18,11 @@
                 <p for="" class="text-muted col-md-4"><span>PERIOD:</span>
                     @if (request()->input('_period') == 'midterm')
                         <span class="btn btn-info btn-xs" aria-disabled="true"><b>MIDTERM</b></span>
-                        <a href="/teacher/subjects/grading-sheet?_s={{ Crypt::encrypt($_subject->id) }}&_period=finals"
+                        <a href="{{ route('teacher.grading-sheet-main') }}?_s={{ base64_encode($_subject->id) }}&_period=finals"
                             class="btn btn-secondary btn-xs btn-rounded">FINALS</a>
                     @else
 
-                        <a href="/teacher/subjects/grading-sheet?_s={{ Crypt::encrypt($_subject->id) }}&_period=midterm"
+                        <a href="{{ route('teacher.grading-sheet-main') }}?_s={{ base64_encode($_subject->id) }}&_period=midterm"
                             class="btn btn-secondary btn-xs">MIDTERM</a>
                         <span class="btn btn-info btn-xs"><b>FINALS</b></span>
                     @endif
@@ -43,7 +35,6 @@
                 </p>
                 <div class="col-md-6">
                     @if ($_subject_data = $_subject->submitted_grade('ad1', request()->input('_period')))
-
                         @if ($_subject_data->is_approved === 1)
                             @php
                                 $_grade_status = 'disabled';
@@ -187,13 +178,13 @@
                 </div>
             </div>
         </div>
-        <div class="card-body table-responsive p-0" style="height: 450px;">
+        <div class="card-body table-responsive p-0" style="height: 500px;">
             <table class="table table-fixed text-nowrap">
                 <thead>
                     <tr class="text-center">
                         <th colspan="3"> {{ strtoupper(request()->input('_period')) }} - MIDSHIPMAN INFORMATION</th>
                         @foreach ($_columns as $col)
-                            <th colspan="{{ $col[2] }}" class="bg-success  table-bordered">
+                            <th colspan="{{ $col[2] }}" class="bg-primary  table-bordered">
                                 {{ strtoupper($col[0]) }}
                             </th>
                         @endforeach
