@@ -65,7 +65,7 @@
                         <form action="{{ route('employee.work-from-home') }}" method="post">
                             @csrf
                             <input type="hidden" name="_data" value="{{ $_data }}">
-                            <button type="submit" class="btn btn-info text-white w-100 mt-2">I'm Work from Home</button>
+                            <button type="submit" class="btn btn-info text-white w-100 mt-2">I'm Working from Home</button>
                         </form>
                         <form action="{{ route('employee.download-qrcode') }}" method="post">
                             @csrf
