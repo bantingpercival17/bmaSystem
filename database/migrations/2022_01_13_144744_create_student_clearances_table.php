@@ -20,6 +20,8 @@ class CreateStudentClearancesTable extends Migration
             $table->unsignedBigInteger('subject_class_id');
             $table->foreign('subject_class_id')->references('id')->on('subject_classes');
             $table->text('comments')->nullable();
+            $table->unsignedBigInteger('staff_id')->nullable();
+            $table->foreign('staff_id')->references('id')->on('staff');
             $table->boolean('is_approved')->nullable();
             $table->boolean('is_removed')->nullable();
             $table->timestamps();

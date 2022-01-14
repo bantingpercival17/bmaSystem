@@ -8,6 +8,7 @@ use App\Mail\GradeVerificationMail;
 use App\Models\AcademicYear;
 use App\Models\GradeEncode;
 use App\Models\GradeSubmission;
+use App\Models\Section;
 use App\Models\Staff;
 use App\Models\StudentClearance;
 use App\Models\StudentDetails;
@@ -206,6 +207,12 @@ class TeacherController extends Controller
     {
         $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
         $_staffs = Staff::where('department', Auth::user()->staff->department)->orderBy('last_name')->get();
+
+        if (Auth::user()->email == 'k.j.cruz@bma.edu.ph') {
+            $_current_academic =  $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : AcademicYear::where('is_active', 1)->first();
+            $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
+            return view('teacher\department-head\grade\grade_submission', compact('_current_academic', '_academics'));
+        }
         return view('teacher.submission_view', compact('_staffs', '_academics'));
     }
     public function subject_report_view(Request $_request)
@@ -260,6 +267,7 @@ class TeacherController extends Controller
                 'student_id' => $_student_id,
                 'subject_class_id' => $_subject_class,
                 'comments' => $value['comment'], // nullable
+                'staff_id' => Auth::user()->staff->id,
                 'is_approved' => $_check, // nullable
                 'is_removed' => 0
             );
@@ -269,7 +277,15 @@ class TeacherController extends Controller
 
                 // If the Data is existing and the apprvod status is FALSE and the Input is FALSE : Nothing to Do, They will remain
                 // If comment is fillable
-
+                if ($_check_clearance->is_approved == 0 && $_check == 0) {
+                    if ($value['comment']) {
+                        $_check_clearance->comments = $value['comment'];
+                        $_check_clearance->save();
+                    }
+                    /*   $_check_clearance->is_removed = true;
+                    $_check_clearance->save();
+                    StudentClearance::create($_clearance); */
+                }
                 // If the Data is existing and the approved status is TRUE and the Input is FALSE : The Data will removed and create a new one
                 if ($_check_clearance->is_approved == 1 && $_check == 0) {
                     $_check_clearance->is_removed = true;
@@ -288,5 +304,26 @@ class TeacherController extends Controller
 
         }
         return back()->with('success', 'Successfully Submitted Clearance');
+    }
+
+
+    public function e_clearance_view(Request $_request)
+    {
+        $_current_academic =  $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : AcademicYear::where('is_active', 1)->first();
+        $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
+        $_sections = $_request->_academic ? Section::where('academic_id', base64_decode($_request->_academic))->where('course_id', 2)->orderBy('section_name', 'ASC')->get() :
+            Section::where('academic_id', $_current_academic->id)->where('course_id', 2)->orderBy('section_name', 'ASC')->get();
+        return view('teacher.department-head.clearance.view', compact('_academics', '_current_academic', '_sections'));
+    }
+    public function section_view_e_clearance(Request $_request)
+    {
+        $_section = Section::find(base64_decode($_request->_section));
+        $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
+            ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
+            ->where('ss.section_id', $_section->id)
+            ->orderBy('student_details.last_name', 'ASC')
+            ->where('ss.is_removed', false)
+            ->get();
+        return view('teacher.department-head.clearance.view_list', compact('_section', '_students'));
     }
 }

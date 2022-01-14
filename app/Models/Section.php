@@ -15,4 +15,12 @@ class Section extends Model
     {
         return $this->hasMany(StudentSection::class, 'section_id')->join('student_accounts as sa', 'sa.student_id', 'student_sections.student_id')->orderBy('sa.student_number', 'asc');
     }
+    public function academic()
+    {
+        return $this->belongsTo(AcademicYear::class, 'academic_id');
+    }
+    public function subject_class()
+    {
+        return $this->hasMany(SubjectClass::class, 'section_id')->where('is_removed', false);
+    }
 }

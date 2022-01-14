@@ -12,6 +12,7 @@ class StudentClearance extends Model
         'student_id',
         'subject_class_id',
         'comments', // nullable
+        'staff_id',
         'is_approved', // nullable
         'is_removed'
     ];

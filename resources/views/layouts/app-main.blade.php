@@ -36,7 +36,7 @@
 
                 @yield('navigation')
             </div>
-            @if (request()->url('teacher/subject/*'))
+            @if (request()->is('teacher/subjects/*'))
                 @yield('page-content')
             @else
                 <div class="conatiner-fluid content-inner mt-6 py-0">

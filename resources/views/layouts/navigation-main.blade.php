@@ -1086,6 +1086,12 @@
                             'role_routes' => [['Subjects', 'teacher.subject-list'], ['Previous Subject', 'teacher.previous-subjects']],
                         ],
                         [
+                            'role_id' => 6.5,
+                            'role_name' => 'Department Head',
+                            'role_icon' => 'icon-job',
+                            'role_routes' => [['Grade Submission', 'department-head.grade-submission'], ['E-Clearance', 'department.e-clearance']],
+                        ],
+                        [
                             'role_id' => 7,
                             'role_name' => 'Maintenance',
                             'role_icon' => 'icon-job',
@@ -1145,8 +1151,55 @@
                                 </ul>
                             </li>
                         @endif
-                        @foreach (Auth::user()->roles as $role)
 
+                        @foreach (Auth::user()->roles as $role)
+                            @if ($role->id == 6)
+                                @if ($_item['role_id'] == 6.5 && Auth::user()->email == 'k.j.cruz@bma.edu.ph')
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="collapse"
+                                            href="#{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}"
+                                            role="button" aria-expanded="false"
+                                            aria-controls="{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}">
+                                            <i class="icon">
+                                                @include('layouts.icon-main')
+                                                @yield($_item['role_icon'])
+                                            </i>
+                                            <span class="item-name">{{ $_item['role_name'] }}</span>
+                                            <i class="right-icon">
+
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </i>
+                                        </a>
+                                        <ul class="sub-nav collapse"
+                                            id="{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}"
+                                            data-bs-parent="#sidebar-menu">
+                                            @foreach ($_item['role_routes'] as $_route)
+                                                <li class="nav-item">
+                                                    <a class="nav-link {{ request()->routeIs($_route[1]) ? 'active' : '' }}"
+                                                        href="{{ route($_route[1]) }}">
+                                                        <i class="icon">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="10"
+                                                                viewBox="0 0 24 24" fill="currentColor">
+                                                                <g>
+                                                                    <circle cx="12" cy="12" r="8" fill="currentColor">
+                                                                    </circle>
+                                                                </g>
+                                                            </svg>
+                                                        </i>
+                                                        <i class="sidenav-mini-icon"> H </i>
+                                                        <span class="item-name">{{ $_route[0] }}</span>
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </li>
+                                @endif
+
+                            @endif
                             @if ($_item['role_id'] == $role->id)
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="collapse"
@@ -1190,6 +1243,7 @@
                                     </ul>
                                 </li>
                             @endif
+
 
                         @endforeach
                     @endforeach
