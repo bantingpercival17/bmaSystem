@@ -13,12 +13,12 @@ Route::prefix('administrator')->group(function () {
     Route::get('/students', [AdministratorController::class, 'student_view'])->name('admin.students'); // View Students
     Route::post('/students/imports', [AdministratorController::class, 'student_imports']); // Import Student Details
     /* Accounts */
-    Route::get('/accounts', [AdministratorController::class, 'account_view']); // View Accounts
+    Route::get('/accounts', [AdministratorController::class, 'account_view'])->name('admin.accounts'); // View Accounts
     Route::post('/accounts', [AdministratorController::class, 'account_store']); // Store Account
     Route::post('/accounts/profile-picture', [AdministratorController::class, 'account_upload_profile']);
     Route::post('/accounts/role', [AdministratorController::class, 'account_roles_store']);
     /* Subject and Curriculum Routes */
-    Route::get('/subjects', [AdministratorController::class, 'subject_view']); // Subject Curriculum
+    Route::get('/subjects', [AdministratorController::class, 'subject_view'])->name('admin.subjects'); // Subject Curriculum
     Route::post('/curriculum', [AdministratorController::class, 'curriculum_store']); // Store a Curriculum
     Route::get('/subjects/curriculum', [AdministratorController::class, 'curriculum_view']); // Curriculum and Department View
     Route::post('/subjects', [AdministratorController::class, 'subject_store']); // Store New Subjects
@@ -28,7 +28,7 @@ Route::prefix('administrator')->group(function () {
     Route::post('/subjects-handle', [AdministratorController::class, 'subject_import']); // Import Subject Handle
     /* Subject and Curriculum Routes */
     /* Classes and Sections */
-    Route::get('/classes', [AdministratorController::class, 'classes_view']); // Classes View
+    Route::get('/classes', [AdministratorController::class, 'classes_view'])->name('admin.sections'); // Classes View
     Route::post('/classes', [AdministratorController::class, 'classes_store']); // Store Section
     Route::get('/classes/section', [AdministratorController::class, 'class_section_view']); // Section View
     Route::get('/classes/section/add', [AdministratorController::class, 'section_add']); // Section Add
@@ -46,7 +46,7 @@ Route::prefix('administrator')->group(function () {
     Route::get('/qr-code/{data}', [AdministratorController::class, 'qr_generator']);
 
     // Attendance
-    Route::get('/attendance', [AdministratorController::class, 'attendance_view']); // Attendance View
+    Route::get('/attendance', [AdministratorController::class, 'attendance_view'])->name('admin.attendance'); // Attendance View
     Route::get('/attendance/report', [AdministratorController::class, 'attendance_report']); // Attendance Report
 
     // Employee

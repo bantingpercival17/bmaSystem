@@ -1053,7 +1053,7 @@
                             'role_id' => 1,
                             'role_name' => 'Administrator',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Enrollment', 'admin.enrollment'], ['Students', 'admin.students']],
+                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Enrollment', 'admin.enrollment'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections']],
                         ],
                         [
                             'role_id' => 2,
