@@ -41,7 +41,7 @@
                                                 <a class="nav-link py-0 d-flex align-items-center" href="#"
                                                     id="navbarDropdown3" role="button" data-bs-toggle="dropdown"
                                                     aria-expanded="false">
-                                                    <img src="{{ asset('assets/img/staff/' . Auth::user()->staff->profile_pic(Auth::user()->staff)) }}"
+                                                    <img src="{{ asset(Auth::user()->staff->profile_pic(Auth::user()->staff)) }}"
                                                         alt="User-Profile"
                                                         class="img-fluid avatar avatar-50 avatar-rounded ma">
                                                     {{ Auth::user()->name }}

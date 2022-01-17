@@ -31,7 +31,7 @@ class Staff extends Model
         } else {
             $_image = 'avatar.png';
         }
-        return $_image;
+        return '/assets/img/staff/' . $_image;
     }
     public function subjects_handles()
     {
@@ -39,7 +39,14 @@ class Staff extends Model
             ->where('academic_id', Crypt::decrypt(request()->input('_academic')))
             ->where('is_removed', false);
     }
-
+    public function subject_handles()
+    {
+        $_current_academic = AcademicYear::where('is_active', 1)->first();
+        $_academic = request()->input('_academic') ? $_current_academic->id : base64_decode(request()->input('_academic'));
+        return $this->hasMany(SubjectClass::class, 'staff_id')
+            ->where('academic_id', $_academic)
+            ->where('is_removed', false);
+    }
     // Staff Attendance
     public function attendance()
     {

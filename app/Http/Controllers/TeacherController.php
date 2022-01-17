@@ -211,7 +211,7 @@ class TeacherController extends Controller
         if (Auth::user()->email == 'k.j.cruz@bma.edu.ph') {
             $_current_academic =  $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : AcademicYear::where('is_active', 1)->first();
             $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
-            return view('teacher\department-head\grade\grade_submission', compact('_current_academic', '_academics'));
+            return view('teacher\department-head\grade\grade_submission', compact('_current_academic', '_academics','_staffs'));
         }
         return view('teacher.submission_view', compact('_staffs', '_academics'));
     }

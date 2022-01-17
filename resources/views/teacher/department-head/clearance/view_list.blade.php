@@ -50,13 +50,27 @@ $_title = 'Semestral Clearance';
                                     <tr>
                                         <td>
                                             <a
-                                                href="{{ route('onboard.midshipman') }}?_midshipman={{ base64_encode($_data->student_id) }}">
+                                                href="{{-- {{ route('teacher.student-clearance') }} --}}?_midshipman={{ base64_encode($_data->student_id) }}">
                                                 {{ strtoupper($_data->last_name . ', ' . $_data->first_name) }}
                                             </a>
                                         </td>
                                         @foreach ($_section->subject_class as $_class)
                                             <td>
-                                                {{ $_data->clearance($_class->id) ? ($_data->clearance($_class->id)->is_approved == 1 ? 'CLEARED' : 'NOT CLEARED') : '-' }}
+                                                <div class="form-check d-block ">
+                                                    @if ($_data->clearance($_class->id))
+                                                        @if ($_data->clearance($_class->id)->is_approved == 1)
+                                                            <input class="form-check-input" type="checkbox" checked
+                                                                disabled>
+                                                        @else
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="flexCheckChecked-3-" name="data[][e_clearance]"
+                                                                value="{{ $_data->id }}">
+                                                        @endif
+                                                    @else
+                                                        <span class="text-danger"><b>-</b></span>
+                                                    @endif
+                                                </div>
+                                               {{--  {{ $_data->clearance($_class->id) ? ($_data->clearance($_class->id)->is_approved == 1 ? 'CLEARED' : 'NOT CLEARED') : '' }} --}}
                                             </td>
                                             {{-- <th>{{ $_class->curriculum_subject->subject->subject_code }}</th> --}}
                                         @endforeach
