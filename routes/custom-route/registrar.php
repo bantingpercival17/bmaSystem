@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('registrar')->group(function () {
     // Dashboard
-    Route::get('/', [RegistrarController::class, 'index']);
+    Route::get('/', [RegistrarController::class, 'index'])->name('registrar.dashboard');
 
-
+    Route::get('/dashboard', [RegistrarController::class, 'index'])->name('registrar.dashboard');
     // Applicants
 
     // Subjects
@@ -19,7 +19,7 @@ Route::prefix('registrar')->group(function () {
     Route::post('/subjects/curriculum', [RegistrarController::class, 'curriculum_subject_store']); // Store Curriculum Subject
 
     // Enrollment
-
+    Route::get('/', [RegistrarController::class, 'index'])->name('registrar.enrollment');
     // Student Profile
     Route::get('/student-porfile', [RegistrarController::class, 'student_list_view']); // Student List View
     Route::get('/students/view', [RegistrarController::class, 'student_profile_view']);

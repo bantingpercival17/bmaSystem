@@ -1065,7 +1065,7 @@
                             'role_id' => 3,
                             'role_name' => 'Registrar',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'administrative.dashboard'], ['Enrollment', 'admin.enrollment']],
+                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment']],
                         ],
                         [
                             'role_id' => 4,
@@ -1107,6 +1107,9 @@
                     
                 @endphp
                 <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
+
+
+
                     @foreach ($_side_nav as $_item)
                         @if ($_item['role_id'] == 0)
                             <li class="nav-item">
