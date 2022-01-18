@@ -1,28 +1,5 @@
 @extends('layouts.app-main')
 @section('page-title', 'Accounts')
-@section('js')
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        @if (Session::has('success'))
-            Swal.fire({
-            title: 'Complete!',
-            text:"{{ session('success') }}",
-            icon: 'success',
-            confirmButtonText: 'Okay'
-            })
-            /* toastr.success("{{ session('message') }}") */
-        @endif
-        var message = "<?php echo session('reset-password'); ?>"
-        @if (Session::has('reset-password'))
-            Swal.fire({
-            title: 'Complete!',
-            text:/* "{{ session('reset-password') }}" */ message,
-            icon: 'success',
-            confirmButtonText: 'Okay'
-            })
-        @endif
-    </script>
-@endsection
 @section('page-content')
     <div class="card">
         <div class="card-header d-flex justify-content-between">

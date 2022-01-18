@@ -75,6 +75,27 @@
 
     <!-- App Script -->
     <script src="{{ asset('resources/js/gigz.js') }}" defer></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (Session::has('success'))
+            Swal.fire({
+            title: 'Complete!',
+            text:"{{ session('success') }}",
+            icon: 'success',
+            confirmButtonText: 'Okay'
+            })
+            /* toastr.success("{{ session('message') }}") */
+        @endif
+        var message = "<?php echo session('reset-password'); ?>"
+        @if (Session::has('reset-password'))
+            Swal.fire({
+            title: 'Complete!',
+            text:/* "{{ session('reset-password') }}" */ message,
+            icon: 'success',
+            confirmButtonText: 'Okay'
+            })
+        @endif
+    </script>
     @yield('js')
 </body>
 
