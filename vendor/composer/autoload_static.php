@@ -752,6 +752,7 @@ class ComposerStaticInitad9a3fefd2e4c6a7edf47485ac1509a3
         'App\\Models\\SubjectClass' => __DIR__ . '/../..' . '/app/Models/SubjectClass.php',
         'App\\Models\\TrainingCertificates' => __DIR__ . '/../..' . '/app/Models/TrainingCertificates.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Models\\UserPasswordReset' => __DIR__ . '/../..' . '/app/Models/UserPasswordReset.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',

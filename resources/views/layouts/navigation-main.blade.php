@@ -49,11 +49,9 @@
                                                 <ul class="dropdown-menu  dropdown-menu-lg-end"
                                                     aria-labelledby="navbarDropdown3">
                                                     <li><a class="dropdown-item"
-                                                            href="../dashboard/app/user-profile.html">My
+                                                            href="{{ route('employee.profile') }}">My
                                                             Profile</a></li>
-                                                    <li><a class="dropdown-item"
-                                                            href="../dashboard/app/user-privacy-setting.html">Privacy
-                                                            Setting</a></li>
+
                                                     <li>
                                                         <hr class="dropdown-divider">
                                                     </li>

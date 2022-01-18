@@ -51,4 +51,5 @@ Route::prefix('administrator')->group(function () {
 
     // Employee
     Route::get('/accounts/view', [AdministratorController::class, 'employee_profile']);
+    Route::post('/accounts/reset-password', [AdministratorController::class, 'employee_reset_password'])->name('admin.reset-password');
 });

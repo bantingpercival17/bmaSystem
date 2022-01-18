@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EmployeeAttendance;
 use App\Models\Staff;
 use App\Models\User;
+use App\Models\UserPasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -12,6 +13,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Validation\Rules;
 
 class EmployeeController extends Controller
 {
@@ -180,13 +182,7 @@ class EmployeeController extends Controller
     {
         $_staff = Auth::user()->staff;
         $_attendance = EmployeeAttendance::where('staff_id', $_staff->id)->get();
-        //return $_attendance;
         return view('employee.attendance_view_main', compact('_attendance'));
-        /* if (Auth::user()->email == 'p.banting@bma.edu.ph') {
-            return view('employee.attendance_view_main', compact('_attendance'));
-        } else {
-            return view('employee.attendance_view', compact('_attendance'));
-        } */
     }
     public function attendance_store(Request $_request)
     {
@@ -208,20 +204,6 @@ class EmployeeController extends Controller
             )),
             date('Y-m-d H:i:s'),
         );
-        //return base64_encode($_staff_details);
-        /*   $_email = User::where('email', $_request->employee)->first();
-        EmployeeAttendance::create(array(
-            'staff_id' => $_email->staff->id,
-            'description' => json_encode(array(
-                'body_temprature' => $_request->body_temp,
-                'have_any' => $_request->question1,
-                'experience' =>  $_request->question2,
-                'positive' => $_request->question3,
-                'gatekeeper_in' => Auth::user()->name
-
-            )),
-            'time_in' => date('Y-m-d H:i:s'),
-        )); */
         $_data = json_encode($_staff_details);
         $_data = base64_encode($_data);
         return view('employee.generate_qr_code', compact('_data'));
@@ -264,5 +246,26 @@ class EmployeeController extends Controller
             EmployeeAttendance::create($_staff_);
             return back()->with('success', 'Stay Safe at Home');
         }
+    }
+    public function employee_profile_view()
+    {
+        return view('employee.profile.view');
+    }
+    public function account_change_password(Request $_request)
+    {
+        $_request->validate([
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+        $_user = Auth::user();
+        $_user->password = Hash::make($_request->password);
+        $_user->save();
+        UserPasswordReset::create([
+            'user_id' => $_user->id,
+            'password_string' => $_request->password,
+            'is_status' => 'change-password',
+            'is_removed' => false,
+        ]);
+
+        return back()->with('reset-password', 'Successsfully Change your Password');
     }
 }

@@ -86,6 +86,7 @@ return array(
     'App\\Models\\SubjectClass' => $baseDir . '/app/Models/SubjectClass.php',
     'App\\Models\\TrainingCertificates' => $baseDir . '/app/Models/TrainingCertificates.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
+    'App\\Models\\UserPasswordReset' => $baseDir . '/app/Models/UserPasswordReset.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',
     'App\\Providers\\BroadcastServiceProvider' => $baseDir . '/app/Providers/BroadcastServiceProvider.php',

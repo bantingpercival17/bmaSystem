@@ -33,6 +33,8 @@ Route::prefix('employee')->group(function () {
     Route::post('/attendance/qr_code', [EmployeeController::class, 'attendance_generate_qr']);
     Route::post('/attendance/qr_code/download', [EmployeeController::class, 'download_qr_code'])->name('employee.download-qrcode');
     Route::post('/attendance/wfh', [EmployeeController::class, 'attendance_wfh'])->name('employee.work-from-home');
+    Route::get('/profile', [EmployeeController::class, 'employee_profile_view'])->name('employee.profile'); // Profile View
+    Route::post('/account/change-password', [EmployeeController::class, 'account_change_password'])->name('employee.change-password'); // Profile View
 });
 
 

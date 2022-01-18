@@ -23,6 +23,7 @@ use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
 use App\Models\User;
+use App\Models\UserPasswordReset;
 use App\Report\AttendanceSheetReport;
 use App\Report\StudentListReport;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Auth\Events\PasswordReset;
 
 class AdministratorController extends Controller
 {
@@ -357,6 +359,22 @@ class AdministratorController extends Controller
         return $pdf->setPaper([0, 0, 285.00, 250.00], 'landscape')->stream($file_name . '.pdf');
     }
 
+    public function employee_reset_password(Request $_request)
+    {
+        $_staff = Staff::find(base64_decode($_request->_employee));
+        $length = 5;
+        $_password = 'BMA-' . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+        $_staff->user->password = HasH::make($_password);
+        $_staff->user->save();
+        UserPasswordReset::create([
+            'user_id' => $_staff->user->id,
+            'password_string' => $_password,
+            'is_status' => 'reset-password',
+            'is_removed' => false,
+        ]);
+
+        return back()->with('reset-password', 'Successsfully Password Reset : ' . $_password);
+    }
     // Attendance
     public function attendance_view()
     {
