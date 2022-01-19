@@ -68,4 +68,13 @@ class Staff extends Model
     {
         return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('created_at', 'like', '%' . $_date . '%')->first();
     }
+    public function current_academic()
+    {
+        $_academic = request()->input('_academic') ? AcademicYear::find(base64_decode(request()->input('_academic'))) : AcademicYear::where('is_active', 1)->first();
+        return $_academic;
+    }
+    public function academics()
+    {
+        return AcademicYear::where('is_removed', false)->orderBy('id', 'Desc')->get();
+    }
 }

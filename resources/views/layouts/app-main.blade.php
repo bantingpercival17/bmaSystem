@@ -39,6 +39,9 @@
             @if (request()->is('teacher/subjects/*'))
                 @yield('page-content')
             @else
+                @if (request()->is('registrar/enrollment*'))
+                    @yield('sub-navigation')
+                @endif
                 <div class="conatiner-fluid content-inner mt-6 py-0">
                     @yield('page-content')
                 </div>

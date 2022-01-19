@@ -63,6 +63,7 @@ return array(
     'App\\Models\\Documents' => $baseDir . '/app/Models/Documents.php',
     'App\\Models\\EducationalDetails' => $baseDir . '/app/Models/EducationalDetails.php',
     'App\\Models\\EmployeeAttendance' => $baseDir . '/app/Models/EmployeeAttendance.php',
+    'App\\Models\\EnrollmentApplication' => $baseDir . '/app/Models/EnrollmentApplication.php',
     'App\\Models\\EnrollmentAssessment' => $baseDir . '/app/Models/EnrollmentAssessment.php',
     'App\\Models\\GradeComputed' => $baseDir . '/app/Models/GradeComputed.php',
     'App\\Models\\GradeEncode' => $baseDir . '/app/Models/GradeEncode.php',

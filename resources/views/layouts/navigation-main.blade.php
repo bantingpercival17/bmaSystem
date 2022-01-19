@@ -1,5 +1,5 @@
 @section('navigation')
-    <nav class="nav navbar navbar-expand-lg navbar-light iq-navbar py-lg-0">
+    <nav class="nav navbar navbar-expand-lg navbar-light iq-navbar py-lg-0 nav-fixed-top">
         <div class="container-fluid navbar-inner">
             <a href="/" class="navbar-brand">
                 <span class="ms-1 font-weight-bold"><b>@yield('page-title')</b></span>
@@ -1063,7 +1063,7 @@
                             'role_id' => 3,
                             'role_name' => 'Registrar',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment']],
+                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students']],
                         ],
                         [
                             'role_id' => 4,
@@ -1257,4 +1257,34 @@
 
 
     </aside>
+@endsection
+
+@section('sub-navigation')
+    <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
+        <div class="dropdown mt-3 mb-2 w-100">
+            <a class=" dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false"
+                aria-expanded="false">
+                <span class="text-muted">Academic Year :</span>
+                <b>{{ Auth::user()->staff->current_academic()->semester }} |
+                    {{ Auth::user()->staff->current_academic()->school_year }}</b>
+            </a>
+            <ul class="dropdown-menu w-100" data-popper-placement="bottom-start">
+                @php
+                    $_url = route('registrar.enrollment');
+                    /* $_url = request()->is('student/academic/grades') ? route('academic.grades') : $_url;
+                     $_url = request()->is('student/academic/clearance') ? route('academic.clearance') : $_url; */
+                @endphp
+                @if (Auth::user()->staff->academics()->count() > 0)
+                    @foreach (Auth::user()->staff->academics() as $_academic)
+
+                        <li>
+                            <a class="dropdown-item "
+                                href="{{ $_url }}?_academic={{ base64_encode($_academic->id) }}">
+                                {{ $_academic->semester }} | {{ $_academic->school_year }}</a>
+                        </li>
+                    @endforeach
+                @endif
+            </ul>
+        </div>
+    </nav>
 @endsection

@@ -64,7 +64,7 @@ class StudentDetails extends Model
         if ($_count > 1) {
             $_students = StudentDetails::where('is_removed', false)
                 ->where('last_name', 'like', "%" . $_student[0] . "%")
-                ->where('first_name', 'like', "%" . $_student[1] . "%")
+                ->where('first_name', 'like', "%" . trim($_student[1]) . "%")
                 ->orderBy('last_name', 'asc')->get();
         } else {
             $_students = StudentDetails::where('is_removed', false)
@@ -72,6 +72,14 @@ class StudentDetails extends Model
                 ->orderBy('last_name', 'asc')->get();
         }
         return $_students;
+    }
+    /* Enrollment Application */
+    public function enrollment_application()
+    {
+        $_academic = request()->input('_academic') ? AcademicYear::find(base64_decode(request()->input('_academic'))) : AcademicYear::where('is_active', 1)->first();
+        //$_students = $this->hasMany(EnrollmentApplication::class, 'student_id')->where('academic_id', $_academic->id);
+        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')->join('enrollment_applications as ea', 'ea.student_id', 'student_details.id')->where('ea.academic_id', $_academic->id)->where('is_approved', null);
+        return $_students->get();
     }
     /* Grading Query */
     public function subject_score($_data)

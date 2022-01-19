@@ -27,6 +27,17 @@ class RegistrarController extends Controller
         return view('registrar.dashboard.view');
     }
 
+    /* Enrollment Panel */
+    public function enrollment_view(Request $_request)
+    {
+        $_courses = CourseOffer::where('is_removed', false)->get();
+        $_student_detials = new StudentDetails();
+        // return $_student_detials->enrollment_application();
+        // $_recent_enrollee = EnrollmentApplication::where('academic_id',Auth::user()->current_academic()->id)->where('is_approved',false)->get();
+        $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application();
+        return view('registrar.enrollment.view', compact('_courses', '_students'));
+    }
+
 
     public function subject_view()
     {
