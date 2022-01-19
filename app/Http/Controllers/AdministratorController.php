@@ -65,7 +65,11 @@ class AdministratorController extends Controller
         //$_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
         return view('administrator.student.view', compact('_academics', '_course', '_students'));
     } /* View Student  */
-
+    public function student_profile(Request $_request)
+    {
+        $_student = StudentDetails::find(base64_decode($_request->_s));
+        return view('administrator.student.profile', compact('_student'));
+    }
     public function student_imports(Request $_request)
     {
         $_files = json_decode(file_get_contents($_request->file('_file')));

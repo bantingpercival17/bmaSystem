@@ -53,24 +53,8 @@ $_title = 'Students';
         <div class="col-md-7">
             @if (count($_students) > 0)
                 @foreach ($_students as $_student)
-
-                    {{-- <div class="card card-primary">
-                        <div class="card-body box-profile">
-                            <span
-                                class="text-success"><b>{{ $_student->account ? $_student->account->student_number : '-' }}</b></span>
-                            <a href="/administrator/students/view?_s={{ base64_encode($_student->id) }}">
-                                <h4 class="text-info">
-                                    <b> | {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }} </b>
-                                </h4>
-                            </a>
-                            <span
-                                class="text-success"><b>{{ $_student->account ? $_student->account->campus_email : '-' }}</b></span><br>
-                            <label
-                                class="text-muted">{{ $_student->enrollment_assessment->course->course_name }}</label>
-                        </div>
-                    </div> --}}
                     @if ($_student)
-                        <a href="/administrator/students/view?_s={{ /* base64_encode */($_student->id) }}">
+                        <a href="/administrator/students/view?_s={{ base64_encode($_student->id) }}">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">

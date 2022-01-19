@@ -11,6 +11,7 @@ Route::prefix('administrator')->group(function () {
     Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
     /* Students */
     Route::get('/students', [AdministratorController::class, 'student_view'])->name('admin.students'); // View Students
+    Route::get('/students/view', [AdministratorController::class, 'student_profile'])->name('admin.student-profile');
     Route::post('/students/imports', [AdministratorController::class, 'student_imports']); // Import Student Details
     /* Accounts */
     Route::get('/accounts', [AdministratorController::class, 'account_view'])->name('admin.accounts'); // View Accounts
