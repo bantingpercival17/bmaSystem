@@ -140,7 +140,29 @@ class StudentDetails extends Model
         $_lab_grade_final = $this->lab_grade([$_data, 'finals']);
         $_total_final_grade = $_lab_grade_final > 0 ? ($_lec_grade_final + $_lab_grade_final) * .5 : (($_lec_grade_final / .4) * .5);
 
-
+        $_final_grade = 0;
+        $midtermGradeLecture = $this->lec_grade([$_data, 'midterm']);
+        $midtermGradeLaboratory = $this->lab_grade([$_data, 'midterm']);;
+        $finalGradeLecture = $this->lec_grade([$_data, 'finals']);
+        $finalGradeLaboratory = $this->lab_grade([$_data, 'finals']);
+        if ($_period == 'midterm') {
+            if ($midtermGradeLaboratory > 0) {
+                $_final_grade = $midtermGradeLecture + $midtermGradeLaboratory; // Midterm Grade Formula With Laboratory
+            } else {
+                $_final_grade = $midtermGradeLecture / .4; // Midterm Grade Formula without Laboratory
+            }
+        } else {
+            if ($finalGradeLaboratory > 0) {
+                if ($midtermGradeLaboratory > 0) {
+                    $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                } else {
+                    $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                }
+            } else {
+                $_final_grade = (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture / .4) * 5);
+            }
+        }
+        return $_final_grade;
 
         return  $_period == 'midterm' ?
             // MIDTERM FORUMLA
