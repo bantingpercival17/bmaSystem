@@ -20,9 +20,11 @@ Route::prefix('registrar')->group(function () {
 
     // Enrollment
     Route::get('/enrollment', [RegistrarController::class, 'enrollment_view'])->name('registrar.enrollment');
+    Route::get('/enrollment/student-clearance', [RegistrarController::class, 'student_clearance'])->name('registrar.student-clearance');
     // Student Profile
     Route::get('/student-profile', [RegistrarController::class, 'student_list_view'])->name('registrar.students'); // Student List View
     Route::get('/student-profile/view', [RegistrarController::class, 'student_profile_view']);
+    Route::get('/student-profile/student-information-report', [RegistrarController::class, 'student_information_report'])->name('registrar.student-information-report');
 
     // Section 
     Route::get('/sections', [RegistrarController::class, 'section_view']); // Section View

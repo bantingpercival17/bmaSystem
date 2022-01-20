@@ -7,12 +7,15 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title-report')</title>
     <style>
-        @page {  margin: 100px 25px; }
+        @page {
+            margin: 100px 25px;
+        }
+
         * {
             padding: 0;
             margin: 0;
             font-family: "Times New Roman", Times, serif;
-            
+
         }
 
         header {
@@ -32,13 +35,6 @@
             font-family: "Times New Roman", Times, serif;
         }
 
-        /* footer {
-            position: absolute;
-            bottom: 15px;
-            left: 0px;
-            right: 0px;
-            text-align: center
-        } */
         footer {
             position: fixed;
             bottom: 30px;
@@ -161,6 +157,30 @@
             font-size: 12px;
             padding-left: 10px;
             margin-top: -10px
+        }
+
+        .form-rg-table {
+            font-family: "Times New Roman", Times, serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .form-rg-table td,
+        .form-rg-table th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border: 1px solid rgb(0, 0, 0);
+            font-size: 10px;
+
+        }
+
+        .text-header {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .text-fill-in{
+            text-decoration: underline;
+            text-align: center;
         }
 
     </style>

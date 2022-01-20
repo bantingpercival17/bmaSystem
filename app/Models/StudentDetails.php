@@ -45,9 +45,17 @@ class StudentDetails extends Model
     {
         return $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->orderBy('id', 'desc');
     }
+    public function enrollment_history()
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->orderBy('id', 'desc');
+    }
     public function account()
     {
         return $this->hasOne(StudentAccount::class, 'student_id');
+    }
+    public function educational_background()
+    {
+        return $this->hasMany(EducationalDetails::class, 'student_id');
     }
     public function section($_academic)
     {
@@ -140,7 +148,7 @@ class StudentDetails extends Model
                 (($_lec_grade_midterm + $_lab_grade_midterm)) // FORMULA FOR ENCODED LABORATORY : ((Lecture + Laboratory) * 50%)
                 : ($_lec_grade_midterm / .4))
             // FINALS FORMULA
-            : ($_lab_grade_midterm > 0 ?  // IF THE GRADE OF LABORATORY IS ENCODED IN MIDTERM
+            : ($_lab_grade_final > 0 ?  // IF THE GRADE OF LABORATORY IS ENCODED IN FINALS
 
                 (($_lec_grade_midterm + $_lab_grade_midterm) * .5) + $_total_final_grade  // FORMULA FOR (MLEC+MLAB)*.5 + (FLEC+FLAB)*.5
                 : (($_lec_grade_midterm / .4) * .5) + $_total_final_grade);

@@ -6,11 +6,13 @@ use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\CurriculumSubject;
+use App\Models\EnrollmentAssessment;
 use App\Models\Section;
 use App\Models\StudentDetails;
 use App\Models\Subject;
 use App\Models\SubjectClass;
 use App\Models\User;
+use App\Report\Students\StudentReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -32,13 +34,17 @@ class RegistrarController extends Controller
     {
         $_courses = CourseOffer::where('is_removed', false)->get();
         $_student_detials = new StudentDetails();
-        // return $_student_detials->enrollment_application();
-        // $_recent_enrollee = EnrollmentApplication::where('academic_id',Auth::user()->current_academic()->id)->where('is_approved',false)->get();
         $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application();
         return view('registrar.enrollment.view', compact('_courses', '_students'));
     }
-
-
+    public function student_clearance(Request $_request)
+    {
+        $_student = StudentDetails::find(base64_decode($_request->_student));
+        $_academic = $_student->enrollment_assessment->academic_id;
+        $_section = $_student->section($_academic)->first();
+        $_subject_class = $_section ? SubjectClass::where('section_id', $_section->section_id)->where('is_removed', false)->get() : [];
+        return view('registrar.enrollment.clearance', compact('_student', '_subject_class'));
+    }
     public function subject_view()
     {
         $_curriculum = Curriculum::where('is_removed', false)->get();
@@ -151,7 +157,12 @@ class RegistrarController extends Controller
         $_course = CourseOffer::where('is_removed', false)->get();
         return view('registrar.student.student_profile', compact('_student', '_course'));
     }
-
+    public function student_information_report(Request $_request)
+    {
+        // $_data = EnrollmentAssessment::find(base64_decode($_request->_assessment));
+        $_student_report = new StudentReport();;
+        return $_student_report->enrollment_information(base64_decode($_request->_assessment));
+    }
 
     // Section Panel 
     public function section_view(Request $_request)

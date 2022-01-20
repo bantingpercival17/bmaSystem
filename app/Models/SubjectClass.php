@@ -35,4 +35,8 @@ class SubjectClass extends Model
     {
         return $this->hasOne(GradeSubmission::class, 'subject_class_id')->latest();
     }
+    public function e_clearance()
+    {
+        return $this->hasOne(StudentClearance::class, 'subject_class_id')->where('student_id', base64_decode(request()->input('_student')));
+    }
 }

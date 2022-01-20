@@ -29,9 +29,10 @@ $_title = 'Enrollment';
                 <h4 class="title-bt fw-bolder">
                     {{ request()->input('_student') ? 'Search Result: ' . request()->input('_student') : 'Recent Enrollee' }}
                 </h4>
-                {{-- <a href="./product.html" class="text-black pt-2">See All
-                    <i class="fas fa-long-arrow-alt-right"></i>
-                </a> --}}
+                <span href="./product.html" class="text-black pt-2">
+                    No. Result: <b>{{ count($_students) }}</b>
+                </span>
+
             </div>
             <div class="search-container">
                 @if (count($_students) > 0)
@@ -55,12 +56,13 @@ $_title = 'Enrollment';
                                             </span>
                                             <br>
                                             <span>
-                                                YEAR LEVEL | SECTION
+                                                {{ $_student ? $_student->enrollment_assessment->year_and_section($_student->enrollment_assessment) : '- | -' }}
                                             </span>
 
                                         <div class="row">
                                             <div class="col-md">
-                                                <button class="btn btn-primary btn-sm w-100">View</button>
+                                                <a href="{{ route('registrar.student-clearance') }}?_student={{ base64_encode($_student->id) }}"
+                                                    class="btn btn-primary btn-sm w-100">View</a>
                                             </div>
                                             <div class="col-md">
                                                 <button class="btn btn-info btn-sm text-white w-100">Enroll</button>

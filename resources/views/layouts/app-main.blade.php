@@ -33,9 +33,9 @@
         @yield('side-navigation')
         <main class="main-content">
             <div class="position-relative">
-
                 @yield('navigation')
             </div>
+            {{-- @yield('extra-navigation') --}}
             @if (request()->is('teacher/subjects/*'))
                 @yield('page-content')
             @else

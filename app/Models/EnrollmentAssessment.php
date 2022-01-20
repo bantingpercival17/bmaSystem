@@ -22,6 +22,10 @@ class EnrollmentAssessment extends Model
     {
         return $this->belongsTo(CourseOffer::class, 'course_id');
     }
+    public function student()
+    {
+        return $this->belongsTo(StudentDetails::class, 'student_id');
+    }
     public function payment_assessments()
     {
         return $this->hasOne(PaymentAssessment::class, 'enrollment_id');
@@ -29,5 +33,17 @@ class EnrollmentAssessment extends Model
     public function academic()
     {
         return $this->belongsTo(AcademicYear::class, 'academic_id');
+    }
+    public function year_and_section($_data)
+    {
+        $_year_level = $_data->year_level == '11' ? 'Grade 11' : '-';
+        $_year_level = $_data->year_level == '12' ? 'Grade 12' : $_year_level;
+        $_year_level = $_data->year_level == '4' ? '4th Class' : $_year_level;
+        $_year_level = $_data->year_level == '3' ? '3rd Class' : $_year_level;
+        $_year_level = $_data->year_level == '2' ? '2nd Class' : $_year_level;
+        $_year_level = $_data->year_level == '1' ? '1st Class' : $_year_level;
+        $_student_section = $_data->student->section($_data->academic_id)->first();
+        $_section = $_student_section ? $_student_section->section->section_name : '-';
+        return $_year_level . " | " . $_section;
     }
 }
