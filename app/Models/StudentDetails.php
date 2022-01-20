@@ -138,7 +138,7 @@ class StudentDetails extends Model
         $_lab_grade_midterm = $this->lab_grade([$_data, 'midterm']);;
         $_lec_grade_final = $this->lec_grade([$_data, 'finals']);
         $_lab_grade_final = $this->lab_grade([$_data, 'finals']);
-        $_total_final_grade = ($_lec_grade_final + $_lab_grade_final) * .5;
+        $_total_final_grade = $_lab_grade_final > 0 ? ($_lec_grade_final + $_lab_grade_final) * .5 : (($_lec_grade_final / .4) * .5);
 
 
 
@@ -150,8 +150,8 @@ class StudentDetails extends Model
             // FINALS FORMULA
             : ($_lab_grade_final > 0 ?  // IF THE GRADE OF LABORATORY IS ENCODED IN FINALS
 
-                (($_lec_grade_midterm + $_lab_grade_midterm) * .5) + $_total_final_grade  // FORMULA FOR (MLEC+MLAB)*.5 + (FLEC+FLAB)*.5
-                : (($_lec_grade_midterm / .4) * .5) + $_total_final_grade);
+                (($_lec_grade_midterm + $_lab_grade_midterm) * .5) + (($_lec_grade_final + $_lab_grade_final) * .5) // LABOARTORY FORMULA   // FORMULA FOR (MLEC+MLAB)*.5 + (FLEC+FLAB)*.5
+                : (($_lec_grade_midterm / .4) * .5) + (($_lec_grade_final / .4) * .5)); // LECTURE FORMULA
     }
     public function percentage_grade($_grade)
     {
