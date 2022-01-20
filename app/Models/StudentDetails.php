@@ -134,7 +134,7 @@ class StudentDetails extends Model
     }
     public function final_grade($_data, $_period)
     {
-        
+
         $_final_grade = 0;
         $midtermGradeLecture = $this->lec_grade([$_data, 'midterm']);
         $midtermGradeLaboratory = $this->lab_grade([$_data, 'midterm']);;
@@ -154,7 +154,7 @@ class StudentDetails extends Model
                     $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
                 }
             } else {
-                $_final_grade = (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture / .4) * 5);
+                $_final_grade = (($midtermGradeLecture / .4)) + (($finalGradeLecture / .4));
             }
         }
         return $_final_grade;
