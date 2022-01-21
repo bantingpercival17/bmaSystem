@@ -110,7 +110,7 @@
                             'role_id' => 1,
                             'role_name' => 'Administrator',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Enrollment', 'admin.enrollment'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections']],
+                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Enrollment', 'admin.enrollment'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting']],
                         ],
                         [
                             'role_id' => 2,
@@ -140,14 +140,9 @@
                             'role_id' => 6,
                             'role_name' => 'Teacher',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Subjects', 'teacher.subject-list'], ['Previous Subject', 'teacher.previous-subjects']],
+                            'role_routes' => [['Subjects', 'teacher.subject-list']],
                         ],
-                        [
-                            'role_id' => 6.5,
-                            'role_name' => 'Department Head',
-                            'role_icon' => 'icon-job',
-                            'role_routes' => [['Grade Submission', 'department-head.grade-submission'], ['E-Clearance', 'department.e-clearance']],
-                        ],
+                    
                         [
                             'role_id' => 7,
                             'role_name' => 'Maintenance',
@@ -159,6 +154,12 @@
                             'role_name' => 'Executive',
                             'role_icon' => 'icon-job',
                             'role_routes' => [['Dashboard', 'administrative.dashboard'], ['Enrollment', 'admin.enrollment']],
+                        ],
+                        [
+                            'role_id' => 9,
+                            'role_name' => 'Department Head',
+                            'role_icon' => 'icon-job',
+                            'role_routes' => [['Grade Submission', 'department-head.grade-submission'], ['E-Clearance', 'department.e-clearance']],
                         ],
                     ];
                     
@@ -330,6 +331,8 @@
             <ul class="dropdown-menu w-100" data-popper-placement="bottom-start">
                 @php
                     $_url = route('registrar.enrollment');
+                    $_url = request()->is('teacher/subjects*') ? route('teacher.subject-list') : $_url;
+                    $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
                     /* $_url = request()->is('student/academic/grades') ? route('academic.grades') : $_url;
                      $_url = request()->is('student/academic/clearance') ? route('academic.clearance') : $_url; */
                 @endphp

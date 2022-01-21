@@ -37,9 +37,10 @@
             </div>
             {{-- @yield('extra-navigation') --}}
             @if (request()->is('teacher/subjects/*'))
+
                 @yield('page-content')
             @else
-                @if (request()->is('registrar/enrollment*'))
+                @if (request()->is('registrar/enrollment*') || request()->is('teacher/subjects*') || request()->is('department-head/grade-submission*'))
                     @yield('sub-navigation')
                 @endif
                 <div class="conatiner-fluid content-inner mt-6 py-0">

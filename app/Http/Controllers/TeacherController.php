@@ -28,17 +28,21 @@ class TeacherController extends Controller
         $this->middleware('auth');
         $this->middleware('teacher');
     }
-    public function index()
+    public function subject_list(Request $_request)
     {
         $_staff = Auth::user()->staff;
 
         $_academic = AcademicYear::where('is_active', 1)->first();
-        // Select * from subject_classes where staff_id = ? and academic_id = ? 
         $_subject = SubjectClass::where('staff_id', $_staff->id)
             ->where('academic_id', $_academic->id)
             ->where('is_removed', false)
             ->get();
         if (Auth::user()->email == 'k.j.cruz@bma.edu.ph') {
+            $_academic = $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : Auth::user()->staff->current_academic();
+            $_subject = SubjectClass::where('staff_id', $_staff->id)
+                ->where('academic_id', $_academic->id)
+                ->where('is_removed', false)
+                ->get();
             return view('teacher\dashboard\dasboard-main', compact('_subject'));
         } else {
             return view('teacher.dashboard', compact('_subject'));
@@ -187,13 +191,11 @@ class TeacherController extends Controller
     public function subject_grade_submission(Request $_request)
     {
         $_subject = SubjectClass::find(Crypt::decrypt($_request->_subject));
-        //return $_subject->section->course_id;
         GradeSubmission::create([
             'subject_class_id' => $_subject->id,
             'form' => $_request->_form,
             'period' => $_request->_period
         ]);
-        //return $_subject;
         //Mail::to('developer@bma.edu.ph')->bcc('it@bma.edu.ph')->send(new GradeSubmissionMail($_subject));
         return back()->with('message', "Grade Sudmitted");
     }
@@ -209,9 +211,7 @@ class TeacherController extends Controller
         $_staffs = Staff::where('department', Auth::user()->staff->department)->orderBy('last_name')->get();
 
         if (Auth::user()->email == 'k.j.cruz@bma.edu.ph') {
-            $_current_academic =  $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : AcademicYear::where('is_active', 1)->first();
-            $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
-            return view('teacher\department-head\grade\grade_submission', compact('_current_academic', '_academics','_staffs'));
+            return view('teacher\department-head\grade\grade_submission', compact('_staffs'));
         }
         return view('teacher.submission_view', compact('_staffs', '_academics'));
     }

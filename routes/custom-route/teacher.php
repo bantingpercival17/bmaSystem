@@ -4,8 +4,8 @@ use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('teacher')->group(function () {
-    Route::get('/', [TeacherController::class, 'index'])->name('teacher.subject-list');
-    Route::get('/subjects', [TeacherController::class, 'index'])->name('teacher.subject-list'); // Subject List View
+    Route::get('/', [TeacherController::class, 'subject_list'])->name('teacher.subject-list');
+    Route::get('/subjects', [TeacherController::class, 'subject_list'])->name('teacher.subject-list'); // Subject List View
     Route::get('/subjects/view', [TeacherController::class, 'subject_class_view'])->name('teacher.subject-view');
     Route::get('/subjects/grading-sheet', [TeacherController::class, 'subject_grading_view'])->name('teacher.grading-sheet'); // Subject Grading Sheet View
     Route::get('/subjects/grading-sheet-frame', [TeacherController::class, 'subject_grading_main_view'])->name('teacher.grading-sheet-main'); // Subject Grading Sheet View
@@ -26,4 +26,9 @@ Route::prefix('teacher')->group(function () {
     Route::get('/semestral-clearance', [TeacherController::class, 'e_clearance_view'])->name('department.e-clearance'); // List of Clearance
     Route::get('/semestral-clearance/view', [TeacherController::class, 'section_view_e_clearance'])->name('department.e-clearance-view'); // List of Clearance
 
+});
+
+
+Route::prefix('department-head')->group(function () {
+    Route::get('/grade-submission', [TeacherController::class, 'submission_view'])->name('department-head.grade-submission');
 });

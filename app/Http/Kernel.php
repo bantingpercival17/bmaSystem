@@ -72,5 +72,9 @@ class Kernel extends HttpKernel
         'executive' => \App\Http\Middleware\Executive::class,
         'onboard' => \App\Http\Middleware\OnboardTraining::class,
         'maintenance' => \App\Http\Middleware\Maintenance::class,
+        'department-head' => \App\Http\Middleware\DepartmentHead::class,
+        'dean' => \App\Http\Middleware\Dean::class,
+        'librarian' => \App\Http\Middleware\Librarian::class,
+
     ];
 }

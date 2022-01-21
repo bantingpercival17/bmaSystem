@@ -394,4 +394,35 @@ class AdministratorController extends Controller
 
         return $_report_pdf;
     }
+
+
+    /* Setting */
+    public function setting_view(Request $_request)
+    {
+        $_roles = Role::all();
+        $_academic = AcademicYear::where('is_removed', false)->orderBy('id', 'desc')->get();
+        return view('administrator.setting.view', compact('_roles', '_academic'));
+    }
+    // Academic 
+    public function store_academic(Request $_request)
+    {
+        AcademicYear::create([
+            'school_year' => $_request->_school_year,
+            'semester' => $_request->semester,
+            'is_removed'
+        ]);
+        return back()->with('success', 'Successfully Created');
+    }
+    // Roles
+    public function store_role(Request $_request)
+    {
+        $_details = array(
+            'name' => str_replace(' ', '-', strtolower($_request->_role_name)),
+            'display_name' => ucwords($_request->_role_name),
+            'description' => str_replace(' ', '-', strtolower($_request->_role_name)),
+        );
+        Role::create($_details);
+        return back()->with('success', 'Successfully Created');
+    }
+    // Department
 }
