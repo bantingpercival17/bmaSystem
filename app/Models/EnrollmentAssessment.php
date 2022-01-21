@@ -46,4 +46,12 @@ class EnrollmentAssessment extends Model
         $_section = $_student_section ? $_student_section->section->section_name : '-';
         return $_year_level . " | " . $_section;
     }
+    public function course_subjects($_assessment)
+    {
+        return CurriculumSubject::where('course_id', $_assessment->course_id)
+            ->where('curriculum_id', $_assessment->curriculum_id)
+            ->where('year_level', $_assessment->year_level)
+            ->where('semester', $_assessment->academic->semester)
+            ->get();
+    }
 }

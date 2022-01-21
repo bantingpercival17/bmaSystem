@@ -77,14 +77,10 @@ $_title = 'Enrollment';
                     </div>
 
                     <div class="tool-card">
-                        @if ($_student->enrollment_assessment->course_id == 3)
-                            <a href="?_student={{ base64_encode($_student->id) }}&_academic={{ $_student->enrollment_assessment->academic_id }}"
-                                class="btn btn-sm btn-primary">FORM
-                                RG-04</a>
-                        @else
-                            <a href="{{ route('registrar.student-information-report') }}?_assessment={{ base64_encode($_student->enrollment_assessment->id) }}"
-                                class="btn btn-sm btn-primary">FORM RG-03</a>
-                        @endif
+                        <a href="{{ route('registrar.student-information-report') }}?_assessment={{ base64_encode($_student->enrollment_assessment->id) }}"
+                            class="btn btn-sm btn-primary">
+                            {{ $_student->enrollment_assessment->course_id == 3 ? 'FORM RG-04' : 'FORM SHS RG-03' }}
+                        </a>
                     </div>
                 </div>
                 <div class="card-body p-3">

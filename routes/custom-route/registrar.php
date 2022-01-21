@@ -21,6 +21,7 @@ Route::prefix('registrar')->group(function () {
     // Enrollment
     Route::get('/enrollment', [RegistrarController::class, 'enrollment_view'])->name('registrar.enrollment');
     Route::get('/enrollment/student-clearance', [RegistrarController::class, 'student_clearance'])->name('registrar.student-clearance');
+    Route::post('/enrollment/assessment', [RegistrarController::class, 'enrollment_assessment'])->name('registrar.enrollment-assessment');
     // Student Profile
     Route::get('/student-profile', [RegistrarController::class, 'student_list_view'])->name('registrar.students'); // Student List View
     Route::get('/student-profile/view', [RegistrarController::class, 'student_profile_view']);

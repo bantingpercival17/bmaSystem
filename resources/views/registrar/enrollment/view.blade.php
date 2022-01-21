@@ -59,16 +59,24 @@ $_title = 'Enrollment';
                                                 {{ $_student ? $_student->enrollment_assessment->year_and_section($_student->enrollment_assessment) : '- | -' }}
                                             </span>
 
-                                        <div class="row">
-                                            <div class="col-md">
-                                                <a href="{{ route('registrar.student-clearance') }}?_student={{ base64_encode($_student->id) }}"
-                                                    class="btn btn-primary btn-sm w-100">View</a>
-                                            </div>
-                                            <div class="col-md">
-                                                <button class="btn btn-info btn-sm text-white w-100">Enroll</button>
-                                            </div>
-                                        </div>
+
+
                                         </p>
+                                        <form action="{{ route('registrar.enrollment-assessment') }}" method="post">
+                                            @csrf
+                                            <input type="hidden" name="_student"
+                                                value="{{ base64_encode($_student->id) }}">
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <a href="{{ route('registrar.student-clearance') }}?_student={{ base64_encode($_student->id) }}"
+                                                        class="btn btn-primary btn-sm w-100">View</a>
+                                                </div>
+                                                <div class="col-md">
+                                                    <button class="btn btn-info btn-sm text-white w-100">Enroll</button>
+                                                </div>
+                                            </div>
+                                        </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -103,8 +111,8 @@ $_title = 'Enrollment';
         <div class="col-md-4">
             @foreach ($_courses as $_course)
                 <div class="col-md">
-                    <div class="card  mb-xxl-0 iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50"
-                        data-iq-rotate="0" data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
+                    <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
+                        data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <h5 class="text-primary">

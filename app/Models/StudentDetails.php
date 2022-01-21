@@ -49,6 +49,10 @@ class StudentDetails extends Model
     {
         return $this->hasMany(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->orderBy('id', 'desc');
     }
+    public function enrollment_application()
+    {
+        return $this->hasOne(EnrollmentApplication::class, 'student_id');
+    }
     public function account()
     {
         return $this->hasOne(StudentAccount::class, 'student_id');
@@ -56,6 +60,10 @@ class StudentDetails extends Model
     public function educational_background()
     {
         return $this->hasMany(EducationalDetails::class, 'student_id');
+    }
+    public function parent_details()
+    {
+        return $this->hasOne(ParentDetails::class, 'student_id');
     }
     public function section($_academic)
     {
@@ -82,7 +90,7 @@ class StudentDetails extends Model
         return $_students;
     }
     /* Enrollment Application */
-    public function enrollment_application()
+    public function enrollment_application_list()
     {
         $_academic = request()->input('_academic') ? AcademicYear::find(base64_decode(request()->input('_academic'))) : AcademicYear::where('is_active', 1)->first();
         //$_students = $this->hasMany(EnrollmentApplication::class, 'student_id')->where('academic_id', $_academic->id);

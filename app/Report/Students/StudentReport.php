@@ -18,7 +18,7 @@ class StudentReport
         $_enrollment_assessment = EnrollmentAssessment::find($_assessment_id);
         $_student = $_enrollment_assessment->student;
         $pdf = PDF::loadView("widgets.report.student.student_enrollment_information", compact('_student', '_enrollment_assessment'));
-        $file_name = 'FORM RG-03 - STUDENT REGISTRATION';
+        $file_name = 'FORM RG-03 - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 }

@@ -169,7 +169,6 @@
         .form-rg-table th {
             padding-top: 5px;
             padding-bottom: 5px;
-            border: 1px solid rgb(0, 0, 0);
             font-size: 10px;
 
         }
@@ -178,8 +177,49 @@
             font-weight: bold;
             font-size: 14px;
         }
-        .text-fill-in{
+
+        .text-fill-in {
             text-decoration: underline;
+            text-align: center;
+        }
+
+
+        .form-check .form-check-input {
+            float: left;
+            /*  margin-left: 0.0em; */
+            margin-bottom: 0.0em;
+        }
+
+        .form-label {
+            float: left;
+            text-combine-upright:unset ;
+            margin-top: 0.2em;
+            margin-left: 2.0em;
+           
+        }
+        .subject-list-table {
+            font-family: "Times New Roman", Times, serif;
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #ddd;
+            border: 1px solid #ddd;
+            margin-top: 20px
+        }
+
+        .subject-list-table td,
+        .subject-list-table th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+            border: 1px solid #ddd;
+            font-size: 12px;
+
+        }
+
+        .subject-list-table th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+
             text-align: center;
         }
 
