@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class CourseOffer extends Model
 {
@@ -31,5 +32,10 @@ class CourseOffer extends Model
     {
         $_academic = request()->input('_academic') ? AcademicYear::find(base64_decode(request()->input('_academic'))) : AcademicYear::where('is_active', 1)->first();
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')->where('is_removed', false)->where('academic_id', $_academic->id);
+    }
+    public function sections()
+    {
+        $_academic = Auth::user()->staff->current_academic();
+        return $this->hasMany(Section::class, 'course_id')->where('academic_id', $_academic->id)->where('is_removed', false)->orderBy('section_name', 'Desc');
     }
 }

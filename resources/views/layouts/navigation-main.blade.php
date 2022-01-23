@@ -161,6 +161,12 @@
                             'role_icon' => 'icon-job',
                             'role_routes' => [['Grade Submission', 'department-head.grade-submission'], ['E-Clearance', 'department-head.e-clearance']],
                         ],
+                        [
+                            'role_id' => 10,
+                            'role_name' => 'Dean',
+                            'role_icon' => 'icon-job',
+                            'role_routes' => [['Grade Submission', 'dean.grade-submission'], ['E-Clearance', 'dean.e-clearance']],
+                        ],
                     ];
                     
                 @endphp
@@ -334,6 +340,7 @@
                     $_url = request()->is('teacher/subjects*') ? route('teacher.subject-list') : $_url;
                     $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
                     $_url = request()->is('department-head/semestral-clearance*') ? route('department-head.e-clearance') : $_url;
+                    $_url = request()->is('dean/e-clearance*') ? route('dean.e-clearance') : $_url;
                     /* $_url = request()->is('student/academic/grades') ? route('academic.grades') : $_url;
                      $_url = request()->is('student/academic/clearance') ? route('academic.clearance') : $_url; */
                 @endphp

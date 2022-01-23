@@ -40,9 +40,15 @@
 
                 @yield('page-content')
             @else
-                @if (request()->is('registrar/enrollment*') || request()->is('teacher/subjects*') || request()->is('department-head/grade-submission*') || request()->is('department-head/semestral-clearance*'))
-                    @yield('sub-navigation')
-                @endif
+                @php
+                    $_route = ['registrar/enrollment*', 'teacher/subjects*', 'department-head/grade-submission*', 'department-head/semestral-clearance*', 'dean/e-clearance*'];
+                @endphp
+                @foreach ($_route as $route)
+                    @if (request()->is($route))
+                        @yield('sub-navigation')
+                    @endif
+                @endforeach
+
                 <div class="conatiner-fluid content-inner mt-6 py-0">
                     @yield('page-content')
                 </div>

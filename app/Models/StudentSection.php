@@ -19,5 +19,4 @@ class StudentSection extends Model
     {
         return $this->belongsTo(StudentDetails::class, 'student_id');
     }
-    
 }
