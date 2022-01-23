@@ -124,7 +124,6 @@ class DepartmentHeadController extends Controller
                 );
             }
         }
-
         return compact('data');
     }
 }
