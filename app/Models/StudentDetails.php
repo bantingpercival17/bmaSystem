@@ -206,6 +206,10 @@ class StudentDetails extends Model
     {
         return $this->hasOne(StudentClearance::class, 'student_id')->where('subject_class_id', $_data)->where('is_removed', false)->first();
     }
+    public function non_academic_clearance($_data)
+    {
+        return $this->hasOne(StudentNonAcademicClearance::class, 'student_id')->where('non_academic_type', $_data)->where('is_removed', false)->first();
+    }
     public function student_single_file_import($_student)
     {
         echo "<b>" . $_student->student_details->last_name . ", " . $_student->student_details->first_name . "</b> <br>";

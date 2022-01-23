@@ -40,7 +40,7 @@
 
                 @yield('page-content')
             @else
-                @if (request()->is('registrar/enrollment*') || request()->is('teacher/subjects*') || request()->is('department-head/grade-submission*'))
+                @if (request()->is('registrar/enrollment*') || request()->is('teacher/subjects*') || request()->is('department-head/grade-submission*') || request()->is('department-head/semestral-clearance*'))
                     @yield('sub-navigation')
                 @endif
                 <div class="conatiner-fluid content-inner mt-6 py-0">
@@ -99,6 +99,46 @@
             confirmButtonText: 'Okay'
             })
         @endif
+        $('.input-select').click(function() {
+            var data = $(this).data('check')
+            $('.input-select-' + data).prop('checked', $(this).prop('checked'))
+            //alert(data)
+        })
+        $('.form-check-input').click(function() {
+            var data = $(this).prop('checked')
+            if (data == false) {
+                var categ = $(this).data('category'),
+                    content = $(this).data('content'),
+                    id = $(this).val();
+                if ((categ) && (content) && id) {
+                    $.get('uncleared?category=' + categ + "&content=" + content + "&id=" + id, function(data) {
+                        if (data.data.respond == 200) {
+                            // Message Notication
+                        }
+                        console.log(data)
+
+                    }).fail(function() {
+                        console.info('Error')
+                    })
+                }
+            }
+            if (data == true) {
+                var categ = $(this).data('category'),
+                    content = $(this).data('content'),
+                    id = $(this).val();
+                if (categ == 'academic') {
+                    $.get('cleared?category=' + categ + "&content=" + content + "&id=" + id, function(data) {
+                        if (data.data.respond == 200) {
+                            // Message Notication
+                        }
+                        console.log(data)
+
+                    }).fail(function() {
+                        console.info('Error')
+                    })
+                }
+            }
+        })
     </script>
     @yield('js')
 </body>

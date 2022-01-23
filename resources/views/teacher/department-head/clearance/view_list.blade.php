@@ -34,65 +34,115 @@ $_title = 'Semestral Clearance';
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="datatable" class="table table-striped" data-toggle="data-table">
-                        <thead>
-                            <tr>
-                                <th>Midshipman Name</th>
-                                @foreach ($_section->subject_class as $_class)
-                                    <th>{{ $_class->curriculum_subject->subject->subject_code }}</th>
-                                @endforeach
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (count($_students))
-                                @foreach ($_students as $_data)
-                                    <tr>
-                                        <td>
-                                            <a
-                                                href="{{-- {{ route('teacher.student-clearance') }} --}}?_midshipman={{ base64_encode($_data->student_id) }}">
-                                                {{ strtoupper($_data->last_name . ', ' . $_data->first_name) }}
-                                            </a>
-                                        </td>
-                                        @foreach ($_section->subject_class as $_class)
-                                            <td>
-                                                <div class="form-check d-block ">
-                                                    @if ($_data->clearance($_class->id))
-                                                        @if ($_data->clearance($_class->id)->is_approved == 1)
-                                                            <input class="form-check-input" type="checkbox" checked
-                                                                disabled>
-                                                        @else
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="flexCheckChecked-3-" name="data[][e_clearance]"
-                                                                value="{{ $_data->id }}">
-                                                        @endif
-                                                    @else
-                                                        <span class="text-danger"><b>-</b></span>
-                                                    @endif
-                                                </div>
-                                               {{--  {{ $_data->clearance($_class->id) ? ($_data->clearance($_class->id)->is_approved == 1 ? 'CLEARED' : 'NOT CLEARED') : '' }} --}}
-                                            </td>
-                                            {{-- <th>{{ $_class->curriculum_subject->subject->subject_code }}</th> --}}
-                                        @endforeach
-
-                                    </tr>
-                                @endforeach
-                            @else
+                    <form action="{{ route('department-head.store-e-clearance') }}" method="post">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md">
+                                <div class="form-group">
+                                    <label for="" class="form-label">Laboratory</label>
+                                    <div class="form-check d-block">
+                                        <input class="form-check-input input-select" data-check="laboratory" type="checkbox"
+                                            id="flexCheckChecked-3">
+                                        <label class="form-check-label" for="flexCheckChecked-3">
+                                            Select All
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-group">
+                                    <label for="" class="form-label">Department Head</label>
+                                    <div class="form-check d-block">
+                                        <input class="form-check-input input-select" data-check="department-head"
+                                            type="checkbox" id="flexCheckChecked-4">
+                                        <label class="form-check-label" for="flexCheckChecked-4">
+                                            Select All
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <button class="btn btn-primary" type="submit">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                        <table id="datatable" class="table table-striped" data-toggle="data-table">
+                            <thead>
                                 <tr>
-                                    <th colspan="{{ count($_section->subject_class) + 1 }}">No Data</th>
-                                </tr>
-                            @endif
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Midshipman Name</th>
-                                @foreach ($_section->subject_class as $_class)
-                                    <th>{{ $_class->curriculum_subject->subject->subject_code }}</th>
-                                @endforeach
+                                    <th>Midshipman Name</th>
+                                    @foreach ($_section->subject_class as $_class)
+                                        <th>{{ $_class->curriculum_subject->subject->subject_code }}</th>
+                                    @endforeach
+                                    <th class="text-center">Laboratory
+                                    </th>
+                                    <th class="text-center">Department Head
 
-                            </tr>
-                        </tfoot>
-                    </table>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (count($_students))
+                                    @foreach ($_students as $_data)
+                                        <tr>
+                                            <td>
+                                                <a
+                                                    href="{{-- {{ route('teacher.student-clearance') }} --}}?_midshipman={{ base64_encode($_data->student_id) }}">
+                                                    {{ strtoupper($_data->last_name . ', ' . $_data->first_name) }}
+                                                </a>
+                                            </td>
+                                            @foreach ($_section->subject_class as $_class)
+                                                <td>
+                                                    <div class="form-check d-block ">
+                                                        @if ($_data->clearance($_class->id))
+                                                            @if ($_data->clearance($_class->id)->is_approved == 1)
+                                                                <input class="form-check-input" type="checkbox" checked
+                                                                    disabled>
+                                                            @else
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="flexCheckChecked-3-" data-category="academic"
+                                                                    data-content="{{ $_class->id }}"
+                                                                    value="{{ $_data->id }}">
+                                                            @endif
+                                                        @else
+                                                            <span class="text-danger"><b>-</b></span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            @endforeach
+                                            <td>
+                                                <input class="form-check-input input-select-laboratory" type="checkbox"
+                                                    name="laboratory[]" value="{{ $_data->id }}"
+                                                    data-category="non-academic" data-content="laboratory"
+                                                    {{ $_data->non_academic_clearance('laboratory') ? ($_data->non_academic_clearance('laboratory')->is_approved == 1 ? 'checked' : '') : '' }}>
+                                            </td>
+                                            <td>
+                                                <input class="form-check-input input-select-department-head" type="checkbox"
+                                                    name="dept_head[]" value="{{ $_data->id }}"
+                                                    {{ $_data->non_academic_clearance('department-head') ? ($_data->non_academic_clearance('department-head')->is_approved == 1 ? 'checked' : '') : '' }}>
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <th colspan="{{ count($_section->subject_class) + 3 }}">No Data</th>
+                                    </tr>
+                                @endif
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Midshipman Name</th>
+                                    @foreach ($_section->subject_class as $_class)
+                                        <th>{{ $_class->curriculum_subject->subject->subject_code }}</th>
+                                    @endforeach
+                                    <th>Laboratory</th>
+                                    <th>Department Head</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </form>
+
                 </div>
             </div>
         </div>

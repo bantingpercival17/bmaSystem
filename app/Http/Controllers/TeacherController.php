@@ -37,7 +37,7 @@ class TeacherController extends Controller
             ->where('academic_id', $_academic->id)
             ->where('is_removed', false)
             ->get();
-        if (Auth::user()->email == 'k.j.cruz@bma.edu.ph') {
+        if (Auth::user()->email == 'k.j.cruz@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph') {
             $_academic = $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : Auth::user()->staff->current_academic();
             $_subject = SubjectClass::where('staff_id', $_staff->id)
                 ->where('academic_id', $_academic->id)

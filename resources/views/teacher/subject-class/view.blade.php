@@ -75,7 +75,13 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                             <h4 class="card-title">E-Clearance</h4>
                         </div>
                         <div class="card-tool">
-                            <button type="button" class="btn btn-info text-white" id="select-all">Select All</button>
+                            <div class="form-check d-block">
+                                <input class="form-check-input input-select" data-check="subject-clearance" type="checkbox"
+                                    id="flexCheckChecked-4">
+                                <label class="form-check-label" for="flexCheckChecked-4">
+                                    Select All
+                                </label>
+                            </div>
                             <input type="hidden" name="_subject_class" value="{{ base64_encode($_subject->id) }}">
                             <button type="submit" class="btn btn-primary">SUBMIT</button>
                         </div>
@@ -100,7 +106,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                                                 </td>
                                                 <td>
                                                     <div class="form-check d-block">
-                                                        <input class="form-check-input" type="checkbox"
+                                                        <input class="form-check-input input-select-subject-clearance" type="checkbox"
                                                             id="flexCheckChecked-3-{{ $_key }}"
                                                             name="data[{{ $_key }}][e_clearance]"
                                                             value="{{ $_student->id }}"
@@ -151,18 +157,4 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
 
 
     @endif
-@endsection
-@section('js')
-    <script>
-        $('#select-all').click(function(event) {
-            if (this.checked) {
-                console.log('checked:true')
-                $(':checkbox').prop('checked',false);
-            } else {
-                console.log('checked:false')
-                $(':checkbox').prop('checked', true);
-                //$(':checkbox').prop('checked', false);
-            }
-        });
-    </script>
 @endsection

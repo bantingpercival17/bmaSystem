@@ -159,7 +159,7 @@
                             'role_id' => 9,
                             'role_name' => 'Department Head',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Grade Submission', 'department-head.grade-submission'], ['E-Clearance', 'department.e-clearance']],
+                            'role_routes' => [['Grade Submission', 'department-head.grade-submission'], ['E-Clearance', 'department-head.e-clearance']],
                         ],
                     ];
                     
@@ -214,7 +214,7 @@
                         @endif
 
                         @foreach (Auth::user()->roles as $role)
-                            @if ($role->id == 6)
+                            {{-- @if ($role->id == 6)
                                 @if ($_item['role_id'] == 6.5 && Auth::user()->email == 'k.j.cruz@bma.edu.ph')
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="collapse"
@@ -260,7 +260,7 @@
                                     </li>
                                 @endif
 
-                            @endif
+                            @endif --}}
                             @if ($_item['role_id'] == $role->id)
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="collapse"
@@ -333,6 +333,7 @@
                     $_url = route('registrar.enrollment');
                     $_url = request()->is('teacher/subjects*') ? route('teacher.subject-list') : $_url;
                     $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
+                    $_url = request()->is('department-head/semestral-clearance*') ? route('department-head.e-clearance') : $_url;
                     /* $_url = request()->is('student/academic/grades') ? route('academic.grades') : $_url;
                      $_url = request()->is('student/academic/clearance') ? route('academic.clearance') : $_url; */
                 @endphp
