@@ -27,7 +27,8 @@ class RegistrarController extends Controller
     }
     public function index()
     {
-        return view('registrar.dashboard.view');
+        $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
+        return view('pages.registrar.dashboard.view', compact('_courses'));
     }
 
     /* Enrollment Panel */
@@ -36,7 +37,7 @@ class RegistrarController extends Controller
         $_courses = CourseOffer::where('is_removed', false)->get();
         $_student_detials = new StudentDetails();
         $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application_list();
-        return view('registrar.enrollment.view', compact('_courses', '_students'));
+        return view('pages.registrar.enrollment.view', compact('_courses', '_students'));
     }
     public function enrollment_assessment(Request $_request)
     {
@@ -108,13 +109,22 @@ class RegistrarController extends Controller
             // New Student
         }
     }
+
+    public function enrolled_list_view(Request $_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_students = $_course->enrollment_list;
+        //return $_course->enrolled_list(Auth::user()->staff->current_academic()->id)->count();
+        return view('pages.registrar.enrollment.enrolled_list_view', compact('_course', '_students'));
+    }
+
     public function student_clearance(Request $_request)
     {
         $_student = StudentDetails::find(base64_decode($_request->_student));
         $_academic = $_student->enrollment_assessment->academic_id;
         $_section = $_student->section($_academic)->first();
         $_subject_class = $_section ? SubjectClass::where('section_id', $_section->section_id)->where('is_removed', false)->get() : [];
-        return view('registrar.enrollment.clearance', compact('_student', '_subject_class'));
+        return view('pages.registrar.enrollment.clearance', compact('_student', '_subject_class'));
     }
     public function subject_view()
     {
@@ -122,7 +132,7 @@ class RegistrarController extends Controller
         $_academic = AcademicYear::where('is_removed', false)
             ->orderBy('id', 'DESC')
             ->get();
-        return view('registrar.subjects.view', compact('_curriculum', '_academic'));
+        return view('pages.registrar.subjects.view', compact('_curriculum', '_academic'));
     }
 
 
@@ -140,7 +150,7 @@ class RegistrarController extends Controller
             ->join('role_user', 'users.id', 'role_user.user_id')
             /* ->where('role_user.role_id', 6) */
             ->get(); // Get All the Teachers
-        return view('registrar.subjects.classes_view', compact('_academic', '_course', '_course_view', '_curriculum', '_section', '_teacher'));
+        return view('pages.registrar.subjects.classes_view', compact('_academic', '_course', '_course_view', '_curriculum', '_section', '_teacher'));
     }
     public function classes_store(Request $_request)
     {
@@ -170,7 +180,7 @@ class RegistrarController extends Controller
         $_course_view = CourseOffer::where('is_removed', false)->get();
         $_course = $_request->d ? CourseOffer::find($_course) : $_course_view;
         $_couuse_subject = $_request->d ? CurriculumSubject::where('course_id', $_course->id)->get() : '';
-        return view('registrar.subjects.curriculum_view', compact('_curriculum', '_course_view', '_course'));
+        return view('pages.registrar.subjects.curriculum_view', compact('_curriculum', '_course_view', '_course'));
     }
     public function curriculum_subject_store(Request $_request)
     {
@@ -212,21 +222,15 @@ class RegistrarController extends Controller
     {
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_course = CourseOffer::where('is_removed', false)->get();
-
-        if ($_request->_course  || $_request->_academic || $_request->_student) {
-            $_student_detials = new StudentDetails();
-            $_students = $_request->_cadet ? $_student_detials->student_search($_request->_cadet) : [];
-        } else {
-
-            $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
-        }
-        return view('registrar.student.view', compact('_academics', '_course', '_students'));
+        $_student_detials = new StudentDetails();
+        $_students = $_request->_student ? $_student_detials->student_search($_request->_student) :  StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
+        return view('pages.registrar.student.view', compact('_academics', '_course', '_students'));
     }
     public function student_profile_view(Request $_request)
     {
-        $_student = StudentDetails::find(base64_decode($_request->_s));
+        $_student = StudentDetails::find(base64_decode($_request->_student));
         $_course = CourseOffer::where('is_removed', false)->get();
-        return view('registrar.student.student_profile', compact('_student', '_course'));
+        return view('pages.registrar.student.student_profile', compact('_student', '_course'));
     }
     public function student_information_report(Request $_request)
     {
@@ -240,6 +244,6 @@ class RegistrarController extends Controller
     {
         $_course = CourseOffer::where('is_removed', false)->get();
         $_academic = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
-        return view('registrar.sections.view', compact('_course', '_academic'));
+        return view('pages.registrar.sections.view', compact('_course', '_academic'));
     }
 }

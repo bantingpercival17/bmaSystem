@@ -11,7 +11,7 @@ Route::prefix('registrar')->group(function () {
     // Applicants
 
     // Subjects
-    Route::get('/subjects', [RegistrarController::class, 'subject_view']); // Subject Views
+    Route::get('/subjects', [RegistrarController::class, 'subject_view'])->name('registrar.subject-view'); // Subject Views
     Route::get('/subjects/classes', [RegistrarController::class, 'classes_view']); // Subject Classes View
     Route::post('/subjects/classes', [RegistrarController::class, 'classes_store']); // Store Subjects Classes Handled
     Route::get('/subjects/classes/removed', [RegistrarController::class, 'classes_removed']); // Remove Subjects Clases Handled
@@ -20,13 +20,14 @@ Route::prefix('registrar')->group(function () {
 
     // Enrollment
     Route::get('/enrollment', [RegistrarController::class, 'enrollment_view'])->name('registrar.enrollment');
+    Route::get('/enrollment/enrolled-list', [RegistrarController::class, 'enrolled_list_view'])->name('registrar.course-enrolled');
     Route::get('/enrollment/student-clearance', [RegistrarController::class, 'student_clearance'])->name('registrar.student-clearance');
     Route::post('/enrollment/assessment', [RegistrarController::class, 'enrollment_assessment'])->name('registrar.enrollment-assessment');
     // Student Profile
     Route::get('/student-profile', [RegistrarController::class, 'student_list_view'])->name('registrar.students'); // Student List View
-    Route::get('/student-profile/view', [RegistrarController::class, 'student_profile_view']);
+    Route::get('/student-profile/view', [RegistrarController::class, 'student_profile_view'])->name('registrar.student-profile');
     Route::get('/student-profile/student-information-report', [RegistrarController::class, 'student_information_report'])->name('registrar.student-information-report');
 
     // Section 
-    Route::get('/sections', [RegistrarController::class, 'section_view']); // Section View
+    Route::get('/sections', [RegistrarController::class, 'section_view'])->name('registrar.section-view'); // Section View
 });

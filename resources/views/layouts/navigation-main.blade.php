@@ -122,7 +122,7 @@
                             'role_id' => 3,
                             'role_name' => 'Registrar',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students']],
+                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view']],
                         ],
                         [
                             'role_id' => 4,
@@ -220,53 +220,6 @@
                         @endif
 
                         @foreach (Auth::user()->roles as $role)
-                            {{-- @if ($role->id == 6)
-                                @if ($_item['role_id'] == 6.5 && Auth::user()->email == 'k.j.cruz@bma.edu.ph')
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="collapse"
-                                            href="#{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}"
-                                            role="button" aria-expanded="false"
-                                            aria-controls="{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}">
-                                            <i class="icon">
-                                                @include('layouts.icon-main')
-                                                @yield($_item['role_icon'])
-                                            </i>
-                                            <span class="item-name">{{ $_item['role_name'] }}</span>
-                                            <i class="right-icon">
-
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M9 5l7 7-7 7" />
-                                                </svg>
-                                            </i>
-                                        </a>
-                                        <ul class="sub-nav collapse"
-                                            id="{{ str_replace(' ', '-', strtolower($_item['role_name'])) }}"
-                                            data-bs-parent="#sidebar-menu">
-                                            @foreach ($_item['role_routes'] as $_route)
-                                                <li class="nav-item">
-                                                    <a class="nav-link {{ request()->routeIs($_route[1]) ? 'active' : '' }}"
-                                                        href="{{ route($_route[1]) }}">
-                                                        <i class="icon">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="10"
-                                                                viewBox="0 0 24 24" fill="currentColor">
-                                                                <g>
-                                                                    <circle cx="12" cy="12" r="8" fill="currentColor">
-                                                                    </circle>
-                                                                </g>
-                                                            </svg>
-                                                        </i>
-                                                        <i class="sidenav-mini-icon"> H </i>
-                                                        <span class="item-name">{{ $_route[0] }}</span>
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </li>
-                                @endif
-
-                            @endif --}}
                             @if ($_item['role_id'] == $role->id)
                                 <li class="nav-item">
                                     <a class="nav-link" data-bs-toggle="collapse"
@@ -292,8 +245,9 @@
                                         data-bs-parent="#sidebar-menu">
                                         @foreach ($_item['role_routes'] as $_route)
                                             <li class="nav-item">
-                                                <a class="nav-link {{ request()->routeIs($_route[1]) ? 'active' : '' }}"
+                                                <a class="nav-link {{ request()->is(str_replace('http://127.0.0.1:8000/', '', strtolower(route($_route[1]))) . '*') ? 'active' : '' }}"
                                                     href="{{ route($_route[1]) }}">
+
                                                     <i class="icon">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="10"
                                                             viewBox="0 0 24 24" fill="currentColor">
@@ -337,12 +291,11 @@
             <ul class="dropdown-menu w-100" data-popper-placement="bottom-start">
                 @php
                     $_url = route('registrar.enrollment');
+                    $_url = request()->is('registrar/dashboard*') ? route('registrar.dashboard') : $_url;
                     $_url = request()->is('teacher/subjects*') ? route('teacher.subject-list') : $_url;
                     $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
                     $_url = request()->is('department-head/semestral-clearance*') ? route('department-head.e-clearance') : $_url;
                     $_url = request()->is('dean/e-clearance*') ? route('dean.e-clearance') : $_url;
-                    /* $_url = request()->is('student/academic/grades') ? route('academic.grades') : $_url;
-                     $_url = request()->is('student/academic/clearance') ? route('academic.clearance') : $_url; */
                 @endphp
                 @if (Auth::user()->staff->academics()->count() > 0)
                     @foreach (Auth::user()->staff->academics() as $_academic)

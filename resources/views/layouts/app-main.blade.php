@@ -41,7 +41,7 @@
                 @yield('page-content')
             @else
                 @php
-                    $_route = ['registrar/enrollment*', 'teacher/subjects*', 'department-head/grade-submission*', 'department-head/semestral-clearance*', 'dean/e-clearance*'];
+                    $_route = ['registrar/dashboard*','registrar/enrollment*', 'teacher/subjects*', 'department-head/grade-submission*', 'department-head/semestral-clearance*', 'dean/e-clearance*'];
                 @endphp
                 @foreach ($_route as $route)
                     @if (request()->is($route))
