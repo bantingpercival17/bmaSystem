@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Auth;
 
 class DeanController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('dean');
+    }
     public function dashboard(Request $_request)
     {
         $_course = CourseOffer::where('course_code', '!=', 'pbm')->get();

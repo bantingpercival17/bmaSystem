@@ -104,7 +104,7 @@
                             'role_id' => 0,
                             'role_name' => 'Employee',
                             'role_icon' => 'icon-user',
-                            'role_routes' => [['Attendance', 'employee.attendance'], ['Profile', 'employee.attendance']],
+                            'role_routes' => [['Attendance', 'employee.attendance'], ['Profile', 'employee.change-password']],
                         ],
                         [
                             'role_id' => 1,
@@ -128,7 +128,7 @@
                             'role_id' => 4,
                             'role_name' => 'Accounting',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'administrative.dashboard'], ['Enrollment', 'admin.enrollment']],
+                            'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Fees', 'accounting.fees']],
                         ],
                         [
                             'role_id' => 5,
@@ -245,7 +245,7 @@
                                         data-bs-parent="#sidebar-menu">
                                         @foreach ($_item['role_routes'] as $_route)
                                             <li class="nav-item">
-                                                <a class="nav-link {{ request()->is(str_replace('http://127.0.0.1:8000/', '', strtolower(route($_route[1]))) . '*') ? 'active' : '' }}"
+                                                <a class="nav-link {{ request()->is(str_replace('http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/', '', strtolower(route($_route[1]))) . '*') ? 'active' : '' }}"
                                                     href="{{ route($_route[1]) }}">
 
                                                     <i class="icon">
@@ -258,6 +258,7 @@
                                                     </i>
                                                     <i class="sidenav-mini-icon"> H </i>
                                                     <span class="item-name">{{ $_route[0] }}</span>
+
                                                 </a>
                                             </li>
                                         @endforeach

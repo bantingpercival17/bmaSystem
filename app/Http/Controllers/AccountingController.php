@@ -13,7 +13,6 @@ class AccountingController extends Controller
     }
     public function index()
     {
-        return view('accounting.dashboard.view');
-        //return 'accounting.dasboard.view';
+        return view('pages.accounting.dashboard.view');
     }
 }
