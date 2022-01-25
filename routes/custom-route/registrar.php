@@ -30,4 +30,8 @@ Route::prefix('registrar')->group(function () {
 
     // Section 
     Route::get('/sections', [RegistrarController::class, 'section_view'])->name('registrar.section-view'); // Section View
+
+    // E-clearance
+    Route::get('/semestrar-clearance', [RegistrarController::class, 'clearance_view'])->name('registrar.e-clearance');
+    Route::post('/semestrar-clearance', [RegistrarController::class, 'clearance_store'])->name('registrar.e-clearance');
 });

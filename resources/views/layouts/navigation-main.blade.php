@@ -122,7 +122,7 @@
                             'role_id' => 3,
                             'role_name' => 'Registrar',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view']],
+                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'],['Semestral Clearance','registrar.e-clearance']],
                         ],
                         [
                             'role_id' => 4,

@@ -316,7 +316,6 @@ class StudentDetails extends Model
             }
         } // Enrollment Assessment
     }
-
     public function upload_student_details($_student)
     {
 

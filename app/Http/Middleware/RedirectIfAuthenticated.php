@@ -32,16 +32,16 @@ class RedirectIfAuthenticated
         $redirectTo = "";
         if (Auth::guard($guards)->check()) {
             $_auth = Auth::user()->roles[0]['id'];
-            $redirectTo = $_auth == 1 ? '/administrator' : '';
+            $redirectTo = $_auth == 1 ? route('admin.dashboard') : '';
             $redirectTo = $_auth == 2 ? '/administrative' : $redirectTo;
-            $redirectTo = $_auth == 3 ? '/registrar' : $redirectTo;
-            $redirectTo = $_auth == 4 ? '/accounting' : $redirectTo;
+            $redirectTo = $_auth == 3 ? route('registrar.dashboard') : $redirectTo;
+            $redirectTo = $_auth == 4 ? route('accounting.dashboard') : $redirectTo;
             $redirectTo = $_auth == 5 ? '/onboard' : $redirectTo;
-            $redirectTo = $_auth == 6 ? '/teacher' : $redirectTo;
+            $redirectTo = $_auth == 6 ? route('teacher.subject-list') : $redirectTo;
             $redirectTo = $_auth == 7 ? '/maintenance' : $redirectTo;
             $redirectTo = $_auth == 8 ? '/executive' : $redirectTo;
             $redirectTo = $_auth == 9 ? '/deparment-head' : $redirectTo;
-            $redirectTo = $_auth == 10 ? '/dean' : $redirectTo;
+            $redirectTo = $_auth == 10 ? route('dean.grade-submission') : $redirectTo;
             $redirectTo = $_auth == 11 ? '/librarian' : $redirectTo;
             return redirect($redirectTo);
         }
