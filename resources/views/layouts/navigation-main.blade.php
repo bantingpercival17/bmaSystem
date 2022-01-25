@@ -110,7 +110,7 @@
                             'role_id' => 1,
                             'role_name' => 'Administrator',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Enrollment', 'admin.enrollment'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting']],
+                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting']],
                         ],
                         [
                             'role_id' => 2,
@@ -122,7 +122,7 @@
                             'role_id' => 3,
                             'role_name' => 'Registrar',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'],['Semestral Clearance','registrar.e-clearance']],
+                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.e-clearance']],
                         ],
                         [
                             'role_id' => 4,

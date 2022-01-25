@@ -31,7 +31,7 @@ $_title = 'Semestral Clearance';
                                 Select All
                             </label>
                         </div>
-                        <input type="hidden" name="_clearance_data" value="registrar">
+                        <input type="hidden" name="_clearance_data" value="ict">
                         <button type="submit" class="btn btn-primary">SUBMIT</button>
                     </div>
                 </div>
@@ -64,7 +64,7 @@ $_title = 'Semestral Clearance';
                                                         type="checkbox" id="flexCheckChecked-3-{{ $_key }}"
                                                         name="data[{{ $_key }}][e_clearance]"
                                                         value="{{ $_data->student->id }}"
-                                                        {{ $_data->student->non_academic_clearance('registrar') ? ($_data->student->non_academic_clearance('registrar')->is_approved == 1 ? 'checked' : '') : '' }}>
+                                                        {{ $_data->student->non_academic_clearance('ict') ? ($_data->student->non_academic_clearance('ict')->is_approved == 1 ? 'checked' : '') : '' }}>
                                                     <label class="form-check-label"
                                                         for="flexCheckChecked-3-{{ $_key }}">
                                                         CLEARED
@@ -77,7 +77,7 @@ $_title = 'Semestral Clearance';
                                                     </label>
                                                     <input type="text" class="form-control"
                                                         name="data[{{ $_key }}][comment]"
-                                                        value="{{ $_data->student->non_academic_clearance('registrar') ? $_data->student->non_academic_clearance('registrar')->comments : '' }}">
+                                                        value="{{ $_data->student->non_academic_clearance('ict') ? $_data->student->non_academic_clearance('ict')->comments : '' }}">
                                                     <input type="hidden" name="data[{{ $_key }}][sId]"
                                                         value="{{ base64_encode($_data->student->id) }}">
                                                 </div>
@@ -95,7 +95,5 @@ $_title = 'Semestral Clearance';
                 </div>
             </div>
         </form>
-
     </div>
-
 @endsection

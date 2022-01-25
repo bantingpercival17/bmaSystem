@@ -19,6 +19,7 @@ use App\Models\Section;
 use App\Models\Staff;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
+use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
@@ -46,7 +47,7 @@ class AdministratorController extends Controller
     {
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_course = CourseOffer::where('is_removed', false)->get();
-        return view('administrator.dashboard', compact('_academics', '_course'));
+        return view('pages.administrator.dashboard', compact('_academics', '_course'));
     }
 
     /* Students */
@@ -63,12 +64,12 @@ class AdministratorController extends Controller
         }
         //return $_students;
         //$_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
-        return view('administrator.student.view', compact('_academics', '_course', '_students'));
+        return view('pages.administrator.student.view', compact('_academics', '_course', '_students'));
     } /* View Student  */
     public function student_profile(Request $_request)
     {
         $_student = StudentDetails::find(base64_decode($_request->_s));
-        return view('administrator.student.profile', compact('_student'));
+        return view('pages.administrator.student.profile', compact('_student'));
     }
     public function student_imports(Request $_request)
     {
@@ -89,7 +90,7 @@ class AdministratorController extends Controller
     {
         $_employees = Staff::orderBy('last_name', 'asc')->get();
         $_role = Role::all();
-        return view('administrator.accounts_view', compact('_employees', '_role'));
+        return view('pages.administrator.accounts_view', compact('_employees', '_role'));
     }
     public function account_store(Request $_request)
     {
@@ -162,7 +163,7 @@ class AdministratorController extends Controller
         $_academic = AcademicYear::where('is_removed', false)
             ->orderBy('id', 'DESC')
             ->get();
-        return view('administrator.subjects_view', compact('_curriculum', '_academic'));
+        return view('pages.administrator.subjects_view', compact('_curriculum', '_academic'));
     }
     public function curriculum_store(Request $_request)
     {
@@ -184,7 +185,7 @@ class AdministratorController extends Controller
         $_course_view = CourseOffer::where('is_removed', false)->get();
         $_course = $_request->_d ? CourseOffer::find($_course) : $_course_view;
         $_couuse_subject = $_request->_d ? CurriculumSubject::where('course_id', $_course->id)->get() : '';
-        return view('administrator.curriculum_view', compact('_curriculum', '_course_view', '_course'));
+        return view('pages.administrator.curriculum_view', compact('_curriculum', '_course_view', '_course'));
         // return $_curriculum;
     }
     public function subject_store(Request $_request)
@@ -227,7 +228,7 @@ class AdministratorController extends Controller
             ->join('role_user', 'users.id', 'role_user.user_id')
             /* ->where('role_user.role_id', 6) */
             ->get(); // Get All the Teachers
-        return view('administrator.subject_class_view', compact('_academic', '_course', '_course_view', '_curriculum', '_section', '_teacher'));
+        return view('pages.administrator.subject_class_view', compact('_academic', '_course', '_course_view', '_curriculum', '_section', '_teacher'));
     }
     public function subject_class_store(Request $_request)
     {
@@ -259,7 +260,7 @@ class AdministratorController extends Controller
     {
         $_course = CourseOffer::where('is_removed', false)->get();
         $_academic = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
-        return view('administrator.classess_view', compact('_course', '_academic'));
+        return view('pages.administrator.classess_view', compact('_course', '_academic'));
     }
     public function classes_store(Request $_request)
     {
@@ -305,7 +306,7 @@ class AdministratorController extends Controller
             ->orderBy('sa.student_number', 'ASC')
             ->get()
             : $_student_enrollment->orderBy('sa.student_number', 'ASC')->get();
-        return view('administrator.section_view', compact('_section', '_students', '_add_students'));
+        return view('pages.administrator.section_view', compact('_section', '_students', '_add_students'));
     }
     public function section_add(Request $_request)
     {
@@ -340,19 +341,65 @@ class AdministratorController extends Controller
     }
     /*  Class */
 
-    /* Enrollment */
-    public function enrollment_view(Request $_request)
+    /* Semestral Clearance */
+    public function clearance_view(Request $_request)
     {
-        return view('administrator.enrollment.view');
+        $_enrollment = EnrollmentAssessment::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
+        return view('pages.administrator.clearance.view', compact('_enrollment'));
     }
+    public function clearance_store(Request $_request)
+    {
+        foreach ($_request->data as $key => $value) {
+            $_student_id = base64_decode($value['sId']);
+            $_clearance_data = $_request->_clearance_data;
+            // Check if the student is Store
+            $_check = count($value) > 2 ? 1 : 0;
+            $_clearance = array(
+                'student_id' => $_student_id,
+                'non_academic_type' => $_clearance_data,
+                'comments' => $value['comment'], // nullable
+                'staff_id' => Auth::user()->staff->id,
+                'is_approved' => $_check, // nullable
+                'is_removed' => 0
+            );
+            $_check_clearance = StudentNonAcademicClearance::where('student_id', $_student_id)->where('non_academic_type', $_clearance_data)->where('is_removed', false)->first();
+            if ($_check_clearance) {
+                // If the Data is existing and the approved status id TRUE and the Input Tag is TRUE : They will remain
 
+                // If the Data is existing and the apprvod status is FALSE and the Input is FALSE : Nothing to Do, They will remain
+                // If comment is fillable
+                if ($_check_clearance->is_approved == 0 && $_check == 0) {
+                    if ($value['comment']) {
+                        $_check_clearance->comments = $value['comment'];
+                        $_check_clearance->save();
+                    }
+                }
+                // If the Data is existing and the approved status is TRUE and the Input is FALSE : The Data will removed and create a new one
+                if ($_check_clearance->is_approved == 1 && $_check == 0) {
+                    $_check_clearance->is_removed = true;
+                    $_check_clearance->save();
+                    StudentNonAcademicClearance::create($_clearance);
+                }
+                if ($_check_clearance->is_approved == 0 && $_check == 1) {
+                    $_check_clearance->is_removed = true;
+                    $_check_clearance->save();
+                    StudentNonAcademicClearance::create($_clearance);
+                }
+            } else {
+                StudentNonAcademicClearance::create($_clearance);
+            }
+            //echo "Saved: " . $_student_id . "<br>";
+
+        }
+        return back()->with('success', 'Successfully Submitted Clearance');
+    }
 
     // Employee
     public function employee_profile(Request $_request)
     {
         $_staff = Staff::find(Crypt::decrypt($_request->_e));
         $_roles = Role::all();
-        return view('administrator.employee.view', compact('_staff', '_roles'));
+        return view('pages.administrator.employee.view', compact('_staff', '_roles'));
     }
     public function qr_generator($_data)
     {
@@ -384,7 +431,7 @@ class AdministratorController extends Controller
     {
         $_employees = Staff::orderBy('staff.department', 'asc')
             ->orderBy('staff.last_name', 'asc')->get();
-        return view('administrator.employee.attendance', compact('_employees'));
+        return view('pages.administrator.employee.attendance', compact('_employees'));
     }
     public function attendance_report(Request $_request)
     {
@@ -401,7 +448,7 @@ class AdministratorController extends Controller
     {
         $_roles = Role::all();
         $_academic = AcademicYear::where('is_removed', false)->orderBy('id', 'desc')->get();
-        return view('administrator.setting.view', compact('_roles', '_academic'));
+        return view('pages.administrator.setting.view', compact('_roles', '_academic'));
     }
     // Academic 
     public function store_academic(Request $_request)
