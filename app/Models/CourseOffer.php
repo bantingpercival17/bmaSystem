@@ -31,7 +31,10 @@ class CourseOffer extends Model
     public function enrollment_list()
     {
         $_academic = request()->input('_academic') ? AcademicYear::find(base64_decode(request()->input('_academic'))) : AcademicYear::where('is_active', 1)->first();
-        return $this->hasMany(EnrollmentAssessment::class, 'course_id')->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')/* ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id') */->where('enrollment_assessments.is_removed', false)->where('enrollment_assessments.academic_id', $_academic->id);
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            /* ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id') */
+            ->where('enrollment_assessments.is_removed', false)->where('enrollment_assessments.academic_id', $_academic->id)
+            ->orderBy('pa.created_at','DESC');
     }
     public function enrolled_list($_data)
     {

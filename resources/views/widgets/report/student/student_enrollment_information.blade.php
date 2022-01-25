@@ -152,7 +152,7 @@
                         <tr>
                             <td width="10%"><small>CONTACT NO.:</small></td>
                             <td class="text-fill-in">
-                                <b> {{ $_student->account->contact_number }}</b>
+                                <b> {{ $_student->contact_number }}</b>
                             </td>
                             <td width="12%"><small>EMAIL ADDRESS: </small></td>
                             <td class="text-fill-in">
@@ -435,7 +435,7 @@
                     </tbody>
                 </table>
             </div>
-            <br><br><br>
+            <div class="page-break"></div>
             <div class="survey-information">
                 <br>
                 <h5 for="" class="text-header">C. ACCESS TO DISTANCE LEARNING</h5>

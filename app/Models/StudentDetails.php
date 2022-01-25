@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -44,6 +45,10 @@ class StudentDetails extends Model
     public function enrollment_assessment()
     {
         return $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->orderBy('id', 'desc');
+    }
+    public function enrollment_status()
+    {
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('is_removed', 0);
     }
     public function enrollment_history()
     {
@@ -478,9 +483,85 @@ class StudentDetails extends Model
                 }
             } else {
                 // Then if Student exist all the data Updates
+                if ($_data_student->account) {
+                    $_data_student->account->campus_email = trim(str_replace('-', '', $_data_student->account->campus_email));
+                    $_data_student->account->personal_email = trim(str_replace(' ', '', $_data_student->account->personal_email));
+                    $_data_student->account->save();
+                    $_data_to_log[] = ':: Updating Emails';
+                }
 
-
-                if ($_student->ship_board_training->_shipboard_training) {
+                $_data_to_log[] .= PHP_EOL;
+                $_data_student->birthday = $_student->student_details->birthday;
+                $_data_student->save();
+                $_data_to_log[] = ':: Updating Birthday';
+                $_data_to_log[] .= PHP_EOL;
+                foreach ($_student->enrollment_assessment as $key => $value) {
+                    // Enrollment Assessment Details
+                    $_data_to_log[] = ':: Storing Enrollment Details : Academic ID:' . $value->academic_id;
+                    $_data_to_log[] .= PHP_EOL;
+                    $_enrollment = array(
+                        "student_id" => $_data_student->id,
+                        "academic_id" => $value->academic_id,
+                        "course_id" => $value->course_id,
+                        "year_level" => $value->year_level,
+                        "curriculum_id" => $value->curriculum_id ==  null ? 1 : $value->curriculum_id,
+                    ); // Enrollemtn Assessment Details
+                    $_enrollment = EnrollmentAssessment::where($_enrollment)->first();
+                    $_data_to_log[] = $_enrollment ? 'Update' : 'Empty';
+                    /*  $_enrollment->created_at = $value->created_at;
+                    $_enrollment->updated_at = $value->updated_at;
+                    $_enrollment->save(); */
+                    //$_enrollment = EnrollmentAssessment::create($_enrollment); // Save Enrollment Details
+                    $_data_to_log[] = ':: Updating Enrollment Details';
+                    $_data_to_log[] .= PHP_EOL;
+                    // Payment Assessment
+                    if ($value->payment_assessment) {
+                        $_data_to_log[] = '::Updating Payment Assessment';
+                        $_data_to_log[] .= PHP_EOL;
+                        /*  $_payment = PaymentAssessment::where('enrollment_id', $_enrollment->id)->first();
+                        $_payment = array(
+                            'enrollment_id' => $_enrollment->id,
+                            'payment_mode' => $value->payment_assessment->mode_of_payment,
+                            'voucher_amount' => $value->payment_assessment->voucher_amount,
+                            'total_payment' => $value->payment_assessment->total_payment,
+                            'staff_id' => 6,
+                            'is_removed' => 0,
+                            "created_at" => $value->created_at,
+                            "updated_at" => $value->updated_at
+                        ); */ // Payment Assessment Details
+                        //echo dd($value->payment_assessment);
+                        //$_payment = PaymentAssessment::create($_payment);
+                        //$_data_to_log[] = ':: Updating Payment Assessment';
+                        //$_data_to_log[] .= PHP_EOL;
+                        // Payment Transaction
+                        /*  if ($_payment) {
+                            foreach ($value->payment_assessment->payments as $key => $transaction) {
+                                $_data_to_log[] = '::Storing Payment Transaction';
+                                $_data_to_log[] .= PHP_EOL;
+                                $_transaction = array(
+                                    'assessment_id' => $_payment->id,
+                                    'or_number' => $transaction->or_number,
+                                    'payment_amount' => $transaction->payment_amount,
+                                    'payment_method' => $transaction->payment_method,
+                                    'remarks' => $transaction->remarks,
+                                    'payment_transaction' => 'TUITION FEE',
+                                    'transaction_date' => $transaction->transaction_date ?: '2021-01-02',
+                                    'staff_id' => 6,
+                                    'is_removed' => 0,
+                                    "created_at" => $value->created_at,
+                                    "updated_at" => $value->updated_at
+                                ); // Payment Transaction Details
+                                PaymentTransaction::create($_transaction);
+                                $_data_to_log[] = '::Stored Payment Transaction';
+                                $_data_to_log[] .= PHP_EOL;
+                            }
+                        } */
+                    } else {
+                        $_data_to_log[] = ':: Payment Assessment Details Empty';
+                        $_data_to_log[] .= PHP_EOL;
+                    }
+                } // Enrollment Assessment
+                /*  if ($_student->ship_board_training->_shipboard_training) {
                     $_data_to_log[] = ':: Updating Shipboard Training Details';
                     $_data_to_log[] .= PHP_EOL;
 
@@ -493,7 +574,7 @@ class StudentDetails extends Model
                     //$_shipping->update($_shipboard_training);
                     $_data_to_log[] = ':: Updated Shipboard Training Details';
                     $_data_to_log[] .= PHP_EOL;
-                }
+                } */
             }
         } else {
             $_data_to_log[] = ':: Empty Data';

@@ -7,7 +7,7 @@ Route::prefix('accounting')->group(function () {
     Route::get('/', [AccountingController::class, 'index'])->name('accounting.dashboard');
     Route::get('/dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard'); // Dashboard
     // Assessment
-    Route::get('/assessment-fee', [AccountingController::class, 'assessment_view']); // Assessment View
+    Route::get('/assessment-fee', [AccountingController::class, 'assessment_view'])->name('accounting.assessments'); // Assessment View
     // Student Search
     Route::get('/student-search', [AccountingController::class, 'search_students']); // Search Student
 

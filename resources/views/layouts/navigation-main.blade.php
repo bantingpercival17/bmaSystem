@@ -128,7 +128,7 @@
                             'role_id' => 4,
                             'role_name' => 'Accounting',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Fees', 'accounting.fees']],
+                            'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Fees', 'accounting.fees']],
                         ],
                         [
                             'role_id' => 5,

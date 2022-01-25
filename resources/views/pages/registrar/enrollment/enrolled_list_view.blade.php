@@ -21,7 +21,7 @@ $_title = 'Enrolled List';
                     <a href="/administrator/students/view?_s={{ base64_encode($_data->student->id) }}">
                         <div class="card">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between">
+                                <div class="d-flex justify-content-between {{-- align-itmes-center --}}">
                                     <div>
                                         <span><b>{{ $_data->student->account ? $_data->student->account->student_number : '-' }}</b></span>
                                         <div class="mt-2">
@@ -29,19 +29,22 @@ $_title = 'Enrolled List';
                                                 {{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
                                             </h2>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between mt-2">
-                                    <div>
                                         <span>{{ $_data->student->account ? $_data->student->account->campus_email : '-' }}</span>
                                         <br>
                                         <span
                                             class="badge bg-primary">{{ $_data->student->enrollment_assessment->course->course_name }}</span>
 
                                     </div>
+                                    <div>
+                                        <div class="badge bg-primary">
+
+                                            <span>{{ $_data->student->enrollment_status->created_at->format('F d, Y') }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                     </a>
                 @endforeach
             @endif
