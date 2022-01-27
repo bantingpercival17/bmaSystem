@@ -34,7 +34,7 @@ class CourseOffer extends Model
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
             /* ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id') */
             ->where('enrollment_assessments.is_removed', false)->where('enrollment_assessments.academic_id', $_academic->id)
-            ->orderBy('pa.created_at','DESC');
+            ->orderBy('pa.created_at', 'DESC');
     }
     public function enrolled_list($_data)
     {
@@ -49,5 +49,15 @@ class CourseOffer extends Model
     {
         $_academic = Auth::user()->staff->current_academic();
         return $this->hasMany(Section::class, 'course_id')->where('academic_id', $_academic->id)->where('is_removed', false)->orderBy('section_name', 'Desc');
+    }
+    public function units($_data)
+    {
+        return $this->hasMany(CurriculumSubject::class, 'course_id')
+            ->selectRaw("sum(s.units) as units")
+            ->join('subjects as s', 's.id', 'curriculum_subjects.subject_id')
+            ->where('curriculum_subjects.year_level', $_data->year_level)
+            ->where('curriculum_subjects.curriculum_id', $_data->curriculum_id)
+            ->where('curriculum_subjects.semester', $_data->academic->semester)
+            ->first();
     }
 }

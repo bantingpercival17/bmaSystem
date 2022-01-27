@@ -19,6 +19,8 @@ class CreateStudentNonAcademicClearancesTable extends Migration
             $table->foreign('student_id')->references('id')->on('student_details');
             $table->string('non_academic_type');
             $table->text('comments')->nullable();
+            $table->unsignedBigInteger('academic_id')->nullable();
+            $table->foreign('academic_id')->references('id')->on('academic_years');
             $table->unsignedBigInteger('staff_id')->nullable();
             $table->foreign('staff_id')->references('id')->on('staff');
             $table->boolean('is_approved')->nullable();

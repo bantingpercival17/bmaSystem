@@ -51,6 +51,7 @@ class DepartmentHeadController extends Controller
                 $_data = array(
                     'student_id' => $value,
                     'non_academic_type' => 'laboratory',
+                    'academic_id' => Auth::user()->staff->current_academic()->id,
                     'staff_id' => Auth::user()->staff->id,
                     'is_approved' =>  1, // nullable
                     'is_removed' => 0
@@ -65,6 +66,7 @@ class DepartmentHeadController extends Controller
                 $_data = array(
                     'student_id' => $value,
                     'non_academic_type' => 'department-head',
+                    'academic_id' => Auth::user()->staff->current_academic()->id,
                     'staff_id' => Auth::user()->staff->id,
                     'is_approved' =>  1, // nullable
                     'is_removed' => 0

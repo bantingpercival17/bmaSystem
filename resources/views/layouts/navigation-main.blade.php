@@ -128,7 +128,7 @@
                             'role_id' => 4,
                             'role_name' => 'Accounting',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Fees', 'accounting.fees']],
+                            'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars']],
                         ],
                         [
                             'role_id' => 5,
@@ -297,13 +297,15 @@
                     $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
                     $_url = request()->is('department-head/semestral-clearance*') ? route('department-head.e-clearance') : $_url;
                     $_url = request()->is('dean/e-clearance*') ? route('dean.e-clearance') : $_url;
+                    $_url = request()->is('accounting/particular/fee*') ? route('accounting.particular-fee-view') : $_url;
+                    $_url = request()->is('accounting/fees*') ? route('accounting.fees') : $_url;
                 @endphp
                 @if (Auth::user()->staff->academics()->count() > 0)
                     @foreach (Auth::user()->staff->academics() as $_academic)
 
                         <li>
                             <a class="dropdown-item "
-                                href="{{ $_url }}?_academic={{ base64_encode($_academic->id) }}">
+                                href="{{ $_url }}?_academic={{ base64_encode($_academic->id) }} {{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
                                 {{ $_academic->semester }} | {{ $_academic->school_year }}</a>
                         </li>
                     @endforeach

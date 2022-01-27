@@ -264,6 +264,7 @@ class RegistrarController extends Controller
             $_clearance = array(
                 'student_id' => $_student_id,
                 'non_academic_type' => $_clearance_data,
+                'academic_id' => Auth::user()->staff->current_academic()->id,
                 'comments' => $value['comment'], // nullable
                 'staff_id' => Auth::user()->staff->id,
                 'is_approved' => $_check, // nullable

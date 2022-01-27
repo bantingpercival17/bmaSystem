@@ -12,6 +12,7 @@ class StudentNonAcademicClearance extends Model
         'student_id',
         'non_academic_type',
         'comments', // nullable
+        'academic_id',
         'staff_id',
         'is_approved', // nullable
         'is_removed'

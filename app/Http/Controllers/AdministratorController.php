@@ -358,6 +358,7 @@ class AdministratorController extends Controller
                 'student_id' => $_student_id,
                 'non_academic_type' => $_clearance_data,
                 'comments' => $value['comment'], // nullable
+                'academic_id' => Auth::user()->staff->current_academic()->id,
                 'staff_id' => Auth::user()->staff->id,
                 'is_approved' => $_check, // nullable
                 'is_removed' => 0

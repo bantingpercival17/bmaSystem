@@ -13,7 +13,15 @@ Route::prefix('accounting')->group(function () {
 
 
     // Fees
-    Route::get('/fees')->name('accounting.fees');
+    Route::get('/fees', [AccountingController::class, 'fee_view'])->name('accounting.fees');
+    Route::get('/fees/course', [AccountingController::class, 'course_fee_view'])->name('accounting.course-fee-view');
+    Route::get('/fees/course/create', [AccountingController::class, 'course_fee_create_view'])->name('accounting.create-course-fee');
+    Route::post('/fees/course', [AccountingController::class, 'course_fee_store'])->name('accounting.course-fee-store');
+    // Particulars 
+    Route::get('/particular', [AccountingController::class, 'particular_view'])->name('accounting.particulars');
+    Route::post('/particular/store', [AccountingController::class, 'particular_store'])->name('accounting.create-particular');
+    Route::get('/particular/fee', [AccountingController::class, 'particular_fee_view'])->name('accounting.particular-fee-view');
+    Route::post('/particular/fee', [AccountingController::class, 'particular_fee_store'])->name('accounting.particular-fee-store');
     // Paymongo 
     // Create Payment Method
     Route::get('/paymongo-testing', [AccountingController::class, 'payment_testing']); // Paymongo Testing
