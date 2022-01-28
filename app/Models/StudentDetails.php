@@ -82,16 +82,23 @@ class StudentDetails extends Model
         $_student = explode(',', $_data);
         $_count = count($_student);
         //$_students = 
-        if ($_count > 1) {
-            $_students = StudentDetails::where('is_removed', false)
-                ->where('last_name', 'like', "%" . $_student[0] . "%")
-                ->where('first_name', 'like', "%" . trim($_student[1]) . "%")
-                ->orderBy('last_name', 'asc')->get();
+        if (is_int(intval($_data)) == 1) {
+             $_students = StudentDetails::join('student_accounts', 'student_accounts.student_id', 'student_details.id')
+            ->where('student_accounts.student_number', $_data)->get();
         } else {
-            $_students = StudentDetails::where('is_removed', false)
-                ->where('last_name', 'like', "%" . $_student[0] . "%")
-                ->orderBy('last_name', 'asc')->get();
+            if ($_count > 1) {
+                $_students = StudentDetails::where('is_removed', false)
+                    ->where('last_name', 'like', "%" . $_student[0] . "%")
+                    ->where('first_name', 'like', "%" . trim($_student[1]) . "%")
+                    ->orderBy('last_name', 'asc')->get();
+            } else {
+                $_students = StudentDetails::where('is_removed', false)
+                    ->where('last_name', 'like', "%" . $_student[0] . "%")
+                    ->orderBy('last_name', 'asc')->get();
+            }
+            
         }
+
         return $_students;
     }
     /* Enrollment Application */

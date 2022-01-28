@@ -58,8 +58,8 @@ class AdministratorController extends Controller
         if ($_request->_course  || $_request->_academic || $_request->_student) {
             $_student_detials = new StudentDetails();
             $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : [];
+            //return $_students;
         } else {
-
             $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
         }
         //return $_students;
