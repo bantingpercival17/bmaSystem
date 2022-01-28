@@ -137,7 +137,7 @@ $_title = 'Shipboard Monitoring';
                                             <div class="text-center">
                                                 <div class="card-body ">
                                                     <a
-                                                        href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->month) }}">
+                                                        href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->id) }}">
                                                         <i class="icon text-muted">
                                                             @yield('icon-document')
                                                         </i>
