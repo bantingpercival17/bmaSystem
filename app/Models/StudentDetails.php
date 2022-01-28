@@ -82,7 +82,7 @@ class StudentDetails extends Model
         $_student = explode(',', $_data);
         $_count = count($_student);
         //$_students = 
-        if (is_int(intval($_data)) == 1) {
+        if (is_numeric($_data) == 1) {
             $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
                 ->where('student_accounts.student_number', $_data)->get();
         } else {
