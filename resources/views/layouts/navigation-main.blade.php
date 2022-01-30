@@ -167,6 +167,12 @@
                             'role_icon' => 'icon-job',
                             'role_routes' => [['Grade Submission', 'dean.grade-submission'], ['E-Clearance', 'dean.e-clearance']],
                         ],
+                        [
+                            'role_id' => 11,
+                            'role_name' => 'Librarian',
+                            'role_icon' => 'icon-job',
+                            'role_routes' => [['Semestral Clearance', 'librarian.semestral-clearance']],
+                        ],
                     ];
                     
                 @endphp
@@ -300,6 +306,7 @@
                     $_url = request()->is('accounting/particular/fee*') ? route('accounting.particular-fee-view') : $_url;
                     $_url = request()->is('accounting/fees*') ? route('accounting.fees') : $_url;
                     $_url = request()->is('executive/semestral-clearance*') ? route('exo.semestral-clearance') : $_url;
+                    $_url = request()->is('librarian/semestral-clearance*') ? route('librarian.semestral-clearance') : $_url;
                 @endphp
                 @if (Auth::user()->staff->academics()->count() > 0)
                     @foreach (Auth::user()->staff->academics() as $_academic)
