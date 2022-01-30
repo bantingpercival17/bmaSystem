@@ -33,4 +33,9 @@ Route::prefix('accounting')->group(function () {
     // Get Payment Method
     Route::get('/paymongo-get', [AccountingController::class, 'payment_view']); // 
 
+
+    // Semestral Clearance
+    Route::get('/semestral-clearance', [AccountingController::class, 'semestral_clearance_view'])->name('accounting.semestral-clearance'); // Course View
+    Route::get('/semestral-clearance/view', [AccountingController::class, 'semestral_student_list_view'])->name('accounting.semestral-student-list'); // Section view
+    Route::post('/semestral-clearance', [AccountingController::class, 'semestral_clearance_store'])->name('accounting.semestral-clearance-store');
 });
