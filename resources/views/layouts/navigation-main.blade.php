@@ -110,7 +110,7 @@
                             'role_id' => 1,
                             'role_name' => 'Administrator',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting']],
+                            'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting']],
                         ],
                         [
                             'role_id' => 2,
@@ -309,6 +309,7 @@
                     $_url = request()->is('accounting/semestral-clearance*') ? route('accounting.semestral-clearance') : $_url;
                     $_url = request()->is('executive/semestral-clearance*') ? route('exo.semestral-clearance') : $_url;
                     $_url = request()->is('librarian/semestral-clearance*') ? route('librarian.semestral-clearance') : $_url;
+                    $_url = request()->is('administrator/semestral-clearance*') ? route('admin.semestral-clearance') : $_url;
                 @endphp
                 @if (Auth::user()->staff->academics()->count() > 0)
                     @foreach (Auth::user()->staff->academics() as $_academic)

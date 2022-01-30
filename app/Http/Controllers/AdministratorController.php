@@ -344,8 +344,14 @@ class AdministratorController extends Controller
     /* Semestral Clearance */
     public function clearance_view(Request $_request)
     {
-        $_enrollment = EnrollmentAssessment::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
-        return view('pages.administrator.clearance.view', compact('_enrollment'));
+        $_courses = CourseOffer::all();
+        $_sections = $_request->_course ? Section::where('course_id', base64_decode($_request->_course))->where('is_removed', false)->where('academic_id', Auth::user()->staff->current_academic()->id)->orderBy('section_name', 'desc')->get() : [];
+        return view('pages.administrator.semestral-clearance.view', compact('_courses', '_sections'));
+    }
+    public function semestral_student_list_view(Request $_request)
+    {
+        $_section = Section::find(base64_decode($_request->_section));
+        return view('pages.administrator.semestral-clearance.student_section', compact('_section'));
     }
     public function clearance_store(Request $_request)
     {
@@ -357,8 +363,8 @@ class AdministratorController extends Controller
             $_clearance = array(
                 'student_id' => $_student_id,
                 'non_academic_type' => $_clearance_data,
+                'academic_id' => $_request->_academic,
                 'comments' => $value['comment'], // nullable
-                'academic_id' => Auth::user()->staff->current_academic()->id,
                 'staff_id' => Auth::user()->staff->id,
                 'is_approved' => $_check, // nullable
                 'is_removed' => 0

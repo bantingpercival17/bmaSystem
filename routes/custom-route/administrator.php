@@ -38,8 +38,10 @@ Route::prefix('administrator')->group(function () {
     Route::get('/classes/section/report', [AdministratorController::class, 'section_report_list']); // List of Student Per Section
     /* Classes and Sections */
     /* Enrollment */
-    Route::get('/semestral-clearance', [AdministratorController::class, 'clearance_view'])->name('admin.clearance'); // Clearance View
-    Route::post('/semestral-clearance', [AdministratorController::class, 'clearance_store'])->name('admin.e-clearance'); // Enrollment View
+    Route::get('/semestral-clearance', [AdministratorController::class, 'clearance_view'])->name('admin.semestral-clearance'); // Clearance View
+    Route::post('/semestral-clearance', [AdministratorController::class, 'clearance_store'])->name('admin.semestral-clearance-store'); // Enrollment View
+    Route::get('/semestral-clearance/view', [AdministratorController::class, 'semestral_student_list_view'])->name('admin.semestral-student-list'); // Section view
+
     // Paymongo 
     Route::get('/paymongo', [PaymongoApi::class, 'view']); // Enrollment View
 
