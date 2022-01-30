@@ -122,7 +122,7 @@
                             'role_id' => 3,
                             'role_name' => 'Registrar',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.e-clearance']],
+                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance']],
                         ],
                         [
                             'role_id' => 4,
@@ -299,6 +299,7 @@
                 @php
                     $_url = route('registrar.enrollment');
                     $_url = request()->is('registrar/dashboard*') ? route('registrar.dashboard') : $_url;
+                    $_url = request()->is('registrar/semestral-clearance*') ? route('registrar.semestral-clearance') : $_url;
                     $_url = request()->is('teacher/subjects*') ? route('teacher.subject-list') : $_url;
                     $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
                     $_url = request()->is('department-head/semestral-clearance*') ? route('department-head.e-clearance') : $_url;

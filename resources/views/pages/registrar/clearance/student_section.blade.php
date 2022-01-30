@@ -6,7 +6,7 @@ $_title = 'Semestral Clearance';
 @section('beardcrumb-content')
     <li class="breadcrumb-item">
         <a
-            href="{{ route('librarian.semestral-clearance') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}">
+            href="{{ route('registrar.semestral-clearance') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}">
             <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -29,7 +29,7 @@ $_title = 'Semestral Clearance';
 @endsection
 @section('page-content')
     <div class=" mt-6 py-0">
-        <form action="{{ route('librarian.semestral-clearance-store') }}" method="post">
+        <form action="{{ route('registrar.semestral-clearance-store') }}" method="post">
             @csrf
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
@@ -46,7 +46,7 @@ $_title = 'Semestral Clearance';
                             </label>
                         </div>
                         <input type="hidden" name="_academic" value="{{ Auth::user()->staff->current_academic()->id }}">
-                        <input type="hidden" name="_clearance_data" value="library">
+                        <input type="hidden" name="_clearance_data" value="registrar">
                         <button type="submit" class="btn btn-primary">SUBMIT</button>
                     </div>
                 </div>
@@ -75,7 +75,7 @@ $_title = 'Semestral Clearance';
                                                         type="checkbox" id="flexCheckChecked-3-{{ $_key }}"
                                                         name="data[{{ $_key }}][e_clearance]"
                                                         value="{{ $_data->student->id }}"
-                                                        {{ $_data->student->non_academic_clearance('library') ? ($_data->student->non_academic_clearance('library')->is_approved == 1 ? 'checked' : '') : '' }}>
+                                                        {{ $_data->student->non_academic_clearance('registrar') ? ($_data->student->non_academic_clearance('registrar')->is_approved == 1 ? 'checked' : '') : '' }}>
                                                     <label class="form-check-label"
                                                         for="flexCheckChecked-3-{{ $_key }}">
                                                         CLEARED
@@ -88,7 +88,7 @@ $_title = 'Semestral Clearance';
                                                     </label>
                                                     <input type="text" class="form-control"
                                                         name="data[{{ $_key }}][comment]"
-                                                        value="{{ $_data->student->non_academic_clearance('library') ? $_data->student->non_academic_clearance('library')->comments : '' }}">
+                                                        value="{{ $_data->student->non_academic_clearance('registrar') ? $_data->student->non_academic_clearance('registrar')->comments : '' }}">
                                                     <input type="hidden" name="data[{{ $_key }}][sId]"
                                                         value="{{ base64_encode($_data->student->id) }}">
                                                 </div>
