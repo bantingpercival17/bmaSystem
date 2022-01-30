@@ -47,13 +47,13 @@ class RegistrarController extends Controller
         $_year_level = Auth::user()->staff->current_academic()->semestral == 'First Semester' ? intval($_current_assessment->year_level) + 1 : intval($_current_assessment->year_level);
         if (count($_student->enrollment_history) > 0) {
             // Old Student 
-            // If the Student is Incoming 4th class and have a previous Enrollment Assessment first check the Year level if the year level is Equal to 13 the Student will equvalet into 4th class
-
+            // If the Student is Incoming 4th class and have a previous Enrollment Assessment 
+            //first check the Year level if the year level is Equal to 13 the Student will equvalet into 4th class
             if ($_year_level == 13) {
                 // This Will be incoming 4th Class
-
                 // Create a new Student number and Student Account
             }
+            // Validate the Enrollment Assessment of the Student
             $_assessment = EnrollmentAssessment::where('student_id', $_student->id)->where('academic_id', Auth::user()->staff->current_academic()->id)->first();
             if (!$_assessment) {
                 // Store Enrollment Assessment
@@ -70,9 +70,9 @@ class RegistrarController extends Controller
                 EnrollmentAssessment::create($_assessment_details); // Saved Enrollment Assessment
                 // Update Enrollment Application
                 if ($_student->enrollment_application) { // If Online Enrollee Update Data
-                    $_student->enrollment_assessment->staff_id = Auth::user()->staff->id;
-                    $_student->enrollment_assessment->is_approved = 1;
-                    $_student->enrollment_assessment->save();
+                    $_student->enrollment_application->staff_id = Auth::user()->staff->id;
+                    $_student->enrollment_application->is_approved = 1;
+                    $_student->enrollment_application->save();
                 } else { // If Onsite Enrollee Store Data
                     $_details = [
                         'student_id' => $_student->id,

@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\CourseOffer;
 use App\Models\CourseSemestralFees;
 use App\Models\Curriculum;
+use App\Models\EnrollmentAssessment;
 use App\Models\ParticularFees;
 use App\Models\Particulars;
+use App\Models\PaymentAssessment;
 use App\Models\SemestralFee;
+use App\Models\StudentDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -50,7 +53,6 @@ class AccountingController extends Controller
         $_particulars = Particulars::where('department', $_request->_department)->where('is_removed', false)->get();
         return view('pages.accounting.particular.create_semestral_fee', compact('_particulars'));
     }
-
     public function particular_fee_store(Request $_request)
     {
         foreach ($_request->data as $key => $value) {
@@ -64,8 +66,6 @@ class AccountingController extends Controller
         }
         return back()->with('success', 'Successfully Created a Semestral Tuition Fee');
     }
-
-
     public function fee_view(Request $_request)
     {
         $_courses = CourseOffer::where('is_removed', false)->get();
@@ -90,12 +90,11 @@ class AccountingController extends Controller
             ->sum('pf.particular_amount');
         //return compact('_tag');
         return view('pages.accounting.fee.course_fee_view', compact('_course', '_course_fees'));
-       
     }
     public function course_fee_create_view(Request $_request)
     {
         $_department = base64_decode($_request->_course) == 3 ? 'senior_high' : 'college';
-        $_particulars = Particulars::where('department', $_department)->where('is_removed', false)->get();
+        $_particulars = Particulars::where('department', $_department)->where('is_removed', false)/* ->where('particular_type', 'tuition_type') */->get();
         $_curriculum = Curriculum::all();
         //$_courses = CourseOffer::where('is_removed', false)->get();
         return view('pages.accounting.fee.create_semestral_fee', compact('_particulars', '_curriculum'));
@@ -149,5 +148,48 @@ class AccountingController extends Controller
                 SemestralFee::create($_data);
         }
         return back()->with('success', 'Successfully Create a Semestral Tuition Fee');
+    }
+
+    public function assessment_view(Request $_request)
+    {
+        $_student_detials = new StudentDetails();
+        $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
+        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+            ->join('enrollment_assessments', 'student_details.id', 'enrollment_assessments.student_id')
+            ->leftJoin('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
+            ->whereNull('pa.enrollment_id')->get();
+        $_students = $_request->_students ?   $_student_detials->student_search($_request->_students) : $_students;
+        if ($_ea = $_student->enrollment_assessment) {
+            $_course_semestral_fee =  $_ea->course_semestral_fees($_ea); // Course Semestral Fee Table
+            $_semestral_fees = $_course_semestral_fee ? $_course_semestral_fee->semestral_fees($_course_semestral_fee->id) : [];
+            //return compact('_semestral_fees');
+        } else {
+            $_semestral_fees = [];
+        }
+
+        return view('pages.accounting.assessment.view', compact('_student', '_students', '_semestral_fees', '_course_semestral_fee'));
+    }
+    public function assessment_store(Request $_request)
+    {
+        $_details = array(
+            'enrollment_id' => $_request->enrollment,
+            'course_semestral_fee_id' => $_request->semestral_fees,
+            'payment_mode' => $_request->mode,
+            'staff_id' => auth()->user()->staff->id,
+            'is_removed' => 0,
+            'total_payment' => 0,
+            'voucher_amount' => 0
+        );
+        $_payment_assessment = PaymentAssessment::where('enrollment_id',$_request->enrollment)->first();
+        if (!$_payment_assessment) {
+            PaymentAssessment::create($_details);
+            return back()->with('success', 'Payment Assessment Complete.');
+        } else {
+            
+            return back()->with('success', 'Payment Assessment Updated');
+        }
+
+        //return dd($_details);
     }
 }

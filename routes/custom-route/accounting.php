@@ -8,6 +8,11 @@ Route::prefix('accounting')->group(function () {
     Route::get('/dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard'); // Dashboard
     // Assessment
     Route::get('/assessment-fee', [AccountingController::class, 'assessment_view'])->name('accounting.assessments'); // Assessment View
+    Route::post('/assessment-fee', [AccountingController::class, 'assessment_store'])->name('accounting.payment-assessment'); // Assessment Store
+
+    //Payment 
+    Route::get('/payments', [AccountingController::class, 'payment_view'])->name('accounting.payment-view');
+    Route::post('/payments', [AccountingController::class], 'payment_store')->name('accounting.payment-store');
     // Student Search
     Route::get('/student-search', [AccountingController::class, 'search_students']); // Search Student
 

@@ -54,4 +54,13 @@ class EnrollmentAssessment extends Model
             ->where('semester', $_assessment->academic->semester)
             ->get();
     }
+    public function course_semestral_fees($_data)
+    {
+        return CourseSemestralFees::where([
+            'course_id' => $_data->course_id,
+            'curriculum_id' => $_data->curriculum_id,
+            'academic_id' => $_data->academic_id,
+            'year_level' => $_data->year_level
+        ])->first();
+    }
 }

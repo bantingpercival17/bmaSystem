@@ -12,19 +12,24 @@ class CourseSemestralFees extends Model
 
     public function semestral_fees($_data)
     {
-
-        /*  return $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-            ->select('p.particular_tag')
-            ->selectRaw("sum(pf.particular_amount) as fees")
-            ->join('particular_fees as pf', 'pf.id', 'semestral_fees.particular_fee_id')
-            ->join('particulars as p', 'p.id', 'pf.particular_id'); */
-        /*  ->group('p.particular_tag'); */
         return SemestralFee::select('p.particular_tag')
             ->selectRaw("sum(pf.particular_amount) as fees")
             ->join('particular_fees as pf', 'pf.id', 'semestral_fees.particular_fee_id')
             ->join('particulars as p', 'p.id', 'pf.particular_id')
             ->where('semestral_fees.course_semestral_fee_id', $_data)
             ->groupBy('p.particular_tag')
+            ->where('p.particular_tag', '!=', 'addition_tags')
+            ->get();
+    }
+    public function additional_fees($_data)
+    {
+        return SemestralFee::select('p.particular_name', 'pf.particular_amount')
+            /* ->selectRaw("sum(pf.particular_amount) as fees") */
+            ->join('particular_fees as pf', 'pf.id', 'semestral_fees.particular_fee_id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('semestral_fees.course_semestral_fee_id', $_data)
+            /*  ->groupBy('p.particular_tag') */
+            ->where('p.particular_tag', '=', 'addition_tags')
             ->get();
     }
     public function course()
@@ -33,6 +38,6 @@ class CourseSemestralFees extends Model
     }
     public function academic()
     {
-        return $this->belongsTo(AcademicYear::class,'academic_id');
+        return $this->belongsTo(AcademicYear::class, 'academic_id');
     }
 }

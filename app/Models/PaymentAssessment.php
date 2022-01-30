@@ -11,6 +11,7 @@ class PaymentAssessment extends Model
     protected $fillable = [
         'enrollment_id',
         'payment_mode',
+        'course_semestral_fee_id',
         'voucher_amount',
         'total_payment',
         'staff_id',
