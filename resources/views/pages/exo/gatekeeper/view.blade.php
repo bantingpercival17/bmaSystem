@@ -1,10 +1,8 @@
-@extends('app')
+@extends('layouts.app-main')
 @section('page-title', 'Attendance - ' . now()->format('M d,Y'))
-@section('page-navigation')
-    <ol class="breadcrumb ">
-        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
-        <li class="breadcrumb-item active">Attendance</li>
-    </ol>
+@section('beardcrumb-content')
+    <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+    <li class="breadcrumb-item active">Attendance</li>
 @endsection
 @section('page-content')
     <div class="card">

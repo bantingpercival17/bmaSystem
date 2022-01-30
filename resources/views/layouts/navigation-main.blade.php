@@ -153,7 +153,7 @@
                             'role_id' => 8,
                             'role_name' => 'Executive',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'administrative.dashboard'], ['Enrollment', 'admin.enrollment']],
+                            'role_routes' => [['Dashboard', 'exo.dashboard'], ['Staff Attendance', 'exo.staff-attendance'], ['Semestral Clearance', 'exo.semestral-clearance']],
                         ],
                         [
                             'role_id' => 9,
@@ -299,6 +299,7 @@
                     $_url = request()->is('dean/e-clearance*') ? route('dean.e-clearance') : $_url;
                     $_url = request()->is('accounting/particular/fee*') ? route('accounting.particular-fee-view') : $_url;
                     $_url = request()->is('accounting/fees*') ? route('accounting.fees') : $_url;
+                    $_url = request()->is('executive/semestral-clearance*') ? route('exo.semestral-clearance') : $_url;
                 @endphp
                 @if (Auth::user()->staff->academics()->count() > 0)
                     @foreach (Auth::user()->staff->academics() as $_academic)

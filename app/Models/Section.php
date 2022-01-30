@@ -23,4 +23,8 @@ class Section extends Model
     {
         return $this->hasMany(SubjectClass::class, 'section_id')->where('is_removed', false);
     }
+    public function course()
+    {
+        return $this->belongsTo(CourseOffer::class, 'course_id');
+    }
 }
