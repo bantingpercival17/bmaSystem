@@ -43,6 +43,13 @@ $_title = 'Students';
                 <div class="card-body">
                     <label class="text-muted h5">| IMPORT STUDENT DETAILS</label>
                     <div class="form-group">
+                        <label class="text-success">FILE TYPE</label>
+                        <select name="_file_type" id="" class="form-select">
+                            <option value="excel">Excel File</option>
+                            <option value="json">Json File</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label class="text-success">ATTACH FILE</label>
                         <input type="file" class="form-control" name="_file">
                     </div>

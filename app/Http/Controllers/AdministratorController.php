@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\StaffImport;
+use App\Imports\StudentInformationImport;
 use App\Imports\StudentSection as ImportsStudentSection;
 use App\Imports\SubjectHandle;
 use App\Models\AcademicYear;
@@ -73,16 +74,17 @@ class AdministratorController extends Controller
     }
     public function student_imports(Request $_request)
     {
-        $_files = json_decode(file_get_contents($_request->file('_file')));
-        $_student_model = new StudentDetails();
-        foreach ($_files as $key => $_file) {
-            /*  $_student = StudentAccount::where('student_number', $_file->student_details->student_number)->first();
-            if (!$_student) {
-                $_student_model->student_single_file_import($_file);
-            } */
-            $_student_model->upload_student_details($_file);
+        if ($_request->_file_type == 'json') {
+            $_files = json_decode(file_get_contents($_request->file('_file')));
+            $_student_model = new StudentDetails();
+            foreach ($_files as $key => $_file) {
+                $_student_model->upload_student_details($_file);
+            }
         }
-        return back()->with('message', 'Successfully Upload Student Details');
+        if ($_request->_file_type == 'excel') {
+            Excel::import(new StudentInformationImport, $_request->file('_file'));
+        }
+        //return back()->with('message', 'Successfully Upload Student Details');
     }
 
     /* Accounts */
