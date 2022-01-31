@@ -65,7 +65,7 @@ class OnboardTrainingController extends Controller
             '_ship_name' => 'string | required',
             '_type_vessel' => 'string | required',
             '_ship' => 'string | required',
-            '_company_group' => 'string | required',
+            '_shipboard_status' => 'string | required',
             '_sbt_batch' => 'string | required',
             '_embarked' => 'date | required',
         ]);
@@ -76,13 +76,27 @@ class OnboardTrainingController extends Controller
             'vessel_name' => $_request->_ship_name,
             'vessel_type' => $_request->_type_vessel,
             'shipping_company' => $_request->_ship,
-            'company_group' => $_request->_company_group,
+            'shipboard_status' => $_request->_shipboard_status,
             'sbt_batch' => $_request->_sbt_batch,
             'embarked' => $_request->_embarked,
-            'disembarked' => $_request->_disemabarke ?: ''
         );
-        ShipBoardInformation::create($_shipboard_info);
-        return back();
+        $_check  = ShipBoardInformation::where('student_id', $_request->_student_id)->first();
+        if ($_check) {
+            ShipBoardInformation::where('student_id', $_request->_student_id)->update([
+                'company_name' => $_request->company_name,
+                'vessel_name' => $_request->_ship_name,
+                'vessel_type' => $_request->_type_vessel,
+                'shipping_company' => $_request->_ship,
+                'shipboard_status' => $_request->_shipboard_status,
+                'sbt_batch' => $_request->_sbt_batch,
+                'embarked' => $_request->_embarked,
+                'disembarked' => $_request->_disemabarke ?: null
+            ]);
+            return redirect(route('onboard.midshipman') . '?_midshipman=' . base64_encode($_request->_student_id))->with('success', 'Successfully Updated');
+        } else {
+            ShipBoardInformation::create($_shipboard_info);
+            return redirect(route('onboard.midshipman') . '?_midshipman=' . base64_encode($_request->_student_id))->with('success', 'Successfully Submitted');
+        }
     }
     public function onboard_training_view(Request $_request)
     {
@@ -92,7 +106,7 @@ class OnboardTrainingController extends Controller
     }
     public function  onboard_journal_view(Request $_request)
     {
-        $_journals = ShipboardJournal::where('month', base64_decode($_request->_j))->where('student_id',base64_decode($_request->_midshipman))->get();
+        $_journals = ShipboardJournal::where('month', base64_decode($_request->_j))->where('student_id', base64_decode($_request->_midshipman))->get();
         $_midshipman = $_journals[0]->student;
 
         return view('onboardtraining.shipboard.document', compact('_midshipman', '_journals'));

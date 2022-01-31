@@ -30,7 +30,7 @@ $_title = 'Midshipman';
                             </h4>
                             <p class="card-text">
                                 <span>STUDENT NUMBER: <b>
-                                        {{ $_midshipman ? ($_midshipman->account ? $_midshipman->account->student_number : '-' ) : '-' }}</b></span>
+                                        {{ $_midshipman ? ($_midshipman->account ? $_midshipman->account->student_number : '-') : '-' }}</b></span>
                                 <br>
                                 <span>COURE: <b>
                                         {{ $_midshipman ? $_midshipman->enrollment_assessment->course->course_name : '-' }}</b></span>
@@ -57,7 +57,7 @@ $_title = 'Midshipman';
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>COMPANY NAME</small></label>
                                                 <input type="text" class="form-control" name="company_name"
-                                                    value="{{ $_midshipman->shipboard_training->company_name }}">
+                                                    value="{{ old('company_name') ?: $_midshipman->shipboard_training->company_name }}">
                                                 @error('company_name')
                                                     <span class="invalid-feedback text-danger" role="alert">
                                                         <small> <b>{{ $message }}</b> </small>
@@ -67,7 +67,7 @@ $_title = 'Midshipman';
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>NAME OF SHIPPING</small></label>
                                                 <input type="text" class="form-control" name="_ship_name"
-                                                    value="{{ $_midshipman->shipboard_training->vessel_name }}">
+                                                    value="{{ old('_ship_name') ?: $_midshipman->shipboard_training->vessel_name }}">
                                                 @error('_ship_name')
                                                     <span class="invalid-feedback text-danger" role="alert">
                                                         <small> <b>{{ $message }}</b> </small>
@@ -85,7 +85,7 @@ $_title = 'Midshipman';
                                                     value="{{ old('_type_vessel') }}">
                                                     @foreach ($_select as $item)
                                                         <option value="{{ $item }}"
-                                                            {{ $_midshipman->shipboard_training->vessel_type == $item ? 'selected' : '' }}>
+                                                            {{ old('_type_vessel') ? (old('_type_vessel') == $item ? 'selected' : '') : ($_midshipman->shipboard_training->vessel_type == $item ? 'selected' : '') }}>
                                                             {{ $item }}</option>
                                                     @endforeach
                                                 </select>
@@ -97,24 +97,24 @@ $_title = 'Midshipman';
                                                 <label class="form-label-sm"><small>SEA EXPERIENCE</small></label>
                                                 <select name="_ship" id="" class="form-select">
                                                     <option value="foreign"
-                                                        {{ $_midshipman->shipboard_training->shipping_company == 'foreign' ? 'selected' : '' }}>
+                                                        {{ old('_ship') ? (old('_ship') == 'foreign' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_company == 'foreign' ? 'selected' : '') }}>
                                                         Foreign Ship</option>
                                                     <option value="domestic"
-                                                        {{ $_midshipman->shipboard_training->shipping_company == 'domestic' ? 'selected' : '' }}>
+                                                        {{ old('_ship') ? (old('_ship') == 'domestic' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_company == 'domestic' ? 'selected' : '') }}>
                                                         Domestic Ship</option>
                                                 </select>
                                             </div>
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>ONBOARD STATUS</small></label>
-                                                <select name="_company_group" id="" class="form-select">
+                                                <select name="_shipboard_status" id="" class="form-select">
                                                     <option value="complete"
-                                                        {{ $_midshipman->shipboard_training->shipping_status == 'complete' ? 'selected' : '' }}>
+                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'complete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_status == 'complete' ? 'selected' : '') }}>
                                                         COMPLETE</option>
                                                     <option value="incomplete"
-                                                        {{ $_midshipman->shipboard_training->shipping_status == 'incomplete' ? 'selected' : '' }}>
+                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'incomplete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_status == 'incomplete' ? 'selected' : '') }}>
                                                         INCOMPLETE</option>
                                                     <option value="on going"
-                                                        {{ $_midshipman->shipboard_training->shipping_status == 'on going' ? 'selected' : '' }}>
+                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'on going' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_status == 'on going' ? 'selected' : '') }}>
                                                         ON GOING</option>
                                                 </select>
                                             </div>
@@ -123,7 +123,7 @@ $_title = 'Midshipman';
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>OBT BATCH</small></label>
                                                 <input type="text" class="form-control" name="_sbt_batch" value="SBT"
-                                                    value="{{ $_midshipman->shipboard_training->sbt_batch }}">
+                                                    value="{{ old('_sbt_batch') ? old('_sbt_batch') : $_midshipman->shipboard_training->sbt_batch }}">
                                                 @error('_sbt_batch')
                                                     <span class="invalid-feedback text-danger" role="alert">
                                                         <small> <b>{{ $message }}</b> </small>
@@ -192,13 +192,7 @@ $_title = 'Midshipman';
                                         </div>
 
                                         <div class="row">
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>NAME OF SHIPPING</small></label>
-                                                <br>
-                                                <label class="text-primary">
-                                                    <b>{{ $_midshipman->shipboard_training->vessel_name }}</b>
-                                                </label>
-                                            </div>
+
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>VESSEL TYPE</small></label>
                                                 <br>
@@ -236,7 +230,8 @@ $_title = 'Midshipman';
                                     <div class="row">
                                         <div class="form-group col-md">
                                             <label class="form-label-sm"><small>COMPANY NAME</small></label>
-                                            <input type="text" class="form-control" name="company_name">
+                                            <input type="text" class="form-control" name="company_name"
+                                                value="{{ old('company_name') }}">
                                             @error('company_name')
                                                 <span class="invalid-feedback text-danger" role="alert">
                                                     <small> <b>{{ $message }}</b> </small>
@@ -245,7 +240,8 @@ $_title = 'Midshipman';
                                         </div>
                                         <div class="form-group col-md">
                                             <label class="form-label-sm"><small>NAME OF SHIPPING</small></label>
-                                            <input type="text" class="form-control" name="_ship_name">
+                                            <input type="text" class="form-control" name="_ship_name"
+                                                value="{{ old('_ship_name') }}">
                                             @error('_ship_name')
                                                 <span class="invalid-feedback text-danger" role="alert">
                                                     <small> <b>{{ $message }}</b> </small>
@@ -256,11 +252,16 @@ $_title = 'Midshipman';
                                     <div class="row">
                                         <div class="form-group col-md-5">
                                             <label class="form-label-sm"><small>VESSEL TYPE</small></label>
+                                            @php
+                                                $_select = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER'];
+                                            @endphp
                                             <select name="_type_vessel" class="form-select"
                                                 value="{{ old('_type_vessel') }}">
-                                                <option value="CONTAINER VESSEL">CONTAINER VESSEL</option>
-                                                <option value="GENERAL CARGO">GENERAL CARGO</option>
-                                                <option value="TANKER">TANKER</option>
+                                                @foreach ($_select as $item)
+                                                    <option value="{{ $item }}"
+                                                        {{ old('_type_vessel') ? (old('_type_vessel') == $item ? 'selected' : '') : '' }}>
+                                                        {{ $item }}</option>
+                                                @endforeach
                                             </select>
                                             @error('_type_vessel')
                                                 <div class="text-danger">{{ $message }}</div>
@@ -269,23 +270,31 @@ $_title = 'Midshipman';
                                         <div class="form-group col-md">
                                             <label class="form-label-sm"><small>SEA EXPERIENCE</small></label>
                                             <select name="_ship" id="" class="form-select">
-                                                <option value="foreign">Foreign Ship</option>
-                                                <option value="domestic">Domestic Ship</option>
+                                                <option value="foreign"
+                                                    {{ old('_ship') ? (old('_ship') == 'foreign' ? 'selected' : '') : '' }}>
+                                                    Foreign Ship</option>
+                                                <option value="domestic"
+                                                    {{ old('_ship') ? (old('_ship') == 'domestic' ? 'selected' : '') : '' }}>
+                                                    Domestic Ship</option>
                                             </select>
                                         </div>
                                         <div class="form-group col-md">
                                             <label class="form-label-sm"><small>ONBOARD STATUS</small></label>
-                                            <select name="_company_group" id="" class="form-select">
-                                                <option value="complete">COMPLETE</option>
-                                                <option value="incomplete">INCOMPLETE</option>
-                                                <option value="on going">ON GOING</option>
+                                            <select name="_shipboard_status" id="" class="form-select">
+                                                <option value="complete">
+                                                    COMPLETE</option>
+                                                <option value="incomplete">
+                                                    INCOMPLETE</option>
+                                                <option value="on going">
+                                                    ON GOING</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="form-group col-md">
                                             <label class="form-label-sm"><small>OBT BATCH</small></label>
-                                            <input type="text" class="form-control" name="_sbt_batch" value="SBT">
+                                            <input type="text" class="form-control" name="_sbt_batch" value="SBT"
+                                                value="{{ old('_sbt_batch') }}">
                                             @error('_sbt_batch')
                                                 <span class="invalid-feedback text-danger" role="alert">
                                                     <small> <b>{{ $message }}</b> </small>
@@ -294,8 +303,8 @@ $_title = 'Midshipman';
                                         </div>
                                         <div class="form-group col-md">
                                             <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
-                                            <input class="form-control" type="date" name="_embarked"
-                                                value="{{ old('_embarked') }}" max="2021-12-31" min="2000-12-21">
+                                            <input class="form-control" type="date" name="_embarked" max="2021-12-31"
+                                                min="2000-12-21" value="{{ old('_embarked') }}">
                                             @error('_embarked')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
