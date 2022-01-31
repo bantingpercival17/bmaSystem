@@ -300,7 +300,51 @@ $_title = 'Enrollment';
                                 </tbody>
                             </table>
                         </div>
-
+                        <text-primary class="h5">Non-Academic</text-primary>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><b>Personel</b></th>
+                                        <th><b>Status</b></th>
+                                        <th><b>Comment</b></th>
+                                        <th><b>Contact</b></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $_department = ['Department Head', 'Laboratory', 'Dean', 'Library', 'Exo', 'Accounting', 'Registrar', 'ICT'];
+                                    @endphp
+                                    @if (count($_department) > 0)
+                                        @foreach ($_department as $_data)
+                                            <tr>
+                                                <th>
+                                                    <b class="text-primary">
+                                                        {{ $_data }}
+                                                    </b>
+                                                <td>
+                                                    @if ($_student->non_academic_clearance($_data))
+                                                        @if ($_student->non_academic_clearance($_data)->is_approved == 1)
+                                                            <span class="text-primary"><b>Cleared</b></span>
+                                                        @else
+                                                            <span class="text-warning"><b>Not Clear</b></span><br>
+                                                        @endif
+                                                    @else
+                                                        <span class="text-danger">-</span>
+                                                    @endif
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <th colspan="4" class="text-center text-muted"> Non Academic Clearance</th>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
