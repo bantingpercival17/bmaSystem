@@ -63,6 +63,23 @@ $_title = 'Setting';
         <div class="col-md-7">
             <label for="" class="text-primary h4">Academics</label>
             <div class="card">
+                <div class="card-header">
+                    <form action="{{ route('setting.store-academic') }}" method="post">
+                        @csrf
+                        <div class="form-group">
+                            <label for="" class="form-label">School Year</label>
+                            <input type="text" class="form-control" name="_school_year" placeholder="ex. 2021-2022">
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="form-label">Semester</label>
+                            <select name="semester" id="" class="form-select">
+                                <option value="First Semester">First Semester</option>
+                                <option value="Second Semester">Second Semester</option>
+                            </select>
+
+                        </div>
+                    </form>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table">

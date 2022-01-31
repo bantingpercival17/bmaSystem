@@ -460,11 +460,16 @@ class AdministratorController extends Controller
     // Academic 
     public function store_academic(Request $_request)
     {
+        $_current_academic = AcademicYear::where('is_active', true)->first();
+        $_current_academic->is_active = false;
+        $_current_academic->save();
         AcademicYear::create([
             'school_year' => $_request->_school_year,
             'semester' => $_request->semester,
-            'is_removed'
+            'is_active' => true,
+            'is_removed' => false
         ]);
+
         return back()->with('success', 'Successfully Created');
     }
     // Roles
@@ -478,5 +483,7 @@ class AdministratorController extends Controller
         Role::create($_details);
         return back()->with('success', 'Successfully Created');
     }
+    // Academic Year Store
+
     // Department
 }
