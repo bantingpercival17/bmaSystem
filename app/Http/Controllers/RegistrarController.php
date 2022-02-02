@@ -242,9 +242,8 @@ class RegistrarController extends Controller
     // Section Panel 
     public function section_view(Request $_request)
     {
-        $_course = CourseOffer::where('is_removed', false)->get();
-        $_academic = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
-        return view('pages.registrar.sections.view', compact('_course', '_academic'));
+        $_courses = CourseOffer::where('is_removed', false)->get();
+        return view('pages.registrar.sections.view', compact('_courses'));
     }
 
     // Semestral clearance

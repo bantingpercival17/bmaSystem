@@ -300,6 +300,7 @@
                     $_url = route('registrar.enrollment');
                     $_url = request()->is('registrar/dashboard*') ? route('registrar.dashboard') : $_url;
                     $_url = request()->is('registrar/semestral-clearance*') ? route('registrar.semestral-clearance') : $_url;
+                    $_url = request()->is('registrar/sections*') ? route('registrar.section-view') : $_url;
                     $_url = request()->is('registrar/subjects*') ? route('registrar.subject-view') : $_url;
                     $_url = request()->is('teacher/subjects*') ? route('teacher.subject-list') : $_url;
                     $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
