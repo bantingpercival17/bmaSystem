@@ -31,22 +31,12 @@ class TeacherController extends Controller
     public function subject_list(Request $_request)
     {
         $_staff = Auth::user()->staff;
-
-        $_academic = AcademicYear::where('is_active', 1)->first();
+        $_academic = $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : Auth::user()->staff->current_academic();
         $_subject = SubjectClass::where('staff_id', $_staff->id)
             ->where('academic_id', $_academic->id)
             ->where('is_removed', false)
             ->get();
-        if (Auth::user()->email == 'k.j.cruz@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph') {
-            $_academic = $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : Auth::user()->staff->current_academic();
-            $_subject = SubjectClass::where('staff_id', $_staff->id)
-                ->where('academic_id', $_academic->id)
-                ->where('is_removed', false)
-                ->get();
-            return view('teacher\dashboard\dasboard-main', compact('_subject'));
-        } else {
-            return view('teacher.dashboard', compact('_subject'));
-        }
+        return view('teacher\dashboard\dasboard-main', compact('_subject'));
     }
     public function subject_class_view(Request $_request)
     {
@@ -210,10 +200,8 @@ class TeacherController extends Controller
         $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
         $_staffs = Staff::where('department', Auth::user()->staff->department)->orderBy('last_name')->get();
 
-        if (Auth::user()->email == 'k.j.cruz@bma.edu.ph') {
-            return view('teacher\department-head\grade\grade_submission', compact('_staffs'));
-        }
-        return view('teacher.submission_view', compact('_staffs', '_academics'));
+        return view('teacher\department-head\grade\grade_submission', compact('_staffs'));
+        //return view('teacher.submission_view', compact('_staffs', '_academics'));
     }
     public function subject_report_view(Request $_request)
     {
