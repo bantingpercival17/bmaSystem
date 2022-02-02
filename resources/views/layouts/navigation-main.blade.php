@@ -251,7 +251,7 @@
                                         data-bs-parent="#sidebar-menu">
                                         @foreach ($_item['role_routes'] as $_route)
                                             <li class="nav-item">
-                                                <a class="nav-link {{ request()->is(str_replace('http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/', '', strtolower(route($_route[1]))) . '*') ? 'active' : '' }}"
+                                                <a class="nav-link {{ request()->is(str_replace('http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/','',strtolower(route($_route[1]))) . '*')? 'active': '' }}"
                                                     href="{{ route($_route[1]) }}">
 
                                                     <i class="icon">
@@ -300,6 +300,7 @@
                     $_url = route('registrar.enrollment');
                     $_url = request()->is('registrar/dashboard*') ? route('registrar.dashboard') : $_url;
                     $_url = request()->is('registrar/semestral-clearance*') ? route('registrar.semestral-clearance') : $_url;
+                    $_url = request()->is('registrar/subjects*') ? route('registrar.subject-view') : $_url;
                     $_url = request()->is('teacher/subjects*') ? route('teacher.subject-list') : $_url;
                     $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
                     $_url = request()->is('department-head/semestral-clearance*') ? route('department-head.e-clearance') : $_url;

@@ -130,15 +130,23 @@ class RegistrarController extends Controller
     public function subject_view()
     {
         $_curriculum = Curriculum::where('is_removed', false)->get();
-        $_academic = AcademicYear::where('is_removed', false)
-            ->orderBy('id', 'DESC')
-            ->get();
-        return view('pages.registrar.subjects.view', compact('_curriculum', '_academic'));
+        $_courses = CourseOffer::all();
+        return view('pages.registrar.subjects.view', compact('_curriculum', '_courses'));
     }
 
 
     // Subject Panel
     public function classes_view(Request $_request)
+    {
+        return $_section = Section::where('academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('is_removed', false)
+            ->get(); // Get all Section base on the Academic Year
+        $_teacher = User::select('users.id', 'users.name')
+            ->join('role_user', 'users.id', 'role_user.user_id')
+            ->where('role_user.role_id', 6)
+            ->get();
+    }
+    public function classes_view_v1(Request $_request)
     {
         $_academic = AcademicYear::find(base64_decode($_request->_view)); // Get the selected Academic Year
         $_course_view = $_request->_d ? CourseOffer::find(Crypt::decrypt($_request->_d)) : []; // Get Course Type
@@ -149,7 +157,7 @@ class RegistrarController extends Controller
             ->get(); // Get all Section base on the Academic Year
         $_teacher = User::select('users.id', 'users.name')
             ->join('role_user', 'users.id', 'role_user.user_id')
-            /* ->where('role_user.role_id', 6) */
+            ->where('role_user.role_id', 6)
             ->get(); // Get All the Teachers
         return view('pages.registrar.subjects.classes_view', compact('_academic', '_course', '_course_view', '_curriculum', '_section', '_teacher'));
     }
@@ -186,37 +194,36 @@ class RegistrarController extends Controller
     public function curriculum_subject_store(Request $_request)
     {
         $_request->validate([
-            '_input_1' => 'required',
-            '_input_2' => 'required',
-            '_input_3' => 'required',
-            '_input_4' => 'required',
-            '_input_5' => 'required'
+            'course_code' => 'required',
+            '_subject_name' => 'required',
+            '_hours' => 'required',
+            '_lab_hour' => 'required',
+            '_units' => 'required'
         ]);
         $_subject = [
-            'subject_code' => strtoupper($_request->_input_1),
-            'subject_name' => strtoupper($_request->_input_2),
-            'lecture_hours' => $_request->_input_3,
-            'laboratory_hours' => $_request->_input_4,
-            'units' => $_request->_input_5,
+            'subject_code' => strtoupper(trim($_request->course_code)),
+            'subject_name' => strtoupper(trim($_request->_subject_name)),
+            'lecture_hours' => trim($_request->_hours),
+            'laboratory_hours' => trim($_request->_lab_hour),
+            'units' => trim($_request->_units),
             'created_by' => Auth::user()->name,
             'is_removed' => 1,
         ]; // Set all the input need to the Subject Details
-        $_verify = Subject::where('subject_code', $_request->_input_1)->first(); // Verify if the Subject is Excited
+        $_verify = Subject::where('subject_code', $_request->course_code)->first(); // Verify if the Subject is Excited
         $_subject = $_verify ?: Subject::create($_subject); // Save Subject or Get Subject
 
         $_course_subject_details = [
-            'curriculum_id' => Crypt::decrypt($_request->_input_0),
+            'curriculum_id' => base64_decode($_request->curriculum),
             'subject_id' => $_subject->id,
-            'course_id' => $_request->_input_6,
+            'course_id' => $_request->course,
             'year_level' => $_request->_input_7,
             'semester' => $_request->_input_8,
             'created_by' => Auth::user()->name,
             'is_removed' => 1,
         ]; // Subject Course Details
         CurriculumSubject::create($_course_subject_details); // Create a Subject Course
-        return $_request->_input_ ? back()->with('message', 'Successfully Created Subject') : redirect('/registrar/subjects/curriculum?view=' . $_request->_input_0 . '&d=' . base64_encode($_request->_input_6))->with('message', 'Successfully Created Subject');
+        return $_request->course ?  redirect('/registrar/subjects/curriculum?view=' . $_request->curriculum . '&d=' . base64_encode($_request->course))->with('success', 'Successfully Created Subject') : back()->with('success', 'Successfully Created Subject');
     }
-
 
     // Student
     public function student_list_view(Request $_request)

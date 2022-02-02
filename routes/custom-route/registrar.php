@@ -12,11 +12,11 @@ Route::prefix('registrar')->group(function () {
 
     // Subjects
     Route::get('/subjects', [RegistrarController::class, 'subject_view'])->name('registrar.subject-view'); // Subject Views
-    Route::get('/subjects/classes', [RegistrarController::class, 'classes_view']); // Subject Classes View
+    Route::get('/subjects/classes', [RegistrarController::class, 'classes_view'])->name('registrar.course-subject-view'); // Subject Classes View
     Route::post('/subjects/classes', [RegistrarController::class, 'classes_store']); // Store Subjects Classes Handled
     Route::get('/subjects/classes/removed', [RegistrarController::class, 'classes_removed']); // Remove Subjects Clases Handled
-    Route::get('/subjects/curriculum', [RegistrarController::class, 'curriculum_view']); // Curriculum Subject View
-    Route::post('/subjects/curriculum', [RegistrarController::class, 'curriculum_subject_store']); // Store Curriculum Subject
+    Route::get('/subjects/curriculum', [RegistrarController::class, 'curriculum_view'])->name('registrar.curriculum-view'); // Curriculum Subject View
+    Route::post('/subjects/curriculum', [RegistrarController::class, 'curriculum_subject_store'])->name('registrar.curriculum-store'); // Store Curriculum Subject
 
     // Enrollment
     Route::get('/enrollment', [RegistrarController::class, 'enrollment_view'])->name('registrar.enrollment');
