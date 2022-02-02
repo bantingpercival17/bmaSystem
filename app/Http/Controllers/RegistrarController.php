@@ -133,33 +133,16 @@ class RegistrarController extends Controller
         $_courses = CourseOffer::all();
         return view('pages.registrar.subjects.view', compact('_curriculum', '_courses'));
     }
-
-
     // Subject Panel
     public function classes_view(Request $_request)
     {
-        return $_section = Section::where('academic_id', Auth::user()->staff->current_academic()->id)
-            ->where('is_removed', false)
-            ->get(); // Get all Section base on the Academic Year
-        $_teacher = User::select('users.id', 'users.name')
+        $_curriculums = Curriculum::where('is_removed', false)->get();
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_teachers = User::select('users.id', 'users.name')
             ->join('role_user', 'users.id', 'role_user.user_id')
             ->where('role_user.role_id', 6)
             ->get();
-    }
-    public function classes_view_v1(Request $_request)
-    {
-        $_academic = AcademicYear::find(base64_decode($_request->_view)); // Get the selected Academic Year
-        $_course_view = $_request->_d ? CourseOffer::find(Crypt::decrypt($_request->_d)) : []; // Get Course Type
-        $_course = CourseOffer::where('is_removed', false)->get(); // Get All the Course
-        $_curriculum = Curriculum::where('is_removed', false)->get(); // Get all the Curriculum
-        $_section = Section::where('academic_id', $_academic)
-            ->where('is_removed', false)
-            ->get(); // Get all Section base on the Academic Year
-        $_teacher = User::select('users.id', 'users.name')
-            ->join('role_user', 'users.id', 'role_user.user_id')
-            ->where('role_user.role_id', 6)
-            ->get(); // Get All the Teachers
-        return view('pages.registrar.subjects.classes_view', compact('_academic', '_course', '_course_view', '_curriculum', '_section', '_teacher'));
+        return view('pages.registrar.subjects.course_subject_view', compact('_curriculums', '_teachers', '_course'));
     }
     public function classes_store(Request $_request)
     {
@@ -180,6 +163,15 @@ class RegistrarController extends Controller
         $_subject_class->is_removed = 1;
         $_subject_class->save();
         return back()->with('message', 'Successfully Removed Subject Classes!');
+    }
+    public function classes_subject_handle(Request $_request)
+    {
+        $_subject = CurriculumSubject::find(base64_decode($_request->_subject));
+        $_teachers = User::select('users.id', 'users.name')
+            ->join('role_user', 'users.id', 'role_user.user_id')
+            ->where('role_user.role_id', 6)
+            ->get();
+        return view('pages.registrar.subjects.course_subject_handle_view', compact('_subject', '_teachers'));
     }
     public function curriculum_view(Request $_request)
     {
