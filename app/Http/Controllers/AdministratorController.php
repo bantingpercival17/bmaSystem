@@ -48,7 +48,8 @@ class AdministratorController extends Controller
     {
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_course = CourseOffer::where('is_removed', false)->get();
-        return view('pages.administrator.dashboard', compact('_academics', '_course'));
+        $_total_population = EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')->where('enrollment_assessments.is_removed', false)->get();
+        return view('pages.administrator.dashboard', compact('_academics', '_course', '_total_population'));
     }
 
     /* Students */

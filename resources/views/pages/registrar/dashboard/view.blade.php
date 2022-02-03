@@ -17,7 +17,7 @@
                 data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h3 class="counter">0</h3>
+                        <h3 class="counter">{{ count($_total_population) }}</h3>
                         {{-- {{$_course->enrollment_list}} --}}
                         <a href="javascript:void(0);">
                             <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -148,7 +148,9 @@
                         @foreach ($_courses as $_course)
                             <tr>
                                 <td>{{ $_course->course_name }}</td>
-                                <td>0</td>
+                                <td>0
+                                    
+                                </td>
                                 <td>0</td>
                                 <td>0</td>
                                 <td>0</td>

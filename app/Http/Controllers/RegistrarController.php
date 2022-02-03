@@ -30,7 +30,11 @@ class RegistrarController extends Controller
     public function index()
     {
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
-        return view('pages.registrar.dashboard.view', compact('_courses'));
+        $_total_population = EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('academic_id', Auth::user()->staff->current_academic()->id)
+            ->get();
+        return view('pages.registrar.dashboard.view', compact('_courses', '_total_population'));
     }
 
     /* Enrollment Panel */
