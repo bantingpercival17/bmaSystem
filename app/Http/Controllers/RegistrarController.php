@@ -13,6 +13,7 @@ use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\Subject;
 use App\Models\SubjectClass;
+use App\Models\SubjectClassSchedule;
 use App\Models\User;
 use App\Report\Students\StudentReport;
 use Illuminate\Http\Request;
@@ -154,7 +155,24 @@ class RegistrarController extends Controller
             'created_by' => Auth::user()->name,
             'is_removed' => 0,
         ];
-        SubjectClass::create($_subject_class_detail);
+        $_check = SubjectClass::where([
+            'staff_id' => $_request->_teacher,
+            'curriculum_subject_id' => $_request->_subject,
+            'academic_id' => $_request->_academic,
+            'section_id' => $_request->_section,
+        ])->first();
+        $_subject_class = $_check ?: SubjectClass::create($_subject_class_detail);
+        $_schedule = array(
+            'subject_class_id' => $_subject_class->id,
+            'day' => $_request->_week,
+            'start_time' => $_request->_start,
+            'end_time' => $_request->_end,
+            'created_by' => Auth::user()->name,
+            'is_removed' => false,
+
+        );
+        SubjectClassSchedule::create($_schedule);
+
         return back()->with('message', 'Successfully Created Subject Classes!');
     }
     public function classes_removed(Request $_request)
@@ -172,6 +190,25 @@ class RegistrarController extends Controller
             ->where('role_user.role_id', 6)
             ->get();
         return view('pages.registrar.subjects.course_subject_handle_view', compact('_subject', '_teachers'));
+    }
+    public function classes_schedule(Request $_request)
+    {
+        $_request->validate([
+            '_subject_class' => 'required',
+            '_start' => 'required',
+            '_end' => 'required'
+        ]);
+        $_schedule = array(
+            'subject_class_id' => $_request->_subject_class,
+            'day' => $_request->_week,
+            'start_time' => $_request->_start,
+            'end_time' => $_request->_end,
+            'created_by' => Auth::user()->name,
+            'is_removed' => false,
+        );
+        SubjectClassSchedule::create($_schedule);
+
+        return back()->with('success', 'Successfully Add Scheduled!!');
     }
     public function curriculum_view(Request $_request)
     {
@@ -245,7 +282,24 @@ class RegistrarController extends Controller
         $_courses = CourseOffer::where('is_removed', false)->get();
         return view('pages.registrar.sections.view', compact('_courses'));
     }
-
+    public function section_store(Request $_request)
+    {
+        $_request->validate([
+            '_section' => 'required',
+            '_level' => 'required',
+        ]);
+        $_section_details = [
+            'section_name' => $_request->_level . ' ' . $_request->_section,
+            'academic_id' => $_request->_academic,
+            'course_id' => $_request->_course,
+            'year_level' => $_request->_level,
+            'created_by' => Auth::user()->name,
+            'is_removed' => 0,
+        ];
+        //return dd($_section_details);
+        Section::create($_section_details);
+        return back()->with('success', 'Successfully Created Section');
+    }
     // Semestral clearance
     public function clearance_view(Request $_request)
     {

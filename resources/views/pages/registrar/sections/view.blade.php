@@ -15,7 +15,11 @@
     @foreach ($_courses as $_course)
         @php
             $_year_level = $_course->id == 3 ? ['GRADE 11', 'GRADE 12'] : ['4/C', '3/C', '2/C', '1/C'];
+            $_section_name = ['FORECASTLE', 'STARBOARD', 'MIDSHIP', 'PORT'];
+            $_section_name = $_course->id == 1 ? ['BSMARE ALPHA', 'BSMARE BRAVO', 'BSMARE CHARLIE', 'BSMARE CURR 2006', 'BSMARE CURR 2013', 'BSMARE CURR 2015', 'BSMARE CURR 2018'] : $_section_name;
+            $_section_name = $_course->id == 2 ? ['BSMT ALPHA', 'BSMT BRAVO', 'BSMT CHARLIE', 'BSMT CURR 2006', 'BSMT CURR 2013', 'BSMT CURR 2015', 'BSMT CURR 2018'] : $_section_name;
             $academic = Auth::user()->staff->current_academic();
+            
         @endphp
         <div class="card">
             <div class="card-header d-flex justify-content-between">
@@ -23,8 +27,40 @@
                     <h4 class="card-title">{{ $_course->course_name }}</h4>
                 </div>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body">
                 <div class="table-responsive mt-4">
+                    <form action="{{ route('registrar.section-store') }}" method="post">
+                        @csrf
+                        <input type="hidden" name="_academic" value="{{ Auth::user()->staff->current_academic()->id }}">
+                        <input type="hidden" name="_course" value="{{ $_course->id }}">
+                        <div class="row">
+                            <div class="col-md">
+                                <select name="_section" id="" class="form-select">
+                                    <option value="" selected disabled>Select Section</option>
+                                    @foreach ($_section_name as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                                @error('_section')
+                                    <span class="badge bg-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md">
+                                <select name="_level" id="" class="form-select">
+                                    <option value="" selected disabled>Select Year Level</option>
+                                    @foreach ($_year_level as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                                @error('_level')
+                                    <span class="badge bg-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">Create</button>
+                            </div>
+                        </div>
+                    </form>
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
@@ -34,127 +70,32 @@
                         </thead>
                         <tbody>
                             @foreach ($_year_level as $level)
+                                @php
+                                    $_sections = $_course->section([Auth::user()->staff->current_academic()->id, $level])->get();
+                                @endphp
                                 <tr>
                                     <td>{{ $level }}</td>
                                     <td>
-                                        if
-                                        {{ $_course->section([Auth::user()->staff->current_academic()->id,$level])->get()}}
-                                      {{--   @if (count(
-                                        $_course->section([Auth::user()->staff->current_academic()->id,$level])->get()) > 0)
-                                        {{ $_course->section([Auth::user()->staff->current_academic()->get()]) }}
-                                    @else
-                                        <span class="badge  bg-info">No Section</span>
-                            @endif
- --}}
-                            </td>
-                            </tr>
-    @endforeach
-
-    </tbody>
-    </table>
-    </div>
-    </div>
-    </div>
-    @endforeach
-    {{-- @foreach ($_academic as $academic)
-        <p>
-            <label for="" class="{{ $academic->is_active == 1 ? 'text-success' : 'text-muted' }} h4">|
-                {{ $academic->school_year . ' - ' . strtoupper($academic->semester) }}</label>
-        </p>
-        @foreach ($_course as $_course)
-            @php
-                $_year_level = $_course->id == 3 ? ['GRADE 11', 'GRADE 12'] : ['4/C', '3/C', '2/C', '1/C'];
-            @endphp
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title"><label for="" class="text-info">{{ $_course->course_name }}</label>
-                    </h3>
-                    <br>
-                </div>
-                <!-- ./card-header -->
-                <div class="card-body p-0">
-                    <table class="table table-hover">
-                        <tbody>
-                            @foreach ($_year_level as $_level)
-                                <tr data-widget="expandable-table" aria-expanded="false">
-                                    <td class="text-muted">
-                                        <b>{{ $_course->id == 3 ? 'GRADE ' . $_level : $_level . ' CLASS' }}</b>
-                                        <div class="float-right">
-                                            <a class="btn btn-success" target="_blank"
-                                                href="/administrator/classes/section/report?_c={{ Crypt::encrypt($_course->id) }}&_a={{ Crypt::encrypt($academic->id) }}&_l={{ Crypt::encrypt($_level) }}">
-                                                <i class="fa fa-print"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="expandable-body">
-                                    <td>
-                                        <div class="row">
-                                            @if ($_course->section([$academic->id, $_level])->count())
-                                                @foreach ($_course->section([$academic->id, $_level])->get() as $section)
-                                                    <div class="col-md-3">
-
-                                                        <div class="callout callout-success">
-                                                            <div class="float-right">
-                                                                <a href="/registrar/sections/removed?s={{ base64_encode($section->id) }}"
-                                                                    class="btn btn-xs"><i
-                                                                        class="fa fa-minus text-danger"></i></a>
-                                                            </div>
-                                                            <a
-                                                                href="/registrar/sections/view?c={{ base64_encode($section->id) }}">
-                                                                <p class="text-info">
-                                                                    <b>{{ $section->section_name }}</b>
-                                                                </p>
-                                                            </a>
-                                                        </div>
+                                        @if (count($_sections) > 0)
+                                            @foreach ($_sections as $item)
+                                                <span class="badge bg-primary">{{ $item->section_name }}</span>
+                                            @endforeach
+                                        @else
+                                            <span class="badge bg-info">No Section</span>
+                                        @endif
 
 
-                                                    </div>
-                                                @endforeach
-                                            @endif
-                                            <div class="col-md-4">
-                                                <form action="/registrar/sections" method="post"
-                                                    class="callout callout-info">
-                                                    @csrf
-                                                    <label for="" class="text-muted">Section Name</label>
-                                                    <div class="form-group row">
-                                                        <input type="hidden" name="_level" value="{{ $_level }}">
-                                                        <input type="hidden" name="_course" value="{{ $_course->id }}">
-                                                        <input type="hidden" name="_academic"
-                                                            value="{{ $academic->id }}">
-                                                        <div class="col-md-9">
-                                                            <select name="_section" class="form-control">
-                                                                <option value="ALPHA">APLHA</option>
-                                                                <option value="BRAVO">BRAVO</option>
-                                                                <option value="CHARLIE">CHARLIE</option>
-                                                                <option value="CURR 2006">CURR 2006
-                                                                </option>
-                                                                <option value="CURR 2013">CURR 2013
-                                                                </option>
-                                                                <option value="CURR 2015">CURR 2015
-                                                                </option>
-                                                                <option value="CURR 2018">CURR 2018
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md">
-                                                            <button type="submit" class="btn btn-success xs"> <i
-                                                                    class="fa fa-plus"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
+
                                     </td>
                                 </tr>
                             @endforeach
+
                         </tbody>
                     </table>
                 </div>
             </div>
+        </div>
+    @endforeach
 
-        @endforeach
-    @endforeach --}}
 
 @endsection

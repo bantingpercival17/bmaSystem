@@ -39,4 +39,8 @@ class SubjectClass extends Model
     {
         return $this->hasOne(StudentClearance::class, 'subject_class_id')->where('student_id', base64_decode(request()->input('_student')));
     }
+    public function class_schedule()
+    {
+        return $this->hasMany(SubjectClassSchedule::class, 'subject_class_id');
+    }
 }

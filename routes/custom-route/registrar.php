@@ -15,6 +15,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/subjects/classes', [RegistrarController::class, 'classes_view'])->name('registrar.course-subject-view'); // Subject Classes View
     Route::post('/subjects/classes', [RegistrarController::class, 'classes_store'])->name('registrar.classes-handled'); // Store Subjects Classes Handled
     Route::get('/subjects/classes/subject-handle', [RegistrarController::class, 'classes_subject_handle'])->name('registrar.course-subject-handle-view');
+    Route::post('/subjects.classes/subject-handle',[RegistrarController::class,'classes_schedule'])->name('registrar.class-schedule');
     Route::get('/subjects/classes/removed', [RegistrarController::class, 'classes_removed']); // Remove Subjects Clases Handled
     Route::get('/subjects/curriculum', [RegistrarController::class, 'curriculum_view'])->name('registrar.curriculum-view'); // Curriculum Subject View
     Route::post('/subjects/curriculum', [RegistrarController::class, 'curriculum_subject_store'])->name('registrar.curriculum-store'); // Store Curriculum Subject
@@ -31,7 +32,7 @@ Route::prefix('registrar')->group(function () {
 
     // Section 
     Route::get('/sections', [RegistrarController::class, 'section_view'])->name('registrar.section-view'); // Section View
-
+    Route::post('/sections', [RegistrarController::class, 'section_store'])->name('registrar.section-store'); // Section Store
     // E-clearance
     Route::get('/semestral-clearance', [RegistrarController::class, 'clearance_view'])->name('registrar.semestral-clearance');
     Route::get('/semestral-clearance/view', [RegistrarController::class, 'semestral_student_list_view'])->name('registrar.semestral-student-list'); // Section view

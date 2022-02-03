@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class CurriculumSubject extends Model
 {
@@ -24,7 +25,11 @@ class CurriculumSubject extends Model
     public function section($_data)
     {
         return $this->hasMany(SubjectClass::class, 'curriculum_subject_id')
-        ->where('academic_id',$_data)
-        ->where('is_removed',false);
+            ->where('academic_id', $_data)
+            ->where('is_removed', false);
+    }
+    public function subject_class()
+    {
+        return $this->hasMany(SubjectClass::class, 'curriculum_subject_id')->where('academic_id',Auth::user()->staff->current_academic()->id)->where('is_removed', false);
     }
 }

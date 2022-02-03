@@ -24,7 +24,7 @@ class CourseOffer extends Model
     {
         return $this->hasMany(Section::class, 'course_id')
             ->where('sections.academic_id', $_data[0])
-            ->where('sections.year_level', $_data[1])
+            ->where('sections.year_level', 'like', '%' . $_data[1] . '%')
             ->where('is_removed', false)
             /* ->get() */;
     }
