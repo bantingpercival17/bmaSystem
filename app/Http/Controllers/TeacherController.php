@@ -36,7 +36,7 @@ class TeacherController extends Controller
             ->where('academic_id', $_academic->id)
             ->where('is_removed', false)
             ->get();
-        return view('teacher\dashboard\dasboard-main', compact('_subject'));
+        return view('teacher.dashboard.dasboard-main', compact('_subject'));
     }
     public function subject_class_view(Request $_request)
     {

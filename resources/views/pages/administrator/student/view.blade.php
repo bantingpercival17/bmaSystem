@@ -79,7 +79,7 @@ $_title = 'Students';
                                             <span>{{ $_student->account ? $_student->account->campus_email : '-' }}</span>
                                             <br>
                                             <span
-                                                class="badge bg-primary">{{ $_student->enrollment_assessment->course->course_name }}</span>
+                                                class="badge bg-primary">{{ $_student->enrollment_assessment ? $_student->enrollment_assessment->course->course_name : '-' }}</span>
 
                                         </div>
                                     </div>

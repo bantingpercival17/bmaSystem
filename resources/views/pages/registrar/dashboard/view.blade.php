@@ -152,7 +152,9 @@
                                     {{ count($_course->previous_enrolled) }}
                                 </td>
                                 <td>0</td>
-                                <td>0</td>
+                                <td>
+                                    {{ count($_course->payment_assessment) }}
+                                </td>
                                 <td>0</td>
                                 <td>0</td>
                             </tr>

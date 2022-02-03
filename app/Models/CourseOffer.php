@@ -58,6 +58,13 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.academic_id', $_academic->id)
             ->orderBy('pa.created_at', 'DESC');
     }
+    public function payment_assessment()
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->whereNull('pa.enrollment_id');
+    }
     public function sections()
     {
         $_academic = Auth::user()->staff->current_academic();
