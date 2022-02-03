@@ -48,6 +48,16 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.year_level', $_data)
             ->where('enrollment_assessments.is_removed', false);
     }
+    public function previous_enrolled()
+    {
+        $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment')
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('enrollment_assessments.academic_id', $_academic->id)
+            ->orderBy('pa.created_at', 'DESC');
+    }
     public function sections()
     {
         $_academic = Auth::user()->staff->current_academic();

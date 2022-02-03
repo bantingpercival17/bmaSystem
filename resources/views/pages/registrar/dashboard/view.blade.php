@@ -148,8 +148,8 @@
                         @foreach ($_courses as $_course)
                             <tr>
                                 <td>{{ $_course->course_name }}</td>
-                                <td>0
-                                    
+                                <td>
+                                    {{ count($_course->previous_enrolled) }}
                                 </td>
                                 <td>0</td>
                                 <td>0</td>

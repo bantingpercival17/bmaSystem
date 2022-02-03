@@ -11,7 +11,7 @@ Route::prefix('accounting')->group(function () {
     Route::post('/assessment-fee', [AccountingController::class, 'assessment_store'])->name('accounting.payment-assessment'); // Assessment Store
 
     //Payment 
-    Route::get('/payments', [AccountingController::class, 'payment_view'])->name('accounting.payment-view');
+    Route::get('/payment-transaction', [AccountingController::class, 'payment_view'])->name('accounting.payment-transactions');
     Route::post('/payments', [AccountingController::class], 'payment_store')->name('accounting.payment-store');
     // Student Search
     Route::get('/student-search', [AccountingController::class, 'search_students']); // Search Student

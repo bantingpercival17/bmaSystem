@@ -162,14 +162,18 @@ class AccountingController extends Controller
             ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
             ->whereNull('pa.enrollment_id')->get();
         $_students = $_request->_students ?   $_student_detials->student_search($_request->_students) : $_students;
-        if ($_ea = $_student->enrollment_assessment) {
-            $_course_semestral_fee =  $_ea->course_semestral_fees($_ea); // Course Semestral Fee Table
-            $_semestral_fees = $_course_semestral_fee ? $_course_semestral_fee->semestral_fees($_course_semestral_fee->id) : [];
-            //return compact('_semestral_fees');
+        if ($_request->_students) {
+            if ($_ea = $_student->enrollment_assessment) {
+                $_course_semestral_fee =  $_ea->course_semestral_fees($_ea); // Course Semestral Fee Table
+                $_semestral_fees = $_course_semestral_fee ? $_course_semestral_fee->semestral_fees($_course_semestral_fee->id) : [];
+                //return compact('_semestral_fees');
+            } else {
+                $_semestral_fees = [];
+            }
         } else {
             $_semestral_fees = [];
+            $_course_semestral_fee = [];
         }
-
         return view('pages.accounting.assessment.view', compact('_student', '_students', '_semestral_fees', '_course_semestral_fee'));
     }
     public function assessment_store(Request $_request)
@@ -252,5 +256,10 @@ class AccountingController extends Controller
 
         }
         return back()->with('success', 'Successfully Submitted Clearance');
+    }
+
+    public function payment_view(Request $_request)
+    {
+        return view('pages.accounting.payment.view');
     }
 }
