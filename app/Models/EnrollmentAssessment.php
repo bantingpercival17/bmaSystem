@@ -60,7 +60,8 @@ class EnrollmentAssessment extends Model
             'course_id' => $_data->course_id,
             'curriculum_id' => $_data->curriculum_id,
             'academic_id' => $_data->academic_id,
-            'year_level' => $_data->year_level
+            'year_level' => $_data->year_level,
+            'is_removed' => false
         ])->first();
     }
 }

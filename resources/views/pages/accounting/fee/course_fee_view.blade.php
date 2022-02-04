@@ -33,6 +33,7 @@ $_title = 'Course Fee | ' . $_course->course_name;
                             <tr>
                                 <th>Year Level</th>
                                 <th>Full Payment</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,6 +63,10 @@ $_title = 'Course Fee | ' . $_course->course_name;
                                                 }
                                                 echo number_format($_total_fees);
                                             @endphp
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('accounting.course-fee-remove') . '?_course_fee=' . base64_encode($item->id) }}"
+                                                class="btn btn-danger btn-sm">Remove</a>
                                         </td>
                                     </tr>
                                 @endforeach

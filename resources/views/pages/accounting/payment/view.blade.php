@@ -26,38 +26,159 @@
                                 <b>{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name) : 'MIDSHIPMAN NAME' }}</b>
                             </h4>
                             <p class="card-text">
-                                <span>STUDENT NUMBER: <b>
-                                        {{ $_student ? $_student->account->student_number : '-' }}</b></span>
+                                <span>
+                                    <b>
+                                        {{ $_student ? $_student->account->student_number : 'STUDENT NO.' }}
+                                        |
+                                        {{ $_student? ($_student->enrollment_assessment? $_student->enrollment_assessment->year_level: 'YEAR LEVEL'): 'YEAR LEVEL' }}
+                                        |
+                                        {{ $_student? ($_student->enrollment_assessment? $_student->enrollment_assessment->course->course_name: 'COURSE'): 'COURSE' }}
+                                    </b>
+                                </span>
+
                             </p>
 
                         </div>
                     </div>
                 </div>
-                <div class="row p-3">
-                    {{-- <span class="text-primary"><b>| ENROLLMENT DETAILS</b></span>
-
-                    <div class="row">
-                        <div class="col-md">
-                            <label for="" class="form-label"><small><b>COURSE / STRAND</b></small>:</label>
-                            <label for=""
-                                class="text-primary"><b>{{ $_assessment ? $_assessment->course->course_name : '-' }}</b></label>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="" class="form-label"><small><b>YEAR LEVEL</b></small>:</label>
-                            <label for=""
-                                class="text-primary"><b>{{ $_assessment? ($_assessment->course->id != 3? $_assessment->year_level . ' CLASS': 'GRADE ' . $_assessment->year_level): '-' }}</b></label>
-
-                        </div>
-                        <div class="col-md-12">
-                            <label for="" class="form-label"><small><b>ACADEMIC YEAR</b></small>: </label>
-                            <label class="text-primary">
-                                <b>{{ $_assessment ? $_assessment->academic->semester . ' | ' . $_assessment->academic->school_year : '-' }}
+            </div>
+            @if ($_student)
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <div class="">
+                            <label for="" class="h4">
+                                <b>
+                                    {{ $_student->enrollment_assessment->academic->semester }}
+                                    <small class="text-primary">
+                                        {{ $_student->enrollment_assessment->academic->school_year }}</small>
                                 </b>
                             </label>
+                            @php
+                                $_payment_details = $_student->enrollment_assessment->payment_assessments;
+                            @endphp
+                            {{ $_payment_details->course_semestral_fee->payment_amount($_payment_details) }}
+                            <div class=" row mt-2">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <small class="form-label">Mode of Payment:</small>
+                                        <br>
+                                        <label class="h5 text-info form-label">
+                                            {{ $_payment_details ? ($_payment_details->payment_mode == 1 ? 'INSTALLMENT' : 'FULL-PAYMENT') : '-' }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-group">
+                                        <small class="form-label">Total Payable:</small>
+                                        <br>
+                                        <label class="h5 text-primary form-label">
+                                            {{ $_payment_details? ($_payment_details->course_semestral_fee_id? number_format($_payment_details->course_semestral_fee->fee[0]->fees, 2): number_format($_payment_details->total_payment, 2)): '-' }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-group">
+                                        <small class="form-label">Total Paid:</small>
+                                        <br>
+                                        <label class="h5 text-primary form-label">
+                                            {{ $_payment_details ? number_format($_payment_details->total_payment, 2) : '-' }}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-group">
+                                        <small class="form-label">Balance:</small>
+                                        <br>
+                                        <label class="h5 text-danger form-label">
+                                            {{ $_payment_details? ($_payment_details->course_semestral_fee_id? $_payment_details->course_semestral_fee->fee[0]->fees: $_payment_details->total_payment) - $_payment_details->total_payment: '-' }}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div> --}}
+                        <hr>
+                        <div class="payment-transaction">
+                            <form action="" method="post">
+                                <h5>PAYMENT TRANSACTION</h5>
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for=""><small>PAYMENT AMOUNT</small></label>
+                                            <input type="text" class="form-control" name="payment" id="input-payment"
+                                                value="0.00">
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <label class="form-label"><small>REMARKS:</small></label>
+                                        <select name="due_payment" class="form-select">
+                                            <option value="Tuition Fee">TUITION FEE</option>
+                                            <option value="Upon Enrollment">UPON ENROLLMENT</option>
+                                            <option value="1ST MONTHLY">1ST MONTHLY</option>
+                                            <option value="2ND MONTHLY">2ND MONTHLY</option>
+                                            <option value="3RD MONTHLY">3RD MONTHLY</option>
+                                            <option value="4TH MONTHLY">4TH MONTHLY</option>
+                                            <option value="UNIFORM">UNIFORM</option>
+                                            <option value="GRADUATION FEE">GRADUATION FEE</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md">
+                                        <label for="" class="form-label"><small>PAYMENT METHOD:</small></label>
+                                        <select name="payment_method" class="form-select">
+                                            <option value="CASH">CASH</option>
+                                            <option value="CASH">GCASH</option>
+                                            <option value="CHECK">CHECK</option>
+                                            <option value="DEPOSIT SLIP">DEPOSIT SLIP</option>
+                                            <option value="VOUCHER">VOUCHER</option>
+                                            <option value="LOAN">LOAN</option>
+                                            <option value="CREDIT CARD">CREDIT CARD</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="" class="form-label"><small>OR / REFERENCE NO.:</small></label>
+                                            <input type="text" class="form-control" name="reference" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label for="" class="form-label"><small>TRANSACTION DATE</small></label>
+                                            <input type="date" class="form-control" name="tran_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label for="" class="form-label"><small>VOUCHER:</small></label>
+                                        <select name="voucher" class="form-select">
+                                            <option value="" selected>No Voucher</option>
+                                            @if (count($_vouchers) > 0)
+                                                @foreach ($_vouchers as $item)
+                                                    <option value="{{ $item->id }}">
+                                                        {{ $item->voucher_name }} - {{ $item->voucher_amount }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+
+                                        </select>
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="form-group">
+                                            <label for="" class="form-label"><small>AMOUNT:</small></label>
+                                            <input type="text" class="form-control" name="amount" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <button type="submit" class="btn btn-primary w-100">ADD TRANSACTION</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
                 </div>
-            </div>
+            @endif
 
         </div>
         <div class="col-md-4">

@@ -13,6 +13,7 @@ use App\Models\Section;
 use App\Models\SemestralFee;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,7 +77,7 @@ class AccountingController extends Controller
     public function course_fee_view(Request $_request)
     {
         $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_course_fees = CourseSemestralFees::where('course_id', $_course->id)->where('academic_id', Auth::user()->staff->current_academic()->id)->get();
+        $_course_fees = CourseSemestralFees::where('course_id', $_course->id)->where('academic_id', Auth::user()->staff->current_academic()->id)->where('is_removed', false)->get();
 
         $_tag = CourseSemestralFees::select('p.particular_tag')
             ->selectRaw("sum(pf.particular_amount) as fees")
@@ -112,7 +113,7 @@ class AccountingController extends Controller
             'curriculum_id' => $_request->_curriculum,
             'year_level' => $_request->_year_level,
             'academic_id' => $_request->_academic,
-
+            'is_removed' => false,
         );
         $_course_semestral = CourseSemestralFees::where($_details)->first();
         $_course_semestral = $_course_semestral ?: CourseSemestralFees::create($_details);
@@ -151,7 +152,13 @@ class AccountingController extends Controller
         }
         return back()->with('success', 'Successfully Create a Semestral Tuition Fee');
     }
-
+    public function course_fee_remove(Request $_request)
+    {
+        $_course_fee = CourseSemestralFees::find(base64_decode($_request->_course_fee));
+        $_course_fee->is_removed = true;
+        $_course_fee->save();
+        return back()->with('success', 'Successfully Removed Course Fees');
+    }
     public function assessment_view(Request $_request)
     {
         $_student_detials = new StudentDetails();
@@ -162,7 +169,7 @@ class AccountingController extends Controller
             ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
             ->whereNull('pa.enrollment_id')->get();
         $_students = $_request->_students ?   $_student_detials->student_search($_request->_students) : $_students;
-        if ($_request->_students) {
+        if ($_request->_midshipman) {
             if ($_ea = $_student->enrollment_assessment) {
                 $_course_semestral_fee =  $_ea->course_semestral_fees($_ea); // Course Semestral Fee Table
                 $_semestral_fees = $_course_semestral_fee ? $_course_semestral_fee->semestral_fees($_course_semestral_fee->id) : [];
@@ -190,10 +197,10 @@ class AccountingController extends Controller
         $_payment_assessment = PaymentAssessment::where('enrollment_id', $_request->enrollment)->first();
         if (!$_payment_assessment) {
             PaymentAssessment::create($_details);
-            return back()->with('success', 'Payment Assessment Complete.');
+            return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Complete.');
         } else {
 
-            return back()->with('success', 'Payment Assessment Updated');
+            return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Updated');
         }
 
         //return dd($_details);
@@ -260,8 +267,16 @@ class AccountingController extends Controller
 
     public function payment_view(Request $_request)
     {
-        $_student = [];
-        $_students = [];
-        return view('pages.accounting.payment.view', compact('_students', '_student'));
+        $_student_detials = new StudentDetails();
+        $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
+        $_vouchers = Voucher::where('is_removed', false)->get();
+        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+            ->join('enrollment_assessments', 'student_details.id', 'enrollment_assessments.student_id')
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
+            ->whereNull('pt.assessment_id')->get();
+        $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : $_students;
+        return view('pages.accounting.payment.view', compact('_students', '_student','_vouchers'));
     }
 }

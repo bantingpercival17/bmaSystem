@@ -96,6 +96,15 @@
             })
             /* toastr.success("{{ session('message') }}") */
         @endif
+        @if (Session::has('error'))
+            Swal.fire({
+            title: 'Existing Data!',
+            text:"{{ session('error') }}",
+            icon: 'error',
+            confirmButtonText: 'Okay'
+            })
+            /* toastr.success("{{ session('message') }}") */
+        @endif
         var message = "<?php echo session('reset-password'); ?>"
         @if (Session::has('reset-password'))
             Swal.fire({

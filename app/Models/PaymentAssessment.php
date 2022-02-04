@@ -17,4 +17,15 @@ class PaymentAssessment extends Model
         'staff_id',
         'is_removed',
     ];
+
+    public function course_semestral_fee()
+    {
+        return $this->belongsTo(CourseSemestralFees::class, 'course_semestral_fee_id');
+    }
+    public function total_payment()
+    {
+        return $this->hasMany(PaymentTransaction::class, 'assessment_id')->where('payment_transaction', 'TUITION FEE')->sum('payment_amount');
+    }
+
+    
 }
