@@ -11,6 +11,98 @@
     </li>
 @endsection
 @section('page-content')
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-2">
+                <div class="row no-gutters">
+                    <div class="col-md-4 col-lg-2">
 
+                        <img src="{{ $_student? $_student->profile_pic($_student->account): 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                            class="avatar-130 rounded" alt="#">
+                    </div>
+                    <div class="col-md col-lg">
+                        <div class="card-body">
+                            <h4 class="card-title text-primary">
+                                <b>{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name) : 'MIDSHIPMAN NAME' }}</b>
+                            </h4>
+                            <p class="card-text">
+                                <span>STUDENT NUMBER: <b>
+                                        {{ $_student ? $_student->account->student_number : '-' }}</b></span>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row p-3">
+                    {{-- <span class="text-primary"><b>| ENROLLMENT DETAILS</b></span>
+
+                    <div class="row">
+                        <div class="col-md">
+                            <label for="" class="form-label"><small><b>COURSE / STRAND</b></small>:</label>
+                            <label for=""
+                                class="text-primary"><b>{{ $_assessment ? $_assessment->course->course_name : '-' }}</b></label>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="" class="form-label"><small><b>YEAR LEVEL</b></small>:</label>
+                            <label for=""
+                                class="text-primary"><b>{{ $_assessment? ($_assessment->course->id != 3? $_assessment->year_level . ' CLASS': 'GRADE ' . $_assessment->year_level): '-' }}</b></label>
+
+                        </div>
+                        <div class="col-md-12">
+                            <label for="" class="form-label"><small><b>ACADEMIC YEAR</b></small>: </label>
+                            <label class="text-primary">
+                                <b>{{ $_assessment ? $_assessment->academic->semester . ' | ' . $_assessment->academic->school_year : '-' }}
+                                </b>
+                            </label>
+                        </div>
+                    </div> --}}
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            <form action="" method="get">
+                @if (request()->input('search_name'))
+                    <input type="hidden" name="search_name" value="{{ request()->input('search_name') }}">
+                @endif
+                <div class="form-group search-input">
+                    <input type="search" class="form-control" placeholder="Search..." name="_students">
+                </div>
+            </form>
+
+            @if ($_students)
+                @foreach ($_students as $item)
+                    <div class="card border-bottom border-4 border-0 border-primary">
+                        <a href="?_midshipman={{ base64_encode($item->id) }}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span
+                                            class="text-primary"><b>{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</b></span>
+                                    </div>
+                                    <div>
+                                        <span>{{ $item->account->student_number }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+                @endforeach
+
+            @else
+                <div class="card border-bottom border-4 border-0 border-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span>NO DATA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+        </div>
+    </div>
 
 @endsection

@@ -82,7 +82,7 @@ class RegistrarController extends Controller
                 } else { // If Onsite Enrollee Store Data
                     $_details = [
                         'student_id' => $_student->id,
-                        'academic_id' => Auth::user()->staff->current_academic()->id->id,
+                        'academic_id' => Auth::user()->staff->current_academic()->id,
                         'enrollment_place' => 'onsite',
                         'staff_id' => Auth::user()->staff->id,
                         'is_approved' => 1,

@@ -260,6 +260,8 @@ class AccountingController extends Controller
 
     public function payment_view(Request $_request)
     {
-        return view('pages.accounting.payment.view');
+        $_student = [];
+        $_students = [];
+        return view('pages.accounting.payment.view', compact('_students', '_student'));
     }
 }
