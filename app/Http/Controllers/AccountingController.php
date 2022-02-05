@@ -9,6 +9,7 @@ use App\Models\EnrollmentAssessment;
 use App\Models\ParticularFees;
 use App\Models\Particulars;
 use App\Models\PaymentAssessment;
+use App\Models\PaymentTransaction;
 use App\Models\Section;
 use App\Models\SemestralFee;
 use App\Models\StudentDetails;
@@ -277,6 +278,47 @@ class AccountingController extends Controller
             ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
             ->whereNull('pt.assessment_id')->get();
         $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : $_students;
-        return view('pages.accounting.payment.view', compact('_students', '_student','_vouchers'));
+        return view('pages.accounting.payment.view', compact('_students', '_student', '_vouchers'));
+    }
+    public function payment_store(Request $_request)
+    {
+        $_amount = str_replace(",", "", $_request->amount);
+        $_tuition_fee_remarks = ['Tuition Fee', 'Upon Enrollment', '1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
+        $_payment_transaction =  in_array($_request->remarks, $_tuition_fee_remarks) ? 'TUITION FEE' : 'ADDITIONAL FEE';
+        if (!$_request->voucher) {
+            $_request->validate([
+                'or_number' => 'required',
+                'amount' => 'required',
+            ]);
+            $_payment_details = array(
+                'assessment_id' => $_request->_assessment,
+                'or_number' => $_request->or_number,
+                'payment_transaction' => $_payment_transaction,
+                'payment_amount' => $_amount,
+                'payment_method' => $_request->payment_method,
+                'remarks' => $_request->remarks,
+                'transaction_date' => $_request->tran_date ? $_request->tran_date : date('Y-m-d'),
+                'staff_id' => Auth::user()->staff->id,
+                'is_removed' => false
+            );
+        } else {
+            $_vouchers = Voucher::find($_request->voucher);
+            $_payment_assessment = PaymentAssessment::find($_request->_assessment);
+            $_student_no = str_replace('-', '', $_payment_assessment->enrollment_assessment->student->account->student_number);
+            $_payment_details = array(
+                'assessment_id' => $_request->_assessment,
+                'or_number' => $_vouchers->voucher_code . "." . $_student_no,
+                'payment_transaction' => $_payment_transaction,
+                'payment_amount' => $_vouchers->voucher_amount,
+                'payment_method' => $_request->payment_method,
+                'remarks' => $_request->remarks,
+                'transaction_date' => $_request->tran_date ? $_request->tran_date : date('Y-m-d'),
+                'staff_id' => Auth::user()->staff->id,
+                'is_removed' => false
+            );
+        }
+
+        PaymentTransaction::create($_payment_details);
+        return back()->with('success', 'Payment Transaction Complete!');
     }
 }

@@ -56,7 +56,8 @@
                             @php
                                 $_payment_details = $_student->enrollment_assessment->payment_assessments;
                             @endphp
-                            {{ $_payment_details->course_semestral_fee->payment_amount($_payment_details) }}
+                            {{-- {{ $_payment_details->course_semestral_fee->payment_amount($_payment_details) }}
+                            {{ $_payment_details->course_semestral_fee->total_payments($_payment_details) }} --}}
                             <div class=" row mt-2">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -72,7 +73,7 @@
                                         <small class="form-label">Total Payable:</small>
                                         <br>
                                         <label class="h5 text-primary form-label">
-                                            {{ $_payment_details? ($_payment_details->course_semestral_fee_id? number_format($_payment_details->course_semestral_fee->fee[0]->fees, 2): number_format($_payment_details->total_payment, 2)): '-' }}
+                                            {{ $_payment_details? ($_payment_details->course_semestral_fee_id? number_format($_payment_details->course_semestral_fee->total_payments($_payment_details), 2): number_format($_payment_details->total_paid_amount, 2)): '-' }}
                                         </label>
                                     </div>
                                 </div>
@@ -81,7 +82,7 @@
                                         <small class="form-label">Total Paid:</small>
                                         <br>
                                         <label class="h5 text-primary form-label">
-                                            {{ $_payment_details ? number_format($_payment_details->total_payment, 2) : '-' }}
+                                            {{ $_payment_details ? number_format($_payment_details->total_paid_amount->sum('payment_amount'), 2) : '-' }}
                                         </label>
                                     </div>
                                 </div>
@@ -90,7 +91,7 @@
                                         <small class="form-label">Balance:</small>
                                         <br>
                                         <label class="h5 text-danger form-label">
-                                            {{ $_payment_details? ($_payment_details->course_semestral_fee_id? $_payment_details->course_semestral_fee->fee[0]->fees: $_payment_details->total_payment) - $_payment_details->total_payment: '-' }}
+                                            {{ $_payment_details? number_format(($_payment_details->course_semestral_fee_id? $_payment_details->course_semestral_fee->total_payments($_payment_details): $_payment_details->total_payment) - $_payment_details->total_paid_amount->sum('payment_amount'),2): '-' }}
                                         </label>
                                     </div>
                                 </div>
@@ -98,26 +99,27 @@
                         </div>
                         <hr>
                         <div class="payment-transaction">
-                            <form action="" method="post">
+                            <form action="{{ route('accounting.payment-transaction') }}" method="post">
                                 <h5>PAYMENT TRANSACTION</h5>
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for=""><small>PAYMENT AMOUNT</small></label>
-                                            <input type="text" class="form-control" name="payment" id="input-payment"
-                                                value="0.00">
+                                            <input type="hidden" name="_assessment" value="{{ $_payment_details->id }}">
+                                            <input type="text" class="form-control" name="_payment" id="input-payment"
+                                                value=" {{ $_payment_details? ($_payment_details->course_semestral_fee_id? number_format($_payment_details->course_semestral_fee->payment_amount($_payment_details), 2): number_format($_payment_details->total_paid_amount, 2)): '-' }} ">
                                         </div>
                                     </div>
                                     <div class="col-md">
                                         <label class="form-label"><small>REMARKS:</small></label>
-                                        <select name="due_payment" class="form-select">
-                                            <option value="Tuition Fee">TUITION FEE</option>
+                                        <select name="remarks" class="form-select">
                                             <option value="Upon Enrollment">UPON ENROLLMENT</option>
                                             <option value="1ST MONTHLY">1ST MONTHLY</option>
                                             <option value="2ND MONTHLY">2ND MONTHLY</option>
                                             <option value="3RD MONTHLY">3RD MONTHLY</option>
                                             <option value="4TH MONTHLY">4TH MONTHLY</option>
+                                            <option value="Tuition Fee">TUITION FEE</option>
                                             <option value="UNIFORM">UNIFORM</option>
                                             <option value="GRADUATION FEE">GRADUATION FEE</option>
                                         </select>
@@ -140,7 +142,10 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="" class="form-label"><small>OR / REFERENCE NO.:</small></label>
-                                            <input type="text" class="form-control" name="reference" required>
+                                            <input type="text" class="form-control" name="or_number">
+                                            @error('or_number')
+                                                <span class="badge bg-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-8">
@@ -166,7 +171,10 @@
                                     <div class="col-md">
                                         <div class="form-group">
                                             <label for="" class="form-label"><small>AMOUNT:</small></label>
-                                            <input type="text" class="form-control" name="amount" required>
+                                            <input type="text" class="form-control" name="amount">
+                                            @error('or_number')
+                                                <span class="badge bg-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
