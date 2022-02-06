@@ -66,6 +66,33 @@ $_title = 'Student';
     <div class="col-12 mt-4">
         <div class="card">
             <div class="card-header pb-0 p-3">
+                <h5 class="mb-1 fw-bolder">Email Account</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md">
+                        <div class="form-group">
+                            <label for="" class="form-label">Campus Email</label>
+                            <label for="" class="form-control">{{ $_student->account->campus_email }}</label>
+                        </div>
+                    </div>
+                    <div class="col-md">
+                        <div class="form-group">
+                            <label for="" class="form-label">Personal Email</label>
+                            <label for="" class="form-control">{{ $_student->account->personal_email }}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <a href="{{ route('admin.student-reset-password') }}?_student={{ base64_encode($_student->account->id) }}"
+                                class="btn btn-primary w-100">Reset Pasword</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header pb-0 p-3">
                 <h5 class="mb-1"><b>PROFILE INFORMATION</b></h5>
                 <p class="text-sm">Student Information of the cadet's/ student's at Baliwag Maritime Academy</p>
             </div>
@@ -174,8 +201,7 @@ $_title = 'Student';
                             <div class="form-group">
                                 <label for="example-text-input" class="form-control-label">Contact Number</label>
 
-                                <span
-                                    class="form-control">{{ $_student->account->contact_number ?: 'Missing Value' }}</span>
+                                <span class="form-control">{{ $_student->contact_number ?: '' }}</span>
                             </div>
                         </div>
                         <div class="col-xl-6 col-md-6 mb-xl-0">

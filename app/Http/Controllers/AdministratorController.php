@@ -21,6 +21,7 @@ use App\Models\Staff;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
+use App\Models\StudentPasswordReset;
 use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
@@ -87,7 +88,22 @@ class AdministratorController extends Controller
         }
         //return back()->with('message', 'Successfully Upload Student Details');
     }
+    public function student_reset_password(Request $_request)
+    {
+        $_student_accounts = StudentAccount::find(base64_decode($_request->_student));
+        $length = 5;
+        $_password = 'BMA-' . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+        $_student_accounts->password = HasH::make($_password);
+        $_student_accounts->save();
+        StudentPasswordReset::create([
+            'student_id' => $_student_accounts->student_id,
+            'password_string' => $_password,
+            'is_status' => 'reset-password',
+            'is_removed' => false,
+        ]);
 
+        return back()->with('reset-password', 'Successsfully Password Reset : ' . $_password);
+    }
     /* Accounts */
     public function account_view()
     {

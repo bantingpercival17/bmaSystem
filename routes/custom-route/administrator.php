@@ -13,6 +13,7 @@ Route::prefix('administrator')->group(function () {
     Route::get('/students', [AdministratorController::class, 'student_view'])->name('admin.students'); // View Students
     Route::get('/students/view', [AdministratorController::class, 'student_profile'])->name('admin.student-profile');
     Route::post('/students/imports', [AdministratorController::class, 'student_imports']); // Import Student Details
+    Route::get('/students/reset-password', [AdministratorController::class, 'student_reset_password'])->name('admin.student-reset-password');
     /* Accounts */
     Route::get('/accounts', [AdministratorController::class, 'account_view'])->name('admin.accounts'); // View Accounts
     Route::post('/accounts', [AdministratorController::class, 'account_store']); // Store Account
