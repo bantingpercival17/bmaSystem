@@ -139,7 +139,7 @@
                             <th>Course</th>
                             <th>Unenrolled</th>
                             <th>Cleared</th>
-                            <th>Assessment</th>
+                            <th>Enrollment Assessment</th>
                             <th>Payment</th>
                             <th>Enrolled</th>
                         </tr>
@@ -153,9 +153,9 @@
                                 </td>
                                 <td>0</td>
                                 <td>
-                                    {{ count($_course->payment_assessment) }}
+
                                 </td>
-                                <td>0</td>
+                                <td>{{ count($_course->payment_assessment) }}</td>
                                 <td>0</td>
                             </tr>
                         @endforeach
