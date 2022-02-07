@@ -52,7 +52,7 @@
                             </td>
                             <td width="3%"><small>YEAR:</small></td>
                             <td class="text-fill-in">
-                                <b>{{ $_enrollment_assessment->course_id == 3 ? 'GRADE ' . $_enrollment_assessment->year_level : $_enrollment_assessment->year_level . ' CLASS' }}</b>
+                                <b>{{ $_enrollment_assessment->course_id == 3? 'GRADE ' . $_enrollment_assessment->year_level: $_enrollment_assessment->year_level . ' CLASS' }}</b>
                             </td>
                             <td width="5%"><small>SEMESTER:</small></td>
                             <td class="text-fill-in">
@@ -242,17 +242,17 @@
                         <tr>
                             <td class="text-fill-in">
                                 <b>
-                                    {{ $_parent ? strtoupper($_parent->father_last_name . ', ' . $_parent->father_first_name . ' ' . $_parent->father_middle_name) : '-' }}
+                                    {{ $_parent? strtoupper($_parent->father_last_name . ', ' . $_parent->father_first_name . ' ' . $_parent->father_middle_name): '-' }}
                                 </b>
                             </td>
                             <td class="text-fill-in">
                                 <b>
-                                    {{ $_parent ? strtoupper($_parent->mother_last_name . ', ' . $_parent->mother_first_name . ' ' . $_parent->mother_middle_name) : '-' }}
+                                    {{ $_parent? strtoupper($_parent->mother_last_name . ', ' . $_parent->mother_first_name . ' ' . $_parent->mother_middle_name): '-' }}
                                 </b>
                             </td>
                             <td class="text-fill-in">
                                 <b>
-                                    {{ $_parent ? strtoupper($_parent->guardian_last_name . ', ' . $_parent->guardian_first_name . ' ' . $_parent->guardian_middle_name) : '-' }}
+                                    {{ $_parent? strtoupper($_parent->guardian_last_name . ', ' . $_parent->guardian_first_name . ' ' . $_parent->guardian_middle_name): '-' }}
                                 </b>
                             </td>
                         </tr>
@@ -575,7 +575,7 @@
                             <td>
                                 <small>LEVEL :</small>
                                 <b>
-                                    {{ $_enrollment_assessment->course_id == 3 ? 'GRADE ' . $_enrollment_assessment->year_level : $_enrollment_assessment->year_level . ' CLASS' }}
+                                    {{ $_enrollment_assessment->course_id == 3? 'GRADE ' . $_enrollment_assessment->year_level: $_enrollment_assessment->year_level . ' CLASS' }}
                                 </b>
                             </td>
                             <td>
@@ -589,7 +589,7 @@
 
                                 <small>LEVEL :</small>
                                 <b>
-                                    {{ $_enrollment_assessment->course_id == 3 ? 'GRADE ' . $_enrollment_assessment->year_level : $_enrollment_assessment->year_level . ' CLASS' }}
+                                    {{ $_enrollment_assessment->course_id == 3? 'GRADE ' . $_enrollment_assessment->year_level: $_enrollment_assessment->year_level . ' CLASS' }}
                                 </b>
                             </td>
                         @endif
@@ -652,198 +652,106 @@
                     </tfoot>
                 </table>
             </div>
-        </div>
+            <br><br>
+            <div class="assessment-fees">
+                @php
+                    $_assessment = $_enrollment_assessment->payment_assessments;
+                    $_course_semestral_fee = $_enrollment_assessment->payment_assessments->course_semestral_fee;
+                    $_payment_details = $_student->enrollment_assessment->payment_assessments;
+                    $_total_payment = 0;
+                    $_upon_enrollment = 0;
+                    $_monthly_payment = 0;
+                    $_total_fees = 0;
+                @endphp
+                <p class="title-header"><b>| ASSESSMENT SUMMARY</b></p>
+                <table class="subject-list-table ">
+                    <thead>
+                        <tr>
+                            <th colspan="2">ASSESSMENT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        Assessment Details
+                        <tr>
+                            <td>PAYMENT MODE:</td>
+                            <td class="text-center">
+                                {{ $_payment_details->payment_mode == 0 ? 'FULLPAYMENT' : 'INSTALLMENT' }}
+                            </td>
 
-        {{-- <br>
-        <p class="title-header"><b>| ENROLLMENT DETAILS</b></p>
-        @php
-            $_units = 0;
-            $_subject = $_student->course_subject_level($_enrollment_assessment->curriculum_id, $_enrollment_assessment->course_id, $_enrollment_assessment->year_level, $_enrollment_assessment->academic->semester);
-        @endphp
-        <table class="table-2">
-            <thead>
-                <tr>
-                    <th>SUBJECT CODE</th>
-                    <th>DESCRIPTIVE TITLE</th>
-                    @if ($_enrollment_assessment->course_id != 3)
-                        <th>LEC. HOURS</th>
-                        <th>LAB. HOURS</th>
-                    @endif
-                    <th>UNIT</th>
-                </tr>
-
-            </thead>
-            <tbody>
-                @foreach ($_subject as $item)
-                    <tr>
-                        <td>{{ $item->course_code }}</td>
-                        <td>{{ $item->subject_description }}</td>
-                        @if ($_enrollment_assessment->course_id != 3)
-                            <td style="text-align: center">{{ $item->lecture_hours }}</td>
-                            <td style="text-align: center">{{ $item->laboratory_hours }}</td>
+                        </tr>
+                        @if (count($_course_semestral_fee->semestral_fees($_course_semestral_fee->id)) > 0)
+                            @foreach ($_course_semestral_fee->semestral_fees($_course_semestral_fee->id) as $item)
+                                <tr>
+                                    <td>
+                                        {{ ucwords(str_replace(['_', 'tags'], [' ', 'Fee'], $item->particular_tag)) }}
+                                    </td>
+                                    <td class="text-center">
+                                        @php
+                                            $_total_payment += $item->fees;
+                                        @endphp
+                                        <b> {{ number_format($item->fees, 2) }}</b>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @if ($_enrollment_assessment->course_id == 3)
+                                @foreach ($_course_semestral_fee->additional_fees($_course_semestral_fee->id) as $item)
+                                    <tr>
+                                        <td> <span class="mt-2 badge bg-success">
+                                                {{ ucwords(str_replace(['_', 'tags'], [' ', 'Fee'], $item->particular_name)) }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            @php
+                                                $_total_payment += $item->particular_amount;
+                                            @endphp
+                                            <b> {{ number_format($item->particular_amount, 2) }}</b>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         @endif
-                        <td style="text-align: center">{{ $item->units }}</td>
                         @php
-                            $_units += $item->units;
+                            
                         @endphp
-
-                    </tr>
-                @endforeach
-                @if ($_enrollment_assessment->course_id != 3)
-                    @if ($_enrollment_assessment->bridging_program == 'with')
                         <tr>
-                            <td>BRDGE</td>
-                            <td>INTRODUCTORY SUBJECT (IMC, IMTME, IMS)</td>
-                            <td>(4)</td>
-                            <td>0</td>
-                            <td>3</td>
-                            @php
-                                $_units += 3;
-                            @endphp
+                            <td class="text-center"><b>TOTAL PAYMENT</b> </td>
+                            <td class="text-center">
+                                <b>{{ number_format($_total_payment, '2') }}</b>
+                            </td>
                         </tr>
-
-                    @endif
-                @endif
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="{{ $_enrollment_assessment->course_id != 3 ? 4 : 2 }}">TOTAL UNITS</th>
-                    <th class="total-unit">{{ $_units }}</th>
-                </tr>
-            </tfoot>
-        </table>
-        <br>
-        <p class="title-header"><b>| ASSESSMENT SUMMARY</b></p>
-        @php
-            $_fees = $_enrollment_assessment->assessment_fee($_enrollment_assessment);
-            $_assessment = $_student->_assessment;
-            $_total_payment = 0;
-            $_monthly_payment = 0;
-            $_total_fees_without_book = 0;
-            $_total_books_uniform = 0;
-            $_total_fees = 0;
-            $_upon_enrollment = 0;
-            $_monthly_fee = ['1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
-            // Solution 1
-            // Senior High Tuition
-            if ($_enrollment_assessment->course_id == 3) {
-                // If Installment - 100% Books plus the total of Tuition Fee/5
-                if ($_assessment->mode_payment == 1) {
-                    // Ito ay Para Sa installment
-                    foreach ($_fees as $key => $_fees_value) {
-                        if ($_fees_value->particular->fee_name != 'BOOKS' && $_fees_value->particular->fee_name != 'UNIFORMS') {
-                            $_total_fees_without_book += $_fees_value->fee_amount;
-                        } else {
-                            $_total_books_uniform += $_fees_value->fee_amount;
-                        }
-                    }
-                    // Wala pang internts
-                    $_monthly_payment = ($_total_fees_without_book + 710) / 5;
-                    $_upon_enrollment = $_monthly_payment + $_total_books_uniform;
-                } else {
-                    // For FULLPAYMENT of Senior High
-                    foreach ($_fees as $key => $_fees_value) {
-                        $_total_fees_without_book += $_fees_value->fee_amount;
-                    }
-                    $_upon_enrollment = $_total_fees_without_book;
-                }
-            } else {
-                // Add all the fee in College
-                foreach ($_fees as $key => $_fees_value) {
-                    if ($_fees_value->fee_id == 6) {
-                        if ($_enrollment_assessment->bridging_program == 'with') {
-                            $_total_fees += $_fees_value->fee_amount;
-                        }
-                    } else {
-                        $_total_fees += $_fees_value->fee_amount;
-                    }
-                } // End of Added
-                // Payment Mode
-                if ($_assessment->mode_payment == 1) {
-                    //$_interest = ($_total_fees - 800) * .035;
-                    $_interest = $_enrollment_assessment->course_id == 2 ? $_total_fees * 0.035 : ($_total_fees - 800) * 0.035;
-                    $_total_fees += $_interest;
-                    $_upon_enrollment = $_total_fees / 5;
-                    $_monthly_payment = $_upon_enrollment;
-                } else {
-                    $_upon_enrollment = $_total_fees;
-                }
-            }
-        @endphp
-        <table class="table-2 ">
-            <thead>
-                <tr>
-                    <th colspan="2">ASSESSMENT</th>
-                </tr>
-            </thead>
-            <tbody>
-                Assessment Details
-                <tr>
-                    <td>PAYMENT MODE:</td>
-                    <td class="text-center">{{ $_assessment->mode_payment == 0 ? 'FULLPAYMENT' : 'INSTALLMENT' }}
-                    </td>
-
-                </tr>
-                @foreach ($_fees as $_item)
-                    @if ($_item->fee_id == 6)
-                        @if ($_enrollment_assessment->bridging_program == 'with')
-                            <tr>
-                                <td>{{ $_item->particular->fee_name }}</td>
-                                <td class="text-center">{{ number_format($_item->fee_amount, '2') }}</td>
-                                @php
-                                    $_total_payment += $_item->fee_amount;
-                                @endphp
-                            </tr>
-                        @endif
-                    @else
                         <tr>
-                            <td>{{ $_item->particular->fee_name }}</td>
-                            <td class="text-center">{{ number_format($_item->fee_amount, '2') }}</td>
-                            @php
-                                $_total_payment += $_item->fee_amount;
-                            @endphp
+                            <th colspan="2">SCHEDULE OF PAYMENT</th>
                         </tr>
-                    @endif
-
-                @endforeach
-                <tr>
-                    <td>LESS: ESC/SHS VOUCHER: </td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td class="text-center"><b>TOTAL PAYMENT</b> </td>
-                    <td class="text-center"><b>{{ number_format($_total_payment, '2') }}</b></td>
-                </tr>
-                <tr>
-                    <th colspan="2">SCHEDULE OF PAYMENT</th>
-                </tr>
-                <tr>
-                    <td class="text-center">PAYMENT DUE DATE</td>
-                    <td class="text-center">AMOUNT</td>
-                </tr>
-                <tr>
-                    <td>UPON ENROLLMENT</td>
-                    <td class="text-center">{{ number_format($_upon_enrollment, '2') }}</td>
-                </tr>
-                <tr>
-                    <td>4 MONTHLY INSTALLMENT</td>
-                    <td class="text-center">
-                        {{ $_monthly_payment > 0 ? number_format($_monthly_payment, '2') : '-' }}
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>TOTAL FEES</b></td>
-                    <td class="text-center">
-                        <b>{{ $_monthly_payment > 0 ? number_format($_total_fees, '2') : '-' }}</b>
-                    </td>
-                </tr>
-                {{-- @foreach ($_monthly_fee as $_due)
-          <tr>
-              <td>{{$_due}}</td>
-              <td class="text-center">{{$_monthly_payment >0 ? number_format($_monthly_payment,'2'):'-'}}</td>
-          </tr>
-          @endforeach --}}
-        </tbody>
-        </table> --}}
+                        <tr>
+                            <td class="text-center">PAYMENT DUE DATE</td>
+                            <td class="text-center">AMOUNT</td>
+                        </tr>
+                        <tr>
+                            <td>UPON ENROLLMENT</td>
+                            <td class="text-center">
+                                {{ number_format($_payment_details->course_semestral_fee->upon_enrollment($_payment_details), '2') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4 MONTHLY INSTALLMENT</td>
+                            <td class="text-center">
+                                {{ number_format($_payment_details->course_semestral_fee->monthly_fees($_payment_details), '2') }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>TOTAL FEES</b></td>
+                            <td class="text-center">
+                                <b>{{ number_format($_payment_details->course_semestral_fee->total_payments($_payment_details), '2') }}</b>
+                            </td>
+                        </tr>
+                        {{-- @foreach ($_monthly_fee as $_due)
+                  <tr>
+                      <td>{{$_due}}</td>
+                      <td class="text-center">{{$_monthly_payment >0 ? number_format($_monthly_payment,'2'):'-'}}</td>
+                  </tr>
+                  @endforeach --}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </main>
 @endsection
