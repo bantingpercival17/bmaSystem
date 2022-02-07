@@ -277,7 +277,7 @@ class AccountingController extends Controller
             ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
             ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
             ->whereNull('pt.assessment_id')->get();
-        $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : $_students;
+        $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : [];
         return view('pages.accounting.payment.view', compact('_students', '_student', '_vouchers'));
     }
     public function payment_store(Request $_request)
