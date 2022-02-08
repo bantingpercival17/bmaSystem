@@ -30,19 +30,22 @@ class CourseOffer extends Model
     }
     public function enrollment_list()
     {
-        return $this->hasMany(EnrollmentAssessment::class, 'course_id')->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment')
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            /* ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment') */
             ->where('enrollment_assessments.is_removed', false)
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->with('payment_transactions')
             ->orderBy('pa.created_at', 'DESC');
     }
     public function enrolled_list($_data)
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment')
+            /* ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment') */
+            ->with('payment_transactions')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->orderBy('enrollment_assessments.created_at', 'DESC')
             ->where('enrollment_assessments.year_level', $_data)

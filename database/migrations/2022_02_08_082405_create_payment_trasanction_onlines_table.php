@@ -24,6 +24,7 @@ class CreatePaymentTrasanctionOnlinesTable extends Migration
             $table->string('trasaction_type');
             $table->text('reciept_attach_path');
             $table->boolean('is_approved');
+            $table->text('comment_remarks')->nullable();
             $table->string('or_number');
             $table->boolean('is_removed');
             $table->timestamps();

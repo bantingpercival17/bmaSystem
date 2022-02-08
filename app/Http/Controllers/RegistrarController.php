@@ -31,17 +31,18 @@ class RegistrarController extends Controller
     {
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment')
+            /* ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment') */
             ->where('enrollment_assessments.is_removed', false)
             ->where('academic_id', Auth::user()->staff->current_academic()->id)
+            ->with('payment_transactions')
             ->get();
         return view('pages.registrar.dashboard.view', compact('_courses', '_total_population'));
     }
     public function dashboard_payment_assessment(Request $_request)
     {
         $_course = CourseOffer::find(base64_decode($_request->_course));
-        return view('pages.registrar.dashboard.payment-assessment',compact('_course'));
+        return view('pages.registrar.dashboard.payment-assessment', compact('_course'));
     }
     public function enrollment_view(Request $_request)
     {

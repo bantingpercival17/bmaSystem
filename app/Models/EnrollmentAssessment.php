@@ -64,4 +64,8 @@ class EnrollmentAssessment extends Model
             'is_removed' => false
         ])->first();
     }
+    public function payment_transactions()
+    {
+        return $this->hasOne(PaymentTransaction::class, 'assessment_id')->where('remarks', 'Upon Enrollment');
+    }
 }

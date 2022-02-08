@@ -69,7 +69,9 @@
                                 <a
                                     href="{{ route('registrar.course-enrolled') }}?_course={{ base64_encode($_course->id) }}&_academic={{ request()->input('_academic') }}">
                                     <div class="d-flex align-items-center justify-content-between">
-                                        <h3 class="counter">{{ count($_course->enrollment_list) }}</h3>
+                                        <h3 class="counter">
+                                            {{ $_course->enrollment_list->count() }}
+                                        </h3>
                                         {{-- {{$_course->enrollment_list}} --}}
                                         <a href="javascript:void(0);">
                                             <svg width="32" viewBox="0 0 24 24" fill="none"
