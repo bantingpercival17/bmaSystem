@@ -747,6 +747,7 @@ class ComposerStaticInitad9a3fefd2e4c6a7edf47485ac1509a3
         'App\\Models\\Particulars' => __DIR__ . '/../..' . '/app/Models/Particulars.php',
         'App\\Models\\PaymentAssessment' => __DIR__ . '/../..' . '/app/Models/PaymentAssessment.php',
         'App\\Models\\PaymentTransaction' => __DIR__ . '/../..' . '/app/Models/PaymentTransaction.php',
+        'App\\Models\\PaymentTrasanctionOnline' => __DIR__ . '/../..' . '/app/Models/PaymentTrasanctionOnline.php',
         'App\\Models\\Permission' => __DIR__ . '/../..' . '/app/Models/Permission.php',
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\Section' => __DIR__ . '/../..' . '/app/Models/Section.php',

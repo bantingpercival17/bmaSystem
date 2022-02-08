@@ -19,4 +19,8 @@ class PaymentTransaction extends Model
         'staff_id',
         'is_removed'
     ];
+    public function enrollment_assessment()
+    {
+        return $this->belongsTo(EnrollmentAssessment::class, 'enrollment_id');
+    }
 }

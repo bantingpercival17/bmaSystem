@@ -155,7 +155,12 @@
                                 <td>
 
                                 </td>
-                                <td>{{ count($_course->payment_assessment) }}</td>
+                                <td>
+                                    <a
+                                        href="{{ route('registrar.dashboard-payment-assessment') . '?_course=' . base64_encode($_course->id) }}">
+                                        {{ count($_course->payment_assessment) }}
+                                    </a>
+                                </td>
                                 <td>0</td>
                             </tr>
                         @endforeach

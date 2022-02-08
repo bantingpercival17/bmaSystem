@@ -6,8 +6,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('registrar')->group(function () {
     // Dashboard
     Route::get('/', [RegistrarController::class, 'index'])->name('registrar.dashboard');
-
     Route::get('/dashboard', [RegistrarController::class, 'index'])->name('registrar.dashboard');
+
+    Route::get('/dashboard/payment-assessment', [RegistrarController::class, 'dashboard_payment_assessment'])->name('registrar.dashboard-payment-assessment');
     // Applicants
 
     // Subjects
@@ -15,7 +16,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/subjects/classes', [RegistrarController::class, 'classes_view'])->name('registrar.course-subject-view'); // Subject Classes View
     Route::post('/subjects/classes', [RegistrarController::class, 'classes_store'])->name('registrar.classes-handled'); // Store Subjects Classes Handled
     Route::get('/subjects/classes/subject-handle', [RegistrarController::class, 'classes_subject_handle'])->name('registrar.course-subject-handle-view');
-    Route::post('/subjects.classes/subject-handle',[RegistrarController::class,'classes_schedule'])->name('registrar.class-schedule');
+    Route::post('/subjects.classes/subject-handle', [RegistrarController::class, 'classes_schedule'])->name('registrar.class-schedule');
     Route::get('/subjects/classes/removed', [RegistrarController::class, 'classes_removed']); // Remove Subjects Clases Handled
     Route::get('/subjects/curriculum', [RegistrarController::class, 'curriculum_view'])->name('registrar.curriculum-view'); // Curriculum Subject View
     Route::post('/subjects/curriculum', [RegistrarController::class, 'curriculum_subject_store'])->name('registrar.curriculum-store'); // Store Curriculum Subject

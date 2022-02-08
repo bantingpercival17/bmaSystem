@@ -38,7 +38,11 @@ class RegistrarController extends Controller
             ->get();
         return view('pages.registrar.dashboard.view', compact('_courses', '_total_population'));
     }
-
+    public function dashboard_payment_assessment(Request $_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        return view('pages.registrar.dashboard.payment-assessment',compact('_course'));
+    }
     public function enrollment_view(Request $_request)
     {
         $_courses = CourseOffer::where('is_removed', false)->get();
