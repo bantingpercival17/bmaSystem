@@ -70,7 +70,7 @@
                                     href="{{ route('registrar.course-enrolled') }}?_course={{ base64_encode($_course->id) }}&_academic={{ request()->input('_academic') }}">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <h3 class="counter">
-                                            {{ $_course->enrollment_list->count() }}
+                                            {{ count($_course->enrollment_list) }}
                                         </h3>
                                         {{-- {{$_course->enrollment_list}} --}}
                                         <a href="javascript:void(0);">
@@ -155,7 +155,7 @@
                                 </td>
                                 <td>0</td>
                                 <td>
-
+                                    <a href="{{ route('registrar.enrollment') }}">{{ count($_course->enrollment_application) }}</a>
                                 </td>
                                 <td>
                                     <a
@@ -163,7 +163,12 @@
                                         {{ count($_course->payment_assessment) }}
                                     </a>
                                 </td>
-                                <td>0</td>
+                                <td>
+                                    <a
+                                        href="{{ route('registrar.course-enrolled') }}?_course={{ base64_encode($_course->id) }}&_academic={{ request()->input('_academic') }}">
+                                        {{ count($_course->enrollment_list) }}
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

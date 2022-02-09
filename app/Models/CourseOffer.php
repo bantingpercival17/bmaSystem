@@ -63,7 +63,13 @@ class CourseOffer extends Model
     }
     public function enrollment_application()
     {
-        # code...
+        $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('enrollment_applications as ea', 'ea.student_id', 'enrollment_assessments.student_id')
+            ->whereNull('ea.is_approved')
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('enrollment_assessments.academic_id', $_academic->id);
     }
     public function payment_assessment()
     {
