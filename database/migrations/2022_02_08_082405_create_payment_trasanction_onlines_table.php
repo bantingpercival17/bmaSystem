@@ -15,17 +15,17 @@ class CreatePaymentTrasanctionOnlinesTable extends Migration
     {
         Schema::create('payment_trasanction_onlines', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('student_id');
-            $table->foreign('student_id')->references('id')->on('student_details');
+            $table->unsignedBigInteger('assessment_id');
+            $table->foreign('assessment_id')->references('id')->on('payment_assessments');
             $table->unsignedBigInteger('payment_id')->nullable();
             $table->foreign('payment_id')->references('id')->on('payment_transactions');
             $table->double('amount_paid');
             $table->string('reference_number');
-            $table->string('trasaction_type');
+            $table->string('transaction_type');
             $table->text('reciept_attach_path');
-            $table->boolean('is_approved');
+            $table->boolean('is_approved')->nullable();
             $table->text('comment_remarks')->nullable();
-            $table->string('or_number');
+            $table->string('or_number')->nullable();
             $table->boolean('is_removed');
             $table->timestamps();
         });

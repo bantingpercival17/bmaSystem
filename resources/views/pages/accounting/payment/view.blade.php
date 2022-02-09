@@ -56,8 +56,6 @@
                             @php
                                 $_payment_details = $_student->enrollment_assessment->payment_assessments;
                             @endphp
-                            {{-- {{ $_payment_details->course_semestral_fee->payment_amount($_payment_details) }}
-                            {{ $_payment_details->course_semestral_fee->total_payments($_payment_details) }} --}}
                             <div class=" row mt-2">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -98,91 +96,204 @@
                             </div>
                         </div>
                         <hr>
-                        <div class="payment-transaction">
-                            <form action="{{ route('accounting.payment-transaction') }}" method="post">
-                                <h5>PAYMENT TRANSACTION</h5>
-                                @csrf
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for=""><small>PAYMENT AMOUNT</small></label>
-                                            <input type="hidden" name="_assessment" value="{{ $_payment_details->id }}">
-                                            <input type="text" class="form-control" name="_payment" id="input-payment"
-                                                value=" {{ $_payment_details? ($_payment_details->course_semestral_fee_id? number_format($_payment_details->course_semestral_fee->payment_amount($_payment_details), 2): number_format($_payment_details->total_paid_amount, 2)): '-' }} ">
+                        @if (request()->input('add-transaction') == true)
+                            <div class="payment-transaction">
+                                <form action="{{ route('accounting.payment-transaction') }}" method="post">
+                                    <h5>PAYMENT TRANSACTION</h5>
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for=""><small>PAYMENT AMOUNT</small></label>
+                                                <input type="hidden" name="_assessment"
+                                                    value="{{ $_payment_details->id }}">
+                                                <input type="text" class="form-control" name="_payment" id="input-payment"
+                                                    value=" {{ $_payment_details? ($_payment_details->course_semestral_fee_id? number_format($_payment_details->course_semestral_fee->payment_amount($_payment_details), 2): number_format($_payment_details->total_paid_amount, 2)): '-' }} ">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md">
-                                        <label class="form-label"><small>REMARKS:</small></label>
-                                        <select name="remarks" class="form-select">
-                                            <option value="Upon Enrollment">UPON ENROLLMENT</option>
-                                            <option value="1ST MONTHLY">1ST MONTHLY</option>
-                                            <option value="2ND MONTHLY">2ND MONTHLY</option>
-                                            <option value="3RD MONTHLY">3RD MONTHLY</option>
-                                            <option value="4TH MONTHLY">4TH MONTHLY</option>
-                                            <option value="Tuition Fee">TUITION FEE</option>
-                                            <option value="UNIFORM">UNIFORM</option>
-                                            <option value="GRADUATION FEE">GRADUATION FEE</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md">
-                                        <label for="" class="form-label"><small>PAYMENT METHOD:</small></label>
-                                        <select name="payment_method" class="form-select">
-                                            <option value="CASH">CASH</option>
-                                            <option value="CASH">GCASH</option>
-                                            <option value="CHECK">CHECK</option>
-                                            <option value="DEPOSIT SLIP">DEPOSIT SLIP</option>
-                                            <option value="VOUCHER">VOUCHER</option>
-                                            <option value="LOAN">LOAN</option>
-                                            <option value="CREDIT CARD">CREDIT CARD</option>
-                                        </select>
-                                    </div>
+                                        <div class="col-md">
+                                            <label class="form-label"><small>REMARKS:</small></label>
+                                            <select name="remarks" class="form-select">
+                                                <option value="Upon Enrollment">UPON ENROLLMENT</option>
+                                                <option value="1ST MONTHLY">1ST MONTHLY</option>
+                                                <option value="2ND MONTHLY">2ND MONTHLY</option>
+                                                <option value="3RD MONTHLY">3RD MONTHLY</option>
+                                                <option value="4TH MONTHLY">4TH MONTHLY</option>
+                                                <option value="Tuition Fee">TUITION FEE</option>
+                                                <option value="UNIFORM">UNIFORM</option>
+                                                <option value="GRADUATION FEE">GRADUATION FEE</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md">
+                                            <label for="" class="form-label"><small>PAYMENT METHOD:</small></label>
+                                            <select name="payment_method" class="form-select">
+                                                <option value="CASH">CASH</option>
+                                                <option value="CASH">GCASH</option>
+                                                <option value="CHECK">CHECK</option>
+                                                <option value="DEPOSIT SLIP">DEPOSIT SLIP</option>
+                                                <option value="VOUCHER">VOUCHER</option>
+                                                <option value="LOAN">LOAN</option>
+                                                <option value="CREDIT CARD">CREDIT CARD</option>
+                                            </select>
+                                        </div>
 
-                                </div>
-                                <div class="row mt-2">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="" class="form-label"><small>OR / REFERENCE NO.:</small></label>
-                                            <input type="text" class="form-control" name="or_number">
-                                            @error('or_number')
-                                                <span class="badge bg-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
                                     </div>
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <label for="" class="form-label"><small>TRANSACTION DATE</small></label>
-                                            <input type="date" class="form-control" name="tran_date">
+                                    <div class="row mt-2">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="" class="form-label"><small>OR / REFERENCE
+                                                        NO.:</small></label>
+                                                <input type="text" class="form-control" name="or_number">
+                                                @error('or_number')
+                                                    <span class="badge bg-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <label for="" class="form-label"><small>VOUCHER:</small></label>
-                                        <select name="voucher" class="form-select">
-                                            <option value="" selected>No Voucher</option>
-                                            @if (count($_vouchers) > 0)
-                                                @foreach ($_vouchers as $item)
-                                                    <option value="{{ $item->id }}">
-                                                        {{ $item->voucher_name }} - {{ $item->voucher_amount }}
-                                                    </option>
-                                                @endforeach
-                                            @endif
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label for="" class="form-label"><small>TRANSACTION DATE</small></label>
+                                                <input type="date" class="form-control" name="tran_date">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="" class="form-label"><small>VOUCHER:</small></label>
+                                            <select name="voucher" class="form-select">
+                                                <option value="" selected>No Voucher</option>
+                                                @if (count($_vouchers) > 0)
+                                                    @foreach ($_vouchers as $item)
+                                                        <option value="{{ $item->id }}">
+                                                            {{ $item->voucher_name }} - {{ $item->voucher_amount }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
 
-                                        </select>
-                                    </div>
-                                    <div class="col-md">
-                                        <div class="form-group">
-                                            <label for="" class="form-label"><small>AMOUNT:</small></label>
-                                            <input type="text" class="form-control" name="amount">
-                                            @error('or_number')
-                                                <span class="badge bg-danger">{{ $message }}</span>
-                                            @enderror
+                                            </select>
+                                        </div>
+                                        <div class="col-md">
+                                            <div class="form-group">
+                                                <label for="" class="form-label"><small>AMOUNT:</small></label>
+                                                <input type="text" class="form-control" name="amount">
+                                                @error('or_number')
+                                                    <span class="badge bg-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <button type="submit" class="btn btn-primary w-100">ADD TRANSACTION</button>
-                                </div>
-                            </form>
+                                    <div class="row">
+                                        <button type="submit" class="btn btn-primary w-100">ADD TRANSACTION</button>
+                                    </div>
+                                </form>
 
+                            </div>
+                        @else
+                            <a href="{{ route('accounting.payment-transactions') }}?_midshipman={{ request()->input('_midshipman') }}&add-transaction=true"
+                                class="btn btn-primary w-100">
+                                Add Transaction</a>
+                        @endif
+                        <hr>
+                        <div class="payment-history">
+                            <h5>ONLINE PAYMENT</h5>
+                            <ul class="media-story mt-2 p-0">
+                                @if (count($_payment_details->online_payment_transaction) > 0)
+                                    @foreach ($_payment_details->online_payment_transaction as $item)
+                                        <li class="d-flex  align-items-center">
+                                            <div class="stories-data ">
+                                                <p class="mb-0">{{ $item->created_at->format('d, F Y') }}</p>
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <small>REFERENCE NO: </small> <br>
+                                                        <h5><span
+                                                                class="text-primary">{{ $item->reference_number }}</span>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <small>AMOUNT: </small> <br>
+                                                        <h5><span
+                                                                class="text-primary">{{ number_format($item->amount_paid, 2) }}</span>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <small>REFERENCE NO: </small> <br>
+                                                        <h5><span
+                                                                class="text-primary">{{ $item->reference_number }}</span>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <a href="{{ $item->reciept_attach_path }}" target="_blank"
+                                                            class="btn btn-primary btn-sm">view</a>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between mt-2">
+                                                    <div>
+                                                        <a href="" class="btn btn-primary btn-sm">APPROVED PAYMENT</a>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between ms-2">
+                                                        <form action="" method="post" class="">
+                                                            @csrf
+                                                            <div>
+                                                                <button type="submit"
+                                                                    class="btn btn-danger btn-sm w-100">DISSAPPROVED</button>
+                                                            </div>
+                                                            <div class="mt-2">
+                                                                <input type="text" class="form-control" value="remarks">
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                @else
+                                    <li class="d-flex mb-4 align-items-center">
+
+                                        <div class="stories-data ms-3">
+                                            <h5 class="text-muted">No Online Transaction</h5>
+                                        </div>
+                                    </li>
+                                @endif
+                            </ul>
+
+                        </div>
+                        <hr>
+                        <div class="payment-history">
+                            <h5>PAYMENT HISTORY</h5>
+                            <div class="mt-2">
+                                @if ($_payment_details->payment_transaction)
+                                    @foreach ($_payment_details->payment_transaction as $_payment)
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                                            
+                                            <div>
+                                                <small>PARTIAL: </small> <br>
+                                                <h5><span class="text-primary">{{ $_payment->remarks }}</span>
+                                                </h5>
+                                            </div>
+                                            <div>
+                                                <small>AMOUNT: </small> <br>
+                                                <h5><span
+                                                        class="text-primary">{{ number_format($_payment->payment_amount, 2) }}</span>
+                                                </h5>
+                                            </div>
+                                            <div>
+                                                <small>OR NUMBER: </small> <br>
+                                                <h5><span class="text-primary">{{ $_payment->or_number }}</span>
+                                            </div>
+                                        </div>
+                                        <p class="mb-0">
+                                            <small>{{ $_payment->transaction_date /*->format('d, F Y') */ }}</small>
+                                        </p>
+                                    @endforeach
+                                @else
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                                        <div>
+                                            <h5>No Payment Transaction</h5>
+                                            <p></p>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>

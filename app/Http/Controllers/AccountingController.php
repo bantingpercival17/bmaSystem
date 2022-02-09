@@ -10,6 +10,7 @@ use App\Models\ParticularFees;
 use App\Models\Particulars;
 use App\Models\PaymentAssessment;
 use App\Models\PaymentTransaction;
+use App\Models\PaymentTrasanctionOnline;
 use App\Models\Section;
 use App\Models\SemestralFee;
 use App\Models\StudentDetails;
@@ -272,12 +273,13 @@ class AccountingController extends Controller
         $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
         $_vouchers = Voucher::where('is_removed', false)->get();
         $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
-            ->join('enrollment_assessments', 'student_details.id', 'enrollment_assessments.student_id')
-            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
-            ->whereNull('pt.assessment_id')->get();
-        $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : [];
+            ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'ea.id')
+            ->join('payment_trasanction_onlines as pto', 'pto.assessment_id', 'pa.id')
+            ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
+            ->whereNull('pto.is_approved')
+            ->get();
+        $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : $_students;
         return view('pages.accounting.payment.view', compact('_students', '_student', '_vouchers'));
     }
     public function payment_store(Request $_request)
