@@ -173,7 +173,11 @@ class StudentDetails extends Model
                     $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
                 }
             } else {
-                $_final_grade = (($midtermGradeLecture / .4)) + (($finalGradeLecture / .4));
+                if ($midtermGradeLaboratory > 0) {
+                    $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                } else {
+                    $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture /.4) * .5);
+                }
             }
         }
         return $_final_grade;

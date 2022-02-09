@@ -1,5 +1,7 @@
 @extends('layouts.grading-layout')
+@section('page-title', 'Grading Sheet')
 @section('page-content')
+
     <div class="card">
         <div class="card-header">
             <h3 class="card-title"><b>GRADING SHEET</b></h3>
@@ -9,8 +11,8 @@
                     <br>
                     <span class="h6"><b>{{ $_subject->curriculum_subject->subject->subject_name }}</b></span>
                 </p>
-                <p for="" class="text-muted col-md-4"><span>UNITS:</span>
-                    <span class="h6"><b>{{ $_subject->curriculum_subject->subject->units }}</b></span>
+                <p for="" class="text-muted col-md-4"><span><small><b>UNITS:</b></small></span> <br>
+                    <span class="h6"><b>{{ $_subject->curriculum_subject->subject->units }} UNIT/S</b></span>
                 </p>
                 <p for="" class="text-muted col-md-4"><span>SECTION:</span>
                     <span class="h6"><b>{{ $_subject->section->section_name }}</b></span>
@@ -146,7 +148,7 @@
 
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <button type="submit" class="btn btn-info">SUBMIT </button>
+                                    <button type="submit" class="btn btn-primary btn-sm">SUBMIT </button>
                                 </div>
 
                             </div>
@@ -169,7 +171,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <button type="submit" class="btn btn-success" {{ $_grade_status }}>UPLOAD</button>
+                                    
+                                    <button type="submit" class="btn btn-primary btn-sm" {{ $_grade_status }}>UPLOAD</button>
                                 </div>
                             </div>
                         </form>
@@ -178,64 +181,67 @@
                 </div>
             </div>
         </div>
-        <div class="card-body table-responsive p-0" style="height: 500px;">
-            <table class="table table-fixed text-nowrap">
-                <thead>
-                    <tr class="text-center">
-                        <th colspan="3"> {{ strtoupper(request()->input('_period')) }} - MIDSHIPMAN INFORMATION</th>
-                        @foreach ($_columns as $col)
-                            <th colspan="{{ $col[2] }}" class="bg-primary  table-bordered">
-                                {{ strtoupper($col[0]) }}
-                            </th>
-                        @endforeach
-                    </tr>
-                    <tr>
-                        <th>NO</th>
-                        <th>STUDENT NUMBER</th>
-                        <th>COMPLETE NAME</th>
-                        @foreach ($_columns as $col)
-                            @for ($i = 1; $i <= $col[2]; $i++)
-                                <th class="bg-info text-center table-bordered">
-                                    {{ strtoupper($col[1]) . $i }}
-                                </th>
-                            @endfor
-
-                        @endforeach
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($_students->count() > 0)
-                        @foreach ($_students as $_key => $_student)
+        <div class="card-body table-responsive p-0">
+            <main>
+                <div role="region" aria-label="data table" tabindex="0" class="primary">
+                    <table>
+                        <thead>
                             <tr>
-                                <td>{{ $_key + 1 }}</td>
-                                <td>{{ $_student->account->student_number }}</td>
-                                <td>{{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
-                                </td>
+                                <th class="pin"> {{ strtoupper(request()->input('_period')) }} - MIDSHIPMAN
+                                    INFORMATION
+                                </th>
+                                @foreach ($_columns as $col)
+                                    <th colspan="{{ $col[2] }}" class="table-bordered">
+                                        {{ strtoupper($col[0]) }}
+                                    </th>
+                                @endforeach
+                            </tr>
+                            <tr>
+                                <th class="pin">STUDENT NO. - COMPLETE NAME</th>
                                 @foreach ($_columns as $col)
                                     @for ($i = 1; $i <= $col[2]; $i++)
-                                        <th class="text-center table-bordered">
-                                            @php
-                                                $_score = $_student->subject_score([$_subject->id, request()->input('_period'), $col[1] . $i]);
-                                            @endphp
-                                            <input type="text" class="score-cell" style="width: 38px; font-size:12px"
-                                                value="{{ $_score }}" data-student="{{ $_student->id }}"
-                                                data-category="{{ $col[1] . $i }}" data-section="{{ $_subject->id }}"
-                                                {{ $_grade_status }}>
+                                        <th class=" text-center table-bordered">
+                                            {{ strtoupper($col[1]) . $i }}
                                         </th>
                                     @endfor
 
                                 @endforeach
-
                             </tr>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td colspan="30">No Students</td>
-                        </tr>
-                    @endif
-                </tbody>
+                        </thead>
+                        <tbody>
+                            @if ($_students->count() > 0)
+                                @foreach ($_students as $_key => $_student)
+                                    <tr>
+                                        <th>{{ $_student->account->student_number }} -
+                                            {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
+                                        </th>
+                                        @foreach ($_columns as $col)
+                                            @for ($i = 1; $i <= $col[2]; $i++)
+                                                <td class="text-center table-bordered">
+                                                    @php
+                                                        $_score = $_student->subject_score([$_subject->id, request()->input('_period'), $col[1] . $i]);
+                                                    @endphp
+                                                    <input type="text" class="score-cell"
+                                                        style="width: 38px; font-size:12px" value="{{ $_score }}"
+                                                        data-student="{{ $_student->id }}"
+                                                        data-category="{{ $col[1] . $i }}"
+                                                        data-section="{{ $_subject->id }}" {{ $_grade_status }}>
+                                                </td>
+                                            @endfor
 
-            </table>
+                                        @endforeach
+
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="28">No Students</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </main>
         </div>
     </div>
 

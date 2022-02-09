@@ -14,19 +14,24 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>Subject</a>
     </li>
+    <li class="breadcrumb-item">
+        <a
+            href="{{ route('teacher.subject-list') }}?_academic={{ base64_encode($_subject->academic_id) }}">{{ $_subject->academic->school_year . ' - ' . $_subject->academic->semester }}</a>
+    </li>
     <li class="breadcrumb-item active" aria-current="page">{{ $_title }}</li>
 @endsection
 @section('page-content')
     <div class="nav-scroller text-center">
         <nav class="nav nav-underline bg-soft-primary  pb-0" aria-label="Secondary navigation ">
             <div class="d-flex" id="head-check">
-                <a href="{{ Request::url() . '?_s=' . request()->input('_s') }}&_work_panel=student-list"
-                    class="nav-link {{ request()->input('_work_panel') == 'student-list' || request()->input('_work_panel') == '' ? 'active' : '' }}">Student</a>
-                <a href="{{ Request::url() . '?_s=' . request()->input('_s') }}&_work_panel=e-clearance"
-                    class="nav-link {{ request()->input('_work_panel') == 'e-clearance' ? 'active' : '' }}">Semestral
+                <a href="{{ route('teacher.subject-view') . '?_s=' . request()->input('_s') }}"
+                    class="nav-link {{ request()->routeIs('teacher.subject-view') ? 'active' : '' }}">Student</a>
+                <a href="{{ route('teacher.semestral-clearance') . '?_subject=' . request()->input('_s') }}"
+                    class="nav-link {{ request()->routeIs('teacher.semestral-clearance') ? 'active' : '' }}">Semestral
                     Clearance</a>
-                <a href="{{ Request::url() . '?_s=' . request()->input('_s') }}&_work_panel=record-book"
-                    class="nav-link {{ request()->input('_work_panel') == 'record-book' ? 'active' : '' }}">Record Book</a>
+                <a href="{{ route('teacher.grading-sheet-main') }}?_student={{ base64_encode($_subject->id) }}&_period=midterm"
+                    class="nav-link {{ request()->routeIs('teacher.grading-sheet-main') ? 'active' : '' }}">Grading
+                    Sheet</a>
             </div>
         </nav>
     </div>
@@ -106,11 +111,11 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                                                 </td>
                                                 <td>
                                                     <div class="form-check d-block">
-                                                        <input class="form-check-input input-select-subject-clearance" type="checkbox"
-                                                            id="flexCheckChecked-3-{{ $_key }}"
+                                                        <input class="form-check-input input-select-subject-clearance"
+                                                            type="checkbox" id="flexCheckChecked-3-{{ $_key }}"
                                                             name="data[{{ $_key }}][e_clearance]"
                                                             value="{{ $_student->id }}"
-                                                            {{ $_student->clearance($_subject->id) ? ($_student->clearance($_subject->id)->is_approved == 1 ? 'checked' : '') : '' }}>
+                                                            {{ $_student->clearance($_subject->id)? ($_student->clearance($_subject->id)->is_approved == 1? 'checked': ''): '' }}>
                                                         <label class="form-check-label"
                                                             for="flexCheckChecked-3-{{ $_key }}">
                                                             CLEARED
@@ -143,18 +148,6 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
             </form>
 
         </div>
-
-    @endif
-    @if (request()->input('_work_panel') == 'record-book')
-        <div class="row">
-            <div class="col-md-12">
-                <iframe
-                    src="{{ route('teacher.grading-sheet-main') }}?_s={{ base64_encode($_subject->id) }}&_period=midterm"
-                    style="width: 100%;  height: 1000px; overflow: auto">
-                </iframe>
-            </div>
-        </div>
-
 
     @endif
 @endsection

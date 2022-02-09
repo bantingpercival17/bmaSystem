@@ -14,6 +14,118 @@
 
     {{-- <script src="{{ asset('js/app-1.js') }}"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script> --}}
+    <style>
+        body {
+            font: 90%/1.4 system-ui;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        header {
+            padding: 7vh 5vw;
+            border-bottom: 1px solid #ddd;
+        }
+
+        header h1,
+        header p {
+            margin: 0;
+        }
+
+        footer {
+            padding: 7vh 5vw;
+            border-top: 1px solid #ddd;
+        }
+
+        aside {
+            padding: 7vh 5vw;
+        }
+
+        .primary {
+            overflow: auto;
+            scroll-snap-type: both mandatory;
+            height: 80vh;
+        }
+
+        @media (min-width: 40em) {
+            main {
+                display: flex;
+            }
+
+            aside {
+                flex: 0 1 20vw;
+                order: 1;
+                border-right: 1px solid #ddd;
+            }
+
+            .primary {
+                order: 2;
+            }
+        }
+
+        table {
+            border-collapse: collapse;
+            border: 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #aaa;
+            background-clip: padding-box;
+            scroll-snap-align: start;
+        }
+
+        tbody tr:last-child th,
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        thead {
+            z-index: 1000;
+            position: relative;
+        }
+
+        th,
+        td {
+            padding: 0.6rem;
+            min-width: 6rem;
+            text-align: left;
+            margin: 0;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            border-top: 0;
+            background-clip: padding-box;
+        }
+
+        thead th.pin {
+            left: 0;
+            z-index: 1001;
+            border-left: 0;
+        }
+
+        tbody th {
+            background-clip: padding-box;
+            border-left: 0;
+        }
+
+        tbody {
+            z-index: 10;
+            position: relative;
+        }
+
+        tbody th {
+            position: sticky;
+            left: 0;
+        }
+
+        thead th,
+        tbody th {
+            background-color: #f8f8f8;
+        }
+
+    </style>
 
 </head>
 
