@@ -273,6 +273,7 @@
                 if (event.keyCode == 13) {
                     _grade_save(_data)
                 }
+                console.log(event.keyCode)
             }
         })
 
