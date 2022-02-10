@@ -4,11 +4,14 @@
 
     <div class="card">
         <div class="card-header">
-            <a href="{{ route('teacher.subject-view') . '?_subject=' . base64_encode($_subject->id) }}" class="btn btn-primary btn-sm rounded-pill mt-2">
+            <a href="{{ route('teacher.subject-view') . '?_subject=' . base64_encode($_subject->id) }}"
+                class="btn btn-primary btn-sm rounded-pill mt-2">
                 <i class="icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4.25 12.2744L19.25 12.2744" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M10.2998 18.2988L4.2498 12.2748L10.2998 6.24976" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M4.25 12.2744L19.25 12.2744" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M10.2998 18.2988L4.2498 12.2748L10.2998 6.24976" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round"></path>
                     </svg>
                 </i>
             </a>
@@ -257,7 +260,7 @@
 
 @section('js')
     <script>
-        $(document).on('keyup', '.score-cell', function() {
+        $(document).on('keydown', '.score-cell', function(e) {
             // Allow the numberica number only the inputs
             var _data = {
                 '_student': $(this).data('student'),
@@ -270,21 +273,35 @@
                 toastr.error("Invalid Score input")
                 $(this).val('');
             } else {
-                if (event.keyCode == 13) {
+                if (event.keyCode === 13) {
+                    _grade_save(_data)
+                    //$(this).data('category').focus().click();
+                    /* $next = $('[category=' + $(this).data('category') + ']')
+                    console.log($next.length);
+                    if (!$next.length) {
+                        $next = $('category=1]');
+                    }
+                    $next.focus().click(); */
+
+                    //$_next.focus();
+                    //console.log($next)
+                }
+                if (event.keyCode === 9) {
                     _grade_save(_data)
                 }
-                console.log(event.keyCode)
+                //console.log(event.keyCode)
             }
         })
 
         function _grade_save(_data) {
             $.get('/teacher/grading-sheet/store', _data, function(respond) {
                 if (respond._respond.status == 'success') {
+                    //Toastr.success(respond._respond.message);
                     toastr.success(respond._respond.message)
                 } else {
                     toastr.error("Error")
                 }
-                console.log(respond)
+                //console.log(respond)
             });
         }
     </script>

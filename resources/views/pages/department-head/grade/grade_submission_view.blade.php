@@ -16,7 +16,7 @@ $_title = 'Grade Submission';
                 </svg>{{ $_title }}</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            {{ Auth::user()->staff->current_academic()->semester . ' | ' . Auth::user()->staff->current_academic()->school_year }}
+            {{ Auth::user()->staff->current_academic()->semester .' | ' .Auth::user()->staff->current_academic()->school_year }}
         </li>
     @else
         <li class="breadcrumb-item active" aria-current="page">
@@ -46,7 +46,6 @@ $_title = 'Grade Submission';
                             <thead>
                                 <tr>
                                     <th>Instruction Name</th>
-                                    <th>Subjects</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -59,42 +58,38 @@ $_title = 'Grade Submission';
                                                 <div class="d-flex align-items-center">
                                                     <img class=" avatar-rounded img-fluid avatar-45 me-3 bg-soft-primary"
                                                         src="{{ asset($_data->profile_pic($_data)) }}" alt="profile">
-                                                    <h6> {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}
-                                                    </h6>
+                                                    <a
+                                                        href="{{ route('department-head.grade-submission-view') . '?_staff=' . base64_encode($_data->id) }} {{ request()->input('_academic') ? '?)_academic=' . request()->input('_academic') : '' }}">
+                                                        <h6> {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}
+                                                        </h6>
+                                                    </a>
                                                 </div>
                                             </td>
                                             <td>
-                                                @if (count($_data->subject_handles) > 0)
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <small class="fw-bolder">MIDTERM GRADE SUBMISSION: </small>
+                                                        <br>
+                                                        <span class="fw-bolder">
+                                                            <span class="badge bg-info">0</span> <small> out of</small>
+                                                            <span class="badge bg-primary">
+                                                                {{ count($_data->subject_handles) }}
+                                                            </span>
+                                                            <small>Submitted Grade</small>
+                                                        </span>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <small class="fw-bolder">FINAL GRADE SUBMISSION: </small> <br>
+                                                        <span class="fw-bolder">
+                                                            <span class="badge bg-info">0</span> <small> out of</small>
+                                                            <span class="badge bg-primary">
+                                                                {{ count($_data->subject_handles) }}
+                                                            </span>
+                                                            <small>Submitted Grade</small>
+                                                        </span>
+                                                    </div>
+                                                </div>
 
-                                                    @foreach ($_data->subject_handles as $_subjects)
-                                                        <a href="" class="btn btn-outline-primary mt-2">
-                                                            {{ $_subjects->curriculum_subject->subject->subject_code }}
-                                                        </a>
-                                                    @endforeach
-
-                                                    {{-- <div class="iq-media-group iq-media-group-1">
-                                                        @foreach ($_data->subject_handles as $_subjects)
-                                                            <a href="#" class="iq-media-1">
-                                                                <div class="icon iq-icon-box-3 rounded-pill">
-                                                                    {{ $_subjects->curriculum_subject->subject->subject_code }}
-                                                                </div>
-                                                            </a>
-                                                        @endforeach
-                                                        <a href="#" class="iq-media-1">
-                                                            <div class="icon iq-icon-box-3 rounded-pill">PP</div>
-                                                        </a>
-                                                        <a href="#" class="iq-media-1">
-                                                            <div class="icon iq-icon-box-3 rounded-pill">MM</div>
-                                                        </a>
-                                                    </div> --}}
-
-
-                                                @else
-
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <div class="text-info">Pending</div>
                                             </td>
 
                                         </tr>

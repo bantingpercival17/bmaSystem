@@ -10,6 +10,7 @@
 
 
     <link rel="stylesheet" href="{{ asset('css/app-1.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 
     {{-- <script src="{{ asset('js/app-1.js') }}"></script>
@@ -172,6 +173,7 @@
 
     <!-- App Script -->
     <script src="{{ asset('resources/js/gigz.js') }}" defer></script>
+    <script src="{{ asset('js/toastr.min.js') }}"></script>
     @yield('js')
 </body>
 

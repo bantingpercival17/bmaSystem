@@ -142,14 +142,7 @@ class TeacherController extends Controller
         $_staff = Staff::find($_subject->staff_id);
         return view('teacher.teacher_view', compact('_subject', '_staff'));
     }
-    public function submission_view(Request $_request)
-    {
-        $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
-        $_staffs = Staff::where('department', Auth::user()->staff->department)->orderBy('last_name')->get();
-
-        return view('teacher\department-head\grade\grade_submission', compact('_staffs'));
-        //return view('teacher.submission_view', compact('_staffs', '_academics'));
-    }
+  
     public function subject_report_view(Request $_request)
     {
         $_subject = SubjectClass::find(Crypt::decrypt($_request->_subject));

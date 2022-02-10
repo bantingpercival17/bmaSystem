@@ -9,6 +9,7 @@ use App\Models\Staff;
 use App\Models\StudentClearance;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
+use App\Models\SubjectClass;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +23,12 @@ class DepartmentHeadController extends Controller
     public function submission_view(Request $_request)
     {
         $_staffs = Staff::where('department', Auth::user()->staff->department)->orderBy('last_name')->get();
-        return view('pages\department-head\grade\grade_submission', compact('_staffs'));
+        return view('pages.department-head.grade.grade_submission_view', compact('_staffs'));
+    }
+    public function subject_submission_view(Request $_request)
+    {
+        $_staff = Staff::find(base64_decode($_request->_staff));
+        return view('pages.department-head.grade.instruction_subject_view', compact('_staff'));
     }
     public function e_clearance_view(Request $_request)
     {

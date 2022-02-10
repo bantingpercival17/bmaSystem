@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Http\Controllers\EmployeeController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
 class Staff extends Model
@@ -33,18 +34,10 @@ class Staff extends Model
         }
         return '/assets/img/staff/' . $_image;
     }
-    public function subjects_handles()
-    {
-        return $this->hasMany(SubjectClass::class, 'staff_id')
-            ->where('academic_id', Crypt::decrypt(request()->input('_academic')))
-            ->where('is_removed', false);
-    }
     public function subject_handles()
     {
-        $_current_academic = AcademicYear::where('is_active', 1)->first();
-        $_academic = request()->input('_academic') ? $_current_academic->id : base64_decode(request()->input('_academic'));
         return $this->hasMany(SubjectClass::class, 'staff_id')
-            ->where('academic_id', $_academic)
+            ->where('academic_id', Auth::user()->staff->current_academic()->id)
             ->where('is_removed', false);
     }
     // Staff Attendance
