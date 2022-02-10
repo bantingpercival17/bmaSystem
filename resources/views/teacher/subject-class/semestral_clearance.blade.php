@@ -24,13 +24,13 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
     <div class="nav-scroller text-center">
         <nav class="nav nav-underline bg-soft-primary  pb-0" aria-label="Secondary navigation ">
             <div class="d-flex" id="head-check">
-                <a href="{{ route('teacher.subject-view') . '?_s=' . request()->input('_s') }}"
+                <a href="{{ route('teacher.subject-view') . '?_subject=' . request()->input('_subject') }}"
                     class="nav-link {{ request()->routeIs('teacher.subject-view') ? 'active' : '' }}">Student</a>
-                <a href="{{ route('teacher.semestral-clearance') . '?_subject=' . request()->input('_s') }}"
+                <a href="{{ route('teacher.semestral-clearance') . '?_subject=' . request()->input('_subject') }}"
                     class="nav-link {{ request()->routeIs('teacher.semestral-clearance') ? 'active' : '' }}">Semestral
                     Clearance</a>
-                <a href="{{ route('teacher.grading-sheet-main') }}?_s={{ base64_encode($_subject->id) }}&_period=midterm"
-                    class="nav-link {{ request()->routeIs('teacher.grading-sheet-main') ? 'active' : '' }}">Grading
+                <a href="{{ route('teacher.grading-sheet') }}?_subject={{ base64_encode($_subject->id) }}&_period=midterm"
+                    class="nav-link {{ request()->routeIs('teacher.grading-sheet') ? 'active' : '' }}">Grading
                     Sheet</a>
             </div>
         </nav>
@@ -71,7 +71,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                                 @if (count($_students))
                                     @foreach ($_students as $_key => $_student)
                                         <tr>
-                                            <td>{{ $_student->account->student_number }}</td>
+                                            <td>{{ $_student->student->account->student_number }}</td>
                                             <td>{{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
                                             </td>
                                             <td>
@@ -79,8 +79,8 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                                                     <input class="form-check-input input-select-subject-clearance"
                                                         type="checkbox" id="flexCheckChecked-3-{{ $_key }}"
                                                         name="data[{{ $_key }}][e_clearance]"
-                                                        value="{{ $_student->id }}"
-                                                        {{ $_student->clearance($_subject->id)? ($_student->clearance($_subject->id)->is_approved == 1? 'checked': ''): '' }}>
+                                                        value="{{ $_student->student->id }}"
+                                                        {{ $_student->student->clearance($_subject->id)? ($_student->student->clearance($_subject->id)->is_approved == 1? 'checked': ''): '' }}>
                                                     <label class="form-check-label"
                                                         for="flexCheckChecked-3-{{ $_key }}">
                                                         CLEARED
@@ -93,9 +93,9 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                                                     </label>
                                                     <input type="text" class="form-control"
                                                         name="data[{{ $_key }}][comment]"
-                                                        value="{{ $_student->clearance($_subject->id) ? $_student->clearance($_subject->id)->comments : '' }}">
+                                                        value="{{ $_student->student->clearance($_subject->id) ? $_student->student->clearance($_subject->id)->comments : '' }}">
                                                     <input type="hidden" name="data[{{ $_key }}][sId]"
-                                                        value="{{ base64_encode($_student->id) }}">
+                                                        value="{{ base64_encode($_student->student->id) }}">
                                                 </div>
                                             </td>
                                         </tr>

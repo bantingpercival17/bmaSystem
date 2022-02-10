@@ -22,7 +22,7 @@ class DepartmentHeadController extends Controller
     public function submission_view(Request $_request)
     {
         $_staffs = Staff::where('department', Auth::user()->staff->department)->orderBy('last_name')->get();
-        return view('teacher\department-head\grade\grade_submission', compact('_staffs'));
+        return view('pages\department-head\grade\grade_submission', compact('_staffs'));
     }
     public function e_clearance_view(Request $_request)
     {
@@ -30,7 +30,7 @@ class DepartmentHeadController extends Controller
         $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
         $_sections = $_request->_academic ? Section::where('academic_id', base64_decode($_request->_academic))->where('course_id', 2)->orderBy('section_name', 'ASC')->get() :
             Section::where('academic_id', $_current_academic->id)->where('course_id', 2)->orderBy('section_name', 'ASC')->get();
-        return view('teacher.department-head.clearance.view', compact('_academics', '_current_academic', '_sections'));
+        return view('pages.department-head.clearance.view', compact('_academics', '_current_academic', '_sections'));
     }
     public function section_view_e_clearance(Request $_request)
     {
@@ -41,7 +41,7 @@ class DepartmentHeadController extends Controller
             ->orderBy('student_details.last_name', 'ASC')
             ->where('ss.is_removed', false)
             ->get();
-        return view('teacher.department-head.clearance.view_list', compact('_section', '_students'));
+        return view('pages.department-head.clearance.view_list', compact('_section', '_students'));
     }
     public function store_student_clearance(Request $_request)
     {

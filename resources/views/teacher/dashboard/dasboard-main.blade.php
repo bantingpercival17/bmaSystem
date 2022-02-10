@@ -19,7 +19,7 @@ $_title = 'Subjects';
         @if ($_subject->count() > 0)
             @foreach ($_subject as $subject)
                 <div class=" col-sm-4 col-md-4">
-                    <a href="{{ route('teacher.subject-view') }}?_s={{ base64_encode($subject->id) }}">
+                    <a href="{{ route('teacher.subject-view') }}?_subject={{ base64_encode($subject->id) }}">
                         <div class="card">
                             <div class="card-body">
                                 <span class="h4 text-info">

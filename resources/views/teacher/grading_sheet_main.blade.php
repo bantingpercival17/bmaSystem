@@ -4,38 +4,55 @@
 
     <div class="card">
         <div class="card-header">
+            <a href="{{ route('teacher.subject-view') . '?_subject=' . base64_encode($_subject->id) }}" class="btn btn-primary btn-sm rounded-pill mt-2">
+                <i class="icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.25 12.2744L19.25 12.2744" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M10.2998 18.2988L4.2498 12.2748L10.2998 6.24976" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </i>
+            </a>
             <h3 class="card-title"><b>GRADING SHEET</b></h3>
             <br>
             <div class="row">
-                <p for="" class="text-muted col-md-8"><span><small><b>SUBJECT:</b></small></span>
-                    <br>
-                    <span class="h6"><b>{{ $_subject->curriculum_subject->subject->subject_name }}</b></span>
-                </p>
-                <p for="" class="text-muted col-md-4"><span><small><b>UNITS:</b></small></span> <br>
-                    <span class="h6"><b>{{ $_subject->curriculum_subject->subject->units }} UNIT/S</b></span>
-                </p>
-                <p for="" class="text-muted col-md-4"><span>SECTION:</span>
-                    <span class="h6"><b>{{ $_subject->section->section_name }}</b></span>
-                </p>
-                <p for="" class="text-muted col-md-4"><span>PERIOD:</span>
-                    @if (request()->input('_period') == 'midterm')
-                        <span class="btn btn-info btn-xs" aria-disabled="true"><b>MIDTERM</b></span>
-                        <a href="{{ route('teacher.grading-sheet-main') }}?_s={{ base64_encode($_subject->id) }}&_period=finals"
-                            class="btn btn-secondary btn-xs btn-rounded">FINALS</a>
-                    @else
-
-                        <a href="{{ route('teacher.grading-sheet-main') }}?_s={{ base64_encode($_subject->id) }}&_period=midterm"
-                            class="btn btn-secondary btn-xs">MIDTERM</a>
-                        <span class="btn btn-info btn-xs"><b>FINALS</b></span>
-                    @endif
-                </p>
-                <p for="" class="text-muted col-md-4"><span>PRE-VIEW:</span>
-                    <a href="/teacher/subjects/grading-sheet?_s={{ Crypt::encrypt($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad1"
-                        class="btn btn-warning btn-xs">FORM AD-01</a>
-                    <a href="/teacher/subjects/grading-sheet?_s={{ Crypt::encrypt($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2"
-                        class="btn btn-primary btn-xs">FORM AD-02</a>
-                </p>
                 <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span><small><b>SUBJECT:</b></small></span>
+                            <br>
+                            <span
+                                class="h6"><b>{{ $_subject->curriculum_subject->subject->subject_name }}</b></span>
+                        </div>
+                        <div class="col-md-6">
+                            <span><small><b>UNITS:</b></small></span> <br>
+                            <span class="h6"><b>{{ $_subject->curriculum_subject->subject->units }}
+                                    UNIT/S</b></span>
+                        </div>
+                        <div class="col-md-6">
+                            <small><b>SECTION:</b></small> <br>
+                            <span class="h6"><b>{{ $_subject->section->section_name }}</b></span>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <small><b>PERIOD:</b></small> <br>
+                            <a href="{{ route('teacher.grading-sheet') }}?_subject={{ base64_encode($_subject->id) }}&_period=midterm"
+                                class="btn {{ request()->input('_period') == 'midterm' ? 'btn-info text-white' : 'btn-secondary' }} btn-sm me-2 mt-2">MIDTERM</a>
+                            <a href="{{ route('teacher.grading-sheet') }}?_subject={{ base64_encode($_subject->id) }}&_period=finals"
+                                class="btn {{ request()->input('_period') == 'finals' ? 'btn-info text-white' : 'btn-secondary' }} btn-sm me-2 mt-2">FINALS</a>
+                        </div>
+                        <div class="col-md-6">
+                            <small><b>PRE-VIEW:</b></small> <br>
+                            <a href="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad1"
+                                class="btn btn-warning btn-xs" target="pdf">FORM AD-01</a>
+                            <a href="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2"
+                                class="btn btn-primary btn-xs" target="pdf">FORM AD-02</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="" class="text-primary"><b>| GRADE SUBMISSION</b></label>
                     @if ($_subject_data = $_subject->submitted_grade('ad1', request()->input('_period')))
                         @if ($_subject_data->is_approved === 1)
                             @php
@@ -136,7 +153,6 @@
                         <form action="/teacher/subjects/grade-submission" method="post">
                             <input type="hidden" name="_subject" value="{{ Crypt::encrypt($_subject->id) }}">
                             <input type="hidden" name="_period" value="{{ request()->input('_period') }}">
-                            <label for="" class="text-muted">GRADE SUBMISSION</label>
                             @csrf
                             <div class="row">
                                 <div class="form-group col-md">
@@ -148,36 +164,28 @@
 
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <button type="submit" class="btn btn-primary btn-sm">SUBMIT </button>
+                                    <button type="submit" class="btn btn-primary ">SUBMIT </button>
                                 </div>
 
                             </div>
                         </form>
                     @endif
-                </div>
-                <div class="col-md-6">
-                    @if (Auth::user()->email != 'm.delacruz@bma.edu.ph')
-                        <form action="/teacher/subject-grade/bulk-upload" method="post" enctype="multipart/form-data">
-                            @csrf
-                            <label for="" class="text-success"><b>| BULK UPLOAD GRADES</b></label>
-                            <div class="row">
-                                <div class="form-group col-md">
-
-                                    <div class="custom-file">
-                                        <input type="hidden" name="_section" value="{{ Crypt::encrypt($_subject->id) }}">
-                                        <input type="file" class="custom-file-input" id="customFile" name="_file_grade"
-                                            required {{ $_grade_status }}>
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    
-                                    <button type="submit" class="btn btn-primary btn-sm" {{ $_grade_status }}>UPLOAD</button>
+                    <form action="{{ route('teacher.bulk-upload-grades') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <label for="" class="text-primary"><b>| BULK UPLOAD GRADES</b></label>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="hidden" name="_section" value="{{ Crypt::encrypt($_subject->id) }}">
+                                    <input class="form-control" type="file" id="customFile" name="_file_grade" required
+                                        {{ $_grade_status }}>
                                 </div>
                             </div>
-                        </form>
-                    @endif
-
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary" {{ $_grade_status }}>UPLOAD</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -187,20 +195,21 @@
                     <table>
                         <thead>
                             <tr>
-                                <th class="pin"> {{ strtoupper(request()->input('_period')) }} - MIDSHIPMAN
+                                <th class="pin text-primary fw-bolder"> {{ strtoupper(request()->input('_period')) }} -
+                                    MIDSHIPMAN
                                     INFORMATION
                                 </th>
                                 @foreach ($_columns as $col)
-                                    <th colspan="{{ $col[2] }}" class="table-bordered">
+                                    <th colspan="{{ $col[2] }}" class="text-center text-primary fw-bolder">
                                         {{ strtoupper($col[0]) }}
                                     </th>
                                 @endforeach
                             </tr>
                             <tr>
-                                <th class="pin">STUDENT NO. - COMPLETE NAME</th>
+                                <th class="pin text-primary fw-bolder">STUDENT NO. - COMPLETE NAME</th>
                                 @foreach ($_columns as $col)
                                     @for ($i = 1; $i <= $col[2]; $i++)
-                                        <th class=" text-center table-bordered">
+                                        <th class=" text-center table-bordered text-primary fw-bolder">
                                             {{ strtoupper($col[1]) . $i }}
                                         </th>
                                     @endfor
@@ -212,18 +221,19 @@
                             @if ($_students->count() > 0)
                                 @foreach ($_students as $_key => $_student)
                                     <tr>
-                                        <th>{{ $_student->account->student_number }} -
-                                            {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
+                                        <th class="text-primary fw-bolder">
+                                            {{ $_student->student->account->student_number }} -
+                                            {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
                                         </th>
                                         @foreach ($_columns as $col)
                                             @for ($i = 1; $i <= $col[2]; $i++)
                                                 <td class="text-center table-bordered">
                                                     @php
-                                                        $_score = $_student->subject_score([$_subject->id, request()->input('_period'), $col[1] . $i]);
+                                                        $_score = $_student->student->subject_score([$_subject->id, request()->input('_period'), $col[1] . $i]);
                                                     @endphp
                                                     <input type="text" class="score-cell"
                                                         style="width: 38px; font-size:12px" value="{{ $_score }}"
-                                                        data-student="{{ $_student->id }}"
+                                                        data-student="{{ $_student->student->id }}"
                                                         data-category="{{ $col[1] . $i }}"
                                                         data-section="{{ $_subject->id }}" {{ $_grade_status }}>
                                                 </td>

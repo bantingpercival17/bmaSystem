@@ -24,13 +24,13 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
     <div class="nav-scroller text-center">
         <nav class="nav nav-underline bg-soft-primary  pb-0" aria-label="Secondary navigation ">
             <div class="d-flex" id="head-check">
-                <a href="{{ route('teacher.subject-view') . '?_s=' . request()->input('_s') }}"
+                <a href="{{ route('teacher.subject-view') . '?_subject=' . request()->input('_subject') }}"
                     class="nav-link {{ request()->routeIs('teacher.subject-view') ? 'active' : '' }}">Student</a>
-                <a href="{{ route('teacher.semestral-clearance') . '?_subject=' . request()->input('_s') }}"
+                <a href="{{ route('teacher.semestral-clearance') . '?_subject=' . request()->input('_subject') }}"
                     class="nav-link {{ request()->routeIs('teacher.semestral-clearance') ? 'active' : '' }}">Semestral
                     Clearance</a>
-                <a href="{{ route('teacher.grading-sheet-main') }}?_student={{ base64_encode($_subject->id) }}&_period=midterm"
-                    class="nav-link {{ request()->routeIs('teacher.grading-sheet-main') ? 'active' : '' }}">Grading
+                <a href="{{ route('teacher.grading-sheet') }}?_subject={{ base64_encode($_subject->id) }}&_period=midterm"
+                    class="nav-link {{ request()->routeIs('teacher.grading-sheet') ? 'active' : '' }}">Grading
                     Sheet</a>
             </div>
         </nav>
@@ -53,7 +53,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                                     @foreach ($_students as $_key => $_student)
                                         <tr>
                                             <td>{{ $_key + 1 }}</td>
-                                            <td>{{ $_student->account->student_number }}</td>
+                                            <td>{{ $_student->student->account->student_number }}</td>
                                             <td>{{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
                                             </td>
                                         </tr>

@@ -76,77 +76,78 @@
                     @foreach ($_students as $_key => $_student)
                         <tr class="text-center">
                             <td>{{ $_key + 1 }}</td>
-                            <td>{{ $_student->account->student_number }}</td>
-                            <td>{{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}</td>
+                            <td>{{ $_student->student->account->student_number }}</td>
+                            <td>{{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
+                            </td>
                             @for ($i = 1; $i <= 10; $i++)
                                 <td>
-                                    {{ $_student->subject_score([$_subject->id, request()->input('_period'), 'Q' . $i]) }}
+                                    {{ $_student->student->subject_score([$_subject->id, request()->input('_period'), 'Q' . $i]) }}
+
                                 </td>
                             @endfor
                             <th>
                                 @php
-                                    $_quiz_avg = $_student->subject_average_score([$_subject->id, request()->input('_period'), 'Q']);
+                                    $_quiz_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), 'Q']);
                                 @endphp
                                 {{ $_quiz_avg > 0 ? number_format($_quiz_avg, 2) : '' }}
                             </th>
                             @for ($i = 1; $i <= 5; $i++)
                                 <td>
-                                    {{ $_student->subject_score([$_subject->id, request()->input('_period'), 'O' . $i]) }}
+                                    {{ $_student->student->subject_score([$_subject->id, request()->input('_period'), 'O' . $i]) }}
                                 </td>
                             @endfor
                             <th>
                                 @php
-                                    $_oral_avg = $_student->subject_average_score([$_subject->id, request()->input('_period'), 'O']);
+                                    $_oral_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), 'O']);
                                 @endphp
                                 {{ $_oral_avg > 0 ? number_format($_oral_avg, 2) : '' }}
                             </th>
                             @for ($i = 1; $i <= 10; $i++)
                                 <td>
-                                    {{ $_student->subject_score([$_subject->id, request()->input('_period'), 'R' . $i]) }}
+                                    {{ $_student->student->subject_score([$_subject->id, request()->input('_period'), 'R' . $i]) }}
                                 </td>
                             @endfor
                             <th>
                                 @php
-                                    $_output_avg = $_student->subject_average_score([$_subject->id, request()->input('_period'), 'R']);
+                                    $_output_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), 'R']);
                                 @endphp
                                 {{ $_output_avg > 0 ? number_format($_output_avg, 2) : '' }}
                             </th>
                             <td>
-                                {{ $_student->subject_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E1']) }}
+                                {{ $_student->student->subject_score([$_subject->id,request()->input('_period'),strtoupper(request()->input('_period'))[0] . 'E1']) }}
                             </td>
                             <th>
                                 @php
-                                    $_exam_avg = $_student->subject_average_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E']);
+                                    $_exam_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E']);
                                 @endphp
                                 {{ $_exam_avg > 0 ? number_format($_exam_avg, 2) : '' }}
 
                             </th>
                             <th>
                                 @php
-                                    $_lec_grade = $_student->lec_grade([$_subject->id, request()->input('_period')]);
+                                    $_lec_grade = $_student->student->lec_grade([$_subject->id, request()->input('_period')]);
                                 @endphp
                                 {{ $_lec_grade > 0 ? number_format($_lec_grade, 2) : '' }}
                             </th>
                             @for ($i = 1; $i <= 10; $i++)
                                 <td>
-                                    {{ $_student->subject_score([$_subject->id, request()->input('_period'), 'A' . $i]) }}
+                                    {{ $_student->student->subject_score([$_subject->id, request()->input('_period'), 'A' . $i]) }}
                                 </td>
-
                             @endfor
                             <th>
                                 @php
-                                    $_lab_grade = $_student->lab_grade([$_subject->id, request()->input('_period')]);
+                                    $_lab_grade = $_student->student->lab_grade([$_subject->id, request()->input('_period')]);
                                 @endphp
                                 {{ $_lab_grade > 0 ? number_format($_lab_grade, 2) : '' }}
                             </th>
                             <th>
                                 @php
-                                    $_final = $_student->final_grade($_subject->id, request()->input('_period'));
+                                    $_final = $_student->student->final_grade($_subject->id, request()->input('_period'));
                                 @endphp
-                                {{ $_final > 0 ? number_format($_final, 2) : '' }}
+                                {{ $_final > 0 && $_exam_avg > 0 ? number_format($_final, 2) : '' }}
                             </th>
                             <th>
-                                {{ $_final > 0 ? number_format($_student->percentage_grade(number_format($_final, 2)), 2) : '' }}
+                                {{ $_final > 0 && $_exam_avg > 0? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2): 'INC' }}
                             </th>
                         </tr>
                     @endforeach

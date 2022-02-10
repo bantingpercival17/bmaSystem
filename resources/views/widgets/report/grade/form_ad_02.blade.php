@@ -28,30 +28,30 @@
                     @foreach ($_students as $_key => $_student)
                         <tr>
                             <td class="text-center">{{ $_key + 1 }}</td>
-                            <td class="text-center">{{ $_student->account->student_number }}</td>
+                            <td class="text-center">{{ $_student->student->account->student_number }}</td>
                             <td style="padding-left: 10px;">
-                                {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}</td>
+                                {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}</td>
                             <td class="text-center">
                                 @php
-                                    $_final = $_student->final_grade($_subject->id, 'midterm');
+                                    $_final = $_student->student->final_grade($_subject->id, 'midterm');
                                 @endphp
                                 {{ $_final > 0 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
-                                <b> {{ $_final > 0 ? number_format($_student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
+                                <b> {{ $_final > 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
                             <td class="text-center">
                                 @php
-                                    $_final = $_student->final_grade($_subject->id, 'finals');
+                                    $_final = $_student->student->final_grade($_subject->id, 'finals');
                                 @endphp
                                 {{ $_final > 49 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
-                                <b> {{ $_final > 49 ? number_format($_student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
+                                <b> {{ $_final > 49 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
                             <td class="text-center">
                                 <b>
-                                    {{ $_final > 49 ? ($_student->percentage_grade($_final) >= 5 ? 'FAILED' : 'PASSED') : '' }}
+                                    {{ $_final > 49 ? ($_student->student->percentage_grade($_final) >= 5 ? 'FAILED' : 'PASSED') : '' }}
                                 </b>
 
                             </td>

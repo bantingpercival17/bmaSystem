@@ -40,25 +40,12 @@ class TeacherController extends Controller
     }
     public function subject_class_view(Request $_request)
     {
-        $_subject = SubjectClass::find(base64_decode($_request->_s));
+        $_subject = SubjectClass::find(base64_decode($_request->_subject));
         $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
         if ($_subject_code == 'BRDGE') {
-            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
-                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
-                ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
-                ->where('ea.academic_id', $_subject->academic_id)
-                ->where('ss.section_id', $_subject->section_id)
-                ->where('ea.bridging_program', 'with')
-                ->orderBy('student_details.last_name', 'ASC')
-                ->where('ss.is_removed', false)
-                ->get();
+            $_students = $_subject->section->student_with_bdg_sections;
         } else {
-            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
-                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
-                ->where('ss.section_id', $_subject->section_id)
-                ->orderBy('student_details.last_name', 'ASC')
-                ->where('ss.is_removed', false)
-                ->get();
+            $_students = $_subject->section->student_sections;
         }
         return view('teacher.subject-class.view', compact('_subject', '_students'));
     }
@@ -67,48 +54,22 @@ class TeacherController extends Controller
         $_subject = SubjectClass::find(base64_decode($_request->_subject));
         $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
         if ($_subject_code == 'BRDGE') {
-            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
-                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
-                ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
-                ->where('ea.academic_id', $_subject->academic_id)
-                ->where('ss.section_id', $_subject->section_id)
-                ->where('ea.bridging_program', 'with')
-                ->orderBy('student_details.last_name', 'ASC')
-                ->where('ss.is_removed', false)
-                ->get();
+            $_students = $_subject->section->student_with_bdg_sections;
         } else {
-            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
-                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
-                ->where('ss.section_id', $_subject->section_id)
-                ->orderBy('student_details.last_name', 'ASC')
-                ->where('ss.is_removed', false)
-                ->get();
+            $_students = $_subject->section->student_sections;
         }
         return view('teacher.subject-class.semestral_clearance', compact('_subject', '_students'));
     }
-    public function subject_grading_main_view(Request $_request)
+    public function subject_grading_view(Request $_request)
     {
-        $_subject = SubjectClass::find(base64_decode($_request->_student));
+        $_subject = SubjectClass::find(base64_decode($_request->_subject));
         $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
 
         //return $_subject->academic_id;
         if ($_subject_code == 'BRDGE') {
-            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
-                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
-                ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
-                ->where('ea.academic_id', $_subject->academic_id)
-                ->where('ss.section_id', $_subject->section_id)
-                ->where('ea.bridging_program', 'with')
-                ->orderBy('student_details.last_name', 'ASC')
-                ->where('ss.is_removed', false)
-                ->get();
+            $_students = $_subject->section->student_with_bdg_sections;
         } else {
-            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
-                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
-                ->where('ss.section_id', $_subject->section_id)
-                ->orderBy('student_details.last_name', 'ASC')
-                ->where('ss.is_removed', false)
-                ->get();
+            $_students = $_subject->section->student_sections;
         }
         if ($_request->_preview) {
             $_report = new GradingSheetReport($_students, $_subject);
@@ -122,44 +83,6 @@ class TeacherController extends Controller
 
 
             return view('teacher.grading_sheet_main', compact('_subject', '_students', '_columns'));
-        }
-    }
-    public function subject_grading_view(Request $_request)
-    {
-        $_subject = SubjectClass::find(Crypt::decrypt($_request->_s));
-        $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
-
-        //return $_subject->academic_id;
-        if ($_subject_code == 'BRDGE') {
-            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
-                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
-                ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
-                ->where('ea.academic_id', $_subject->academic_id)
-                ->where('ss.section_id', $_subject->section_id)
-                ->where('ea.bridging_program', 'with')
-                ->orderBy('student_details.last_name', 'ASC')
-                ->where('ss.is_removed', false)
-                ->get();
-        } else {
-            $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
-                ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
-                ->where('ss.section_id', $_subject->section_id)
-                ->orderBy('student_details.last_name', 'ASC')
-                ->where('ss.is_removed', false)
-                ->get();
-        }
-        if ($_request->_preview) {
-            $_report = new GradingSheetReport($_students, $_subject);
-            return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
-        } else {
-            $_columns = [['QUIZZES', 'Q', 10], ['ORAL EXAM', 'O', 5], ['R W - OUTPUT', 'R', 10], [request()->input('_period'),  strtoupper(request()->input('_period')[0]) . 'E', 1]];
-            $_subject_code = $_subject->curriculum_subject->subject->subject_code;
-            if ($_subject->curriculum_subject->subject->laboratory_hours > 0 && $_subject_code !=  str_contains($_subject_code, 'P.E.')) {
-                $_columns[] =  ['Scientific and Technical Experiments Demonstrations of Competencies Acquired', 'A', 10];
-            }
-
-
-            return view('teacher.grading_sheet', compact('_subject', '_students', '_columns'));
         }
     }
     public function subject_view()
@@ -229,7 +152,7 @@ class TeacherController extends Controller
     }
     public function subject_report_view(Request $_request)
     {
-        $_subject = SubjectClass::find(Crypt::decrypt($_request->_s));
+        $_subject = SubjectClass::find(Crypt::decrypt($_request->_subject));
         $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
             ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
             ->where('ss.section_id', $_subject->section_id)
