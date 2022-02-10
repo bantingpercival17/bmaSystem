@@ -264,7 +264,7 @@
                                 @if ($_payment_details->payment_transaction)
                                     @foreach ($_payment_details->payment_transaction as $_payment)
                                         <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-                                            
+
                                             <div>
                                                 <small>PARTIAL: </small> <br>
                                                 <h5><span class="text-primary">{{ $_payment->remarks }}</span>
@@ -282,7 +282,7 @@
                                             </div>
                                         </div>
                                         <p class="mb-0">
-                                            <small>{{ $_payment->transaction_date /*->format('d, F Y') */ }}</small>
+                                            <small>{{ $_payment->transaction_date; /*->format('d, F Y') */ }}</small>
                                         </p>
                                     @endforeach
                                 @else
@@ -321,7 +321,7 @@
                                             class="text-primary"><b>{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</b></span>
                                     </div>
                                     <div>
-                                        <span>{{ $item->account->student_number }}</span>
+                                        <span>{{ $item->account ? $item->account->student_number : '' }}</span>
                                     </div>
                                 </div>
                             </div>
