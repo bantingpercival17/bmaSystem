@@ -282,7 +282,7 @@
                                             </div>
                                         </div>
                                         <p class="mb-0">
-                                            <small>{{ $_payment->transaction_date; /*->format('d, F Y') */ }}</small>
+                                            <small>{{ $_payment->transaction_date }}</small>
                                         </p>
                                     @endforeach
                                 @else

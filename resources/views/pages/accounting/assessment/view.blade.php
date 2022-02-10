@@ -347,7 +347,7 @@
                                             class="text-primary"><b>{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</b></span>
                                     </div>
                                     <div>
-                                        <span>{{ $item->account->student_number }}</span>
+                                        <span>{{ $item->account ? $item->account->student_number : ''}}</span>
                                     </div>
                                 </div>
                             </div>
