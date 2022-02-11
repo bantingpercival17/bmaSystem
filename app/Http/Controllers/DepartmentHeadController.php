@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
+use App\Models\GradeSubmission;
 use App\Models\Section;
 use App\Models\Staff;
 use App\Models\StudentClearance;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\SubjectClass;
+use App\Report\GradingSheetReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,8 +30,23 @@ class DepartmentHeadController extends Controller
     public function subject_submission_view(Request $_request)
     {
         $_staff = Staff::find(base64_decode($_request->_staff));
-        return view('pages.department-head.grade.instruction_subject_view', compact('_staff'));
+        $_subject_class = $_request->_subject ? GradeSubmission::where('subject_class_id', base64_decode($_request->_subject))->where('form', 'ad1')->where('period', $_request->_period)->latest()->first() : [];
+        return view('pages.department-head.grade.instruction_subject_view', compact('_staff', '_subject_class'));
     }
+
+    public function subject_report_view(Request $_request)
+    {
+         $_subject = SubjectClass::find(base64_decode($_request->_subject));
+        $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
+        if ($_subject_code == 'BRDGE') {
+            $_students = $_subject->section->student_with_bdg_sections;
+        } else {
+            $_students = $_subject->section->student_sections;
+        }
+        $_report = new GradingSheetReport($_students, $_subject);
+        return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+    }
+
     public function e_clearance_view(Request $_request)
     {
         $_current_academic =  $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : AcademicYear::where('is_active', 1)->first();
