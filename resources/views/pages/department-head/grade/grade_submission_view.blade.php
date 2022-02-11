@@ -7,7 +7,7 @@ $_title = 'Grade Submission';
 @section('beardcrumb-content')
     @if (request()->input('_academic'))
         <li class="breadcrumb-item">
-            <a href="{{ route('onboard.dashboard') }}">
+            <a href="{{ route('department-head.grade-submission') }}">
                 <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -15,6 +15,7 @@ $_title = 'Grade Submission';
                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>{{ $_title }}</a>
         </li>
+        
         <li class="breadcrumb-item active" aria-current="page">
             {{ Auth::user()->staff->current_academic()->semester .' | ' .Auth::user()->staff->current_academic()->school_year }}
         </li>
@@ -59,7 +60,7 @@ $_title = 'Grade Submission';
                                                     <img class=" avatar-rounded img-fluid avatar-45 me-3 bg-soft-primary"
                                                         src="{{ asset($_data->profile_pic($_data)) }}" alt="profile">
                                                     <a
-                                                        href="{{ route('department-head.grade-submission-view') . '?_staff=' . base64_encode($_data->id) }} {{ request()->input('_academic') ? '?)_academic=' . request()->input('_academic') : '' }}">
+                                                        href="{{ route('department-head.grade-submission-view') . '?_staff=' . base64_encode($_data->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                                                         <h6> {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}
                                                         </h6>
                                                     </a>
