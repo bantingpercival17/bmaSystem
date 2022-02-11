@@ -37,6 +37,12 @@ class SubjectClass extends Model
             ->where('form', 'ad1')
             ->where('period', 'midterm')->latest();
     }
+    public function finals_grade_submission()
+    {
+        return $this->hasOne(GradeSubmission::class, 'subject_class_id')
+            ->where('form', 'ad1')
+            ->where('period', 'finals')->latest();
+    }
     public function grade_submission()
     {
         return $this->hasOne(GradeSubmission::class, 'subject_class_id')->latest();

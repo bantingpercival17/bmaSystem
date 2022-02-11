@@ -15,7 +15,7 @@ $_title = 'Grade Submission';
                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>{{ $_title }}</a>
         </li>
-        
+
         <li class="breadcrumb-item active" aria-current="page">
             {{ Auth::user()->staff->current_academic()->semester .' | ' .Auth::user()->staff->current_academic()->school_year }}
         </li>
@@ -56,15 +56,15 @@ $_title = 'Grade Submission';
                                     @foreach ($_staffs as $_data)
                                         <tr>
                                             <td>
-                                                <div class="d-flex align-items-center">
+                                                <div class="d-flex align-items-center text-primary">
                                                     <img class=" avatar-rounded img-fluid avatar-45 me-3 bg-soft-primary"
                                                         src="{{ asset($_data->profile_pic($_data)) }}" alt="profile">
                                                     <a
                                                         href="{{ route('department-head.grade-submission-view') . '?_staff=' . base64_encode($_data->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
-                                                        <h6> {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}
-                                                        </h6>
+                                                        {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}
                                                     </a>
                                                 </div>
+
                                             </td>
                                             <td>
                                                 <div class="row">
@@ -72,7 +72,9 @@ $_title = 'Grade Submission';
                                                         <small class="fw-bolder">MIDTERM GRADE SUBMISSION: </small>
                                                         <br>
                                                         <span class="fw-bolder">
-                                                            <span class="badge bg-info">0</span> <small> out of</small>
+                                                            <span
+                                                                class="badge bg-info">{{ count($_data->grade_submission_midterm) }}</span>
+                                                            <small> out of</small>
                                                             <span class="badge bg-primary">
                                                                 {{ count($_data->subject_handles) }}
                                                             </span>
@@ -82,7 +84,9 @@ $_title = 'Grade Submission';
                                                     <div class="col-md">
                                                         <small class="fw-bolder">FINAL GRADE SUBMISSION: </small> <br>
                                                         <span class="fw-bolder">
-                                                            <span class="badge bg-info">0</span> <small> out of</small>
+                                                            <span
+                                                                class="badge bg-info">{{ count($_data->grade_submission_finals) }}</span>
+                                                            <small> out of</small>
                                                             <span class="badge bg-primary">
                                                                 {{ count($_data->subject_handles) }}
                                                             </span>
