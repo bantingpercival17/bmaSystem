@@ -43,8 +43,8 @@
 
         .primary {
             overflow: auto;
-            scroll-snap-type: both mandatory;
-            height: 80vh;
+            scroll-snap-type: x mandatory;
+            height: 100vh;
         }
 
         @media (min-width: 40em) {

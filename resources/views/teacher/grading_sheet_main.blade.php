@@ -275,21 +275,10 @@
             } else {
                 if (event.keyCode === 13) {
                     _grade_save(_data)
-                    //$(this).data('category').focus().click();
-                    /* $next = $('[category=' + $(this).data('category') + ']')
-                    console.log($next.length);
-                    if (!$next.length) {
-                        $next = $('category=1]');
-                    }
-                    $next.focus().click(); */
-
-                    //$_next.focus();
-                    //console.log($next)
                 }
                 if (event.keyCode === 9) {
                     _grade_save(_data)
                 }
-                //console.log(event.keyCode)
             }
         })
 
