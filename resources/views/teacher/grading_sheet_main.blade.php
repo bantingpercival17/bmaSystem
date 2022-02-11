@@ -24,7 +24,7 @@
                             <span><small><b>SUBJECT:</b></small></span>
                             <br>
                             <span
-                                class="h6"><b>{{ $_subject->curriculum_subject->subject->subject_name }}</b></span>
+                                class="h6"><b>{{ $_subject->curriculum_subject->subject->subject_name }} - {{ $_subject->curriculum_subject->subject->subject_code }}</b></span>
                         </div>
                         <div class="col-md-6">
                             <span><small><b>UNITS:</b></small></span> <br>
