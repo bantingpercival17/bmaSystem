@@ -73,18 +73,83 @@ $_title = 'Grade Submission';
                 <div class="card-body">
                     @if (count($_staff->subject_handles) > 0)
                         @foreach ($_staff->subject_handles as $_handle)
-                            <div class="border-bottom">
-                                <div class="row mb-2 mt-2">
-                                    <div class="col-md">
-                                        <a
-                                            href="{{ route('department-head.grade-submission-view') }}{{ '?_staff=' . request()->input('_staff') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}{{ '&_subject=' . base64_encode($_handle->id) }}">
+                            <div class="border-bottom ">
+                                <div class="card mb-0 iq-content rounded-bottom">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between">
+                                        <div class="d-flex flex-wrap align-items-center">
+                                            <div class="mb-sm-0">
+                                                <a
+                                                    href="{{ route('department-head.grade-submission-view') }}{{ '?_staff=' . request()->input('_staff') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}{{ '&_subject=' . base64_encode($_handle->id) }}">
 
-                                            <div class="d-flex">
-                                                <h5 class="">
-                                                    {{ $_handle->curriculum_subject->subject->subject_code }}</h5>
+                                                    <div class="d-flex">
+                                                        <h5 class="">
+                                                            {{ $_handle->curriculum_subject->subject->subject_code }}
+                                                        </h5>
+                                                    </div>
+                                                    <p class="mb-0">{{ $_handle->section->section_name }}</p>
+                                                </a>
                                             </div>
-                                            <p class="mb-0">{{ $_handle->section->section_name }}</p>
-                                        </a>
+                                        </div>
+                                        <ul class="d-flex mb-0 text-center ">
+                                            @if ($_handle->midterm_grade_submission)
+                                                @if ($_handle->midterm_grade_submission->is_approved == 1)
+                                                    <li class="badge bg-primary me-2">
+                                                        <small class="mb-1 fw-bolder">MIDTERM</small>
+                                                        <br>
+                                                        <small class="mb-1 fw-normal">APPROVED </small>
+                                                    </li>
+                                                @endif
+                                                @if ($_handle->midterm_grade_submission->is_approved === 0)
+                                                    <li class="badge bg-danger me-2">
+                                                        <small class="mb-1 fw-bolder">MIDTERM</small>
+                                                        <br>
+                                                        <small class="mb-1 fw-normal">DISAPPROVED</small>
+                                                    </li>
+                                                @endif
+                                                @if ($_handle->midterm_grade_submission->is_approved === null)
+                                                    <li class="badge bg-info me-2">
+                                                        <small class="mb-1 fw-bolder">MIDTERM</small>
+                                                        <br>
+                                                        <small class="mb-1 fw-normal">FOR APPROVAL</small>
+                                                    </li>
+                                                @endif
+                                            @else
+                                                <li class="badge bg-secondary me-2">
+                                                    <small class="mb-1 fw-bolder">MIDTERM</small>
+                                                    <br>
+                                                    <small class="mb-1 fw-normal">-</small>
+                                                </li>
+                                            @endif
+                                            @if ($_handle->finals_grade_submission)
+                                                @if ($_handle->finals_grade_submission->is_approved == 1)
+                                                    <li class="badge bg-primary me-2">
+                                                        <small class="mb-1 fw-bolder">FINALS</small>
+                                                        <br>
+                                                        <small class="mb-1 fw-normal">APPROVED</small>
+                                                    </li>
+                                                @endif
+                                                @if ($_handle->finals_grade_submission->is_approved === 0)
+                                                    <li class="badge bg-danger me-2">
+                                                        <small class="mb-1 fw-bolder">FINALS</small>
+                                                        <br>
+                                                        <small class="mb-1 fw-normal">DISAPPROVED</small>
+                                                    </li>
+                                                @endif
+                                                @if ($_handle->finals_grade_submission->is_approved === null)
+                                                    <li class="badge bg-info me-2">
+                                                        <small class="mb-1 fw-bolder">FINALS</small>
+                                                        <br>
+                                                        <small class="mb-1 fw-normal">FOR APPROVAL</small>
+                                                    </li>
+                                                @endif
+                                            @else
+                                                <li class="badge bg-secondary me-2">
+                                                    <small class="mb-1 fw-bolder">FINALS</small>
+                                                    <br>
+                                                    <small class="mb-1 fw-normal">-</small>
+                                                </li>
+                                            @endif
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -279,12 +344,12 @@ $_title = 'Grade Submission';
                                             <input type="hidden" name="_submission"
                                                 value="{{ base64_encode($_subject_class->finals_grade_submission->id) }}">
                                             <input type="hidden" name="_status" value="0">
-                                            <input type="text" class="form-control rounded-pill" placeholder="Leave Remarks"
-                                                name="_comments">
+                                            <input type="text" class="form-control rounded-pill"
+                                                placeholder="Leave Remarks" name="_comments">
                                             <div class=" d-flex align-items-center mt-2 float-end">
                                                 <div class="me-4 text-body">
-                                                    <button class="btn btn-outline-danger rounded-pill btn-xs" type="submit"
-                                                        value="0" name="_status">DISAPPROVED</button>
+                                                    <button class="btn btn-outline-danger rounded-pill btn-xs"
+                                                        type="submit" value="0" name="_status">DISAPPROVED</button>
                                                 </div>
                                         </form>
                                         <div class="text-body">
@@ -301,17 +366,12 @@ $_title = 'Grade Submission';
                                         </div>
                                     </div>
                                 </div>
-
-
-
+                            @endif
                         </div>
+                    </div>
                 @endif
+            @endif
         </div>
-    </div>
-    @endif
-    @endif
-
-    </div>
     </div>
 
     <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
