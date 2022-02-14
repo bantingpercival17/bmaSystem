@@ -30,13 +30,14 @@ class DepartmentHeadController extends Controller
     public function subject_submission_view(Request $_request)
     {
         $_staff = Staff::find(base64_decode($_request->_staff));
-        $_subject_class = $_request->_subject ? GradeSubmission::where('subject_class_id', base64_decode($_request->_subject))->where('form', 'ad1')->where('period', $_request->_period)->latest()->first() : [];
+        //$_subject_class = $_request->_subject ? GradeSubmission::where('subject_class_id', base64_decode($_request->_subject))->where('form', 'ad1')->where('period', $_request->_period)->latest()->first() : [];
+        $_subject_class = $_request->_subject ? SubjectClass::find(base64_decode($_request->_subject)) : [];
         return view('pages.department-head.grade.instruction_subject_view', compact('_staff', '_subject_class'));
     }
 
     public function subject_report_view(Request $_request)
     {
-         $_subject = SubjectClass::find(base64_decode($_request->_subject));
+        $_subject = SubjectClass::find(base64_decode($_request->_subject));
         $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
         if ($_subject_code == 'BRDGE') {
             $_students = $_subject->section->student_with_bdg_sections;

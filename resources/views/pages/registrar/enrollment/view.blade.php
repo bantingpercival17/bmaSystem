@@ -72,7 +72,7 @@ $_title = 'Enrollment';
                                                         class="btn btn-primary btn-sm w-100">View</a>
                                                 </div>
                                                 <div class="col-md">
-                                                    <button class="btn btn-info btn-sm text-white w-100">Enroll</button>
+                                                    <button class="btn btn-info btn-sm text-white w-100">For Assessment</button>
                                                 </div>
                                             </div>
                                         </form>

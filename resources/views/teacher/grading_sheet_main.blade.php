@@ -23,8 +23,8 @@
                         <div class="col-md-12">
                             <span><small><b>SUBJECT:</b></small></span>
                             <br>
-                            <span
-                                class="h6"><b>{{ $_subject->curriculum_subject->subject->subject_name }} - {{ $_subject->curriculum_subject->subject->subject_code }}</b></span>
+                            <span class="h6"><b>{{ $_subject->curriculum_subject->subject->subject_name }} -
+                                    {{ $_subject->curriculum_subject->subject->subject_code }}</b></span>
                         </div>
                         <div class="col-md-6">
                             <span><small><b>UNITS:</b></small></span> <br>
@@ -46,10 +46,14 @@
                         </div>
                         <div class="col-md-6">
                             <small><b>PRE-VIEW:</b></small> <br>
-                            <a href="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad1"
-                                class="btn btn-warning btn-xs" target="pdf">FORM AD-01</a>
-                            <a href="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2"
-                                class="btn btn-primary btn-xs" target="pdf">FORM AD-02</a>
+                            <button type="button" class="btn btn-warning btn-xs btn-form-grade mt-2"
+                                data-bs-toggle="modal" data-bs-target=".grade-view-modal"
+                                data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad1">
+                                FORM AD-01</button>
+                                <button type="button" class="btn btn-primary btn-xs btn-form-grade mt-2"
+                                data-bs-toggle="modal" data-bs-target=".grade-view-modal"
+                                data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2">
+                                FORM AD-02</button>
                         </div>
                     </div>
                 </div>
@@ -257,9 +261,21 @@
             </main>
         </div>
     </div>
+    <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
+                </iframe>
+            </div>
+        </div>
+    </div>
 
+@endsection
 @section('js')
     <script>
+        $(document).on('click', '.btn-form-grade', function(evt) {
+            $('.form-view').attr('src', $(this).data('grade-url'))
+        });
         $(document).on('keydown', '.score-cell', function(e) {
             // Allow the numberica number only the inputs
             var _data = {
@@ -294,5 +310,4 @@
             });
         }
     </script>
-@endsection
 @endsection
