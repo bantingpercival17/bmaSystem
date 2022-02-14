@@ -42,12 +42,15 @@ class Staff extends Model
     }
     public function grade_submission_midterm()
     {
+        return $this->hasMany(SubjectClass::class, 'staff_id')->with('midterm_grade_submission')
+            ->where('subject_classes.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('subject_classes.is_removed', false);
         return $this->hasMany(SubjectClass::class, 'staff_id')
             ->leftJoin('grade_submissions as gs', 'gs.subject_class_id', 'subject_classes.id')
             ->where('gs.form', 'ad1')
-            ->where('gs.period', 'finals')
-            ->where('gs.is_approved')
-            /* ->with('midterm_grade_submission') */
+            ->where('gs.period', 'midterm')
+           /*  ->where('gs.is_approved',true) *//* ->orWhere('gs.is_approved','=','null') */
+            ->with('midterm_grade_submission')
             ->where('subject_classes.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('subject_classes.is_removed', false);
     }

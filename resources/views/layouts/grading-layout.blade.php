@@ -180,6 +180,27 @@
     <!-- App Script -->
     <script src="{{ asset('resources/js/gigz.js') }}" defer></script>
     <script src="{{ asset('js/toastr.min.js') }}"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (Session::has('success'))
+            Swal.fire({
+            title: 'Complete!',
+            text:"{{ session('success') }}",
+            icon: 'success',
+            confirmButtonText: 'Okay'
+            })
+            /* toastr.success("{{ session('message') }}") */
+        @endif
+        @if (Session::has('error'))
+            Swal.fire({
+            title: 'Existing Data!',
+            text:"{{ session('error') }}",
+            icon: 'error',
+            confirmButtonText: 'Okay'
+            })
+            /* toastr.success("{{ session('message') }}") */
+        @endif
+    </script>
     @yield('js')
 </body>
 

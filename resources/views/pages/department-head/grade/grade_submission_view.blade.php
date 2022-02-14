@@ -68,26 +68,42 @@ $_title = 'Grade Submission';
                                             </td>
                                             <td>
                                                 <div class="row">
-                                                    <div class="col-md">
+                                                    <div class="col-md-12">
                                                         <small class="fw-bolder">MIDTERM GRADE SUBMISSION: </small>
                                                         <br>
                                                         <span class="fw-bolder">
+                                                            @php
+                                                                $_counts = 0;
+                                                                foreach ($_data->grade_submission_midterm as $_count) {
+                                                                    if (!empty($_count->midterm_grade_submission)) {
+                                                                        $_counts += 1;
+                                                                    }
+                                                                }
+                                                            @endphp
                                                             <span
-                                                                class="badge bg-info">{{ count($_data->grade_submission_midterm) }}</span>
-                                                            <small> out of</small>
-                                                            <span class="badge bg-primary">
+                                                                class="text-info fw-bolder">{{ $_counts }}</span><small>
+                                                                out of</small>
+                                                            <span class="text-primary fw-bolder">
                                                                 {{ count($_data->subject_handles) }}
                                                             </span>
                                                             <small>Submitted Grade</small>
                                                         </span>
                                                     </div>
-                                                    <div class="col-md">
+                                                    <div class="col-md-12">
                                                         <small class="fw-bolder">FINAL GRADE SUBMISSION: </small> <br>
                                                         <span class="fw-bolder">
+                                                            @php
+                                                                $_finals_counts = 0;
+                                                                foreach ($_data->grade_submission_finals as $_finals) {
+                                                                    if (!empty($_finals->finals_grade_submission)) {
+                                                                        $_finals_counts += 1;
+                                                                    }
+                                                                }
+                                                            @endphp
                                                             <span
-                                                                class="badge bg-info">{{ count($_data->grade_submission_finals) }}</span>
+                                                                class="text-info fw-bolder">{{ $_finals_counts }}</span>
                                                             <small> out of</small>
-                                                            <span class="badge bg-primary">
+                                                            <span class="text-primary fw-bolder">
                                                                 {{ count($_data->subject_handles) }}
                                                             </span>
                                                             <small>Submitted Grade</small>

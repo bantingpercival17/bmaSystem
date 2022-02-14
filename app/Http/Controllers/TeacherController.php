@@ -134,7 +134,8 @@ class TeacherController extends Controller
             'period' => $_request->_period
         ]);
         //Mail::to('developer@bma.edu.ph')->bcc('it@bma.edu.ph')->send(new GradeSubmissionMail($_subject));
-        return back()->with('success', "Grade Sudmitted");
+        return back()->with('success', 'Successfully Submitted Grading Sheet...');
+        //return back()->with('success', "Grade Sudmitted");
     }
     public function instructor_view(Request $_request)
     {
@@ -154,30 +155,6 @@ class TeacherController extends Controller
             ->get();
         $_report = new GradingSheetReport($_students, $_subject);
         return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
-    }
-    public function check_grade_submission(Request $_request)
-    {
-        $_grade_submission = GradeSubmission::find(Crypt::decrypt($_request->_submission));
-        $_subject = $_grade_submission->subject_class->curriculum_subject->subject->subject_code;
-        $_section =  $_grade_submission->subject_class->section->section_name;
-        if ($_request->_status == 1) {
-            echo "Approved";
-            $_grade_submission->update([
-                'is_approved' => true,
-                'approved_by' => Auth::user()->name
-            ]);
-            //Mail::to('developer@bma.edu.ph')->bcc('it@bma.edu.ph')->send(new GradeVerificationMail($_grade_submission->subject_class, 'approved'));
-            return back()->with('success', $_subject . " " . $_section . " Approved");
-        } else {
-            echo "Disapproved";
-            $_grade_submission->update([
-                'is_approved' => false,
-                'comments' => $_request->_comments,
-                'approved_by' => Auth::user()->name
-            ]);
-            //Mail::to('developer@bma.edu.ph')->bcc('it@bma.edu.ph')->send(new GradeVerificationMail($_grade_submission->subject_class, 'disapproved'));
-            return back()->with('success', $_subject . " " . $_section . " Disapproved");
-        }
     }
     public function subject_grade_bulk_upload(Request $_request)
     {
