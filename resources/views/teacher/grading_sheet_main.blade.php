@@ -46,12 +46,12 @@
                         </div>
                         <div class="col-md-6">
                             <small><b>PRE-VIEW:</b></small> <br>
-                            <button type="button" class="btn btn-warning btn-xs btn-form-grade mt-2"
-                                data-bs-toggle="modal" data-bs-target=".grade-view-modal"
+                            <button type="button" class="btn btn-warning btn-xs btn-form-grade mt-2" data-bs-toggle="modal"
+                                data-bs-target=".grade-view-modal"
                                 data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad1">
                                 FORM AD-01</button>
-                                <button type="button" class="btn btn-primary btn-xs btn-form-grade mt-2"
-                                data-bs-toggle="modal" data-bs-target=".grade-view-modal"
+                            <button type="button" class="btn btn-primary btn-xs btn-form-grade mt-2" data-bs-toggle="modal"
+                                data-bs-target=".grade-view-modal"
                                 data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2">
                                 FORM AD-02</button>
                         </div>
@@ -166,8 +166,7 @@
                                     <label for="" class="form-control">
                                         {{ request()->input('_period') == 'midterm' ? 'Form AD-01 Midterm' : 'Form AD-02 Finals' }}
                                     </label>
-                                    <input type="hidden" name="_form"
-                                        value="{{ request()->input('_period') == 'midterm' ? 'ad1' : 'ad2' }}">
+                                    <input type="hidden" name="_form" value="ad1">
 
                                 </div>
                                 <div class="form-group col-md-4">
@@ -220,7 +219,6 @@
                                             {{ strtoupper($col[1]) . $i }}
                                         </th>
                                     @endfor
-
                                 @endforeach
                             </tr>
                         </thead>
@@ -245,7 +243,6 @@
                                                         data-section="{{ $_subject->id }}" {{ $_grade_status }}>
                                                 </td>
                                             @endfor
-
                                         @endforeach
 
                                     </tr>

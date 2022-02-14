@@ -113,13 +113,13 @@ class TeacherController extends Controller
                 }
                 $_return = GradeEncode::where($_score_details)->update(['score' => doubleval($_request->_score)]);
             }
-            $_respond = array('message' => 'Score Saved', 'status' => 'success');
+            $_respond = array('success' => 'Score Saved', 'status' => 'success');
         } else {
             // Save Score
             $_score_details['score'] = doubleval($_request->_score);
             $_score_details['is_removed'] = 0;
             $_return = GradeEncode::create($_score_details);
-            $_respond = array('message' => 'Score Updated', 'status' => 'success');
+            $_respond = array('success' => 'Score Updated', 'status' => 'success');
         }
         if ($_return) {
             return compact('_respond');
@@ -134,7 +134,7 @@ class TeacherController extends Controller
             'period' => $_request->_period
         ]);
         //Mail::to('developer@bma.edu.ph')->bcc('it@bma.edu.ph')->send(new GradeSubmissionMail($_subject));
-        return back()->with('message', "Grade Sudmitted");
+        return back()->with('success', "Grade Sudmitted");
     }
     public function instructor_view(Request $_request)
     {
@@ -142,7 +142,7 @@ class TeacherController extends Controller
         $_staff = Staff::find($_subject->staff_id);
         return view('teacher.teacher_view', compact('_subject', '_staff'));
     }
-  
+
     public function subject_report_view(Request $_request)
     {
         $_subject = SubjectClass::find(Crypt::decrypt($_request->_subject));
@@ -167,7 +167,7 @@ class TeacherController extends Controller
                 'approved_by' => Auth::user()->name
             ]);
             //Mail::to('developer@bma.edu.ph')->bcc('it@bma.edu.ph')->send(new GradeVerificationMail($_grade_submission->subject_class, 'approved'));
-            return back()->with('message', $_subject . " " . $_section . " Approved");
+            return back()->with('success', $_subject . " " . $_section . " Approved");
         } else {
             echo "Disapproved";
             $_grade_submission->update([
@@ -176,7 +176,7 @@ class TeacherController extends Controller
                 'approved_by' => Auth::user()->name
             ]);
             //Mail::to('developer@bma.edu.ph')->bcc('it@bma.edu.ph')->send(new GradeVerificationMail($_grade_submission->subject_class, 'disapproved'));
-            return back()->with('message', $_subject . " " . $_section . " Disapproved");
+            return back()->with('success', $_subject . " " . $_section . " Disapproved");
         }
     }
     public function subject_grade_bulk_upload(Request $_request)

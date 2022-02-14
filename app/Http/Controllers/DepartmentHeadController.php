@@ -152,4 +152,15 @@ class DepartmentHeadController extends Controller
         }
         return compact('data');
     }
+    public function submission_verification(Request $_request)
+    {
+        $_grade_submission = GradeSubmission::find(base64_decode($_request->_submission));
+        $_subject = $_grade_submission->subject_class->curriculum_subject->subject->subject_code;
+        $_section =  $_grade_submission->subject_class->section->section_name;
+        $_grade_submission->is_approved = $_request->_status;
+        $_grade_submission->comments = $_request->_comments;
+        $_grade_submission->approved_by = Auth::user()->name;
+        $_grade_submission->save();
+        return back()->with('success', $_subject . " " . $_section . " Verified..");
+    }
 }
