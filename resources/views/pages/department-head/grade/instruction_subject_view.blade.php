@@ -110,7 +110,7 @@ $_title = 'Grade Submission';
                                                     <li class="badge bg-info me-2">
                                                         <small class="mb-1 fw-bolder">MIDTERM</small>
                                                         <br>
-                                                        <small class="mb-1 fw-normal">FOR APPROVAL</small>
+                                                        <small class="mb-1 fw-normal">PENDING</small>
                                                     </li>
                                                 @endif
                                             @else
@@ -139,7 +139,7 @@ $_title = 'Grade Submission';
                                                     <li class="badge bg-info me-2">
                                                         <small class="mb-1 fw-bolder">FINALS</small>
                                                         <br>
-                                                        <small class="mb-1 fw-normal">FOR APPROVAL</small>
+                                                        <small class="mb-1 fw-normal">PENDING</small>
                                                     </li>
                                                 @endif
                                             @else
