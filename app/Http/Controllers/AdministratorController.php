@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ShipboardInformationImport;
 use App\Imports\StaffImport;
 use App\Imports\StudentInformationImport;
 use App\Imports\StudentSection as ImportsStudentSection;
@@ -86,6 +87,10 @@ class AdministratorController extends Controller
         if ($_request->_file_type == 'excel') {
             Excel::import(new StudentInformationImport, $_request->file('_file'));
         }
+        if ($_request->_file_type == 'shipboard') {
+            Excel::import(new ShipboardInformationImport, $_request->file('_file'));
+        }
+        echo "<a href=".route('admin.students').">BACK</a>";
         //return back()->with('message', 'Successfully Upload Student Details');
     }
     public function student_reset_password(Request $_request)

@@ -45,6 +45,7 @@ $_title = 'Students';
                     <div class="form-group">
                         <label class="text-success">FILE TYPE</label>
                         <select name="_file_type" id="" class="form-select">
+                            <option value="shipboard">Shipboard Update</option>
                             <option value="excel">Excel File</option>
                             <option value="json">Json File</option>
                         </select>
@@ -54,6 +55,7 @@ $_title = 'Students';
                         <input type="file" class="form-control" name="_file">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">IMPORT</button>
+                   
                 </div>
             </form>
         </div>

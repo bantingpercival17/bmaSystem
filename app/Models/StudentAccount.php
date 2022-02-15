@@ -17,4 +17,8 @@ class StudentAccount extends Model
         'is_actived',
         'is_removed',
     ];
+    public function student()
+    {
+        return $this->belongsTo(StudentDetails::class, 'student_id');
+    }
 }
