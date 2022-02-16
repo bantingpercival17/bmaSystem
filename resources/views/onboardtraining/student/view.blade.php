@@ -106,15 +106,16 @@ $_title = 'Midshipman';
                                             </div>
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>ONBOARD STATUS</small></label>
+                                                {{$_midshipman->shipboard_training->shipping_status }}
                                                 <select name="_shipboard_status" id="" class="form-select">
                                                     <option value="complete"
-                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'complete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_status == 'complete' ? 'selected' : '') }}>
+                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'complete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipboard_status == 'complete' ? 'selected' : '') }}>
                                                         COMPLETE</option>
                                                     <option value="incomplete"
-                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'incomplete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_status == 'incomplete' ? 'selected' : '') }}>
+                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'incomplete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipboard_status == 'incomplete' ? 'selected' : '') }}>
                                                         INCOMPLETE</option>
                                                     <option value="on going"
-                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'on going' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_status == 'on going' ? 'selected' : '') }}>
+                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'on going' ? 'selected' : '') : ($_midshipman->shipboard_training->shipboard_status == 'on going' ? 'selected' : '') }}>
                                                         ON GOING</option>
                                                 </select>
                                             </div>
@@ -122,7 +123,7 @@ $_title = 'Midshipman';
                                         <div class="row">
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>OBT BATCH</small></label>
-                                                <input type="text" class="form-control" name="_sbt_batch" value="SBT"
+                                                <input type="text" class="form-control" name="_sbt_batch" 
                                                     value="{{ old('_sbt_batch') ? old('_sbt_batch') : $_midshipman->shipboard_training->sbt_batch }}">
                                                 @error('_sbt_batch')
                                                     <span class="invalid-feedback text-danger" role="alert">
@@ -142,7 +143,7 @@ $_title = 'Midshipman';
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>DATE OF DISEMBARKED</small></label>
                                                 <input class="form-control" type="date" name="_disemabarke"
-                                                    value="{{ old('_disemabarke') }}" max="2029-12-31" min="2000-12-21">
+                                                    value="{{ old('_disemabarke') ? old('_disemabarke') : $_midshipman->shipboard_training->disembarked }}" max="2029-12-31" min="2000-12-21">
                                                 @error('_disemabarke')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
