@@ -78,7 +78,10 @@
                                     <td>
                                         @if (count($_sections) > 0)
                                             @foreach ($_sections as $item)
-                                                <span class="badge bg-primary">{{ $item->section_name }}</span>
+                                                <a
+                                                    href="{{ route('registrar.section-add-student-view') . '?_section=' . base64_encode($item->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                                    <span class="badge bg-primary">{{ $item->section_name }}</span>
+                                                </a>
                                             @endforeach
                                         @else
                                             <span class="badge bg-info">No Section</span>

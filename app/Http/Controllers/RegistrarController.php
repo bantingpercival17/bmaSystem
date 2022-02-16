@@ -11,6 +11,7 @@ use App\Models\EnrollmentAssessment;
 use App\Models\Section;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
+use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
 use App\Models\SubjectClassSchedule;
@@ -309,6 +310,38 @@ class RegistrarController extends Controller
         //return dd($_section_details);
         Section::create($_section_details);
         return back()->with('success', 'Successfully Created Section');
+    }
+    public function section_add_student_view(Request $_request)
+    {
+        $_section = Section::find(base64_decode($_request->_section));
+        $_student_list = $_section->student_section;
+        return view('pages.registrar.sections.section_view', compact('_section', '_student_list'));
+    }
+    public function section_add_student(Request $_request)
+    {
+        $_section = Section::find(base64_decode($_request->_section));
+        $_student_list = $_section->student_section;
+        $_year_level = str_replace('GRADE', '', $_section->year_level);
+        $_year_level = str_replace('/C', '', $_year_level);
+        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+            ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
+            ->where('ea.year_level', trim($_year_level))->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('ea.is_removed', false)
+            //->toSql();
+            ->get();
+        //return compact('_students');
+        return view('pages.registrar.sections.section_add_view', compact('_section', '_students'));
+    }
+    public function section_store_student(Request $_request)
+    {
+        StudentSection::create([
+            'student_id' => base64_decode($_request->_student),
+            'section_id' => base64_decode($_request->_section),
+            'created_by' => Auth::user()->name,
+            'is_removed' => 0,
+        ]);
+        $_section = Section::find(base64_decode($_request->_section));
+        return back()->with('success', 'Successfully Added to ' . $_section->section_name);
     }
     // Semestral clearance
     public function clearance_view(Request $_request)
