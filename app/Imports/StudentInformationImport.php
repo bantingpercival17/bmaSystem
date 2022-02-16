@@ -47,6 +47,7 @@ class StudentInformationImport implements ToCollection
                         "year_level" => 2,
                         'staff_id' => 1,
                         "curriculum_id" => 1,
+                        'is_removed' => false
                     );
                     EnrollmentAssessment::create($_enrollment);
                     echo "Saved Enrollment. <br>";
