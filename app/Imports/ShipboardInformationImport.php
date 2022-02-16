@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\ShipBoardInformation;
 use App\Models\StudentAccount;
+use App\Models\StudentDetails;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
@@ -16,23 +17,29 @@ class ShipboardInformationImport implements ToCollection
     {
         foreach ($collection as $key => $_data) {
             if ($key > 0 && !empty($_data[0])) {
-                $_account = StudentAccount::where('student_number', $_data[0])->first();
-                if ($_account) {
-                    $_shipboard = ShipBoardInformation::where('student_id', $_account->student->id)->first();
-                    echo  ucwords(mb_strtolower(trim($_data[1] . ', ' . $_data[2]))) . ": " . $_data[0] . ".<br>";
-                    echo $_account->campus_email . "<br>";
-                    if ($_shipboard) {
-                        //$this->update_information($_shipboard, $_data);
-                        echo "Shipboard Information : Update <br>";
+                if (!empty($_data[2])) {
+                    $_student = StudentDetails::where([
+                        'last_name' => ucwords(mb_strtolower(trim($_data[2]))),
+                        'first_name' => ucwords(mb_strtolower(trim($_data[1]))),
+                    ])->first();
+                    if ($_student) {
+                        $_account = $_student->account;
+                        $_shipboard = ShipBoardInformation::where('student_id', $_student->id)->first();
+                        echo  ucwords(mb_strtolower(trim($_data[1] . ', ' . $_data[2]))) . ": " . $_data[0] . ".<br>";
+                        //echo $_account->campus_email . "<br>";
+                        if ($_shipboard) {
+                            $this->update_information($_shipboard, $_data);
+                            echo "Shipboard Information : Update <br>";
+                        } else {
+                            $this->create_information($_account->id, $_data);
+                            echo "Shipboard Infomation : Store<br>";
+                        }
                     } else {
-                        //$this->create_information($_account->id, $_data);
-                        echo "Shipboard Infomation : Store<br>";
+                        echo "Not Found <br>";
+                        echo  ucwords(mb_strtolower(trim($_data[1] . ', ' . $_data[2]))) . ": " . $_data[0] . ".<br>";
                     }
-                } else {
-                    echo "Not Found <br>";
-                    echo  ucwords(mb_strtolower(trim($_data[1] . ', ' . $_data[2]))) . ": " . $_data[0] . ".<br>";
+                    echo "<br>";
                 }
-                echo "<br>";
             }
         }
     }

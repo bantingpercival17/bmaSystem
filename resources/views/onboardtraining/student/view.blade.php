@@ -65,7 +65,7 @@ $_title = 'Midshipman';
                                                 @enderror
                                             </div>
                                             <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>NAME OF SHIPPING</small></label>
+                                                <label class="form-label-sm"><small>VESSEL NAME</small></label>
                                                 <input type="text" class="form-control" name="_ship_name"
                                                     value="{{ old('_ship_name') ?: $_midshipman->shipboard_training->vessel_name }}">
                                                 @error('_ship_name')
@@ -132,7 +132,7 @@ $_title = 'Midshipman';
                                             </div>
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
-                                                <input class="form-control" type="date" name="_embarked" max="2021-12-31"
+                                                <input class="form-control" type="date" name="_embarked" max="2029-12-31"
                                                     min="2000-12-21"
                                                     value="{{ $_midshipman->shipboard_training->embarked }}">
                                                 @error('_embarked')
@@ -142,7 +142,7 @@ $_title = 'Midshipman';
                                             <div class="form-group col-md">
                                                 <label class="form-label-sm"><small>DATE OF DISEMBARKED</small></label>
                                                 <input class="form-control" type="date" name="_disemabarke"
-                                                    value="{{ old('_disemabarke') }}" max="2021-12-31" min="2000-12-21">
+                                                    value="{{ old('_disemabarke') }}" max="2029-12-31" min="2000-12-21">
                                                 @error('_disemabarke')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
@@ -183,7 +183,7 @@ $_title = 'Midshipman';
                                                     class="text-primary"><b>{{ $_midshipman->shipboard_training->company_name }}</b></label>
                                             </div>
                                             <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>NAME OF SHIPPING</small></label>
+                                                <label class="form-label-sm"><small>VESSEL NAME</small></label>
                                                 <br>
                                                 <label class="text-primary">
                                                     <b>{{ $_midshipman->shipboard_training->vessel_name }}</b>
@@ -239,7 +239,7 @@ $_title = 'Midshipman';
                                             @enderror
                                         </div>
                                         <div class="form-group col-md">
-                                            <label class="form-label-sm"><small>NAME OF SHIPPING</small></label>
+                                            <label class="form-label-sm"><small>VESSEL NAME</small></label>
                                             <input type="text" class="form-control" name="_ship_name"
                                                 value="{{ old('_ship_name') }}">
                                             @error('_ship_name')
@@ -303,7 +303,7 @@ $_title = 'Midshipman';
                                         </div>
                                         <div class="form-group col-md">
                                             <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
-                                            <input class="form-control" type="date" name="_embarked" max="2021-12-31"
+                                            <input class="form-control" type="date" name="_embarked" max="2029-12-31"
                                                 min="2000-12-21" value="{{ old('_embarked') }}">
                                             @error('_embarked')
                                                 <div class="text-danger">{{ $message }}</div>
@@ -312,7 +312,7 @@ $_title = 'Midshipman';
                                         <div class="form-group col-md">
                                             <label class="form-label-sm"><small>DATE OF DISEMBARKED</small></label>
                                             <input class="form-control" type="date" name="_disemabarke"
-                                                value="{{ old('_disemabarke') }}" max="2021-12-31" min="2000-12-21">
+                                                value="{{ old('_disemabarke') }}" max="2029-12-31" min="2000-12-21">
                                             @error('_disemabarke')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
