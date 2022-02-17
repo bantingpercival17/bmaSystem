@@ -63,7 +63,7 @@ class SubjectClass extends Model
     }
     public function e_clearance()
     {
-        return $this->hasOne(StudentClearance::class, 'subject_class_id')->where('student_id', base64_decode(request()->input('_student')));
+        return $this->hasOne(StudentClearance::class, 'subject_class_id')->where('student_id', base64_decode(request()->input('_student')))->where('is_removed', false);
     }
     public function class_schedule()
     {

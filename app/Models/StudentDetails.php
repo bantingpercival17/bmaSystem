@@ -235,20 +235,20 @@ class StudentDetails extends Model
         if ($_section) {
             $_subject_count = SubjectClass::where('section_id', $_section->section_id)->where('is_removed', false)->get();
             $_subject_count =  $_subject_count->count();
-            return $_subject_count;
-            //return $_enrollment->academic->semester;
             if ($_enrollment->bridging_program == 'without' && $_enrollment->academic->semester == 'First Semester' && $_enrollment->year_level == 4) {
                 $_subject_count -= 1;
             }
-            return $_subject_count;
+            return $_subject_count == $_academic_clearance->count() ? 'CLEARED' : 'NOT CLEARED';
         } else {
             return "NO SECTION";
         }
-        /* if ($_subject_count != null) {
-            return $_academic_clearance->count();
-        } else {
-            return "NOT CLEARED";
-        } */
+    }
+    public function non_academic_clearance_status()
+    {
+        $_non_academic_count  = 8;
+        $_enrollment = $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
+        $_student_clearance = $this->hasMany(StudentNonAcademicClearance::class, 'student_id')->where('is_removed', false)->where('academic_id', $_enrollment->academic_id)->where('is_approved', true);
+        return $_non_academic_count == $_student_clearance->count() ? 'CLEARED' : 'NOT CLEARED';
     }
     public function student_single_file_import($_student)
     {

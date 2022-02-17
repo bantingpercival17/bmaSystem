@@ -40,7 +40,7 @@ $_title = 'Enrollment';
                         <div class="card">
                             <div class="row no-gutters">
                                 <div class="col-md-6 col-lg-4">
-                                    <img src="{{ $_student ? $_student->profile_pic($_student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                                    <img src="{{ $_student? $_student->profile_pic($_student->account): 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
                                         class="card-img" alt="student-profile">
                                 </div>
                                 <div class="col-md-6 col-lg-8">
@@ -58,10 +58,21 @@ $_title = 'Enrollment';
                                             <span>
                                                 {{ $_student ? $_student->enrollment_assessment->year_and_section($_student->enrollment_assessment) : '- | -' }}
                                             </span>
-
-
-
                                         </p>
+                                        <label for="" class="text-muted fw-bolder"><small>Clearance
+                                                Status</small></label>
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <label for="" class="text-info fw-bolder">Academic</label> <br>
+                                                <label for=""
+                                                    class="h5 {{ $_student? ($_student->academic_clearance_status() != 'NO SECTION'? ($_student->academic_clearance_status() == 'NOT CLEARED'? 'text-danger': 'text-primary'): 'text-muted'): 'text-muted' }} fw-bolder">{{ $_student ? $_student->academic_clearance_status() : '' }}</label>
+                                            </div>
+                                            <div>
+                                                <label for="" class="text-info fw-bolder">Non-Academic</label> <br>
+                                                <label for=""
+                                                    class="h5 {{ $_student? ($_student->non_academic_clearance_status() != 'NO SECTION'? ($_student->non_academic_clearance_status() == 'NOT CLEARED'? 'text-danger': 'text-primary'): 'text-muted'): 'text-muted' }} fw-bolder">{{ $_student ? $_student->non_academic_clearance_status() : '' }}</label>
+                                            </div>
+                                        </div>
                                         <form action="{{ route('registrar.enrollment-assessment') }}" method="post">
                                             @csrf
                                             <input type="hidden" name="_student"
@@ -72,7 +83,8 @@ $_title = 'Enrollment';
                                                         class="btn btn-primary btn-sm w-100">View</a>
                                                 </div>
                                                 <div class="col-md">
-                                                    <button class="btn btn-info btn-sm text-white w-100">For Assessment</button>
+                                                    <button class="btn btn-info btn-sm text-white w-100">For
+                                                        Assessment</button>
                                                 </div>
                                             </div>
                                         </form>
