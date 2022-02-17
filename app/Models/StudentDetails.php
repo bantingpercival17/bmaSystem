@@ -176,7 +176,7 @@ class StudentDetails extends Model
                 if ($midtermGradeLaboratory > 0) {
                     $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
                 } else {
-                    $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture /.4) * .5);
+                    $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture / .4) * .5);
                 }
             }
         }
@@ -185,8 +185,8 @@ class StudentDetails extends Model
     public function percentage_grade($_grade)
     {
         $_percent = [
-            [0, 69.4, 5.0],
-            [69.5, 72.88, 3.0],
+            [0, 69.48, 5.0],
+            [69.49, 72.88, 3.0],
             [72.89, 76.27, 2.75],
             [76.28, 79.66, 2.5],
             [79.67, 83.05, 2.25],
@@ -219,11 +219,34 @@ class StudentDetails extends Model
     }
     public function clearance($_data)
     {
-        return $this->hasOne(StudentClearance::class, 'student_id')->where('subject_class_id', $_data)->where('is_removed', false)->first();
+        return $this->hasOne(StudentClearance::class, 'student_id')->where('subject_class_id', $_data)->where('is_removed', false)->latest('id')->first();
     }
     public function non_academic_clearance($_data)
     {
-        return $this->hasOne(StudentNonAcademicClearance::class, 'student_id')->where('non_academic_type', str_replace(' ', '-', strtolower($_data)))->where('is_removed', false)->first();
+        return $this->hasOne(StudentNonAcademicClearance::class, 'student_id')->where('non_academic_type', str_replace(' ', '-', strtolower($_data)))->where('is_removed', false)->latest('id')->first();
+    }
+    public function academic_clearance_status()
+    {
+        $_enrollment = $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
+        $_section  = $this->hasOne(StudentSection::class, 'student_id')->select('student_sections.id', 'student_sections.student_id', 'student_sections.section_id')
+            ->join('sections', 'sections.id', 'student_sections.section_id')->where('sections.academic_id', $_enrollment->academic_id)->where('student_sections.is_removed', false)->first();
+        //$_section = $this->hasOne(StudentSection::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
+        $_academic_clearance = $this->hasMany(StudentClearance::class, 'student_id')->where('is_approved', true)->where('is_removed', false);
+        if ($_section) {
+            $_subject_count = SubjectClass::where('section_id', $_section->section_id)->where('is_removed', false)->get();
+            $_subject_count =  $_subject_count->count();
+            if ($_enrollment->bridging_program == 'with' && $_enrollment->academic->semester == 'FIRST SEMESTER') {
+                $_subject_count -= 1;
+            }
+            return $_subject_count;
+        } else {
+            return "NO SECTION";
+        }
+        /* if ($_subject_count != null) {
+            return $_academic_clearance->count();
+        } else {
+            return "NOT CLEARED";
+        } */
     }
     public function student_single_file_import($_student)
     {
