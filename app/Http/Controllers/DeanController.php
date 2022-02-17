@@ -38,11 +38,11 @@ class DeanController extends Controller
     {
         if (is_array($_request->dean)) {
             foreach ($_request->dean as $key => $value) {
-                $_checker = StudentNonAcademicClearance::where(['student_id' => $value, 'non_academic_type' => 'dean', 'is_approved' =>  1,])->first();
+                $_checker = StudentNonAcademicClearance::where(['student_id' => $value, 'non_academic_type' => 'dean', 'academic_id' => $_request->_academic, 'is_approved' =>  1,])->first();
                 $_data = array(
                     'student_id' => $value,
                     'non_academic_type' => 'dean',
-                    'academic_id' => Auth::user()->staff->current_academic()->id,
+                    'academic_id' => $_request->_academic,
                     'staff_id' => Auth::user()->staff->id,
                     'is_approved' =>  1, // nullable
                     'is_removed' => 0

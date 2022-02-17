@@ -37,6 +37,7 @@ $_title = 'Semestral Clearance';
                 <div class="table-responsive">
                     <form action="{{ route('dean.store-clearance-section') }}" method="post">
                         @csrf
+                        <input type="hidden" name="_academic" value="{{ Auth::user()->staff->current_academic()->id }}">
                         <div class="row">
                             <div class="col-md">
                                 <div class="form-group">
@@ -73,26 +74,26 @@ $_title = 'Semestral Clearance';
                                             <td>
                                                 <a
                                                     href="{{-- {{ route('teacher.student-clearance') }} --}}?_midshipman={{ base64_encode($_data->student_id) }}">
-                                                    {{$_data->student_number}} - {{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
+                                                    {{ $_data->student_number }} -
+                                                    {{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
                                                 </a>
                                             </td>
                                             <td></td>
                                             <td>
                                                 <input class="form-check-input" type="checkbox"
-                                                    {{ $_data->student->non_academic_clearance('laboratory') ? ($_data->student->non_academic_clearance('laboratory')->is_approved == 1 ? 'checked disabled' : 'disabled') : 'disabled' }}>
+                                                    {{ $_data->student->non_academic_clearance('laboratory')? ($_data->student->non_academic_clearance('laboratory')->is_approved == 1? 'checked disabled': 'disabled'): 'disabled' }}>
 
                                             </td>
                                             <td>
                                                 <input class="form-check-input" type="checkbox"
-                                                    {{ $_data->student->non_academic_clearance('department-head') ? ($_data->student->non_academic_clearance('department-head')->is_approved == 1 ? 'checked disabled' : 'disabled') : 'disabled' }}>
+                                                    {{ $_data->student->non_academic_clearance('department-head')? ($_data->student->non_academic_clearance('department-head')->is_approved == 1? 'checked disabled': 'disabled'): 'disabled' }}>
 
                                             </td>
                                             <td>
                                                 @if ($_data->student->non_academic_clearance('department-head'))
                                                     <input class="form-check-input input-select-dean" type="checkbox"
                                                         name="dean[]" value="{{ $_data->student->id }}"
-                                                        {{ $_data->student->non_academic_clearance('dean') ? ($_data->student->non_academic_clearance('dean')->is_approved == 1 ? 'checked' : '') : '' }}>
-
+                                                        {{ $_data->student->non_academic_clearance('dean')? ($_data->student->non_academic_clearance('dean')->is_approved == 1? 'checked': ''): '' }}>
                                                 @endif
                                             </td>
 

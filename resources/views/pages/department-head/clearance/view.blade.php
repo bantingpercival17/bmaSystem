@@ -52,7 +52,7 @@ $_title = 'Semestral Clearance';
                                             class="h5 text-primary"><b>{{ $_section->student_section->count() }}</b></span>
                                     </p>
                                 </div>
-                                <a href="{{ route('department-head.e-clearance-view') }}?_section={{ base64_encode($_section->id) }}"
+                                <a href="{{ route('department-head.e-clearance-view') }}?_section={{ base64_encode($_section->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
                                     class="btn btn-outline-primary btn-sm">
                                     <span class="btn-inner">
                                         <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -72,6 +72,6 @@ $_title = 'Semestral Clearance';
                 </div>
             </div>
         </div>
-     
+
     </div>
 @endsection

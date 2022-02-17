@@ -36,6 +36,7 @@ $_title = 'Semestral Clearance';
                 <div class="table-responsive">
                     <form action="{{ route('department-head.store-e-clearance') }}" method="post">
                         @csrf
+                        <input type="hidden" name="_academic" value="{{ Auth::user()->staff->current_academic()->id }}">
                         <div class="row">
                             <div class="col-md">
                                 <div class="form-group">
@@ -114,12 +115,12 @@ $_title = 'Semestral Clearance';
                                                 <input class="form-check-input input-select-laboratory" type="checkbox"
                                                     name="laboratory[]" value="{{ $_data->id }}"
                                                     data-category="non-academic" data-content="laboratory"
-                                                    {{ $_data->non_academic_clearance('laboratory') ? ($_data->non_academic_clearance('laboratory')->is_approved == 1 ? 'checked' : '') : '' }}>
+                                                    {{ $_data->non_academic_clearance('laboratory')? ($_data->non_academic_clearance('laboratory')->is_approved == 1? 'checked': ''): '' }}>
                                             </td>
                                             <td>
                                                 <input class="form-check-input input-select-department-head" type="checkbox"
                                                     name="dept_head[]" value="{{ $_data->id }}"
-                                                    {{ $_data->non_academic_clearance('department-head') ? ($_data->non_academic_clearance('department-head')->is_approved == 1 ? 'checked' : '') : '' }}>
+                                                    {{ $_data->non_academic_clearance('department-head')? ($_data->non_academic_clearance('department-head')->is_approved == 1? 'checked': ''): '' }}>
                                             </td>
 
                                         </tr>

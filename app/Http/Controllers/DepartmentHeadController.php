@@ -70,8 +70,8 @@ class DepartmentHeadController extends Controller
     public function store_student_clearance(Request $_request)
     {
         if (is_array($_request->laboratory)) {
-            foreach ($_request->laboratory as $key => $value) {
-                $_checker = StudentNonAcademicClearance::where(['student_id' => $value, 'non_academic_type' => 'laboratory', 'is_approved' =>  1,])->first();
+            /*  foreach ($_request->laboratory as $key => $value) {
+                $_checker = StudentNonAcademicClearance::where(['student_id' => $value, 'non_academic_type' => 'laboratory', 'is_approved' =>  1, 'academic_id' => Auth::user()->staff->current_academic()->id,])->first();
                 $_data = array(
                     'student_id' => $value,
                     'non_academic_type' => 'laboratory',
@@ -82,15 +82,57 @@ class DepartmentHeadController extends Controller
                 );
                 $_checker ? '' : StudentNonAcademicClearance::create($_data);
                 //echo $value . "<br>";
+            } */
+            foreach ($_request->laboratory as $key => $value) {
+                $_student_id = $value;
+                $_clearance_data = 'laboratory';
+                // Check if the student is Store
+                $_check = 1;
+                $_clearance = array(
+                    'student_id' => $value,
+                    'non_academic_type' => 'laboratory',
+                    'academic_id' => $_request->_academic,
+                    'staff_id' => Auth::user()->staff->id,
+                    'is_approved' =>  1, // nullable
+                    'is_removed' => 0
+                );
+                $_check_clearance = StudentNonAcademicClearance::where('student_id', $_student_id)->where('non_academic_type', $_clearance_data)->where('academic_id', $_request->_academic)->where('is_removed', false)->first();
+                if ($_check_clearance) {
+                    // If the Data is existing and the approved status id TRUE and the Input Tag is TRUE : They will remain
+
+                    // If the Data is existing and the apprvod status is FALSE and the Input is FALSE : Nothing to Do, They will remain
+                    // If comment is fillable
+                    if ($_check_clearance->is_approved == 0 && $_check == 0) {
+                        if ($value['comment']) {
+                            $_check_clearance->comments = $value['comment'];
+                            $_check_clearance->save();
+                        }
+                    }
+                    // If the Data is existing and the approved status is TRUE and the Input is FALSE : The Data will removed and create a new one
+                    if ($_check_clearance->is_approved == 1 && $_check == 0) {
+                        $_check_clearance->is_removed = true;
+                        $_check_clearance->save();
+                        StudentNonAcademicClearance::create($_clearance);
+                    }
+                    if ($_check_clearance->is_approved == 0 && $_check == 1) {
+                        $_check_clearance->is_removed = true;
+                        $_check_clearance->save();
+                        StudentNonAcademicClearance::create($_clearance);
+                    }
+                } else {
+                    StudentNonAcademicClearance::create($_clearance);
+                }
+                //echo "Saved: " . $_student_id . "<br>";
+
             }
         }
         if (is_array($_request->dept_head)) {
             foreach ($_request->dept_head as $key => $value) {
-                $_checker = StudentNonAcademicClearance::where(['student_id' => $value, 'non_academic_type' => 'department-head', 'is_approved' =>  1,])->first();
+                $_checker = StudentNonAcademicClearance::where(['student_id' => $value, 'non_academic_type' => 'department-head', 'is_approved' =>  1, 'academic_id' => $_request->_academic,])->first();
                 $_data = array(
                     'student_id' => $value,
                     'non_academic_type' => 'department-head',
-                    'academic_id' => Auth::user()->staff->current_academic()->id,
+                    'academic_id' => $_request->_academic,
                     'staff_id' => Auth::user()->staff->id,
                     'is_approved' =>  1, // nullable
                     'is_removed' => 0
