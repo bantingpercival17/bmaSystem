@@ -251,7 +251,7 @@ $_title = 'Grade Submission';
                                 </li>
                             @endforeach
                         </ul>
-                        @if ($_subject_class->midterm_grade_submission->is_approved === null)
+                        {{-- @if ($_subject_class->midterm_grade_submission->is_approved === null)
                             <div class="comment-area p-3">
                                 <hr class="mt-0">
 
@@ -274,6 +274,39 @@ $_title = 'Grade Submission';
                                         </a>
                                     </div>
                                 </form>
+                            </div>
+                        @endif --}}
+                        @if ($_subject_class->midterm_grade_submission->is_approved === null)
+                            <div class=" p-3">
+                                <hr class="mt-0">
+                                <div class="mt-3 mb-5">
+                                    <form class=""
+                                        action="{{ route('department-head.submission-verification') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="_submission"
+                                            value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
+                                        <input type="hidden" name="_status" value="0">
+                                        <input type="text" class="form-control rounded-pill" placeholder="Leave Remarks"
+                                            name="_comments">
+                                        <div class=" d-flex align-items-center mt-2 float-end">
+                                            <div class="me-4 text-body">
+                                                <button class="btn btn-outline-danger rounded-pill btn-xs" type="submit"
+                                                    value="0" name="_status">DISAPPROVED</button>
+                                            </div>
+                                    </form>
+                                    <div class="text-body">
+                                        <form action="{{ route('department-head.submission-verification') }}"
+                                            method="POST">
+                                            @csrf
+                                            <input type="hidden" name="_submission"
+                                                value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
+                                            <input type="hidden" name="_status" value="1">
+                                            <button class="btn btn-outline-primary rounded-pill btn-xs"
+                                                type="submit">APPROVED</button>
+                                        </form>
+
+                                    </div>
+                                </div>
                             </div>
                         @endif
                     </div>

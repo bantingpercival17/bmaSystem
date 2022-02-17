@@ -185,8 +185,8 @@ class StudentDetails extends Model
     public function percentage_grade($_grade)
     {
         $_percent = [
-            [0, 69.48, 5.0],
-            [69.49, 72.88, 3.0],
+            [0, 69.46, 5.0],
+            [69.47, 72.88, 3.0],
             [72.89, 76.27, 2.75],
             [76.28, 79.66, 2.5],
             [79.67, 83.05, 2.25],
@@ -235,7 +235,9 @@ class StudentDetails extends Model
         if ($_section) {
             $_subject_count = SubjectClass::where('section_id', $_section->section_id)->where('is_removed', false)->get();
             $_subject_count =  $_subject_count->count();
-            if ($_enrollment->bridging_program == 'with' && $_enrollment->academic->semester == 'FIRST SEMESTER') {
+            return $_subject_count;
+            //return $_enrollment->academic->semester;
+            if ($_enrollment->bridging_program == 'without' && $_enrollment->academic->semester == 'First Semester' && $_enrollment->year_level == 4) {
                 $_subject_count -= 1;
             }
             return $_subject_count;
