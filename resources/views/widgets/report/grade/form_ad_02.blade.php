@@ -35,10 +35,10 @@
                                 @php
                                     $_final = $_student->student->final_grade($_subject->id, 'midterm');
                                 @endphp
-                                {{ $_final > 0 ? number_format($_final, 2) : '' }}
+                                {{ $_final >= 0 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
-                                <b> {{ $_final > 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
+                                <b> {{ $_final >= 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
                             <td class="text-center">
                                 @php
