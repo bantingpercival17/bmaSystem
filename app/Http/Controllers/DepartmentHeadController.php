@@ -52,6 +52,7 @@ class DepartmentHeadController extends Controller
     {
         $_current_academic =  $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : AcademicYear::where('is_active', 1)->first();
         $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
+        $_course = Auth::user()->staff->department == 'MARINE ENGINEERING' ? 1 : ($_course = Auth::user()->staff->department == 'MARINE TRANSPORTATION' ? 2 : 3);
         $_sections = $_request->_academic ? Section::where('academic_id', base64_decode($_request->_academic))->where('course_id', 2)->orderBy('section_name', 'ASC')->get() :
             Section::where('academic_id', $_current_academic->id)->where('course_id', 2)->orderBy('section_name', 'ASC')->get();
         return view('pages.department-head.clearance.view', compact('_academics', '_current_academic', '_sections'));
