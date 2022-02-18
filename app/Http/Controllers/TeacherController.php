@@ -206,7 +206,8 @@ class TeacherController extends Controller
                 StudentClearance::create($_clearance);
             }
             //echo "Saved: " . $_student_id . "<br>";
-
+            $_student = StudentDetails::find($_student_id);
+            $_student->offical_clearance_cleared();
         }
         return back()->with('success', 'Successfully Submitted Clearance');
     }

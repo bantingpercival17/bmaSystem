@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\CourseOffer;
 use App\Models\Section;
+use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +67,8 @@ class LibrarianController extends Controller
                 StudentNonAcademicClearance::create($_clearance);
             }
             //echo "Saved: " . $_student_id . "<br>";
+            $_student = StudentDetails::find($_student_id);
+            $_student->offical_clearance_cleared();
 
         }
         return back()->with('success', 'Successfully Submitted Clearance');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\CourseOffer;
 use App\Models\Section;
+use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentSection;
 use Illuminate\Http\Request;
@@ -49,6 +50,8 @@ class DeanController extends Controller
                 );
                 $_checker ? '' : StudentNonAcademicClearance::create($_data);
                 //echo $value . "<br>";
+                $_student = StudentDetails::find($value);
+                $_student->offical_clearance_cleared();
             }
         }
         return back()->with('success', 'Successfully Submitted.');

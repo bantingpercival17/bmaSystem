@@ -61,6 +61,17 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.academic_id', $_academic->id)
             ->orderBy('pa.created_at', 'DESC');
     }
+    public function students_clearance()
+    {
+        $_previous_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+        return $this->hasMany(OfficalCleared::class, 'course_id')
+            ->select('offical_cleareds.student_id')
+            ->leftJoin('enrollment_applications as ep', 'ep.student_id', 'offical_cleareds.student_id')
+            ->where('offical_cleareds.is_cleared', true)
+            ->where('offical_cleareds.is_removed', false)
+            ->where('offical_cleareds.academic_id', $_previous_academic->id)
+            ->whereNull('ep.student_id');
+    }
     public function enrollment_application()
     {
         $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
@@ -71,6 +82,7 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.is_removed', false)
             ->where('enrollment_assessments.academic_id', $_academic->id);
     }
+
     public function payment_assessment()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')

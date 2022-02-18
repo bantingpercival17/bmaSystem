@@ -13,14 +13,14 @@
 
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        Payment Assessment
+        Student Cleared
     </li>
 @endsection
 @section('page-content')
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <div class="header-title">
-                <h4 class="card-title">Payment Assessment Overview</h4>
+                <h4 class="card-title">Student Clearance List</h4>
                 <small class="text-muted mt-2 fw-bolder">{{ $_course->course_name }}</small>
             </div>
         </div>
@@ -34,15 +34,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (count($_course->payment_assessment))
-                            @foreach ($_course->payment_assessment as $_payment)
+                        @if (count($_course->students_clearance))
+                            @foreach ($_course->students_clearance as $_data)
                                 <tr>
-                                    <td>{{ $_payment->student->first_name . ' ' . $_payment->student->last_name }}</td>
+                                    <td>{{ $_data->student->first_name . ' ' . $_data->student->last_name }}</td>
                                     <td>
-                                        @if ($_payment->course_id == 3)
-                                            Grade {{ $_payment->year_level }}
+                                        @if ($_data->course_id == 3)
+                                            Grade {{ $_data->student->enrollment_assessment->year_level }}
                                         @else
-                                            {{ $_payment->year_level }}
+                                            {{ $_data->student->enrollment_assessment->year_level }} / C
                                         @endif
                                     </td>
                                 </tr>

@@ -139,6 +139,8 @@ class DepartmentHeadController extends Controller
                 );
                 $_checker ? '' : StudentNonAcademicClearance::create($_data);
                 //echo $value . "<br>";
+                $_student = StudentDetails::find($value);
+                $_student->offical_clearance_cleared();
             }
         }
         return back()->with('success', 'Successfully Submitted.');

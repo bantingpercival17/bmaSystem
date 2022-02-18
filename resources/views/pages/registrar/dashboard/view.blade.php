@@ -153,9 +153,15 @@
                                 <td>
                                     {{ count($_course->previous_enrolled) }}
                                 </td>
-                                <td>0</td>
                                 <td>
-                                    <a href="{{ route('registrar.enrollment') }}">{{ count($_course->enrollment_application) }}</a>
+                                    <a
+                                        href="{{ route('registrar.dashboard-student-clearance-list') . '?_course=' . base64_encode($_course->id) }}">
+                                        {{ count($_course->students_clearance) }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a
+                                        href="{{ route('registrar.enrollment') }}">{{ count($_course->enrollment_application) }}</a>
                                 </td>
                                 <td>
                                     <a

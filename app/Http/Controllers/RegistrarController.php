@@ -45,6 +45,11 @@ class RegistrarController extends Controller
         $_course = CourseOffer::find(base64_decode($_request->_course));
         return view('pages.registrar.dashboard.payment-assessment', compact('_course'));
     }
+    public function dashboard_student_clearance_list(Request $_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        return view('pages.registrar.dashboard.student-clearance-list', compact('_course'));
+    }
     public function enrollment_view(Request $_request)
     {
         $_courses = CourseOffer::where('is_removed', false)->get();
@@ -399,7 +404,8 @@ class RegistrarController extends Controller
                 StudentNonAcademicClearance::create($_clearance);
             }
             //echo "Saved: " . $_student_id . "<br>";
-
+            $_student = StudentDetails::find($_student_id);
+            $_student->offical_clearance_cleared();
         }
         return back()->with('success', 'Successfully Submitted Clearance');
     }

@@ -9,6 +9,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/dashboard', [RegistrarController::class, 'index'])->name('registrar.dashboard');
 
     Route::get('/dashboard/payment-assessment', [RegistrarController::class, 'dashboard_payment_assessment'])->name('registrar.dashboard-payment-assessment');
+    Route::get('/dashboard/student-clearance-list', [RegistrarController::class, 'dashboard_student_clearance_list'])->name('registrar.dashboard-student-clearance-list');
     // Applicants
 
     // Subjects

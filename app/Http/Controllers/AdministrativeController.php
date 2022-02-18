@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseOffer;
+use App\Models\EnrollmentAssessment;
 use App\Models\Staff;
 use App\Report\AttendanceSheetReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdministrativeController extends Controller
 {
@@ -21,7 +24,15 @@ class AdministrativeController extends Controller
             ->orderBy('staff.last_name', 'asc')
             //->orderBy('ea.updated_at', 'desc')
             ->get();
-        return view('administrative.dashboard', compact('_employees'));
+        $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
+        $_total_population = EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            /* ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment') */
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('academic_id', Auth::user()->staff->current_academic()->id)
+            ->with('payment_transactions')
+            ->get();
+        return view('administrative.dashboard', compact('_employees', '_courses','_total_population'));
     }
     public function attendance_view()
     {

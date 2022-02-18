@@ -90,7 +90,7 @@ class AdministratorController extends Controller
         if ($_request->_file_type == 'shipboard') {
             Excel::import(new ShipboardInformationImport, $_request->file('_file'));
         }
-        echo "<a href=".route('admin.students').">BACK</a>";
+        echo "<a href=" . route('admin.students') . ">BACK</a>";
         //return back()->with('message', 'Successfully Upload Student Details');
     }
     public function student_reset_password(Request $_request)
@@ -420,7 +420,8 @@ class AdministratorController extends Controller
                 StudentNonAcademicClearance::create($_clearance);
             }
             //echo "Saved: " . $_student_id . "<br>";
-
+            $_student = StudentDetails::find($_student_id);
+            $_student->offical_clearance_cleared();
         }
         return back()->with('success', 'Successfully Submitted Clearance');
     }

@@ -223,7 +223,8 @@ class StudentDetails extends Model
     }
     public function non_academic_clearance($_data)
     {
-        return $this->hasOne(StudentNonAcademicClearance::class, 'student_id')->where('non_academic_type', str_replace(' ', '-', strtolower($_data)))->where('is_removed', false)->where('academic_id', Auth::user()->staff->current_academic()->id)->latest('id')->first();
+        $_enrollment = $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
+        return $this->hasOne(StudentNonAcademicClearance::class, 'student_id')->where('non_academic_type', str_replace(' ', '-', strtolower($_data)))->where('is_removed', false)->where('academic_id', $_enrollment->academic_id)->latest('id')->first();
     }
     public function academic_clearance_status()
     {
@@ -249,6 +250,51 @@ class StudentDetails extends Model
         $_enrollment = $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
         $_student_clearance = $this->hasMany(StudentNonAcademicClearance::class, 'student_id')->where('is_removed', false)->where('academic_id', $_enrollment->academic_id)->where('is_approved', true);
         return $_non_academic_count == $_student_clearance->count() ? 'CLEARED' : 'NOT CLEARED';
+    }
+    public function offical_clearance_cleared()
+    {
+        $_non_academic_count  = 8;
+        $_enrollment = $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
+        $_section  = $this->hasOne(StudentSection::class, 'student_id')->select('student_sections.id', 'student_sections.student_id', 'student_sections.section_id')
+            ->join('sections', 'sections.id', 'student_sections.section_id')->where('sections.academic_id', $_enrollment->academic_id)->where('student_sections.is_removed', false)->first();
+        //$_section = $this->hasOne(StudentSection::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
+        $_student_non_academic_clearance = $this->hasMany(StudentNonAcademicClearance::class, 'student_id')->where('is_removed', false)->where('is_approved', true)->where('academic_id', $_enrollment->academic_id);
+        $_academic_clearance = $this->hasMany(StudentClearance::class, 'student_id')->where('is_approved', true)->where('is_removed', false);
+        if ($_section) {
+            $_subject_count = SubjectClass::where('section_id', $_section->section_id)->where('is_removed', false)->get();
+            $_subject_count =  $_subject_count->count();
+            if ($_enrollment->bridging_program == 'without' && $_enrollment->academic->semester == 'First Semester' && $_enrollment->year_level == 4) {
+                $_subject_count -= 1;
+            }
+            //return $_student_non_academic_clearance->count();
+            if ($_non_academic_count == $_student_non_academic_clearance->count() && $_subject_count == $_academic_clearance->count()) {
+                $_student_cleared = OfficalCleared::where([
+                    'student_id' => $_enrollment->student_id,
+                    'academic_id' => $_enrollment->academic_id,
+                    'course_id' => $_enrollment->course_id,
+                ])->first();
+                if (!$_student_cleared) {
+                    OfficalCleared::create([
+                        'student_id' => $_enrollment->student_id,
+                        'academic_id' => $_enrollment->academic_id,
+                        'course_id' => $_enrollment->course_id,
+                        'is_cleared' => true,
+                        'is_removed' => false
+                    ]);
+                }
+            } else {
+                $_student_cleared = OfficalCleared::where([
+                    'student_id' => $_enrollment->student_id,
+                    'academic_id' => $_enrollment->academic_id,
+                    'course_id' => $_enrollment->course_id,
+                ])->first();
+                if ($_student_cleared) {
+                    $_student_cleared->is_cleared = false;
+                    $_student_cleared->save();
+                }
+            }
+            // return $_subject_count == $_academic_clearance->count() ? 'CLEARED' : 'NOT CLEARED';
+        }
     }
     public function student_single_file_import($_student)
     {
