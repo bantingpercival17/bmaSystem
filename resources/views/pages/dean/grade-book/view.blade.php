@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Semestral Clearance';
+$_title = 'Grade Verification';
 @endphp
 @section('page-title', $_title)
 @section('page-mode', 'dark-mode')
@@ -33,8 +33,8 @@ $_title = 'Semestral Clearance';
                             <thead>
                                 <tr>
                                     <th>Section Name</th>
-                                    <th>No. of Students</th>
-                                    <th>Clearance Status</th>
+                                    <th>Subject Approved </th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,7 +42,7 @@ $_title = 'Semestral Clearance';
                                     @foreach ($course->sections as $_key => $_data)
                                         <tr>
                                             <td>
-                                                <a href="{{ route('dean.clearance-section-view') . '?_section=' . base64_encode($_data->id) }}&_academic={{ request()->input('_academic') }}}"
+                                                <a href="{{ route('dean.clearance-section-view') . '?_section=' . base64_encode($_data->id) }}&_academic={{ request()->input('_academic') }}"
                                                     class="">
                                                     {{ $_data->section_name }}
                                                 </a>

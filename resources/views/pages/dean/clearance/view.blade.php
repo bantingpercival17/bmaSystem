@@ -42,7 +42,7 @@ $_title = 'Semestral Clearance';
                                     @foreach ($course->sections as $_key => $_data)
                                         <tr>
                                             <td>
-                                                <a href="{{ route('dean.clearance-section-view') . '?_section=' . base64_encode($_data->id) }}&_academic={{ request()->input('_academic') }}}"
+                                                <a href="{{ route('dean.clearance-section-view') . '?_section=' . base64_encode($_data->id) }}&_academic={{ request()->input('_academic') }}"
                                                     class="">
                                                     {{ $_data->section_name }}
                                                 </a>
