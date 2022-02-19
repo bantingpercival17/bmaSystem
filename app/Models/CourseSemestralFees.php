@@ -108,113 +108,95 @@ class CourseSemestralFees extends Model
     }
     public function total_payments($_data)
     {
-        if ($_data->payment_mode == 1) {
-            // Installment 
-            // Get the Monthly Payment
-            if ($_data->enrollment_assessment->course_id == 3) {
-                $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                    ->selectRaw("sum(pf.particular_amount) as fees")
-                    ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                    ->join('particulars as p', 'p.id', 'pf.particular_id')
-                    ->where('p.particular_tag', '!=', 'addition_tags')
-                    ->where('semestral_fees.is_removed', false)->get();
-                $_other_fees =   $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                    ->selectRaw("sum(pf.particular_amount) as fees")
-                    ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                    ->join('particulars as p', 'p.id', 'pf.particular_id')
-                    ->where('p.particular_tag', '=', 'addition_tags')->get();
-                $_tuition_fee =  intval($_tuition_fee[0]['fees']) + 710;
-                $_monthly_fee = ($_tuition_fee - ($_tuition_fee * 0.20));
-                return intval($_tuition_fee) + intval($_other_fees[0]->fees);
-            } else {
-                $_tuition_fee = $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                    ->selectRaw("sum(pf.particular_amount) as fees")
-                    ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                    ->where('semestral_fees.is_removed', false)->get();
-                return ($_tuition_fee[0]->fees * .035) + $_tuition_fee[0]->fees;
-            }
+        $_number_of_units = $_data->enrollment_assessment->course->units($_data->enrollment_assessment)->units;
+        $_tuition_fees = $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', 'tuition_tags')
+            ->where('semestral_fees.is_removed', false)->get();
+        $_miscellaneous =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', '!=', 'addition_tags')
+            ->where('p.particular_tag', '!=', 'tuition_tags')
+            ->where('semestral_fees.is_removed', false)->get();
+        $_additional_fees =   $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', '=', 'addition_tags')->get();
+
+        if ($_data->enrollment_assessment->course_id == 3) {
+            return $_data->payment_mode == 1 ? ($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + $_additional_fees[0]->fees + 710) : ($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + $_additional_fees[0]->fees);
         } else {
-            // Full-Payment 
-            // Get the Payment
-            $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                ->selectRaw("sum(pf.particular_amount) as fees")
-                ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                ->where('semestral_fees.is_removed', false)->get();
-            return $_tuition_fee[0]->fees;
+            $_total_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
+            $_total_tuition = $_total_tuition + ($_total_tuition * 0.035);
+            return $_data->payment_mode == 1 ? $_total_tuition : (($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees);
         }
     }
     public function upon_enrollment($_data)
     {
-        if ($_data->payment_mode == 1) {
-            // Installment 
-            // Get the Monthly Payment
-            if ($_data->enrollment_assessment->course_id == 3) {
-                $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                    ->selectRaw("sum(pf.particular_amount) as fees")
-                    ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                    ->join('particulars as p', 'p.id', 'pf.particular_id')
-                    ->where('p.particular_tag', '!=', 'addition_tags')
-                    ->where('semestral_fees.is_removed', false)->get();
-                $_other_fees =   $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                    ->selectRaw("sum(pf.particular_amount) as fees")
-                    ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                    ->join('particulars as p', 'p.id', 'pf.particular_id')
-                    ->where('p.particular_tag', '=', 'addition_tags')->get();
-                $_tuition_fee =  intval($_tuition_fee[0]['fees']) + 710;
-                return ($_tuition_fee * 0.20) + intval($_other_fees[0]->fees);
-            } else {
-                $_tuition_fee = $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                    ->selectRaw("sum(pf.particular_amount) as fees")
-                    ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                    ->where('semestral_fees.is_removed', false)->get();
-                return ($_tuition_fee[0]->fees * .035) + $_tuition_fee[0]->fees;
-            }
+        $_number_of_units = $_data->enrollment_assessment->course->units($_data->enrollment_assessment)->units;
+        $_tuition_fees = $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', 'tuition_tags')
+            ->where('semestral_fees.is_removed', false)->get();
+        $_miscellaneous =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', '!=', 'addition_tags')
+            ->where('p.particular_tag', '!=', 'tuition_tags')
+            ->where('semestral_fees.is_removed', false)->get();
+        $_additional_fees =   $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', '=', 'addition_tags')->get();
+
+        if ($_data->enrollment_assessment->course_id == 3) {
+            return $_data->payment_mode == 1 ? (($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + 710) * 0.20) + $_additional_fees[0]->fees : ($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + $_additional_fees[0]->fees);
         } else {
-            // Full-Payment 
-            // Get the Payment
-            $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                ->selectRaw("sum(pf.particular_amount) as fees")
-                ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                ->where('semestral_fees.is_removed', false)->get();
-            return $_tuition_fee[0]->fees;
+            $_total_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
+            $_total_tuition = $_total_tuition + ($_total_tuition * 0.035);
+            return $_data->payment_mode == 1 ? $_total_tuition / 5 : (($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees);
         }
     }
     public function monthly_fees($_data)
     {
-        if ($_data->payment_mode == 1) {
-            // Installment 
-            // Get the Monthly Payment
-            if ($_data->enrollment_assessment->course_id == 3) {
-                $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                    ->selectRaw("sum(pf.particular_amount) as fees")
-                    ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                    ->join('particulars as p', 'p.id', 'pf.particular_id')
-                    ->where('p.particular_tag', '!=', 'addition_tags')
-                    ->where('semestral_fees.is_removed', false)->get();
-                $_other_fees =   $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                    ->selectRaw("sum(pf.particular_amount) as fees")
-                    ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                    ->join('particulars as p', 'p.id', 'pf.particular_id')
-                    ->where('p.particular_tag', '=', 'addition_tags')->get();
-                $_tuition_fee =  intval($_tuition_fee[0]['fees']) + 710;
-                $_monthly_fee = ($_tuition_fee - ($_tuition_fee * 0.20));
-                return ($_monthly_fee / 4);
-            } else {
-                $_tuition_fee = $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                    ->selectRaw("sum(pf.particular_amount) as fees")
-                    ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                    ->where('semestral_fees.is_removed', false)->get();
-                $_total_fees =  ($_tuition_fee[0]->fees * .035) + $_tuition_fee[0]->fees;
-                return $_total_fees / 5;
-            }
+        $_number_of_units = $_data->enrollment_assessment->course->units($_data->enrollment_assessment)->units;
+        $_tuition_fees = $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', 'tuition_tags')
+            ->where('semestral_fees.is_removed', false)->get();
+        $_miscellaneous =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', '!=', 'addition_tags')
+            ->where('p.particular_tag', '!=', 'tuition_tags')
+            ->where('semestral_fees.is_removed', false)->get();
+        $_additional_fees =   $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', '=', 'addition_tags')->get();
+
+        if ($_data->enrollment_assessment->course_id == 3) {
+            $_total = ($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + $_additional_fees[0]->fees + 710);
+            $_upon_enrollment = (($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + 710) * 0.20) + $_additional_fees[0]->fees;
+            $_monthly_fee = ($_total - $_upon_enrollment) / 4;
+            return $_data->payment_mode == 1 ? $_monthly_fee  : ($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + $_additional_fees[0]->fees);
         } else {
-            // Full-Payment 
-            // Get the Payment
-            $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
-                ->selectRaw("sum(pf.particular_amount) as fees")
-                ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
-                ->where('semestral_fees.is_removed', false)->get();
-            return 0;
+            $_total_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
+            $_total_tuition = $_total_tuition + ($_total_tuition * 0.035);
+            return $_data->payment_mode == 1 ? $_total_tuition / 5 : (($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees);
         }
     }
     public function total_tuition_fee($_data)

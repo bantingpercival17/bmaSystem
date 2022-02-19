@@ -47,7 +47,7 @@
                     <tbody>
                         <tr>
                             <td width="5%"><small>COURSE:</small></td>
-                            <td width="50%" class="text-fill-in">
+                            <td width="40%" class="text-fill-in">
                                 <b> {{ $_enrollment_assessment->course->course_name }}</b>
                             </td>
                             <td width="3%"><small>YEAR:</small></td>
@@ -456,7 +456,6 @@
                                         {{ $_data }}
                                     </label>
                                 </div>
-
                             @endforeach
 
                         </td>
@@ -481,7 +480,6 @@
                                         {{ in_array($_data, $_array) ? 'checked' : '' }}>
                                     <label class="form-label">{{ $_data }}</label>
                                 </div>
-
                             @endforeach
                         </td>
                     </tr>
@@ -634,7 +632,6 @@
 
                                     </tr>
                                 @endif
-
                             @endforeach
                         @else
                             <tr>
@@ -687,9 +684,15 @@
                                     </td>
                                     <td class="text-center">
                                         @php
+                                            $_particular_amount = $_enrollment_assessment->course_id == 3 ? $item->fees : $_course_semestral_fee->particular_tags($item->particular_tag);
+                                            
+                                            $_total_payment += $_particular_amount;
+                                        @endphp
+                                        <b> {{ number_format($_particular_amount, 2) }}</b>
+                                        {{-- @php
                                             $_total_payment += $item->fees;
                                         @endphp
-                                        <b> {{ number_format($item->fees, 2) }}</b>
+                                        <b> {{ number_format($item->fees, 2) }}</b> --}}
                                     </td>
                                 </tr>
                             @endforeach

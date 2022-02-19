@@ -36,7 +36,7 @@
             var mode = $(this).val();
             if (mode == 1) {
                 console.log('Installment')
-                var _tuition_fee = parseInt($('.tuition-fee').text().replace(/,/g, ''))
+                var _tuition_fee = parseFloat($('.tuition-fee').text().replace(/,/g, ''))
                 _computetion = $('.course').val() == 3 ? computetion_of_senior(_tuition_fee) :
                     computetion_of_college(_tuition_fee)
                 console.log(_computetion)
@@ -71,9 +71,11 @@
         function computetion_of_college(_tuition_fee) {
             console.log('College')
             total_fee = 0;
+            console.log(_tuition_fee)
             _intest = (_tuition_fee * 0.035)
+            
             console.log("Payment Interest: " + _intest);
-            _total_fee = parseInt(_tuition_fee) + parseFloat(_intest)
+            _total_fee = parseFloat(_tuition_fee) + parseFloat(_intest)
             _monthly_fee = _total_fee / 5;
             _upon_enrollment = _monthly_fee
             return {
@@ -199,7 +201,7 @@
                                                 <div class="col-md-4 ">
                                                     <span class="mt-2 float-end">
                                                         @php
-                                                            $_particular_amount = $_assessment->course_id == 3 ? $item->fees : $_course_semestral_fee->particular_tags($item->particular_tag);
+                                                            $_particular_amount = $_assessment->course->id == 3 ? $item->fees : $_course_semestral_fee->particular_tags($item->particular_tag);
                                                             
                                                             $_total_fee += $_particular_amount;
                                                         @endphp
