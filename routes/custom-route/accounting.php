@@ -23,6 +23,8 @@ Route::prefix('accounting')->group(function () {
     Route::get('/fees/course', [AccountingController::class, 'course_fee_view'])->name('accounting.course-fee-view');
     Route::get('/fees/course/create', [AccountingController::class, 'course_fee_create_view'])->name('accounting.create-course-fee');
     Route::post('/fees/course', [AccountingController::class, 'course_fee_store'])->name('accounting.course-fee-store');
+    Route::get('/fees/course/view', [AccountingController::class, 'course_fee_view_list'])->name('accounting.course-fee-view-list');
+    Route::post('/fees/course/change-fee', [AccountingController::class, 'course_change_fee'])->name('accounting.course-change-fee');
     Route::get('/fees/course/fee-remove', [AccountingController::class, 'course_fee_remove'])->name('accounting.course-fee-remove');
     // Particulars 
     Route::get('/particular', [AccountingController::class, 'particular_view'])->name('accounting.particulars');

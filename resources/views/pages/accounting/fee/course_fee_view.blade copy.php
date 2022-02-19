@@ -33,7 +33,6 @@ $_title = 'Course Fee | ' . $_course->course_name;
                             <tr>
                                 <th>Year Level</th>
                                 <th>Full Payment</th>
-                                <th>Installment</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -47,17 +46,26 @@ $_title = 'Course Fee | ' . $_course->course_name;
                                             @else
                                                 {{ $item->year_level }} / C
                                             @endif
-                                            - {{ $item->curriculum->curriculum_name }}
                                         </td>
                                         <td>{{-- {{ $item->semestral_fees($item->id) }} --}}
-                                            {{ $item->total_tuition_fee($item) ? number_format($item->total_tuition_fee($item), 2) : '0.00' }}
+                                            @php
+                                                $_total_fees = 0;
+                                                foreach ($item->semestral_fees($item->id) as $_fees) {
+                                                    if ($_fees->particular_tag == 'tuition_tags') {
+                                                        if (base64_decode(request()->input('_course')) == 3) {
+                                                            $_total_fees += $_fees->fees;
+                                                        } else {
+                                                            $_total_fees = $_fees->fees * $item->course->units($item)->units;
+                                                        }
+                                                    } else {
+                                                        $_total_fees += $_fees->fees;
+                                                    }
+                                                }
+                                                echo number_format($_total_fees);
+                                            @endphp
                                         </td>
                                         <td>
-                                            {{ number_format($item->installment_fee($item, $item->total_tuition_fee($item)), 2) }}
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('accounting.course-fee-view-list') . '?_course_fee=' . base64_encode($item->id) }}"
-                                                class="btn btn-primary btn-sm">View</a>
+                                            <a href="{{ route('accounting.course-fee-view-list') . '?_course_fee=' . base64_encode($item->id) }}" class="btn btn-primary btn-sm">View</a>
                                             <a href="{{ route('accounting.course-fee-remove') . '?_course_fee=' . base64_encode($item->id) }}"
                                                 class="btn btn-danger btn-sm">Remove</a>
                                         </td>

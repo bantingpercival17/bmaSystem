@@ -11,6 +11,6 @@ class SemestralFee extends Model
     protected $fillable = ['particular_fee_id', 'course_semestral_fee_id',  'is_removed'];
     public function particular_fee()
     {
-        return $this->hasOne(ParticularFees::class, 'particular_fee_id');
+        return $this->belongsTo(ParticularFees::class, 'particular_fee_id');
     }
 }

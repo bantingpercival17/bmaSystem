@@ -96,6 +96,20 @@ class AccountingController extends Controller
         //return compact('_tag');
         return view('pages.accounting.fee.course_fee_view', compact('_course', '_course_fees'));
     }
+    public function course_fee_view_list(Request $_request)
+    {
+        $_course_fee = CourseSemestralFees::find(base64_decode($_request->_course_fee));
+        return view('pages.accounting.fee.create_semestral_fee_list', compact('_course_fee'));
+        return $_course_fee->semestral_fee_list;
+    }
+    public function course_change_fee(Request $_request)
+    {
+        //return $_request->_semestral_fee;
+        $_course_fee = SemestralFee::find(base64_decode($_request->_semestral_fee));
+        $_course_fee->particular_fee_id = $_request->_amount;
+        $_course_fee->save();
+        return back()->with('success','Successfully Change Amount');
+    }
     public function course_fee_create_view(Request $_request)
     {
         $_department = base64_decode($_request->_course) == 3 ? 'senior_high' : 'college';
@@ -264,7 +278,6 @@ class AccountingController extends Controller
             //echo "Saved: " . $_student_id . "<br>";
             $_student = StudentDetails::find($_student_id);
             $_student->offical_clearance_cleared();
-
         }
         return back()->with('success', 'Successfully Submitted Clearance');
     }
