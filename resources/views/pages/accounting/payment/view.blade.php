@@ -194,66 +194,71 @@
                         <div class="payment-history">
                             <h5>ONLINE PAYMENT</h5>
                             <ul class="media-story mt-2 p-0">
-                                @if (count($_payment_details->online_payment_transaction) > 0)
-                                    @foreach ($_payment_details->online_payment_transaction as $item)
-                                        <li class="d-flex  align-items-center">
-                                            <div class="stories-data ">
-                                                <p class="mb-0">{{ $item->created_at->format('d, F Y') }}</p>
-                                                <div class="row">
-                                                    <div class="col-md">
-                                                        <small>REFERENCE NO: </small> <br>
-                                                        <h5><span
-                                                                class="text-primary">{{ $item->reference_number }}</span>
-                                                        </h5>
+                                @if ($_payment_details)
+                                    @if (count($_payment_details->online_payment_transaction) > 0)
+                                        @foreach ($_payment_details->online_payment_transaction as $item)
+                                            <li class="d-flex  align-items-center">
+                                                <div class="stories-data ">
+                                                    <p class="mb-0">{{ $item->created_at->format('d, F Y') }}
+                                                    </p>
+                                                    <div class="row">
+                                                        <div class="col-md">
+                                                            <small>REFERENCE NO: </small> <br>
+                                                            <h5><span
+                                                                    class="text-primary">{{ $item->reference_number }}</span>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <small>AMOUNT: </small> <br>
+                                                            <h5><span
+                                                                    class="text-primary">{{ number_format($item->amount_paid, 2) }}</span>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <small>REFERENCE NO: </small> <br>
+                                                            <h5><span
+                                                                    class="text-primary">{{ $item->reference_number }}</span>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <a href="{{ $item->reciept_attach_path }}" target="_blank"
+                                                                class="btn btn-primary btn-sm">view</a>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md">
-                                                        <small>AMOUNT: </small> <br>
-                                                        <h5><span
-                                                                class="text-primary">{{ number_format($item->amount_paid, 2) }}</span>
-                                                        </h5>
+                                                    <div class="d-flex justify-content-between mt-2">
+                                                        <div>
+                                                            <a href="" class="btn btn-primary btn-sm">APPROVED PAYMENT</a>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between ms-2">
+                                                            <form action="" method="post" class="">
+                                                                @csrf
+                                                                <div>
+                                                                    <button type="submit"
+                                                                        class="btn btn-danger btn-sm w-100">DISSAPPROVED</button>
+                                                                </div>
+                                                                <div class="mt-2">
+                                                                    <input type="text" class="form-control"
+                                                                        value="remarks">
+                                                                </div>
+
+                                                            </form>
+                                                        </div>
+
                                                     </div>
-                                                    <div class="col-md">
-                                                        <small>REFERENCE NO: </small> <br>
-                                                        <h5><span
-                                                                class="text-primary">{{ $item->reference_number }}</span>
-                                                        </h5>
-                                                    </div>
-                                                    <div class="col-md">
-                                                        <a href="{{ $item->reciept_attach_path }}" target="_blank"
-                                                            class="btn btn-primary btn-sm">view</a>
-                                                    </div>
+
                                                 </div>
-                                                <div class="d-flex justify-content-between mt-2">
-                                                    <div>
-                                                        <a href="" class="btn btn-primary btn-sm">APPROVED PAYMENT</a>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between ms-2">
-                                                        <form action="" method="post" class="">
-                                                            @csrf
-                                                            <div>
-                                                                <button type="submit"
-                                                                    class="btn btn-danger btn-sm w-100">DISSAPPROVED</button>
-                                                            </div>
-                                                            <div class="mt-2">
-                                                                <input type="text" class="form-control" value="remarks">
-                                                            </div>
+                                            </li>
+                                        @endforeach
+                                    @else
+                                        <li class="d-flex mb-4 align-items-center">
 
-                                                        </form>
-                                                    </div>
-
-                                                </div>
-
+                                            <div class="stories-data ms-3">
+                                                <h5 class="text-muted">No Online Transaction</h5>
                                             </div>
                                         </li>
-                                    @endforeach
-                                @else
-                                    <li class="d-flex mb-4 align-items-center">
-
-                                        <div class="stories-data ms-3">
-                                            <h5 class="text-muted">No Online Transaction</h5>
-                                        </div>
-                                    </li>
+                                    @endif
                                 @endif
+
                             </ul>
 
                         </div>
@@ -261,38 +266,41 @@
                         <div class="payment-history">
                             <h5>PAYMENT HISTORY</h5>
                             <div class="mt-2">
-                                @if ($_payment_details->payment_transaction)
-                                    @foreach ($_payment_details->payment_transaction as $_payment)
-                                        <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                                @if ($_payment_details)
+                                    @if ($_payment_details->payment_transaction)
+                                        @foreach ($_payment_details->payment_transaction as $_payment)
+                                            <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
 
-                                            <div>
-                                                <small>PARTIAL: </small> <br>
-                                                <h5><span class="text-primary">{{ $_payment->remarks }}</span>
-                                                </h5>
+                                                <div>
+                                                    <small>PARTIAL: </small> <br>
+                                                    <h5><span class="text-primary">{{ $_payment->remarks }}</span>
+                                                    </h5>
+                                                </div>
+                                                <div>
+                                                    <small>AMOUNT: </small> <br>
+                                                    <h5><span
+                                                            class="text-primary">{{ number_format($_payment->payment_amount, 2) }}</span>
+                                                    </h5>
+                                                </div>
+                                                <div>
+                                                    <small>OR NUMBER: </small> <br>
+                                                    <h5><span class="text-primary">{{ $_payment->or_number }}</span>
+                                                </div>
                                             </div>
+                                            <p class="mb-0">
+                                                <small>{{ $_payment->transaction_date }}</small>
+                                            </p>
+                                        @endforeach
+                                    @else
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
                                             <div>
-                                                <small>AMOUNT: </small> <br>
-                                                <h5><span
-                                                        class="text-primary">{{ number_format($_payment->payment_amount, 2) }}</span>
-                                                </h5>
-                                            </div>
-                                            <div>
-                                                <small>OR NUMBER: </small> <br>
-                                                <h5><span class="text-primary">{{ $_payment->or_number }}</span>
+                                                <h5>No Payment Transaction</h5>
+                                                <p></p>
                                             </div>
                                         </div>
-                                        <p class="mb-0">
-                                            <small>{{ $_payment->transaction_date }}</small>
-                                        </p>
-                                    @endforeach
-                                @else
-                                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-                                        <div>
-                                            <h5>No Payment Transaction</h5>
-                                            <p></p>
-                                        </div>
-                                    </div>
+                                    @endif
                                 @endif
+
                             </div>
                         </div>
                     </div>
