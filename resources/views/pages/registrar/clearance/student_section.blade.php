@@ -57,6 +57,15 @@ $_title = 'Semestral Clearance';
                                 <tr>
                                     <th>Student Number</th>
                                     <th>Midshipman Name</th>
+                                    @foreach ($_section->subject_class as $_class)
+                                        <th>{{ $_class->curriculum_subject->subject->subject_code }}</th>
+                                    @endforeach
+                                    @php
+                                        $_department = ['Department Head', 'Laboratory', 'Dean', 'Library', 'Exo', 'Accounting', 'ICT'];
+                                    @endphp
+                                    @foreach ($_department as $item)
+                                        <th>{{ $item }}</th>
+                                    @endforeach
                                     <th>Clearance Status</th>
                                     <th>Comment</th>
                                 </tr>
@@ -69,13 +78,37 @@ $_title = 'Semestral Clearance';
                                             </td>
                                             <td>{{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
                                             </td>
+                                            @foreach ($_section->subject_class as $_class)
+                                                <td>
+                                                    <div class="form-check d-block ">
+                                                        @if ($_data->student->clearance($_class->id))
+                                                            @if ($_data->student->clearance($_class->id)->is_approved == 1)
+                                                                <input class="form-check-input" type="checkbox" checked
+                                                                    disabled>
+                                                            @else
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="flexCheckChecked-3-" data-category="academic"
+                                                                    value="{{ $_data->student->id }}" disabled>
+                                                            @endif
+                                                        @else
+                                                            <span class="text-danger"><b>-</b></span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            @endforeach
+                                            @foreach ($_department as $item)
+                                                <td>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        {{ $_data->student->non_academic_clearance($item)? ($_data->student->non_academic_clearance($item)->is_approved == 1? 'checked disabled': 'disabled'): 'disabled' }}>
+                                                </td>
+                                            @endforeach
                                             <td>
                                                 <div class="form-check d-block">
                                                     <input class="form-check-input input-select-subject-clearance"
                                                         type="checkbox" id="flexCheckChecked-3-{{ $_key }}"
                                                         name="data[{{ $_key }}][e_clearance]"
                                                         value="{{ $_data->student->id }}"
-                                                        {{ $_data->student->non_academic_clearance('registrar') ? ($_data->student->non_academic_clearance('registrar')->is_approved == 1 ? 'checked' : '') : '' }}>
+                                                        {{ $_data->student->non_academic_clearance('registrar')? ($_data->student->non_academic_clearance('registrar')->is_approved == 1? 'checked': ''): '' }}>
                                                     <label class="form-check-label"
                                                         for="flexCheckChecked-3-{{ $_key }}">
                                                         CLEARED
@@ -88,7 +121,7 @@ $_title = 'Semestral Clearance';
                                                     </label>
                                                     <input type="text" class="form-control"
                                                         name="data[{{ $_key }}][comment]"
-                                                        value="{{ $_data->student->non_academic_clearance('registrar') ? $_data->student->non_academic_clearance('registrar')->comments : '' }}">
+                                                        value="{{ $_data->student->non_academic_clearance('registrar')? $_data->student->non_academic_clearance('registrar')->comments: '' }}">
                                                     <input type="hidden" name="data[{{ $_key }}][sId]"
                                                         value="{{ base64_encode($_data->student->id) }}">
                                                 </div>
