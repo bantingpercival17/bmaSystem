@@ -105,7 +105,7 @@ $_title = 'Semestral Clearance';
                                                 </td>
                                             @endforeach
                                             <td>
-                                                @if ($_data->student->non_academic_clearance('department-head') || $_data->student->non_academic_clearance('accounting') || $_data->student->non_academic_clearance('registrar'))
+                                                @if ($_data->student->non_academic_clearance('department-head') && $_data->student->non_academic_clearance('accounting') && $_data->student->non_academic_clearance('registrar'))
                                                     <input class="form-check-input input-select-dean" type="checkbox"
                                                         name="dean[]" value="{{ $_data->student->id }}"
                                                         {{ $_data->student->non_academic_clearance('dean')? ($_data->student->non_academic_clearance('dean')->is_approved == 1? 'checked': ''): '' }}>
