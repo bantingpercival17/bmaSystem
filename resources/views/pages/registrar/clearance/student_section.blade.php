@@ -64,7 +64,7 @@ $_title = 'Semestral Clearance';
                                         $_department = ['Department Head', 'Laboratory', 'Dean', 'Library', 'Exo', 'Accounting', 'ICT'];
                                     @endphp
                                     @foreach ($_department as $item)
-                                        <th>{{ $item }}</th>
+                                        <th>{{ $item == 'Department Head' ? 'Academic Department' : $item }}</th>
                                     @endforeach
                                     <th>Clearance Status</th>
                                     <th>Comment</th>
