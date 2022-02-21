@@ -64,6 +64,12 @@ $_title = 'Semestral Clearance';
                                     <th>Subjects Clearance</th>
                                     <th class="text-center">Laboratory</th>
                                     <th class="text-center">Department Head</th>
+                                    @php
+                                        $_department = ['Library', 'Exo', 'Accounting', 'Registrar', 'ICT'];
+                                    @endphp
+                                    @foreach ($_department as $item)
+                                        <th class="text-center">{{ $item }}</th>
+                                    @endforeach
                                     <th>Dean</th>
                                 </tr>
                             </thead>
@@ -89,6 +95,15 @@ $_title = 'Semestral Clearance';
                                                     {{ $_data->student->non_academic_clearance('department-head')? ($_data->student->non_academic_clearance('department-head')->is_approved == 1? 'checked disabled': 'disabled'): 'disabled' }}>
 
                                             </td>
+                                            @php
+                                                $_department = ['Library', 'Exo', 'Accounting', 'Registrar', 'ICT'];
+                                            @endphp
+                                            @foreach ($_department as $item)
+                                                <td>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        {{ $_data->student->non_academic_clearance($item)? ($_data->student->non_academic_clearance($item)->is_approved == 1? 'checked disabled': 'disabled'): 'disabled' }}>
+                                                </td>
+                                            @endforeach
                                             <td>
                                                 @if ($_data->student->non_academic_clearance('department-head'))
                                                     <input class="form-check-input input-select-dean" type="checkbox"
@@ -111,6 +126,10 @@ $_title = 'Semestral Clearance';
                                     <th>Subjects Clearance</th>
                                     <th class="text-center">Laboratory</th>
                                     <th class="text-center">Department Head </th>
+                                    @foreach ($_department as $item)
+                                        <th class="text-center">{{ $item }}</th>
+                                    @endforeach
+                                    <th class="text-center">Dean </th>
                                 </tr>
                             </tfoot>
                         </table>
