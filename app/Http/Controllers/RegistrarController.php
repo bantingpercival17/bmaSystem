@@ -16,6 +16,7 @@ use App\Models\Subject;
 use App\Models\SubjectClass;
 use App\Models\SubjectClassSchedule;
 use App\Models\User;
+use App\Report\Clearance\SemestralClearanceReport;
 use App\Report\Students\StudentReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -360,6 +361,13 @@ class RegistrarController extends Controller
     {
         $_section = Section::find(base64_decode($_request->_section));
         return view('pages.registrar.clearance.student_section', compact('_section'));
+    }
+    public function semestral_clearance_report(Request $_request)
+    {
+        $_section = Section::find(base64_decode($_request->_section));
+        $_report = new SemestralClearanceReport();
+        return $_report->semestral_clearance_overview($_section);
+        //return view('pages.registrar.clearance.student_section', compact('_section'));
     }
     public function clearance_store(Request $_request)
     {

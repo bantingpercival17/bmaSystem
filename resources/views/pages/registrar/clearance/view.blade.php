@@ -32,16 +32,24 @@ $_title = 'Semestral Clearance';
     @endif
 
 @endsection
+@section('js')
+    <script>
+        $(document).on('click', '.btn-form-grade', function(evt) {
+            $('.form-view').attr('src', $(this).data('grade-url'))
+        });
+    </script>
+@endsection
 @section('page-content')
     <div class="row">
         @if (count($_sections) > 0)
             <div class="col-md-8">
                 @foreach ($_sections as $_data)
-                    <a
-                        href="{{ route('registrar.semestral-student-list') }}?_section={{ base64_encode($_data->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between ">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between ">
+                                <a
+                                    href="{{ route('registrar.semestral-student-list') }}?_section={{ base64_encode($_data->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+
                                     <div>
                                         <span>Total Number of Students:
                                             <b>{{ $_data ? count($_data->student_section) : '-' }}</b></span>
@@ -50,16 +58,17 @@ $_title = 'Semestral Clearance';
                                                 {{ strtoupper($_data->section_name) }}
                                             </h2>
                                         </div>
-
-
-
                                     </div>
-
+                                </a>
+                                <div>
+                                    <button type="button" class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
+                                        data-bs-toggle="modal" data-bs-target=".grade-view-modal"
+                                        data-grade-url="{{ route('registrar.semestral-clearance-report') }}?_section={{ base64_encode($_data->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                        CLEARANCE OVERVIEW</button>
                                 </div>
                             </div>
                         </div>
-
-                    </a>
+                    </div>
                 @endforeach
             </div>
         @endif
@@ -127,5 +136,13 @@ $_title = 'Semestral Clearance';
 
         </div>
 
+    </div>
+    <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
+                </iframe>
+            </div>
+        </div>
     </div>
 @endsection
