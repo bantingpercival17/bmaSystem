@@ -161,9 +161,10 @@ class CourseSemestralFees extends Model
         if ($_data->enrollment_assessment->course_id == 3) {
             return $_data->payment_mode == 1 ? (($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + 710) * 0.20) + $_additional_fees[0]->fees : ($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + $_additional_fees[0]->fees);
         } else {
-            $_total_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
-            $_total_tuition = $_total_tuition + ($_total_tuition * 0.035);
-            return $_data->payment_mode == 1 ? $_total_tuition / 5 : (($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees);
+            $_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
+            $_total_tuition = $_tuition + ($_tuition * 0.035);
+            $_upon_enrollment = $_tuition * 0.2;
+            return $_data->payment_mode == 1 ? $_upon_enrollment  : (($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees);
         }
     }
     public function monthly_fees($_data)
@@ -194,9 +195,11 @@ class CourseSemestralFees extends Model
             $_monthly_fee = ($_total - $_upon_enrollment) / 4;
             return $_data->payment_mode == 1 ? $_monthly_fee  : ($_tuition_fees[0]->fees + $_miscellaneous[0]->fees + $_additional_fees[0]->fees);
         } else {
-            $_total_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
-            $_total_tuition = $_total_tuition + ($_total_tuition * 0.035);
-            return $_data->payment_mode == 1 ? $_total_tuition / 5 : (($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees);
+            $_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
+            $_total_tuition = $_tuition + ($_tuition * 0.035);
+            $_upon_enrollment = $_tuition * 0.2;
+            $_monthly_fee =  ($_total_tuition - $_upon_enrollment) / 4;
+            return $_data->payment_mode == 1 ? $_monthly_fee : (($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees);
         }
     }
     public function total_tuition_fee($_data)
