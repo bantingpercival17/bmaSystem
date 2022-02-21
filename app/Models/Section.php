@@ -13,7 +13,9 @@ class Section extends Model
     ];
     public function student_section()
     {
-        return $this->hasMany(StudentSection::class, 'section_id')->join('student_accounts as sa', 'sa.student_id', 'student_sections.student_id')->where('student_sections.is_removed', false)->orderBy('sa.student_number', 'asc');
+        return $this->hasMany(StudentSection::class, 'section_id')
+        ->join('student_accounts as sa', 'sa.student_id', 'student_sections.student_id')
+        ->where('student_sections.is_removed', false)->orderBy('sa.student_number', 'asc');
     }
     public function student_sections()
     {

@@ -164,10 +164,10 @@
                                         <div class="col-sm">
                                             <select name="mode" class="form-select payment-mode">
                                                 <option value="0"
-                                                    {{ $_student->enrollment_application->payment_mode == 1 ? 'selected' : '' }}>
+                                                    {{ $_student->enrollment_application->payment_mode == 0 ? 'selected' : '' }}>
                                                     Fullpayment</option>
                                                 <option value="1"
-                                                    {{ $_student->enrollment_application->payment_mode == 2 ? 'selected' : '' }}>
+                                                    {{ $_student->enrollment_application->payment_mode == 2 || $_student->enrollment_application->payment_mode == 1? 'selected': '' }}>
                                                     Installment</option>
                                             </select>
                                         </div>
@@ -314,16 +314,18 @@
 
             @if ($_students)
                 @foreach ($_students as $item)
-                    <div class="card border-bottom border-4 border-0 border-primary">
+                    <div
+                        class="card border-bottom border-4 border-0 {{ $item->account->student->enrollment_application->payment_mode ? 'border-danger' : 'border-primary' }} ">
                         <a href="?_midshipman={{ base64_encode($item->id) }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span
-                                            class="text-primary"><b>{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</b></span>
+                                            class="{{ $item->account->student->enrollment_application->payment_mode ? 'text-danger' : 'text-primary' }}"><b>{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</b></span>
                                     </div>
                                     <div>
-                                        <span>{{ $item->account ? $item->account->student_number : '' }}</span>
+                                        <span
+                                            class="{{ $item->account->student->enrollment_application->payment_mode ? 'text-danger' : 'text-primary' }}">{{ $item->account ? $item->account->student_number : '' }}</span>
                                     </div>
                                 </div>
                             </div>
