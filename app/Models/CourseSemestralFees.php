@@ -163,7 +163,11 @@ class CourseSemestralFees extends Model
         } else {
             $_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
             $_total_tuition = $_tuition + ($_tuition * 0.035);
-            $_upon_enrollment = $_tuition * 0.2;
+            // Old Formula 
+            $_old_upon_enrollment = $_total_tuition / 5;
+            // New Formula
+            $_new_upon_enrollment = $_tuition * 0.2;
+            $_upon_enrollment = $_data->enrollment_assessment->academic_id >= 4 ? $_new_upon_enrollment : $_old_upon_enrollment;
             return $_data->payment_mode == 1 ? $_upon_enrollment  : (($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees);
         }
     }
@@ -197,8 +201,13 @@ class CourseSemestralFees extends Model
         } else {
             $_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
             $_total_tuition = $_tuition + ($_tuition * 0.035);
+            // Old Computation of Monthly Fees
+            $_monthly_fee_old = $_total_tuition / 5;
+            // New Computation of Monthly Fees
+            $_total_tuition = $_tuition + ($_tuition * 0.035);
             $_upon_enrollment = $_tuition * 0.2;
-            $_monthly_fee =  ($_total_tuition - $_upon_enrollment) / 4;
+            $_monthly_fee_new =  ($_total_tuition - $_upon_enrollment) / 4;
+            $_monthly_fee = $_data->enrollment_assessment->academic_id >= 4 ? $_monthly_fee_new : $_monthly_fee_old;
             return $_data->payment_mode == 1 ? $_monthly_fee : (($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees);
         }
     }
