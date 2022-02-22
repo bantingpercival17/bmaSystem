@@ -223,10 +223,10 @@
                                                         <div class="col-md">
                                                             <small>REFERENCE NO: </small> <br>
                                                             <h5><span
-                                                                    class="text-primary">{{ $item->reference_number }}</span>
+                                                                    class="text-primary">{{ ucwords(str_replace('_', ' ', $item->transaction_type)) }}</span>
                                                             </h5>
                                                         </div>
-                                                        <div class="col-md">
+                                                        <div class="col-md-12">
 
                                                             <button type="button"
                                                                 class="btn btn-primary btn-sm btn-form-document w-100 mt-2"
@@ -402,15 +402,35 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
-                <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
+                <iframe class="iframe-container form-view iframe-placeholder" src="" width="100%" height="600px">
                 </iframe>
             </div>
         </div>
     </div>
+    <img src="" alt="">
+
 @section('js')
     <script>
         $(document).on('click', '.btn-form-document', function(evt) {
-            $('.form-view').attr('src', $(this).data('document-url'))
+            var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'];
+            var file = $(this).data('document-url');
+            file = file.replace(/^.*\./, '');
+            //console.log(fileExtension);
+            // $('.image-fr').empty()
+            if (fileExtension.includes(file)) {
+                $(".form-view").contents().find("body").html('');
+                $('.form-view').contents().find('body').append($("<img/>").attr('class', 'image-frame').attr("src",
+                    $(this).data('document-url')).attr("title",
+                    "sometitle").attr('width', '100%'))
+                /* append(
+                                    '<img class="image-frame" width="100%" src="' + $(this).data('document-url') + '" alt="">'
+                                ); */
+                console.log(file)
+            } else {
+                $('.form-view').attr('src', $(this).data('document-url'))
+                console.log(file)
+            }
+
         });
     </script>
 @endsection

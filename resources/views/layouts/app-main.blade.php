@@ -12,6 +12,20 @@
     <link rel="stylesheet" href="{{ asset('css/app-1.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <style>
+        /* .iframe-container {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 5px;
+        } */
+
+        /* .iframe-container iframe {
+            border: 0;
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        } */
         .iframe-placeholder {
             background: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100% 100%"><text fill="%23FF0000" x="50%" y="50%" font-family="\'Lucida Grande\', sans-serif" font-size="24" text-anchor="middle">LOADING.....</text></svg>') 0px 0px no-repeat;
         }
@@ -46,7 +60,7 @@
                 @yield('page-content')
             @else
                 @php
-                    $_route = ['registrar/dashboard*', 'registrar/enrollment*', 'registrar/semestral-clearance*', 'registrar/sections*', 'registrar/subjects*', 'teacher/subjects*', 'department-head/grade-submission*', 'department-head/semestral-clearance*', 'dean/e-clearance*', 'accounting/fees*', 'accounting/particular/fee*', 'accounting/semestral-clearance*', 'executive/semestral-clearance*', 'librarian/semestral-clearance*', 'administrator/semestral-clearance*','dean/grading-vefication*'];
+                    $_route = ['registrar/dashboard*', 'registrar/enrollment*', 'registrar/semestral-clearance*', 'registrar/sections*', 'registrar/subjects*', 'teacher/subjects*', 'department-head/grade-submission*', 'department-head/semestral-clearance*', 'dean/e-clearance*', 'accounting/fees*', 'accounting/particular/fee*', 'accounting/semestral-clearance*', 'executive/semestral-clearance*', 'librarian/semestral-clearance*', 'administrator/semestral-clearance*', 'dean/grading-vefication*'];
                 @endphp
                 @foreach ($_route as $route)
                     @if (request()->is($route))
