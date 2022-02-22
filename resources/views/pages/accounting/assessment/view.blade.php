@@ -82,6 +82,7 @@
     $_total_fee = 0;
     $_monthly_fee = ['1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
     @endphp
+    
     <div class="row">
         <div class="col-md-8">
             <div class="card mb-2">

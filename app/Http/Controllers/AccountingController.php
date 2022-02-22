@@ -108,7 +108,7 @@ class AccountingController extends Controller
         $_course_fee = SemestralFee::find(base64_decode($_request->_semestral_fee));
         $_course_fee->particular_fee_id = $_request->_amount;
         $_course_fee->save();
-        return back()->with('success','Successfully Change Amount');
+        return back()->with('success', 'Successfully Change Amount');
     }
     public function course_fee_create_view(Request $_request)
     {
@@ -295,7 +295,8 @@ class AccountingController extends Controller
             ->whereNull('pto.is_approved')
             ->get();
         $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : $_students;
-        return view('pages.accounting.payment.view', compact('_students', '_student', '_vouchers'));
+        $_online_payment = $_request->payment_approved ? PaymentTrasanctionOnline::find(base64_decode($_request->payment_approved)) : null;
+        return view('pages.accounting.payment.view', compact('_students', '_student', '_vouchers', '_online_payment'));
     }
     public function payment_store(Request $_request)
     {
@@ -334,8 +335,24 @@ class AccountingController extends Controller
                 'is_removed' => false
             );
         }
+        $_payment = PaymentTransaction::create($_payment_details);
+        if ($_request->_online_payment) {
 
-        PaymentTransaction::create($_payment_details);
+            $_online_payment = PaymentTrasanctionOnline::find($_request->_online_payment);
+            $_online_payment->payment_id = $_payment->id;
+            $_online_payment->is_approved = 1;
+            $_online_payment->or_number = $_request->or_number;
+            $_online_payment->save();
+        }
+
         return back()->with('success', 'Payment Transaction Complete!');
+    }
+    public function payment_verification(Request $_request)
+    {
+        $_online_payment = PaymentTrasanctionOnline::find($_request->_online_payment);
+        $_online_payment->is_approved = 0;
+        $_online_payment->comment_remarks =  $_request->remarks;
+        $_online_payment->save();
+        return back()->with('success', 'Transaction Complete');
     }
 }

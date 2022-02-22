@@ -100,6 +100,10 @@
                             <div class="payment-transaction">
                                 <form action="{{ route('accounting.payment-transaction') }}" method="post">
                                     <h5>PAYMENT TRANSACTION</h5>
+
+                                    @if (request()->input('payment_approved'))
+                                        <input type="hidden" name="_online_payment" value="{{ $_online_payment->id }}">
+                                    @endif
                                     @csrf
                                     <div class="row">
                                         <div class="col-md-12">
@@ -152,7 +156,8 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="" class="form-label"><small>TRANSACTION DATE</small></label>
-                                                <input type="date" class="form-control" name="tran_date">
+                                                <input type="date" class="form-control" name="tran_date"
+                                                    {{ request()->input('payment_approved') ? 'value=' . $_online_payment->created_at . '' : '' }}>
                                             </div>
                                         </div>
                                         <div class="col-md-5">
@@ -172,7 +177,8 @@
                                         <div class="col-md">
                                             <div class="form-group">
                                                 <label for="" class="form-label"><small>AMOUNT:</small></label>
-                                                <input type="text" class="form-control" name="amount">
+                                                <input type="text" class="form-control" name="amount"
+                                                    {{ request()->input('payment_approved') ? 'value=' . $_online_payment->amount_paid . '' : '' }}>
                                                 @error('or_number')
                                                     <span class="badge bg-danger">{{ $message }}</span>
                                                 @enderror
@@ -221,33 +227,69 @@
                                                             </h5>
                                                         </div>
                                                         <div class="col-md">
-                                                            <a href="{{ $item->reciept_attach_path }}" target="_blank"
-                                                                class="btn btn-primary btn-sm">view</a>
+
+                                                            <button type="button"
+                                                                class="btn btn-primary btn-sm btn-form-document w-100 mt-2"
+                                                                data-bs-toggle="modal" data-bs-target=".document-view-modal"
+                                                                data-document-url="{{ $item->reciept_attach_path }}">
+                                                                VIEW</button>
                                                         </div>
                                                     </div>
-                                                    <div class="d-flex justify-content-between mt-2">
-                                                        <div>
-                                                            <a href="" class="btn btn-primary btn-sm">APPROVED PAYMENT</a>
+                                                    @if ($item->is_approved === 0)
+                                                        <div class="d-flex justify-content-between mt-2">
+                                                            <div>
+                                                                <small class="text-danger fw-bolder">DISAPPROVED </small>
+                                                                <br>
+                                                                <h5><span
+                                                                        class="text-muted">{{ $item->comment_remarks }}</span>
+                                                                </h5>
+                                                            </div>
                                                         </div>
-                                                        <div class="d-flex justify-content-between ms-2">
-                                                            <form action="" method="post" class="">
-                                                                @csrf
+                                                    @else
+                                                        @if ($item->is_approved == 1)
+                                                            <div class="d-flex justify-content-between mt-2">
                                                                 <div>
-                                                                    <button type="submit"
-                                                                        class="btn btn-danger btn-sm w-100">DISSAPPROVED</button>
+                                                                    <small class="text-primary fw-bolder">VERIFIED PAYMENT
+                                                                    </small>
                                                                 </div>
-                                                                <div class="mt-2">
-                                                                    <input type="text" class="form-control"
-                                                                        value="remarks">
+                                                            </div>
+                                                        @else
+                                                            <div class="d-flex justify-content-between mt-2">
+                                                                <div>
+
+                                                                    <a href="{{ route('accounting.payment-transactions') }}?_midshipman={{ request()->input('_midshipman') }}&add-transaction=true&payment_approved={{ base64_encode($item->id) }}"
+                                                                        class="btn btn-primary btn-sm">
+                                                                        APPROVED PAYMENT</a>
+                                                                </div>
+                                                                <div class="d-flex justify-content-between ms-2">
+                                                                    <form
+                                                                        action="{{ route('accounting.online-payment-disapproved') }}"
+                                                                        method="post" class="">
+                                                                        @csrf
+                                                                        <input type="hidden" name="_online_payment"
+                                                                            value="{{ $item->id }}">
+                                                                        <div>
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger btn-sm w-100">DISSAPPROVED</button>
+                                                                        </div>
+                                                                        <div class="mt-2">
+                                                                            <input type="text" class="form-control"
+                                                                                placeholder="remarks" name="remarks"
+                                                                                required>
+                                                                        </div>
+
+                                                                    </form>
                                                                 </div>
 
-                                                            </form>
-                                                        </div>
+                                                            </div>
+                                                        @endif
+                                                    @endif
 
-                                                    </div>
 
                                                 </div>
+
                                             </li>
+                                            <hr>
                                         @endforeach
                                     @else
                                         <li class="d-flex mb-4 align-items-center">
@@ -267,7 +309,7 @@
                             <h5>PAYMENT HISTORY</h5>
                             <div class="mt-2">
                                 @if ($_payment_details)
-                                    @if ($_payment_details->payment_transaction)
+                                    @if (count($_payment_details->payment_transaction) > 0)
                                         @foreach ($_payment_details->payment_transaction as $_payment)
                                             <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
 
@@ -352,5 +394,24 @@
 
         </div>
     </div>
-
+    <div class="modal fade document-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Online Payment View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
+                </iframe>
+            </div>
+        </div>
+    </div>
+@section('js')
+    <script>
+        $(document).on('click', '.btn-form-document', function(evt) {
+            $('.form-view').attr('src', $(this).data('document-url'))
+        });
+    </script>
+@endsection
 @endsection
