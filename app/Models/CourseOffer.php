@@ -43,8 +43,8 @@ class CourseOffer extends Model
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            /* ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment') */
+            ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment')
             ->with('payment_transactions')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->orderBy('enrollment_assessments.created_at', 'DESC')
