@@ -56,6 +56,7 @@ class RegistrarController extends Controller
         $_courses = CourseOffer::where('is_removed', false)->get();
         $_student_detials = new StudentDetails();
         $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application_list();
+        $_students = $_request->_course ? $_student_detials->enrollment_application_list_view_course($_request->_course) : $_students;
         return view('pages.registrar.enrollment.view', compact('_courses', '_students'));
     }
     public function enrollment_assessment(Request $_request)

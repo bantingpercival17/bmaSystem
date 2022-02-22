@@ -103,9 +103,24 @@ class StudentDetails extends Model
     /* Enrollment Application */
     public function enrollment_application_list()
     {
-        $_academic = request()->input('_academic') ? AcademicYear::find(base64_decode(request()->input('_academic'))) : AcademicYear::where('is_active', 1)->first();
-        //$_students = $this->hasMany(EnrollmentApplication::class, 'student_id')->where('academic_id', $_academic->id);
-        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')->join('enrollment_applications as ea', 'ea.student_id', 'student_details.id')->where('ea.academic_id', $_academic->id)->where('is_approved', null);
+        $_academic = Auth::user()->staff->current_academic();
+        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+            ->join('enrollment_applications as ea', 'ea.student_id', 'student_details.id')->where('ea.academic_id', $_academic->id)->where('is_approved', null);
+        return $_students->get();
+    }
+    public function enrollment_application_list_view_course($_data)
+
+    {
+        $_academic = Auth::user()->staff->current_academic();
+        $_prevous_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+            ->join('enrollment_assessments as eas', 'eas.student_id', 'student_details.id')
+            ->join('enrollment_applications as ea', 'ea.student_id', 'student_details.id')
+            ->where('ea.academic_id', $_academic->id)
+            ->whereNull('ea.is_approved')
+            ->where('eas.course_id', base64_decode($_data))
+            ->where('eas.is_removed', false)
+            ->where('eas.academic_id', $_prevous_academic->id);
         return $_students->get();
     }
     /* Grading Query */

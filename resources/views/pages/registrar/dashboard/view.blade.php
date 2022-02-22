@@ -161,7 +161,7 @@
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ route('registrar.enrollment') }}">{{ count($_course->enrollment_application) }}</a>
+                                        href="{{ route('registrar.enrollment') }}?_course={{ base64_encode($_course->id) }}">{{ count($_course->enrollment_application) }}</a>
                                 </td>
                                 <td>
                                     <a
