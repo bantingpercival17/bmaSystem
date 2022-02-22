@@ -68,4 +68,8 @@ class EnrollmentAssessment extends Model
     {
         return $this->hasOne(PaymentTransaction::class, 'assessment_id')->where('remarks', 'Upon Enrollment');
     }
+    public function enrollment_payment_assessment()
+    {
+        return $this->hasOne(PaymentAssessment::class, 'enrollment_id')->where('is_removed', false)/* ->with('payment_assessment_paid') */;
+    }
 }

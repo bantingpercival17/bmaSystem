@@ -32,20 +32,20 @@ class CourseOffer extends Model
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            /* ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment') */
+            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment')
             ->where('enrollment_assessments.is_removed', false)
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-            ->with('payment_transactions')
+            ->groupBy('pt.assessment_id')
             ->orderBy('pa.created_at', 'DESC');
     }
     public function enrolled_list($_data)
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            /* ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment') */
-            ->with('payment_transactions')
+            ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment')
+            ->groupBy('pt.assessment_id')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->orderBy('enrollment_assessments.created_at', 'DESC')
             ->where('enrollment_assessments.year_level', $_data)
@@ -89,10 +89,15 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->leftJoin('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
             ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
-            ->whereNull('pt.assessment_id')
-            /* ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
-            ->whereNull('pt.assessment_id')
-            ->whereNull('pa.enrollment_id') */;
+            ->whereNull('pa.enrollment_id');
+    }
+    public function payment_transaction()
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
+            ->whereNull('pt.assessment_id');
     }
     public function sections()
     {

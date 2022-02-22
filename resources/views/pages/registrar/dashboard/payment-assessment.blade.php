@@ -34,8 +34,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (count($_course->payment_assessment))
-                            @foreach ($_course->payment_assessment as $_payment)
+                        @php
+                            $_payment = request()->input('_payment') == 'true' ? $_course->payment_transaction : [];
+                            $_paymkent = request()->input('_assessment') == 'true' ? $_course->payment_assessment : $_payment;
+                        @endphp
+                        @if (count($_payment))
+                            @foreach ($_payment as $_payment)
                                 <tr>
                                     <td>{{ $_payment->student->first_name . ' ' . $_payment->student->last_name }}</td>
                                     <td>

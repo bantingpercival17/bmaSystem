@@ -137,11 +137,12 @@
             <div class="table-responsive mt-4">
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                     <thead>
-                        <tr>
+                        <tr class="text-center">
                             <th>Course</th>
                             <th>Unenrolled</th>
                             <th>Cleared</th>
-                            <th>Enrollment Assessment</th>
+                            <th>Enrollment <br> Assessment</th>
+                            <th>Assessment <br> Fees</th>
                             <th>Payment</th>
                             <th>Enrolled</th>
                         </tr>
@@ -165,8 +166,14 @@
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ route('registrar.dashboard-payment-assessment') . '?_course=' . base64_encode($_course->id) }}">
+                                        href="{{ route('registrar.dashboard-payment-assessment') . '?_course=' . base64_encode($_course->id) }}&_assessment=true">
                                         {{ count($_course->payment_assessment) }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a
+                                        href="{{ route('registrar.dashboard-payment-assessment') . '?_course=' . base64_encode($_course->id) }}&_payment=true">
+                                        {{ count($_course->payment_transaction) }}
                                     </a>
                                 </td>
                                 <td>
