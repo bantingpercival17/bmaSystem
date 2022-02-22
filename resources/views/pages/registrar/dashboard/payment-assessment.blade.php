@@ -36,7 +36,7 @@
                     <tbody>
                         @php
                             $_payment = request()->input('_payment') == 'true' ? $_course->payment_transaction : [];
-                            $_paymkent = request()->input('_assessment') == 'true' ? $_course->payment_assessment : $_payment;
+                            $_payment = request()->input('_assessment') == 'true' ? $_course->payment_assessment : $_payment;
                         @endphp
                         @if (count($_payment))
                             @foreach ($_payment as $_payment)

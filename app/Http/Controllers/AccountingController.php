@@ -191,7 +191,8 @@ class AccountingController extends Controller
             ->join('enrollment_assessments', 'student_details.id', 'enrollment_assessments.student_id')
             ->leftJoin('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
             ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
-            ->whereNull('pa.enrollment_id')->get();
+            ->whereNull('pa.enrollment_id');
+        $_students = $_request->_course ? $_students->where('enrollment_assessments.course_id', base64_decode($_request->_course))->get() : $_students->get();
         $_students = $_request->_students ?   $_student_detials->student_search($_request->_students) : $_students;
         if ($_request->_midshipman) {
             if ($_ea = $_student->enrollment_assessment) {

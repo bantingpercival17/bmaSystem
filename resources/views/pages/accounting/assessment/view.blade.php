@@ -82,7 +82,7 @@
     $_total_fee = 0;
     $_monthly_fee = ['1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
     @endphp
-    
+
     <div class="row">
         <div class="col-md-8">
             <div class="card mb-2">
@@ -305,14 +305,19 @@
         </div>
         <div class="col-md-4">
             <form action="" method="get">
-                @if (request()->input('search_name'))
-                    <input type="hidden" name="search_name" value="{{ request()->input('search_name') }}">
-                @endif
                 <div class="form-group search-input">
                     <input type="search" class="form-control" placeholder="Search..." name="_students">
                 </div>
             </form>
+            <div class=" d-flex justify-content-between mb-2">
+                <h6 class=" fw-bolder text-info">
+                    {{ request()->input('_student') ? 'Search Result: ' . request()->input('_student') : 'Recent Enrollee' }}
+                </h6>
+                <span class="text-primary h6">
+                    No. Result: <b>{{ count($_students) }}</b>
+                </span>
 
+            </div>
             @if ($_students)
                 @foreach ($_students as $item)
                     <div
