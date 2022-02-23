@@ -673,11 +673,12 @@
                             <td>PAYMENT MODE:</td>
                             <td class="text-center">
                                 {{ $_payment_details->payment_mode == 0 ? 'FULLPAYMENT' : 'INSTALLMENT' }}
+                                
                             </td>
 
                         </tr>
                         @if (count($_course_semestral_fee->semestral_fees($_course_semestral_fee->id)) > 0)
-                     
+
                             @foreach ($_course_semestral_fee->semestral_fees($_course_semestral_fee->id) as $item)
                                 <tr>
                                     <td>
@@ -690,10 +691,6 @@
                                             $_total_payment += $_particular_amount;
                                         @endphp
                                         <b> {{ number_format($_particular_amount, 2) }}</b>
-                                        {{-- @php
-                                            $_total_payment += $item->fees;
-                                        @endphp
-                                        <b> {{ number_format($item->fees, 2) }}</b> --}}
                                     </td>
                                 </tr>
                             @endforeach
