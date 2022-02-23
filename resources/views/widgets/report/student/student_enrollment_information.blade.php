@@ -673,6 +673,7 @@
                             <td>PAYMENT MODE:</td>
                             <td class="text-center">
                                 {{ $_payment_details->payment_mode == 0 ? 'FULLPAYMENT' : 'INSTALLMENT' }}
+                                
                             </td>
 
                         </tr>
