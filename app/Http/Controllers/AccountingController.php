@@ -197,7 +197,7 @@ class AccountingController extends Controller
         if ($_request->_midshipman) {
             if ($_ea = $_student->enrollment_assessment) {
                 $_course_semestral_fee =  $_ea->course_semestral_fees($_ea); // Course Semestral Fee Table
-                $_semestral_fees = $_course_semestral_fee ? $_course_semestral_fee->semestral_fees($_course_semestral_fee->id) : [];
+                $_semestral_fees = $_course_semestral_fee ? $_course_semestral_fee->semestral_fees() : [];
                 //return compact('_semestral_fees');
             } else {
                 $_semestral_fees = [];

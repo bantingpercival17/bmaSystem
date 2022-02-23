@@ -676,9 +676,8 @@
                             </td>
 
                         </tr>
-                        @if (count($_course_semestral_fee->semestral_fees($_course_semestral_fee->id)) > 0)
-                     
-                            @foreach ($_course_semestral_fee->semestral_fees($_course_semestral_fee->id) as $item)
+                        @if (count($_course_semestral_fee->semestral_fees()) > 0)
+                            @foreach ($_course_semestral_fee->semestral_fees() as $item)
                                 <tr>
                                     <td>
                                         {{ ucwords(str_replace(['_', 'tags'], [' ', 'Fee'], $item->particular_tag)) }}
@@ -690,10 +689,6 @@
                                             $_total_payment += $_particular_amount;
                                         @endphp
                                         <b> {{ number_format($_particular_amount, 2) }}</b>
-                                        {{-- @php
-                                            $_total_payment += $item->fees;
-                                        @endphp
-                                        <b> {{ number_format($item->fees, 2) }}</b> --}}
                                     </td>
                                 </tr>
                             @endforeach

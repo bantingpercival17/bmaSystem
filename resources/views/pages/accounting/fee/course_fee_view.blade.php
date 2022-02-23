@@ -49,7 +49,7 @@ $_title = 'Course Fee | ' . $_course->course_name;
                                             @endif
                                             - {{ $item->curriculum->curriculum_name }}
                                         </td>
-                                        <td>{{-- {{ $item->semestral_fees($item->id) }} --}}
+                                        <td>{{-- {{ $item->semestral_fees() }} --}}
                                             {{ $item->total_tuition_fee($item) ? number_format($item->total_tuition_fee($item), 2) : '0.00' }}
                                         </td>
                                         <td>
