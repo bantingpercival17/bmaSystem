@@ -8,6 +8,8 @@ use App\Models\Section;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentSection;
+use App\Models\SubjectClass;
+use App\Report\GradingSheetReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +25,23 @@ class DeanController extends Controller
         $_course = CourseOffer::where('course_code', '!=', 'pbm')->get();
         return view('pages/dean/grade-book/view', compact('_course'));
     }
-
+    public function grading_verification_view(Request $_request)
+    {
+        $_section = Section::find(base64_decode($_request->_section));
+        return view('pages.dean.grade-book.grading_verification_view', compact('_section'));
+    }
+    public function grading_sheet_view(Request $_request)
+    {
+        $_subject = SubjectClass::find(base64_decode($_request->_subject));
+        $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
+        if ($_subject_code == 'BRDGE') {
+            $_students = $_subject->section->student_with_bdg_sections;
+        } else {
+            $_students = $_subject->section->student_sections;
+        }
+        $_report = new GradingSheetReport($_students, $_subject);
+        return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+    }
     public function e_clearance_view(Request $_request)
     {
         $_course = CourseOffer::where('course_code', '!=', 'pbm')->get();
