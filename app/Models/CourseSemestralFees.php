@@ -22,7 +22,7 @@ class CourseSemestralFees extends Model
             ->join('particular_fees as pf', 'pf.id', 'semestral_fees.particular_fee_id')
             ->join('particulars as p', 'p.id', 'pf.particular_id')
             ->groupBy('p.particular_tag')
-            ->where('p.particular_tag', '!=', 'addition_tags')->get();
+            ->where('p.particular_tag', '!=', 'addition_tags')->orderBy('p.particular_tag')->get();
     }
     public function additional_fees($_data)
     {
