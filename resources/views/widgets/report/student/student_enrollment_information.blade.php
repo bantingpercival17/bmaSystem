@@ -677,6 +677,7 @@
 
                         </tr>
                         @if (count($_course_semestral_fee->semestral_fees($_course_semestral_fee->id)) > 0)
+                     
                             @foreach ($_course_semestral_fee->semestral_fees($_course_semestral_fee->id) as $item)
                                 <tr>
                                     <td>
