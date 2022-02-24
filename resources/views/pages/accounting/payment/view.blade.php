@@ -407,7 +407,6 @@
             </div>
         </div>
     </div>
-    <img src="" alt="">
 
 @section('js')
     <script>
@@ -422,9 +421,6 @@
                 $('.form-view').contents().find('body').append($("<img/>").attr('class', 'image-frame').attr("src",
                     $(this).data('document-url')).attr("title",
                     "sometitle").attr('width', '100%'))
-                /* append(
-                                    '<img class="image-frame" width="100%" src="' + $(this).data('document-url') + '" alt="">'
-                                ); */
                 console.log(file)
             } else {
                 $('.form-view').attr('src', $(this).data('document-url'))

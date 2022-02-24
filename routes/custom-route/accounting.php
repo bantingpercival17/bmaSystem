@@ -6,6 +6,7 @@ use App\Http\Controllers\AccountingController;
 Route::prefix('accounting')->group(function () {
     Route::get('/', [AccountingController::class, 'index'])->name('accounting.dashboard');
     Route::get('/dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard'); // Dashboard
+    Route::get('/dashboard/payment-pending', [AccountingController::class, 'payment_pending_view'])->name('accounting.dashboard-payment-assessment');
     // Assessment
     Route::get('/assessment-fee', [AccountingController::class, 'assessment_view'])->name('accounting.assessments'); // Assessment View
     Route::post('/assessment-fee', [AccountingController::class, 'assessment_store'])->name('accounting.payment-assessment'); // Assessment Store

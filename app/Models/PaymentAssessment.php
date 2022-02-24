@@ -34,6 +34,10 @@ class PaymentAssessment extends Model
     {
         return $this->hasMany(PaymentTransaction::class, 'assessment_id')->where('is_removed', false);
     }
+    public function online_enrollment_payment()
+    {
+        return $this->hasOne(PaymentTrasanctionOnline::class, 'assessment_id')->where('is_removed', false);
+    }
     public function online_payment_transaction()
     {
         return $this->hasMany(PaymentTrasanctionOnline::class, 'assessment_id')->where('is_removed', false);

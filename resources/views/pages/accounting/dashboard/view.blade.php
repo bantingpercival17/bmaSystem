@@ -172,7 +172,7 @@
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ route('registrar.dashboard-payment-assessment') . '?_course=' . base64_encode($_course->id) }}&_payment=true">
+                                        href="{{ route('accounting.dashboard-payment-assessment') . '?_course=' . base64_encode($_course->id) }}&_payment=true">
                                         {{ count($_course->payment_transaction) }}
                                     </a>
                                 </td>

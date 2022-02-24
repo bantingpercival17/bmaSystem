@@ -38,6 +38,11 @@ class AccountingController extends Controller
             ->get();
         return view('pages.accounting.dashboard.view', compact('_courses', '_total_population'));
     }
+    public function payment_pending_view(Request $_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        return view('pages.accounting.dashboard.payment-assessment', compact('_course'));
+    }
     public function particular_view(Request $_request)
     {
         $_particulars = Particulars::where('is_removed', false)->get();
