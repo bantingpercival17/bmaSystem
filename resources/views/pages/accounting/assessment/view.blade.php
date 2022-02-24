@@ -320,9 +320,9 @@
             </div>
             @if ($_students)
                 @foreach ($_students as $item)
-                    <div
-                        class="card border-bottom border-4 border-0 text-primary ">
-                        <a href="?_midshipman={{ base64_encode($item->id) }}">
+                    <div class="card border-bottom border-4 border-0 text-primary ">
+                        <a
+                            href="?_midshipman={{ base64_encode($item->id) }}{{ request()->input('_course') ? '&_course=' . request()->input('_course') : '' }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
@@ -335,9 +335,9 @@
                                     </div>
                                 </div>
                                 <div>
-                                  
+
                                     <span
-                                        class="text-danger">{{ $item->account->student->enrollment_application->payment_mode === 0? 'FULL-PAYMENT': ($item->account->student->enrollment_application->payment_mode === 1 || $item->account->student->enrollment_application->payment_mode === 2? 'INSTALLMENT': '-') }}</span>
+                                        class="text-danger">{{ $item->account->student->enrollment_application->payment_mode === 0? 'FULL-PAYMENT': ($item->account->student->enrollment_application->payment_mode === 1 ||$item->account->student->enrollment_application->payment_mode === 2? 'INSTALLMENT': '-') }}</span>
                                 </div>
                             </div>
                         </a>
