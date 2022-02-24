@@ -138,13 +138,11 @@
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                     <thead>
                         <tr class="text-center">
-                            <th>Course</th>
-                            <th>Unenrolled</th>
-                            <th>Cleared</th>
-                            <th>Enrollment <br> Assessment</th>
-                            <th>Assessment <br> Fees</th>
-                            <th>Payment</th>
-                            <th>Enrolled</th>
+                            <th>CCOURSE</th>
+                            <th>EXPECTED <br> ENROLLEE</th>
+                            <th>FOR <br> ASSESSMENT</th>
+                            <th>PAYMENT <br> VERIFICATION</th>
+                            <th>TOTAL <br> ENROLLED</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -154,16 +152,7 @@
                                 <td>
                                     {{ count($_course->previous_enrolled) }}
                                 </td>
-                                <td>
-                                    <a
-                                        href="{{ route('registrar.dashboard-student-clearance-list') . '?_course=' . base64_encode($_course->id) }}">
-                                        {{ count($_course->students_clearance) }}
-                                    </a>
-                                </td>
-                                <td>
-                                    <a
-                                        href="{{ route('registrar.enrollment') }}">{{ count($_course->enrollment_application) }}</a>
-                                </td>
+
                                 <td>
                                     <a
                                         href="{{ route('accounting.payment-assessment') . '?_course=' . base64_encode($_course->id) }}">

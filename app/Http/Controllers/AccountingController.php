@@ -336,12 +336,14 @@ class AccountingController extends Controller
         } else {
             $_vouchers = Voucher::find($_request->voucher);
             $_payment_assessment = PaymentAssessment::find($_request->_assessment);
+            $_payment_details = PaymentAssessment::find($_request->_assessment);
+            $_voucher_amount = $_vouchers->voucher_code == "TCC" ? $_payment_details->course_semestral_fee->total_payments($_payment_details) : $_vouchers->voucher_amount;
             $_student_no = str_replace('-', '', $_payment_assessment->enrollment_assessment->student->account->student_number);
             $_payment_details = array(
                 'assessment_id' => $_request->_assessment,
                 'or_number' => $_vouchers->voucher_code . "." . $_student_no,
                 'payment_transaction' => $_payment_transaction,
-                'payment_amount' => $_vouchers->voucher_amount,
+                'payment_amount' => $_voucher_amount,
                 'payment_method' => $_request->payment_method,
                 'remarks' => $_request->remarks,
                 'transaction_date' => $_request->tran_date ? $_request->tran_date : date('Y-m-d'),

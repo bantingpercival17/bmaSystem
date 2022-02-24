@@ -43,12 +43,36 @@
                 </div>
             </div>
             @if ($_student)
+                <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
+                    <div class="dropdown mt-3 mb-2 w-100">
+                        <a class=" dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false"
+                            aria-expanded="false">
+                            <span class="text-muted">Academic Year :</span>
+                            <b>{{ Auth::user()->staff->current_academic()->semester }} |
+                                {{ Auth::user()->staff->current_academic()->school_year }}</b>
+                        </a>
+                        <ul class="dropdown-menu w-100" data-popper-placement="bottom-start">
+                            @php
+                                $_url = request()->is('accounting/particular/fee*') ? route('accounting.particular-fee-view') : '';
+                            @endphp
+                            @if (Auth::user()->staff->academics()->count() > 0)
+                                @foreach (Auth::user()->staff->academics() as $_academic)
+                                    <li>
+                                        <a class="dropdown-item "
+                                            href="{{ $_url }}?_academic={{ base64_encode($_academic->id) }} {{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
+                                            {{ $_academic->semester }} | {{ $_academic->school_year }}</a>
+                                    </li>
+                                @endforeach
+                            @endif
+                        </ul>
+                    </div>
+                </nav>
                 <div class="card mt-2">
                     <div class="card-body">
                         <div class="">
                             <label for="" class="h4">
                                 <b>
-                                    {{ $_student->enrollment_assessment->academic->semester }}
+                                    {{ strtoupper($_student->enrollment_assessment->academic->semester) }}
                                     <small class="text-primary">
                                         {{ $_student->enrollment_assessment->academic->school_year }}</small>
                                 </b>
