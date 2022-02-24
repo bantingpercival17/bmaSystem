@@ -31,7 +31,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/student-profile', [RegistrarController::class, 'student_list_view'])->name('registrar.students'); // Student List View
     Route::get('/student-profile/view', [RegistrarController::class, 'student_profile_view'])->name('registrar.student-profile');
     Route::get('/student-profile/student-information-report', [RegistrarController::class, 'student_information_report'])->name('registrar.student-information-report');
-
+    Route::get('/student-profile/student-application-report', [RegistrarController::class, 'student_application_report'])->name('registrar.student-application-view');
     // Section 
     Route::get('/sections', [RegistrarController::class, 'section_view'])->name('registrar.section-view'); // Section View
     Route::post('/sections', [RegistrarController::class, 'section_store'])->name('registrar.section-store'); // Section Store

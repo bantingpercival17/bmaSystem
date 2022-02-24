@@ -66,8 +66,11 @@ $_title = 'Student';
     <div class="col-12 mt-4">
         <div class="card">
             <div class="card-header pb-0 p-3">
+                <a href="{{ route('registrar.student-application-view') }}?_student={{ base64_encode($_student->id) }}"
+                    class="btn btn-primary btn-sm float-end">FORM RG-01</a>
                 <h5 class="mb-1"><b>PROFILE INFORMATION</b></h5>
                 <p class="text-sm">Student Information of the cadet's/ student's at Baliwag Maritime Academy</p>
+
             </div>
             <div class="card-body p-3">
 
@@ -191,4 +194,3 @@ $_title = 'Student';
         </div>
     </div>
 @endsection
-    

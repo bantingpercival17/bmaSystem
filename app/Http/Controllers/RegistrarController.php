@@ -294,6 +294,12 @@ class RegistrarController extends Controller
         return $_student_report->enrollment_information(base64_decode($_request->_assessment));
     }
 
+    public function student_application_report(Request $_request)
+    {
+        $_student_report = new StudentReport();;
+        return $_student_report->application_form(base64_decode($_request->_student));
+    }
+
     // Section Panel 
     public function section_view(Request $_request)
     {
