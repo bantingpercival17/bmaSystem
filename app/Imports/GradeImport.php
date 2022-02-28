@@ -59,7 +59,7 @@ class GradeImport implements ToCollection
                                 if ($_header_data['type'] != "Q0" && $_header_data['type'] != "none0") {
                                     if ($_check_details) {
                                         // Update Score
-                                        $_save = GradeEncode::where($_score_details)->update(['score' => floatval($_data[$_key])]);
+                                        $_save = GradeEncode::where($_score_details)->update(['score' => floatval($_data[$_key]), 'is_removed' => 0]);
                                         $_data_to_log[] = 'Updated Grades';
                                     } else {
                                         // Save Score
