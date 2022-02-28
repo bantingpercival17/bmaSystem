@@ -83,6 +83,15 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.academic_id', $_academic->id);
     }
 
+    public function payment_assessment_year_level($_year_level)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->leftJoin('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
+            ->whereNull('pa.enrollment_id')
+            ->where('enrollment_assessments.year_level', $_year_level);
+    }
     public function payment_assessment()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
@@ -98,6 +107,15 @@ class CourseOffer extends Model
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
             ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
             ->whereNull('pt.assessment_id');
+    }
+    public function payment_transaction_year_level($_year_level)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
+            ->whereNull('pt.assessment_id')
+            ->where('enrollment_assessments.year_level', $_year_level);
     }
     public function sections()
     {

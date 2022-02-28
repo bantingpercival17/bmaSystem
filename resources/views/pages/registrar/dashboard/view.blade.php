@@ -67,7 +67,7 @@
                             data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
                             <div class="card-body">
                                 <a
-                                    href="{{ route('registrar.course-enrolled') }}?_course={{ base64_encode($_course->id) }}&_academic={{ request()->input('_academic') }}">
+                                    href="{{ route('registrar.course-enrolled') }}?_course={{ base64_encode($_course->id) }}{{request()->input('_academic') ? '&_academic='.request()->input('_academic'):''}}">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <h3 class="counter">
                                             {{ count($_course->enrollment_list) }}
