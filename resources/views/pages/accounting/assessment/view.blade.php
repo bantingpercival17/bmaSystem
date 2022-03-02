@@ -185,7 +185,7 @@
                                         <div class="col-md">
                                             <label for="" class=""><b>PARTICULARS</b></label>
                                             @if (count($_semestral_fees) > 0)
-                                                
+
                                                 @foreach ($_semestral_fees as $item)
                                                     <div class="row">
                                                         <div class="col-md">
@@ -335,7 +335,7 @@
                                     <div class="col-md">
                                         <div class="form-group">
                                             <input type="hidden" class="payment-mode"
-                                                value="{{ $_student->enrollment_application->payment_mode }}">
+                                                value="{{ $_student->enrollment_application ? $_student->enrollment_application->payment_mode : '' }}">
                                             <input type="hidden" class="course"
                                                 value="{{ $_assessment->course_id }}">
                                             <span class="text-muted"><b>MODE :</b></span>
@@ -353,7 +353,7 @@
                                     <div class="col-md">
                                         <label for="" class=""><b>PARTICULARS</b></label>
                                         @if (count($_semestral_fees) > 0)
-                                            
+
                                             @foreach ($_semestral_fees as $item)
                                                 <div class="row">
                                                     <div class="col-md">
