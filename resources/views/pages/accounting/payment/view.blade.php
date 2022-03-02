@@ -162,6 +162,7 @@
                                                 <option value="VOUCHER">VOUCHER</option>
                                                 <option value="LOAN">LOAN</option>
                                                 <option value="CREDIT CARD">CREDIT CARD</option>
+                                                <option value="OVER-PAYMENT">OVER-PAYMENT</option>
                                             </select>
                                         </div>
 
