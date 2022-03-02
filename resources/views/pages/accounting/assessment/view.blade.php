@@ -14,6 +14,10 @@
     <script>
         $(document).ready(function() {
             var mode = $('.payment-mode').val();
+            mode = mode == 2 ? 1 : mode;
+            $(".payment-mode option[value='" + mode +
+                "']").attr('selected', 'selected');
+            console.log(mode)
             computation(mode)
         });
         $('.payment-mode').change(function() {
@@ -23,7 +27,7 @@
 
 
         function computation(mode) {
-            if (mode == 1) {
+            if (mode == 1 || mode == 2) {
                 console.log('Installment')
                 var _tuition_fee = parseFloat($('.tuition-fee').text().replace(/,/g, ''))
                 _computetion = $('.course').val() == 3 ? computetion_of_senior(_tuition_fee) :
@@ -123,7 +127,7 @@
                         <div class="col-md-12">
                             <label for="" class="form-label"><small><b>ACADEMIC YEAR</b></small>: </label>
                             <label class="text-primary">
-                                <b>{{ $_assessment ? $_assessment->academic->semester . ' | ' . $_assessment->academic->school_year : '-' }}
+                                <b>{{ $_assessment? strtoupper($_assessment->academic->semester . ' | ' . $_assessment->academic->school_year): '-' }}
                                 </b>
                             </label>
                         </div>
@@ -137,167 +141,338 @@
                 </div>
                 <div class="card-body">
                     @if ($_assessment)
-                        <form class="form-assessments-view" role="form"
-                            action="{{ route('accounting.payment-assessment') }}" method="post">
-                            @csrf
-                            <input type="hidden" name="enrollment" value="{{ $_assessment ? $_assessment->id : '' }}">
-                            <input type="hidden" name="_student" value="{{ base64_encode($_student->id) }}">
-                            <input type="hidden" name="semestral_fees"
-                                value="{{ $_semestral_fees ? $_assessment->course_semestral_fees($_assessment)->id : '' }}">
-                            <span class="text-primary h5"><b>| TERMS OF PAYMENT</b></span>
-                            <div class="row">
-                                @if ($_assessment)
-                                    @if ($_assessment->course_id != 3)
-                                        <div class="col-md-4">
+                        @if ($_assessment->payment_assessments)
+                            @if (request()->input('reassessment') == true)
+                                <form class="form-assessments-view" role="form"
+                                    action="{{ route('accounting.payment-assessment') }}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="enrollment"
+                                        value="{{ $_assessment ? $_assessment->id : '' }}">
+                                    <input type="hidden" name="_student" value="{{ base64_encode($_student->id) }}">
+                                    <input type="hidden" name="semestral_fees"
+                                        value="{{ $_semestral_fees ? $_assessment->course_semestral_fees($_assessment)->id : '' }}">
+                                    <span class="text-primary h5"><b>| TERMS OF PAYMENT</b></span>
+                                    <div class="row">
+                                        @if ($_assessment)
+                                            @if ($_assessment->course_id != 3)
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <span class="text-muted"><b>BRIDGING PROGRAM :</b></span>
+                                                        <label for=""
+                                                            class="form-control">{{ $_assessment->bridging_program == 'with' ? 'WITH BRIDGING' : 'WITHOUT BRIDGING' }}</label>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endif
+                                        <div class="col-md">
+                                            <input type="hidden" class="payment-mode"
+                                                value="{{ $_assessment->payment_assessments->payment_mode }}">
                                             <div class="form-group">
-                                                <span class="text-muted"><b>BRIDGING PROGRAM :</b></span>
-                                                <label for=""
-                                                    class="form-control">{{ $_assessment->bridging_program == 'with' ? 'WITH BRIDGING' : 'WITHOUT BRIDGING' }}</label>
+                                                <input type="hidden" class="course"
+                                                    value="{{ $_assessment->course_id }}">
+                                                <span class="text-muted"><b>MODE :</b></span>
+                                                <div class="col-sm">
+                                                    <select name="mode" class="form-select payment-mode">
+                                                        <option value="0">Fullpayment</option>
+                                                        <option value="1">Installment</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                    @endif
-                                @endif
-                                <div class="col-md">
-                                    <div class="form-group">
-                                        <input type="hidden" class="course"
-                                            value="{{ $_assessment->course_id }}">
-                                        <span class="text-muted"><b>MODE :</b></span>
-                                        <div class="col-sm">
-                                            <select name="mode" class="form-select payment-mode">
-                                                <option value="0"
-                                                    {{ $_student->enrollment_application->payment_mode == 0 ? 'selected' : '' }}>
-                                                    Fullpayment</option>
-                                                <option value="1"
-                                                    {{ $_student->enrollment_application->payment_mode == 2 || $_student->enrollment_application->payment_mode == 1? 'selected': '' }}>
-                                                    Installment</option>
-                                            </select>
-                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <span class="text-primary h5"><b>| PAYMENT DETAILS</b></span>
-                            <div class="row">
-                                <div class="col-md">
-                                    <label for="" class=""><b>PARTICULARS</b></label>
-                                    @if (count($_semestral_fees) > 0)
-                                        {{ $_course_semestral_fee->particular_tags('tuition_tags') }}
-                                        @foreach ($_semestral_fees as $item)
+                                    <span class="text-primary h5"><b>| PAYMENT DETAILS</b></span>
+                                    <div class="row">
+                                        <div class="col-md">
+                                            <label for="" class=""><b>PARTICULARS</b></label>
+                                            @if (count($_semestral_fees) > 0)
+                                                
+                                                @foreach ($_semestral_fees as $item)
+                                                    <div class="row">
+                                                        <div class="col-md">
+                                                            <span class="mt-2 badge bg-info">
+                                                                {{ ucwords(str_replace(['_', 'tags'], [' ', 'Fee'], $item->particular_tag)) }}</span>
+
+                                                        </div>
+                                                        <div class="col-md-4 ">
+                                                            <span class="mt-2 float-end">
+                                                                @php
+                                                                    $_particular_amount = $_assessment->course->id == 3 ? $item->fees : $_course_semestral_fee->particular_tags($item->particular_tag);
+                                                                    
+                                                                    $_total_fee += $_particular_amount;
+                                                                @endphp
+                                                                <b> {{ number_format($_particular_amount, 2) }}</b>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                                <input type="hidden" id="tuition_tags" value="{{ $_total_fee }}">
+                                                @if ($_assessment->course_id == 3)
+                                                    @foreach ($_course_semestral_fee->additional_fees($_course_semestral_fee->id) as $item)
+                                                        <div class="row">
+                                                            <div class="col-md">
+                                                                <span class="mt-2 badge bg-success">
+                                                                    {{ ucwords(str_replace(['_', 'tags'], [' ', 'Fee'], $item->particular_name)) }}</span>
+
+                                                            </div>
+                                                            <div class="col-md-4 ">
+                                                                <span class="mt-2 float-end">
+                                                                    @php
+                                                                        
+                                                                        $_total_fee += $item->particular_amount;
+                                                                    @endphp
+                                                                    <b>
+                                                                        {{ number_format($item->particular_amount, 2) }}</b>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                            @else
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <span class="mt-2 badge bg-info">
+                                                            Please Setup the Tuition Fee
+                                                        </span>
+
+                                                    </div>
+                                                    <div class="col-md-4 ">
+                                                        <span class="mt-2 ">
+                                                            <a href="{{ route('accounting.fees') }}">
+                                                                <span class="mt-2 badge bg-primary">
+                                                                    click here
+                                                                </span>
+                                                            </a>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            @endif
+
                                             <div class="row">
                                                 <div class="col-md">
                                                     <span class="mt-2 badge bg-info">
-                                                        {{ ucwords(str_replace(['_', 'tags'], [' ', 'Fee'], $item->particular_tag)) }}</span>
+                                                        Total Tution Fees</span>
 
                                                 </div>
                                                 <div class="col-md-4 ">
                                                     <span class="mt-2 float-end">
-                                                        @php
-                                                            $_particular_amount = $_assessment->course->id == 3 ? $item->fees : $_course_semestral_fee->particular_tags($item->particular_tag);
-                                                            
-                                                            $_total_fee += $_particular_amount;
-                                                        @endphp
-                                                        <b> {{ number_format($_particular_amount, 2) }}</b>
+                                                        <b class="tuition-fee">
+                                                            {{ number_format($_total_fee, 2) }}</b>
                                                     </span>
                                                 </div>
                                             </div>
-                                        @endforeach
-                                        <input type="hidden" id="tuition_tags" value="{{ $_total_fee }}">
-                                        @if ($_assessment->course_id == 3)
-                                            @foreach ($_course_semestral_fee->additional_fees($_course_semestral_fee->id) as $item)
+                                        </div>
+                                        <div class="col-md">
+                                            <span class="text-muted h6"><b>SCHEDULE PAYMENT</b></span>
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <span class="mt-2 badge bg-info">
+                                                        TOTAL TUITION FEE</span>
+                                                </div>
+                                                <div class="col-md-4 ">
+                                                    <span class="mt-2 float-end">
+                                                        <b class="final-tuition">{{ number_format($_total_fee, 2) }}</b>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <span class="mt-2 badge bg-info">
+                                                        UPON ENROLLMENT </span>
+                                                </div>
+                                                <div class="col-md-4 ">
+                                                    <span class="mt-2 float-end">
+                                                        <b
+                                                            class="upon-enrollment">{{ number_format($_total_fee, 2) }}</b>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            @foreach ($_monthly_fee as $key => $_value)
                                                 <div class="row">
                                                     <div class="col-md">
-                                                        <span class="mt-2 badge bg-success">
-                                                            {{ ucwords(str_replace(['_', 'tags'], [' ', 'Fee'], $item->particular_name)) }}</span>
+                                                        <span class="mt-2 badge bg-info">
+                                                            {{ $_value }} </span>
+
+                                                    </div>
+                                                    <div class="col-md-4 ">
+                                                        <span class="mt-2 float-end">
+                                                            <b class="monthly-fee">-</b>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+
+
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-block mt-2">RE-ASSESSMENT</button>
+                                    </div>
+                                </form>
+                            @else
+                                <a href="{{ route('accounting.assessments') }}?_midshipman={{ request()->input('_midshipman') }}&reassessment=true"
+                                    class="btn btn-primary btn-sm w-100">RE-ASSESS FEE</a>
+                            @endif
+                        @else
+                            <form class="form-assessments-view" role="form"
+                                action="{{ route('accounting.payment-assessment') }}" method="post">
+                                @csrf
+                                <input type="hidden" name="enrollment"
+                                    value="{{ $_assessment ? $_assessment->id : '' }}">
+                                <input type="hidden" name="_student" value="{{ base64_encode($_student->id) }}">
+                                <input type="hidden" name="semestral_fees"
+                                    value="{{ $_semestral_fees ? $_assessment->course_semestral_fees($_assessment)->id : '' }}">
+                                <span class="text-primary h5"><b>| TERMS OF PAYMENT</b></span>
+                                <div class="row">
+                                    @if ($_assessment)
+                                        @if ($_assessment->course_id != 3)
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <span class="text-muted"><b>BRIDGING PROGRAM :</b></span>
+                                                    <label for=""
+                                                        class="form-control">{{ $_assessment->bridging_program == 'with' ? 'WITH BRIDGING' : 'WITHOUT BRIDGING' }}</label>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endif
+                                    <div class="col-md">
+                                        <div class="form-group">
+                                            <input type="hidden" class="payment-mode"
+                                                value="{{ $_student->enrollment_application->payment_mode }}">
+                                            <input type="hidden" class="course"
+                                                value="{{ $_assessment->course_id }}">
+                                            <span class="text-muted"><b>MODE :</b></span>
+                                            <div class="col-sm">
+                                                <select name="mode" class="form-select payment-mode">
+                                                    <option value="0">Fullpayment</option>
+                                                    <option value="1">Installment</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-primary h5"><b>| PAYMENT DETAILS</b></span>
+                                <div class="row">
+                                    <div class="col-md">
+                                        <label for="" class=""><b>PARTICULARS</b></label>
+                                        @if (count($_semestral_fees) > 0)
+                                            
+                                            @foreach ($_semestral_fees as $item)
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <span class="mt-2 badge bg-info">
+                                                            {{ ucwords(str_replace(['_', 'tags'], [' ', 'Fee'], $item->particular_tag)) }}</span>
 
                                                     </div>
                                                     <div class="col-md-4 ">
                                                         <span class="mt-2 float-end">
                                                             @php
+                                                                $_particular_amount = $_assessment->course->id == 3 ? $item->fees : $_course_semestral_fee->particular_tags($item->particular_tag);
                                                                 
-                                                                $_total_fee += $item->particular_amount;
+                                                                $_total_fee += $_particular_amount;
                                                             @endphp
-                                                            <b> {{ number_format($item->particular_amount, 2) }}</b>
+                                                            <b> {{ number_format($_particular_amount, 2) }}</b>
                                                         </span>
                                                     </div>
                                                 </div>
                                             @endforeach
+                                            <input type="hidden" id="tuition_tags" value="{{ $_total_fee }}">
+                                            @if ($_assessment->course_id == 3)
+                                                @foreach ($_course_semestral_fee->additional_fees($_course_semestral_fee->id) as $item)
+                                                    <div class="row">
+                                                        <div class="col-md">
+                                                            <span class="mt-2 badge bg-success">
+                                                                {{ ucwords(str_replace(['_', 'tags'], [' ', 'Fee'], $item->particular_name)) }}</span>
+
+                                                        </div>
+                                                        <div class="col-md-4 ">
+                                                            <span class="mt-2 float-end">
+                                                                @php
+                                                                    
+                                                                    $_total_fee += $item->particular_amount;
+                                                                @endphp
+                                                                <b> {{ number_format($item->particular_amount, 2) }}</b>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        @else
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <span class="mt-2 badge bg-info">
+                                                        Please Setup the Tuition Fee
+                                                    </span>
+
+                                                </div>
+                                                <div class="col-md-4 ">
+                                                    <span class="mt-2 ">
+                                                        <a href="{{ route('accounting.fees') }}">
+                                                            <span class="mt-2 badge bg-primary">
+                                                                click here
+                                                            </span>
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </div>
                                         @endif
-                                    @else
+
                                         <div class="row">
                                             <div class="col-md">
                                                 <span class="mt-2 badge bg-info">
-                                                    Please Setup the Tuition Fee
-                                                </span>
-
-                                            </div>
-                                            <div class="col-md-4 ">
-                                                <span class="mt-2 ">
-                                                    <a href="{{ route('accounting.fees') }}">
-                                                        <span class="mt-2 badge bg-primary">
-                                                            click here
-                                                        </span>
-                                                    </a>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <div class="row">
-                                        <div class="col-md">
-                                            <span class="mt-2 badge bg-info">
-                                                Total Tution Fees</span>
-
-                                        </div>
-                                        <div class="col-md-4 ">
-                                            <span class="mt-2 float-end">
-                                                <b class="tuition-fee"> {{ number_format($_total_fee, 2) }}</b>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md">
-                                    <span class="text-muted h6"><b>SCHEDULE PAYMENT</b></span>
-                                    <div class="row">
-                                        <div class="col-md">
-                                            <span class="mt-2 badge bg-info">
-                                                TOTAL TUITION FEE</span>
-                                        </div>
-                                        <div class="col-md-4 ">
-                                            <span class="mt-2 float-end">
-                                                <b class="final-tuition">{{ number_format($_total_fee, 2) }}</b>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md">
-                                            <span class="mt-2 badge bg-info">
-                                                UPON ENROLLMENT </span>
-                                        </div>
-                                        <div class="col-md-4 ">
-                                            <span class="mt-2 float-end">
-                                                <b class="upon-enrollment">{{ number_format($_total_fee, 2) }}</b>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    @foreach ($_monthly_fee as $key => $_value)
-                                        <div class="row">
-                                            <div class="col-md">
-                                                <span class="mt-2 badge bg-info">
-                                                    {{ $_value }} </span>
+                                                    Total Tution Fees</span>
 
                                             </div>
                                             <div class="col-md-4 ">
                                                 <span class="mt-2 float-end">
-                                                    <b class="monthly-fee">-</b>
+                                                    <b class="tuition-fee"> {{ number_format($_total_fee, 2) }}</b>
                                                 </span>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    </div>
+                                    <div class="col-md">
+                                        <span class="text-muted h6"><b>SCHEDULE PAYMENT</b></span>
+                                        <div class="row">
+                                            <div class="col-md">
+                                                <span class="mt-2 badge bg-info">
+                                                    TOTAL TUITION FEE</span>
+                                            </div>
+                                            <div class="col-md-4 ">
+                                                <span class="mt-2 float-end">
+                                                    <b class="final-tuition">{{ number_format($_total_fee, 2) }}</b>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md">
+                                                <span class="mt-2 badge bg-info">
+                                                    UPON ENROLLMENT </span>
+                                            </div>
+                                            <div class="col-md-4 ">
+                                                <span class="mt-2 float-end">
+                                                    <b class="upon-enrollment">{{ number_format($_total_fee, 2) }}</b>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        @foreach ($_monthly_fee as $key => $_value)
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <span class="mt-2 badge bg-info">
+                                                        {{ $_value }} </span>
+
+                                                </div>
+                                                <div class="col-md-4 ">
+                                                    <span class="mt-2 float-end">
+                                                        <b class="monthly-fee">-</b>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        @endforeach
 
 
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block mt-2">SUBMIT</button>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-block mt-2">SUBMIT</button>
-                            </div>
-                        </form>
+                            </form>
+                        @endif
+
                     @endif
                 </div>
             </div>
@@ -344,7 +519,6 @@
 
                     </div>
                 @endforeach
-
             @else
                 <div class="card border-bottom border-4 border-0 border-primary">
                     <div class="card-body">

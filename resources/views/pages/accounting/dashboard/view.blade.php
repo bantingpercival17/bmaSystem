@@ -138,7 +138,7 @@
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                     <thead>
                         <tr class="text-center">
-                            <th>CCOURSE</th>
+                            <th>COURSE</th>
                             <th>EXPECTED <br> ENROLLEE</th>
                             <th>FOR <br> ASSESSMENT</th>
                             <th>PAYMENT <br> VERIFICATION</th>

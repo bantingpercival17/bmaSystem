@@ -219,6 +219,8 @@
                             <a href="{{ route('accounting.payment-transactions') }}?_midshipman={{ request()->input('_midshipman') }}&add-transaction=true"
                                 class="btn btn-primary w-100">
                                 Add Transaction</a>
+                            <a href="{{ route('accounting.assessments') }}?_midshipman={{ request()->input('_midshipman') }}&reassessment=true"
+                                class="btn btn-primary w-100 mt-3">Re-assess Fee</a>
                         @endif
                         <hr>
                         <div class="payment-history">
@@ -403,7 +405,6 @@
 
                     </div>
                 @endforeach
-
             @else
                 <div class="card border-bottom border-4 border-0 border-primary">
                     <div class="card-body">

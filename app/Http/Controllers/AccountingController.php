@@ -229,11 +229,11 @@ class AccountingController extends Controller
             PaymentAssessment::create($_details);
             return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Complete.');
         } else {
-
+            $_payment_assessment->course_semestral_fee_id =  $_request->semestral_fees;
+            $_payment_assessment->payment_mode =  $_request->mode;
+            $_payment_assessment->save();
             return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Updated');
         }
-
-        //return dd($_details);
     }
 
     public function semestral_clearance_view(Request $_request)
