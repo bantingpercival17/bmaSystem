@@ -305,6 +305,7 @@ class AccountingController extends Controller
             ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'ea.id')
             ->join('payment_trasanction_onlines as pto', 'pto.assessment_id', 'pa.id')
+            ->where('pto.is_removed',false)
             ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
             ->whereNull('pto.is_approved')
             ->get();
