@@ -54,11 +54,13 @@ class CourseOffer extends Model
     public function previous_enrolled()
     {
         $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
-        return $this->hasMany(EnrollmentAssessment::class, 'course_id')->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
             ->where('pt.remarks', 'Upon Enrollment')
             ->where('enrollment_assessments.is_removed', false)
             ->where('enrollment_assessments.academic_id', $_academic->id)
+            ->groupBy('pt.assessment_id')
             ->orderBy('pa.created_at', 'DESC');
     }
     public function students_clearance()

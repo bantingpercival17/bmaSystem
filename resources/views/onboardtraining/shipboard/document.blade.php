@@ -20,19 +20,11 @@ $_title = 'Shipboard Monitoring';
         </svg>{{ $_title }}
     </li>
 @endsection
-@section('js')
-    <script>
-        $(document).on('click', '.btn-documents', function(evt) {
-            $('.frame-documents').attr('src', $(this).data('documents'))
-        });
-    </script>
-@endsection
 @section('page-content')
     <div class="card mb-2">
         <div class="row no-gutters">
             <div class="col-md col-lg-2">
-
-                <img src="{{ $_midshipman ? $_midshipman->profile_pic($_midshipman->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                <img src="{{ $_midshipman? $_midshipman->profile_pic($_midshipman->account): 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
                     class="card-img " alt="#">
             </div>
             <div class="col-md-8 col-lg-8">
@@ -54,8 +46,7 @@ $_title = 'Shipboard Monitoring';
     </div>
 
     <div class="row">
-
-        <div class="col-md-6">
+        <div class="col-md-9">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="header-title">
@@ -72,7 +63,7 @@ $_title = 'Shipboard Monitoring';
                                 <a class="nav-link" data-bs-toggle="collapse" href="#home-{{ $_journal->id }}"
                                     role="button" aria-expanded="false" aria-controls="home">
                                     <p
-                                        class="{{ $_journal->is_approved == null ? 'text-muted' : ($_journal->is_approved == 1 ? 'text-primary' : 'text-danger') }} h5">
+                                        class="{{ $_journal->is_approved == null? 'text-muted': ($_journal->is_approved == 1? 'text-primary': 'text-danger') }} h5">
                                         <b>{{ strtoupper($_journal->journal_type) }}</b>
                                     </p>
                                     @if ($_journal->is_approved == 1)
@@ -107,7 +98,9 @@ $_title = 'Shipboard Monitoring';
                                             @include('layouts.icon-main')
                                             @if ($_journal)
                                                 @foreach (json_decode($_journal->file_links) as $links)
-                                                    <a for="" data-documents={{ $links }} class="btn-documents col">
+                                                    <a class="btn-form-document col" data-bs-toggle="modal"
+                                                        data-bs-target=".document-view-modal"
+                                                        data-document-url="{{ $links }}">
                                                         @php
                                                             $myFile = pathinfo($links);
                                                             $_ext = $myFile['extension'];
@@ -170,10 +163,29 @@ $_title = 'Shipboard Monitoring';
             </div>
 
         </div>
-        <div class="col-md-6">
+    </div>
+    <div class="modal fade document-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Document Review</h5>
 
-            <iframe class="frame-documents" src="{{ $links }}" frameborder="0" width="100%" height="700px"></iframe>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="btn-group " role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="view.rotate(-Math.PI/2)">Rotate
+                            Left</button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="initDraw()">Reset</button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="view.rotate(Math.PI/2)">Rotate
+                            Right</button>
+                    </div>
+                </div>
+                <canvas width="100%" height="600px"></canvas>
+                <iframe class="iframe-container form-view iframe-placeholder" src="" width="100%" height="600px" style="display: none" id="iframe">
+                </iframe>
+            </div>
         </div>
-
     </div>
 @endsection

@@ -104,6 +104,10 @@
 
     <!-- App Script -->
     <script src="{{ asset('resources/js/gigz.js') }}" defer></script>
+    {{-- documents Viewr --}}
+    <script src="{{ asset('resources/js/plugins/custom-document-viewer.js') }}"></script>
+
+    <script src="{{ asset('resources/js/plugins/viewer.1.0.0.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         @if (Session::has('success'))

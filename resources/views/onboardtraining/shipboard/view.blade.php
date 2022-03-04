@@ -20,7 +20,7 @@ $_title = 'Shipboard Monitoring';
                 <div class="row no-gutters">
                     <div class="col-md-6 col-lg-4">
 
-                        <img src="{{ $_midshipman ? $_midshipman->profile_pic($_midshipman->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                        <img src="{{ $_midshipman? $_midshipman->profile_pic($_midshipman->account): 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
                             class="card-img" alt="#">
                     </div>
                     <div class="col-md-6 col-lg-8">
@@ -32,7 +32,7 @@ $_title = 'Shipboard Monitoring';
                                 <span>STUDENT NUMBER: <b>
                                         {{ $_midshipman ? $_midshipman->account->student_number : '-' }}</b></span>
                                 <br>
-                                <span>COURE: <b>
+                                <span>COURSE: <b>
                                         {{ $_midshipman ? $_midshipman->enrollment_assessment->course->course_name : '-' }}</b></span>
 
                             </p>
@@ -78,7 +78,7 @@ $_title = 'Shipboard Monitoring';
                                             class="text-primary"><b>{{ $_midshipman->shipboard_training->company_name }}</b></label>
                                     </div>
                                     <div class="form-group col-md">
-                                        <label class="form-label-sm"><small>NAME OF SHIPPING</small></label>
+                                        <label class="form-label-sm"><small>NAME OF VESSEL</small></label>
                                         <br>
                                         <label class="text-primary">
                                             <b>{{ $_midshipman->shipboard_training->vessel_name }}</b>
@@ -87,13 +87,7 @@ $_title = 'Shipboard Monitoring';
                                 </div>
 
                                 <div class="row">
-                                    <div class="form-group col-md">
-                                        <label class="form-label-sm"><small>NAME OF SHIPPING</small></label>
-                                        <br>
-                                        <label class="text-primary">
-                                            <b>{{ $_midshipman->shipboard_training->vessel_name }}</b>
-                                        </label>
-                                    </div>
+
                                     <div class="form-group col-md">
                                         <label class="form-label-sm"><small>VESSEL TYPE</small></label>
                                         <br>
@@ -121,43 +115,49 @@ $_title = 'Shipboard Monitoring';
                                 </div>
                             </form>
                         </div>
-                        <hr>
-                        <div class="card-body">
-                            <div class="header-title d-flex justify-content-between">
-                                <span class="h5 text-primary fw-bolder">NARATIVE REPORT</span>
-                            </div>
-                            @include('layouts.icon-main')
-                            <div class="swiper swiper-container mySwiper position-relative">
-                                <div class="swiper-button-next1">
-                                    @yield('icon-left')
-                                </div>
-                                <div class="swiper-wrapper row-cols-2 row-cols-lg-4 list-inline">
-                                    @foreach ($_midshipman->narative_report as $_journal)
-                                        <div class="swiper-slide">
-                                            <div class="text-center">
-                                                <div class="card-body ">
-                                                    <a
-                                                        href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->month) }}&_midshipman={{ base64_encode($_midshipman->id) }}">
-                                                        <i class="icon text-muted">
-                                                            @yield('icon-document')
-                                                        </i>
-
-                                                        <h6 class="text-muted mt-3">
-                                                            {{ date('F - Y', strtotime($_journal->month)) }}
-                                                        </h6>
-                                                    </a>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                <div class="swiper-button-prev1">
-                                    @yield('icon-right')
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="header-title d-flex justify-content-between">
+                            <span class="h5 text-primary fw-bolder">NARATIVE REPORT</span>
                         </div>
+                        <div class="table-responsive mt-4">
+                            <table id="basic-table" class="table table-striped mb-0" role="grid">
+                                <thead>
+                                    <tr>
+                                        <th>Narative Report</th>
+                                        <th>Progress</th>
+                                        <th>Summary Report</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($_midshipman->narative_report as $_journal)
+                                        <tr>
+                                            <td>
+                                                <a
+                                                    href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->month) }}&_midshipman={{ base64_encode($_midshipman->id) }}">
+                                                    {{ date('F - Y', strtotime($_journal->month)) }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center mb-2">
+                                                    <h6>{{ ($_journal->is_approved / 5) * 100 }}%</h6>
+                                                </div>
+                                                <div class="progress bg-soft-info shadow-none w-100" style="height: 6px">
+                                                    <div class="progress-bar bg-info" data-toggle="progress-bar"
+                                                        role="progressbar"
+                                                        aria-valuenow="{{ ($_journal->is_approved / 5) * 100 }}"
+                                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
 
@@ -186,7 +186,6 @@ $_title = 'Shipboard Monitoring';
 
                     </div>
                 @endforeach
-
             @else
                 <div class="card border-bottom border-4 border-0 border-primary">
                     <div class="card-body">
