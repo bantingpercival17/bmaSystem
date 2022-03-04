@@ -290,7 +290,6 @@ $_title = 'Enrollment';
                                                     </td>
                                                 </tr>
                                             @endif
-
                                         @endforeach
                                     @else
                                         <tr>
@@ -323,8 +322,8 @@ $_title = 'Enrollment';
                                                         {{ $_data }}
                                                     </b>
                                                 <td>
-                                                    @if ($_student->non_academic_clearance($_data))
-                                                        @if ($_student->non_academic_clearance($_data)->is_approved == 1)
+                                                    @if ($_student->non_academic_clearance_for_enrollment($_data))
+                                                        @if ($_student->non_academic_clearance_for_enrollment($_data)->is_approved == 1)
                                                             <span class="text-primary"><b>Cleared</b></span>
                                                         @else
                                                             <span class="text-warning"><b>Not Clear</b></span><br>
@@ -351,7 +350,6 @@ $_title = 'Enrollment';
         </div>
         <div class="tab-pane fade" id="contact-two" role="tabpanel" aria-labelledby="contact-tab-two">
             @foreach ($_student->enrollment_history as $item)
-
             @endforeach
         </div>
     </div>

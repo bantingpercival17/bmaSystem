@@ -52,7 +52,7 @@ $_title = 'Enrollment';
                                             <span>{{ $_student ? ($_student->account ? $_student->account->student_number : '-') : '-' }}</span>
                                             <br>
                                             <span>
-                                                {{ $_student ? $_student->enrollment_assessment->course->course_name : '-' }}
+                                                {{ $_student? ($_student->enrollment_assessment->course? $_student->enrollment_assessment->course->course_name: '-'): '-' }}
                                             </span>
                                             <br>
                                             <span>

@@ -13,7 +13,7 @@
 
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        Payment Assessment
+        Student Not Cleared
     </li>
 @endsection
 @section('page-content')
@@ -24,8 +24,7 @@
         @endphp
         @foreach ($_level as $level)
             @php
-                $_payment_ = request()->input('_payment') == 'true' ? $_course->payment_transaction_year_level($level)->get() : [];
-                $_payment_ = request()->input('_assessment') == 'true' ? $_course->payment_assessment_year_level($level)->get() : $_payment_;
+                $_payment_ = $_course->students_not_clearance_year_level($level)->get();
             @endphp
             <div class="col-md">
                 <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
@@ -88,7 +87,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <div class="header-title">
-                <h4 class="card-title">Payment Assessment Overview</h4>
+                <h4 class="card-title">Student Not Cleared List</h4>
                 <small class="text-muted mt-2 fw-bolder">{{ $_course->course_name }}</small>
             </div>
         </div>
@@ -102,14 +101,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php
-                            $_payment = request()->input('_payment') == 'true' ? $_course->payment_transaction : [];
-                            $_payment = request()->input('_assessment') == 'true' ? $_course->payment_assessment : $_payment;
-                        @endphp
-                        @if (count($_payment))
-                            @foreach ($_payment as $_payment)
+
+                        @if (count($_course->students_not_clearance))
+                            @foreach ($_course->students_not_clearance as $_payment)
                                 <tr>
-                                    <td>{{ $_payment->student->first_name . ' ' . $_payment->student->last_name }}</td>
+                                    <td>
+                                        <a
+                                            href="{{ route('registrar.student-clearance') }}?_student={{ base64_encode($_payment->student->id) }}">
+                                            {{ $_payment->student->first_name . ' ' . $_payment->student->last_name }}
+                                        </a>
+                                    </td>
                                     <td>
                                         {{ Auth::user()->staff->convert_year_level($_payment->year_level) }}
                                     </td>

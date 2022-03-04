@@ -49,7 +49,7 @@ class Staff extends Model
             ->leftJoin('grade_submissions as gs', 'gs.subject_class_id', 'subject_classes.id')
             ->where('gs.form', 'ad1')
             ->where('gs.period', 'midterm')
-           /*  ->where('gs.is_approved',true) *//* ->orWhere('gs.is_approved','=','null') */
+            /*  ->where('gs.is_approved',true) *//* ->orWhere('gs.is_approved','=','null') */
             ->with('midterm_grade_submission')
             ->where('subject_classes.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('subject_classes.is_removed', false);
@@ -89,5 +89,15 @@ class Staff extends Model
     public function academics()
     {
         return AcademicYear::where('is_removed', false)->orderBy('id', 'Desc')->get();
+    }
+    public function convert_year_level($_data)
+    {
+        $_level = $_data ==  11 ? 'Grade 11' : '';
+        $_level = $_data ==  12 ? 'Grade 12' : $_level;
+        $_level = $_data ==  1 ? '1st Class' : $_level;
+        $_level = $_data ==  2 ? '2nd Class' : $_level;
+        $_level = $_data ==  3 ? '3rd Class' : $_level;
+        $_level = $_data ==  4 ? '4th Class' : $_level;
+        return $_level;
     }
 }

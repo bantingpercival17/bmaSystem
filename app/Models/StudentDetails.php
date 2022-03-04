@@ -239,8 +239,12 @@ class StudentDetails extends Model
     public function non_academic_clearance($_data)
     {
         $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
-        // $_enrollment = $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
         return $this->hasOne(StudentNonAcademicClearance::class, 'student_id')->where('non_academic_type', str_replace(' ', '-', strtolower($_data)))->where('is_removed', false)->where('academic_id', Auth::user()->staff->current_academic()->id)->latest('id')->first();
+    }
+    public function non_academic_clearance_for_enrollment($_data)
+    {
+        $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+        return $this->hasOne(StudentNonAcademicClearance::class, 'student_id')->where('non_academic_type', str_replace(' ', '-', strtolower($_data)))->where('is_removed', false)->where('academic_id', $_academic->id)->latest('id')->first();
     }
     public function academic_clearance_status()
     {

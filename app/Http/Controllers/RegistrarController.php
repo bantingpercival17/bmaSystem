@@ -55,7 +55,11 @@ class RegistrarController extends Controller
     public function dashboard_student_clearance_list(Request $_request)
     {
         $_course = CourseOffer::find(base64_decode($_request->_course));
-        return view('pages.registrar.dashboard.student-clearance-list', compact('_course'));
+        if ($_request->_clearance_status == 'not-cleared') {
+            return view('pages.registrar.dashboard.student-not-clearance-list', compact('_course'));
+        } else {
+            return view('pages.registrar.dashboard.student-clearance-list', compact('_course'));
+        }
     }
     public function enrollment_view(Request $_request)
     {

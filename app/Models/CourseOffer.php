@@ -56,11 +56,11 @@ class CourseOffer extends Model
         $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment')
+            /*  ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment') */
             ->where('enrollment_assessments.is_removed', false)
             ->where('enrollment_assessments.academic_id', $_academic->id)
-            ->groupBy('pt.assessment_id')
+            #->groupBy('pt.assessment_id')
             ->orderBy('pa.created_at', 'DESC');
     }
     public function students_clearance()
@@ -73,6 +73,31 @@ class CourseOffer extends Model
             ->where('offical_cleareds.is_removed', false)
             ->where('offical_cleareds.academic_id', $_previous_academic->id)
             ->whereNull('ep.student_id');
+    }
+    public function students_not_clearance()
+    {
+        $_previous_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.student_id', 'enrollment_assessments.year_level')
+            ->leftJoin('offical_cleareds as oc', function ($join) {
+                $join->on('oc.student_id', 'enrollment_assessments.student_id');
+                $join->on('oc.academic_id', 'enrollment_assessments.academic_id');
+            })
+            ->where('enrollment_assessments.academic_id', $_previous_academic->id)
+            ->whereNull('oc.student_id');
+    }
+    public function students_not_clearance_year_level($_level)
+    {
+        $_previous_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.student_id', 'enrollment_assessments.year_level')
+            ->leftJoin('offical_cleareds as oc', function ($join) {
+                $join->on('oc.student_id', 'enrollment_assessments.student_id');
+                $join->on('oc.academic_id', 'enrollment_assessments.academic_id');
+            })
+            ->where('enrollment_assessments.year_level', $_level)
+            ->where('enrollment_assessments.academic_id', $_previous_academic->id)
+            ->whereNull('oc.student_id');
     }
     public function enrollment_application()
     {
