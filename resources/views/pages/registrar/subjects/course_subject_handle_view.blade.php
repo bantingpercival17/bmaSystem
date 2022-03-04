@@ -30,7 +30,8 @@ $_title = 'Subjects';
             <div class="card">
                 <div class="card-header">
                     <label class="card-title">
-                        <b class="h4">{{ ucwords(strtolower($_subject->subject->subject_name)) }}</b>
+                        <b
+                            class="h4">{{ ucwords(strtolower($_subject->subject->subject_name . ' ' . $_subject->subject->subject->subject_code)) }}</b>
                         <br>
                         {{ $_subject->course->course_name }}
                     </label>
@@ -58,17 +59,16 @@ $_title = 'Subjects';
                                 <div class="form-group">
                                     <label for="" class="form-label">Section</label>
                                     <select name="_section" class="form-select">
-                                        @if (count($_subject->course->section([Auth::user()->staff->current_academic()->id,
-                                        $_subject->year_level])->get())>0)
-                                        @foreach ($_subject->course->section([Auth::user()->staff->current_academic()->id, $_subject->year_level])->get() as $_section)
-                                            <option value="{{ $_section->id }}">
-                                                {{ $_section->section_name }}
+                                        @if (count($_subject->course->section([Auth::user()->staff->current_academic()->id, $_subject->year_level])->get()) > 0)
+                                            @foreach ($_subject->course->section([Auth::user()->staff->current_academic()->id, $_subject->year_level])->get() as $_section)
+                                                <option value="{{ $_section->id }}">
+                                                    {{ $_section->section_name }}
+                                                </option>
+                                            @endforeach
+                                        @else
+                                            <option selected disabled>
+                                                Please Create Section
                                             </option>
-                                        @endforeach
-                                    @else
-                                        <option selected disabled>
-                                            Please Create Section
-                                        </option>
                                         @endif
 
 
@@ -81,18 +81,17 @@ $_title = 'Subjects';
                         <div class="row">
                             <div class="col-md">
                                 @php
-                                    $_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                                    $_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
                                 @endphp
                                 <label for="" class="form-label">Weekday</label>
                                 <select name="_week" id="" class="form-select">
                                     @foreach ($_week as $week)
-                                    <option value="{{$week}}">{{$week}}</option>
+                                        <option value="{{ $week }}">{{ $week }}</option>
                                     @endforeach
 
                                 </select>
                             </div>
                             <div class="col-md">
-                                <label for="" class="form-label">Time</label>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="">Start Time</label>
@@ -111,67 +110,69 @@ $_title = 'Subjects';
                     <h3 class="mt-2 text-primary">Section List</h3>
                     <hr>
                     @foreach ($_subject->subject_class as $_data)
-                    <div class="twit-feed">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="media-support-info">
-                                <p class="mb-0 h4 text-primary">
-                                    {{$_data->staff->user->name }} - <small class="text-muted">{{$_data->section->section_name }}</small>
-                                </p>
-                            <p class="mb-0">
-                                SCHEDULE: 
-                            
-                                @if(count($_data->class_schedule)> 0)
-@foreach ($_data->class_schedule as $_schedule)
-    <p> <span class="text-info">{{$_schedule->day}}</span> - {{$_schedule->start_time}} : {{$_schedule->end_time}} </p>
-@endforeach
-                                @else
-                                <p> No Schedule </p>
-                                @endif
-                            </p>
-                            <form action="{{ route('registrar.class-schedule') }}" method="post">
-                                @csrf
-                                <input type="hidden" name="_subject_class" value="{{ $_data->id }}">
-                                <label for="" class="form-label">Subject Schedule</label>
-                                <div class="row">
-                                    <div class="col-md">
-                                        @php
-                                            $_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-                                        @endphp
-                                        <label for="">Weekday</label>
-                                        <select name="_week" id="" class="form-select form-select-sm">
-                                            @foreach ($_week as $week)
-                                            <option value="{{$week}}">{{$week}}</option>
+                        <div class="twit-feed">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="media-support-info">
+                                    <p class="mb-0 h4 text-primary">
+                                        {{ $_data->staff->user->name }} - <small
+                                            class="text-muted">{{ $_data->section->section_name }}</small>
+                                    </p>
+                                    <p class="mb-0">
+                                        SCHEDULE:
+
+                                        @if (count($_data->class_schedule) > 0)
+                                            @foreach ($_data->class_schedule as $_schedule)
+                                                <p> <span class="text-info">{{ $_schedule->day }}</span> -
+                                                    {{ $_schedule->start_time }} : {{ $_schedule->end_time }} </p>
                                             @endforeach
-        
-                                        </select>
-                                        @error('_week')
-                                            <span class="badge bg-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
+                                        @else
+                                            <p> No Schedule </p>
+                                        @endif
+                                    </p>
+                                    <form action="{{ route('registrar.class-schedule') }}" method="post">
+                                        @csrf
+                                        <input type="hidden" name="_subject_class" value="{{ $_data->id }}">
+                                        <label for="" class="form-label">Subject Schedule</label>
+                                        <div class="row">
+                                            <div class="col-md">
+                                                @php
+                                                    $_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+                                                @endphp
+                                                <label for="">Weekday</label>
+                                                <select name="_week" id="" class="form-select form-select-sm">
+                                                    @foreach ($_week as $week)
+                                                        <option value="{{ $week }}">{{ $week }}</option>
+                                                    @endforeach
+
+                                                </select>
+                                                @error('_week')
+                                                    <span class="badge bg-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
                                             <div class="col-md">
                                                 <label for="">Start Time</label>
                                                 <input type="time" name="_start" class="form-control form-control-sm">
                                                 @error('_start')
-                                                <span class="badge bg-danger">{{ $message }}</span>
-                                            @enderror
+                                                    <span class="badge bg-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
                                             <div class="col-md">
                                                 <label for="">End Time</label>
                                                 <input type="time" name="_end" class="form-control form-control-sm">
                                                 @error('_end')
-                                                <span class="badge bg-danger">{{ $message }}</span>
-                                            @enderror
+                                                    <span class="badge bg-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
+                                        </div>
+                                        <button class="btn btn-info text-white w-100 mt-2" type="submit">Submit</button>
+
+                                    </form>
                                 </div>
-                                <button class="btn btn-info text-white w-100 mt-2" type="submit">Submit</button>
-        
-                            </form>
                             </div>
                         </div>
-                    </div>
                         <hr>
                     @endforeach
-                   
+
                 </div>
             </div>
         </div>
@@ -186,35 +187,33 @@ $_title = 'Subjects';
                 </div>
                 <div class="card-body">
                     @if ($_subject = $_subject->course->course_subject([$_subject->curriculum_id, $_subject->year_level, Auth::user()->staff->current_academic()->semester]))
-                    @foreach ($_subject as $_subject)
-                    <a
-                                    href="{{ route('registrar.course-subject-handle-view') }}?_subject={{ base64_encode($_subject->id) }}">
-                                   
-                    <div class="twit-feed">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="media-support-info">
-                            <h6 class="mb-0"> {{ $_subject->subject_code }}</h6>
-                            <p class="mb-0">
-                                {{ $_subject->subject_name }}
-                            </p>
-                            </div>
-                        </div>
-                    </div>
-                    </a>
-                    
-                    <hr class="my-4">
-                    
+                        @foreach ($_subject as $_subject)
+                            <a
+                                href="{{ route('registrar.course-subject-handle-view') }}?_subject={{ base64_encode($_subject->id) }}">
 
-                    @endforeach
-                @else
-                    <tr>
-                        <td>NO SUBJECT</td>
-                    </tr>
-                @endif
-                   
-            
+                                <div class="twit-feed">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="media-support-info">
+                                            <h6 class="mb-0"> {{ $_subject->subject_code }}</h6>
+                                            <p class="mb-0">
+                                                {{ $_subject->subject_name }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <hr class="my-4">
+                        @endforeach
+                    @else
+                        <tr>
+                            <td>NO SUBJECT</td>
+                        </tr>
+                    @endif
+
+
                 </div>
-            
+
             </div>
         </div>
     </div>
