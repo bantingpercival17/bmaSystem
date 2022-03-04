@@ -31,7 +31,7 @@ $_title = 'Subjects';
                 <div class="card-header">
                     <label class="card-title">
                         <b
-                            class="h4">{{ ucwords(strtolower($_subject->subject->subject_name . ' ' . $_subject->subject->subject->subject_code)) }}</b>
+                            class="h4">{{ ucwords(strtolower($_subject->subject->subject_name . ' ' . $_subject->subject->subject_code)) }}</b>
                         <br>
                         {{ $_subject->course->course_name }}
                     </label>
