@@ -100,4 +100,15 @@ class Staff extends Model
         $_level = $_data ==  4 ? '4th Class' : $_level;
         return $_level;
     }
+    public function registrar()
+    {
+        $_staff = Staff::where('job_description', 'DEPARTMENT HEAD')->where('department', 'REGISTRAR')->first();
+        return $_staff->user->name;
+    }
+    public function academic_head($_course)
+    {
+        $_course = $_course == 1 ? 'MARINE ENGINEERING' : ($_course == 2 ? 'MARINE TRANSPORTATION' : '');
+        $_staff = Staff::where('job_description', 'DEPARTMENT HEAD')->where('department', $_course)->first();
+        return $_staff->first_name . " " . $_staff->last_name;
+    }
 }

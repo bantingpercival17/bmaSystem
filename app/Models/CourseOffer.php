@@ -51,6 +51,17 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.year_level', $_data)
             ->where('enrollment_assessments.is_removed', false);
     }
+    public function student_list()
+    {
+        $_level =  (string)request()->input('_year_level') . "/C";
+        return $this->hasMany(Section::class, 'course_id')
+            ->select('sd.first_name', 'sd.last_name', 'ss.student_id', 'ss.section_id')
+            ->join('student_sections as ss', 'ss.section_id', 'sections.id')
+            ->join('student_details as sd', 'ss.student_id', 'sd.id')
+            ->where('sections.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('sections.year_level', $_level)
+            ->orderBy('sd.last_name', 'asc')->orderBy('sd.first_name');
+    }
     public function previous_enrolled()
     {
         $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();

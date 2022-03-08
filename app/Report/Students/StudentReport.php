@@ -4,6 +4,7 @@ namespace App\Report\Students;
 
 use App\Models\EnrollmentAssessment;
 use App\Models\StudentDetails;
+use App\Models\StudentSection;
 use Barryvdh\DomPDF\Facade as PDF;
 
 class StudentReport
@@ -30,6 +31,12 @@ class StudentReport
         $_form_number = $_enrollment_assessment->course_id == 3 ? 'FORM RG-02' : 'FORM RG-01';
         $pdf = PDF::loadView("widgets.report.student.student_application_form", compact('_student', '_enrollment_assessment'));
         $file_name = $_form_number . ' - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    public function certificate_of_grade($_student, $_section)
+    {
+        $pdf = PDF::loadView("widgets.report.student.certificate_of_grades", compact('_student', '_section'));
+        $file_name =   'FORM AD-02a  - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 }

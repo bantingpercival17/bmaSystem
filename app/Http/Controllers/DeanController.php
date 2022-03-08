@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\CourseOffer;
+use App\Models\GradeVerification;
 use App\Models\Section;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
@@ -73,5 +74,19 @@ class DeanController extends Controller
             }
         }
         return back()->with('success', 'Successfully Submitted.');
+    }
+
+    public function verify_grade_submission(Request $_request)
+    {
+        $_subject_class = SubjectClass::find(base64_decode($_request->subject_class));
+        $_data = array(
+            'subject_class_id' => $_subject_class->id,
+            'is_approved' => $_request->_status,
+            'comments' => $_request->_comments ?: null,
+            'approved_by' => Auth::user()->name,
+            'is_removed' => 0
+        );
+        GradeVerification::create($_data);
+        return back()->with('success', 'Successfully Approved');
     }
 }

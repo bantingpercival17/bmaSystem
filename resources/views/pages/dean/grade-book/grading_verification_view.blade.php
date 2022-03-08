@@ -119,23 +119,31 @@ $_title = 'Grade Verification';
                                             </div>
                                             <div class="ms-2">
                                                 @if ($item->finals_grade_submission || $item->midterm_grade_submission)
-                                                    <form action="{{ route('dean.grade-verification') }}" method="post">
-                                                        <div class="me-2">
-                                                            <textarea name="_remarks" class="form-control mt-2" cols="20"
-                                                                rows="2"></textarea>
-                                                        </div>
-                                                        @csrf
-                                                        <div class="row">
-                                                            <div class="col-md">
-                                                                <a href="{{ route('dean.grade-verification') }}?subject_class='{{ base64_encode($item->id) }}'"
-                                                                    class="btn btn-info btn-sm text-white w-100  mt-2">APPROVED</a>
-                                                            </div>
-                                                            <div class="col-md">
-                                                                <button type="submit"
-                                                                    class="btn btn-danger btn-sm w-100 mt-2">DISAPPROVED</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
+                                                    @if ($item->finals_grade_submission->is_approved === 1 && $item->midterm_grade_submission->is_approved === 1)
+                                                        @if ($item->grade_final_verification)
+                                                            <span class="badge bg-primary float-start">Grade Verified</span>
+                                                        @else
+                                                            <form action="{{ route('dean.grade-verification') }}"
+                                                                method="get">
+                                                                <div class="me-2">
+                                                                    <textarea name="_remarks" class="form-control mt-2"
+                                                                        cols="20" rows="2"></textarea>
+                                                                </div>
+                                                                @csrf
+                                                                <div class="row">
+                                                                    <div class="col-md">
+                                                                        <a href="{{ route('dean.grade-verification') }}?subject_class='{{ base64_encode($item->id) }}'&_status=1"
+                                                                            class="btn btn-info btn-sm text-white w-100  mt-2">APPROVED</a>
+                                                                    </div>
+                                                                    <div class="col-md">
+                                                                        <input type="hidden" name="_status" value="0">
+                                                                        <button type="submit"
+                                                                            class="btn btn-danger btn-sm w-100 mt-2">DISAPPROVED</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        @endif
+                                                    @endif
                                                 @endif
 
                                             </div>

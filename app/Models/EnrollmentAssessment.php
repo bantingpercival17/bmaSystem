@@ -26,6 +26,10 @@ class EnrollmentAssessment extends Model
     {
         return $this->belongsTo(StudentDetails::class, 'student_id');
     }
+    public function curriculum()
+    {
+        return $this->belongsTo(Curriculum::class, 'curriculum_id');
+    }
     public function payment_assessments()
     {
         return $this->hasOne(PaymentAssessment::class, 'enrollment_id');

@@ -15,6 +15,12 @@ class CreateGradeVerificationsTable extends Migration
     {
         Schema::create('grade_verifications', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('subject_class_id');
+            $table->foreign('subject_class_id')->references('id')->on('subject_classes');
+            $table->boolean('is_approved')->nullable();
+            $table->text('comments')->nullable();
+            $table->string('approved_by')->nullable();
+            $table->boolean('is_removed')->nullable();
             $table->timestamps();
         });
     }

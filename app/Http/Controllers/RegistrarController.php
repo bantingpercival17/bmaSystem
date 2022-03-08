@@ -17,6 +17,7 @@ use App\Models\SubjectClass;
 use App\Models\SubjectClassSchedule;
 use App\Models\User;
 use App\Report\Clearance\SemestralClearanceReport;
+use App\Report\StudentListReport;
 use App\Report\Students\StudentReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -432,5 +433,39 @@ class RegistrarController extends Controller
             $_student->offical_clearance_cleared();
         }
         return back()->with('success', 'Successfully Submitted Clearance');
+    }
+
+    public function semestral_grade_view(Request $_request)
+    {
+        $_courses = CourseOffer::all();
+        $_academic = $_request->_academic ? Auth::user()->staff->current_academic()->id : base64_decode($_request->_academic);
+        $_sections = Section::where('academic_id', $_academic)
+            ->where('course_id', base64_decode($_request->_course))->get();
+        return view('pages.registrar.grade.view', compact('_courses', '_sections'));
+    }
+    public function semestral_grade_section_view(Request $_request)
+    {
+        $_section = Section::find(base64_decode($_request->_section));
+        return view('pages.registrar.grade.student_section', compact('_section'));
+    }
+    public function semestral_grade_report_form(Request $_request)
+    {
+        $_student = StudentDetails::find(base64_decode($_request->_student));
+        $_section = Section::find(base64_decode($_request->_section));
+        $_report = new StudentReport();
+        return $_report->certificate_of_grade($_student, $_section);
+    }
+
+    public function semestral_grade_summary_report(Request $_request)
+    {
+        $_enrollment_curriculum = EnrollmentAssessment::select('enrollment_assessments.curriculum_id')
+            ->groupBy('enrollment_assessments.curriculum_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.course_id', base64_decode($_request->_course))
+            ->where('enrollment_assessments.year_level', $_request->_year_level)
+            ->where('enrollment_assessments.is_removed', false)
+            ->get();
+        $_report = new StudentListReport();
+        return $_report->summary_grade($_enrollment_curriculum, $_request);
     }
 }

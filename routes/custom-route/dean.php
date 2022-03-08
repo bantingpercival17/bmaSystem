@@ -7,7 +7,7 @@ Route::prefix('dean')->group(function () {
     Route::get('/', [DeanController::class, 'dashboard'])->name('dean.grade-submission'); // Dashboard View
     Route::get('/grading-verification', [DeanController::class, 'dashboard'])->name('dean.grade-submission'); // Dashboard View
     Route::get('/grading-verification/view', [DeanController::class, 'grading_verification_view'])->name('dean.grade-verification-view');
-    Route::post('/grading-verification/view', [DeanController::class, 'grading_verification_view'])->name('dean.grade-verification');
+    Route::get('/grading-verification/store', [DeanController::class, 'verify_grade_submission'])->name('dean.grade-verification');
     Route::get('/grading-verification/grading-sheet-view', [DeanController::class, 'grading_sheet_view'])->name('dean.grading-sheet-view');
 
     Route::get('/e-clearance', [DeanController::class, 'e_clearance_view'])->name('dean.e-clearance');

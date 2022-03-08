@@ -37,4 +37,5 @@ class GradingSheetReport
         $file_name = strtoupper($this->subject->curriculum_subject->subject->subject_code) . " - FORM AD 02";
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
+  
 }

@@ -122,7 +122,7 @@
                             'role_id' => 3,
                             'role_name' => 'Registrar',
                             'role_icon' => 'icon-job',
-                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance']],
+                            'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance']],
                         ],
                         [
                             'role_id' => 4,
@@ -271,8 +271,6 @@
                                     </ul>
                                 </li>
                             @endif
-
-
                         @endforeach
                     @endforeach
 
@@ -313,6 +311,7 @@
                     $_url = request()->is('executive/semestral-clearance*') ? route('exo.semestral-clearance') : $_url;
                     $_url = request()->is('librarian/semestral-clearance*') ? route('librarian.semestral-clearance') : $_url;
                     $_url = request()->is('administrator/semestral-clearance*') ? route('admin.semestral-clearance') : $_url;
+                    $_url = request()->is('registrar/semestral-grade*') ? route('registrar.semestral-grades') : $_url;
                 @endphp
                 @if (Auth::user()->staff->academics()->count() > 0)
                     @foreach (Auth::user()->staff->academics() as $_academic)
