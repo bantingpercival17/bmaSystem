@@ -127,7 +127,7 @@ $_average = 0;
                             <td colspan="2"> <b>Capt. Maximo M. Pesta&ntilde;o</b></td>
                         </tr>
                         <tr class="text-center">
-                            <td colspan="2"><small>School Director / Dean of Maritime Studies</small></td>
+                            <td colspan="2"><small>Dean of Maritime Studies</small></td>
                         </tr>
                     </tbody>
                 </table>

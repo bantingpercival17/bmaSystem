@@ -59,35 +59,49 @@ $_title = 'Enrollment';
                                                 {{ $_student ? $_student->enrollment_assessment->year_and_section($_student->enrollment_assessment) : '- | -' }}
                                             </span>
                                         </p>
-                                        <label for="" class="text-muted fw-bolder"><small>Clearance
-                                                Status</small></label>
-                                        <div class="d-flex justify-content-between">
-                                            <div>
-                                                <label for="" class="text-info fw-bolder">Academic</label> <br>
-                                                <label for=""
-                                                    class="h5 {{ $_student? ($_student->academic_clearance_status() != 'NO SECTION'? ($_student->academic_clearance_status() == 'NOT CLEARED'? 'text-danger': 'text-primary'): 'text-muted'): 'text-muted' }} fw-bolder">{{ $_student ? $_student->academic_clearance_status() : '' }}</label>
-                                            </div>
-                                            <div>
-                                                <label for="" class="text-info fw-bolder">Non-Academic</label> <br>
-                                                <label for=""
-                                                    class="h5 {{ $_student? ($_student->non_academic_clearance_status() != 'NO SECTION'? ($_student->non_academic_clearance_status() == 'NOT CLEARED'? 'text-danger': 'text-primary'): 'text-muted'): 'text-muted' }} fw-bolder">{{ $_student ? $_student->non_academic_clearance_status() : '' }}</label>
-                                            </div>
-                                        </div>
-                                        <form action="{{ route('registrar.enrollment-assessment') }}" method="post">
-                                            @csrf
-                                            <input type="hidden" name="_student"
-                                                value="{{ base64_encode($_student->id) }}">
-                                            <div class="row">
-                                                <div class="col-md">
-                                                    <a href="{{ route('registrar.student-clearance') }}?_student={{ base64_encode($_student->id) }}"
-                                                        class="btn btn-primary btn-sm w-100">View</a>
+
+                                        @if ($_student->enrollment_assessment->academic_id == Auth::user()->staff->current_academic()->id)
+                                            @if ($_student->enrollment_assessment->payment_assessments)
+                                                @if ($_student->enrollment_assessment->payment_assessments->payment_assessment_paid)
+                                                    <span class="badge bg-primary">Offical Enrolled</span>
+                                                @else
+                                                    <span class="badge bg-info text-white">Payment </span>
+                                                @endif
+                                            @else
+                                                <span class="badge bg-info text-white">Assessment Fees</span>
+                                            @endif
+                                        @else
+                                            <label for="" class="text-muted fw-bolder"><small>Clearance
+                                                    Status</small></label>
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <label for="" class="text-info fw-bolder">Academic</label> <br>
+                                                    <label for=""
+                                                        class="h5 {{ $_student? ($_student->academic_clearance_status() != 'NO SECTION'? ($_student->academic_clearance_status() == 'NOT CLEARED'? 'text-danger': 'text-primary'): 'text-muted'): 'text-muted' }} fw-bolder">{{ $_student ? $_student->academic_clearance_status() : '' }}</label>
                                                 </div>
-                                                <div class="col-md">
-                                                    <button class="btn btn-info btn-sm text-white w-100">For
-                                                        Assessment</button>
+                                                <div>
+                                                    <label for="" class="text-info fw-bolder">Non-Academic</label> <br>
+                                                    <label for=""
+                                                        class="h5 {{ $_student? ($_student->non_academic_clearance_status() != 'NO SECTION'? ($_student->non_academic_clearance_status() == 'NOT CLEARED'? 'text-danger': 'text-primary'): 'text-muted'): 'text-muted' }} fw-bolder">{{ $_student ? $_student->non_academic_clearance_status() : '' }}</label>
                                                 </div>
                                             </div>
-                                        </form>
+                                            <form action="{{ route('registrar.enrollment-assessment') }}" method="post">
+                                                @csrf
+                                                <input type="hidden" name="_student"
+                                                    value="{{ base64_encode($_student->id) }}">
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <a href="{{ route('registrar.student-clearance') }}?_student={{ base64_encode($_student->id) }}"
+                                                            class="btn btn-primary btn-sm w-100">View</a>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <button class="btn btn-info btn-sm text-white w-100">For
+                                                            Assessment</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        @endif
+
 
                                     </div>
                                 </div>
