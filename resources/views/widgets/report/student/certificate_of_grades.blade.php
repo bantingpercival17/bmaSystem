@@ -20,9 +20,9 @@ $_average = 0;
                             </td>
                             <td class="text-fill-in" width="40%"><b>{{ strtoupper($_student->last_name) }},
                                     {{ strtoupper($_student->first_name) }}
-                                    {{ strtoupper($_student->middle_name) }}</b></td>
-                            <td>
-                                YEAR LEVEL
+                                    {{ strtoupper($_student->middle_name[0]) }}.</b></td>
+                            <td colspan="2">
+                                YEAR LEVEL / SECTION:
 
                             </td>
                             <td class="text-fill-in" colspan="2"><b>{{ $_section->section_name }}</b></td>
@@ -34,6 +34,22 @@ $_average = 0;
                             <td class="text-fill-in"><b>{{ strtoupper($_section->academic->school_year) }}</b></td>
                             <td>TERM:</td>
                             <td class="text-fill-in"><b>{{ strtoupper($_section->academic->semester) }}</b></td>
+                        </tr>
+
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <td width="10%">
+                                COURSE:
+                            </td>
+                            <td class="text-fill-in" width="20%">
+                                <b>{{ $_section->course->course_name }}</b>
+                            </td>
+                            <td colspan="2">
+
+
+                            </td>
+                            <td class="" colspan="2"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -95,7 +111,7 @@ $_average = 0;
                         </tr>
                         <tr class="text-center">
                             <td><b>{{ strtoupper(Auth::user()->staff->academic_head($_section->course_id)) }}</b></td>
-                            <td> <b>{{strtoupper( Auth::user()->staff->registrar()) }}</b></td>
+                            <td> <b>{{ strtoupper(Auth::user()->staff->registrar()) }}</b></td>
                         </tr>
                         <tr class="text-center">
                             <td><small>Department Head</small> </td>
@@ -106,7 +122,7 @@ $_average = 0;
                         <tr class="text-center">
                             <td colspan="2"> Approved By:</td>
                         </tr>
-                        
+
                         <tr class="text-center">
                             <td colspan="2"> <b>Capt. Maximo M. Pesta&ntilde;o</b></td>
                         </tr>

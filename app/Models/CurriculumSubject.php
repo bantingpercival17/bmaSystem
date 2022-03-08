@@ -30,6 +30,11 @@ class CurriculumSubject extends Model
     }
     public function subject_class()
     {
-        return $this->hasMany(SubjectClass::class, 'curriculum_subject_id')->where('academic_id',Auth::user()->staff->current_academic()->id)->where('is_removed', false);
+        return $this->hasMany(SubjectClass::class, 'curriculum_subject_id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('is_removed', false);
+    }
+
+    public function curriculum_subject_class($_data)
+    {
+        return $this->hasOne(SubjectClass::class, 'curriculum_subject_id')->where('section_id', $_data)->first();
     }
 }

@@ -28,6 +28,8 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                             </th>
                             <td class="text-center">UNITS</td>
                         @endforeach
+                        <th>REMARKS</th>
+                        <th>GEN AVERAGE</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,12 +40,34 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                             <th style="text-align: left; padding-left:10px;">
                                 {{ strtoupper($_data->last_name . ', ' . $_data->first_name . ' ' . $_data->middle_name) }}
                             </th>
-                            @foreach ($curriculum->curriculum->subject([$_course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
+                            @php
+                                $_total_units = 0;
+                                $_average = 0;
+                            @endphp
+                            @foreach ($curriculum->curriculum->subject_lists([$_course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
+                                @php
+                                    $_subject_class = $_subject->curriculum_subject_class($_data->section_id);
+                                    if ($_subject_class) {
+                                        if ($_subject_class->grade_final_verification) {
+                                            $_final_grade = number_format($_data->student->final_grade($_subject_class->id, 'finals'), 2);
+                                            $_final_grade = $_data->student->percentage_grade($_final_grade);
+                                        } else {
+                                            $_final_grade = '-';
+                                        }
+                                    
+                                        //$_average += $_final_grade;
+                                    } else {
+                                        $_final_grade = '';
+                                    }
+                                    $_total_units += $_subject->subject->units;
+                                @endphp
                                 <th>
-
+                                    {{ $_final_grade }}
                                 </th>
                                 <td class="text-center"> {{ $_subject->subject->units }}</td>
                             @endforeach
+                            <th>{{ $_total_units }} UNITS</th>
+                            <th></th>
                         </tr>
                     @endforeach
 

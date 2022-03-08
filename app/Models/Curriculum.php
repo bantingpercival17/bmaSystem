@@ -19,4 +19,13 @@ class Curriculum extends Model
             ->where('curriculum_subjects.year_level', $_data[1])
             ->where('curriculum_subjects.semester', $_data[2]);
     }
+    public function subject_lists($_data)
+    {
+        return $this->hasMany(CurriculumSubject::class, 'curriculum_id')
+            ->select('curriculum_subjects.id', 'curriculum_subjects.subject_id')
+            ->join('subjects', 'subjects.id', 'curriculum_subjects.subject_id')
+            ->where('curriculum_subjects.course_id', $_data[0])
+            ->where('curriculum_subjects.year_level', $_data[1])
+            ->where('curriculum_subjects.semester', $_data[2]);
+    }
 }

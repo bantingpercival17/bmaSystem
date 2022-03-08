@@ -14,8 +14,8 @@ class Section extends Model
     public function student_section()
     {
         return $this->hasMany(StudentSection::class, 'section_id')
-        ->join('student_accounts as sa', 'sa.student_id', 'student_sections.student_id')
-        ->where('student_sections.is_removed', false)->orderBy('sa.student_number', 'asc');
+            ->join('student_accounts as sa', 'sa.student_id', 'student_sections.student_id')
+            ->where('student_sections.is_removed', false)->orderBy('sa.student_number', 'asc');
     }
     public function student_sections()
     {
@@ -47,5 +47,13 @@ class Section extends Model
     public function course()
     {
         return $this->belongsTo(CourseOffer::class, 'course_id');
+    }
+    public function student()
+    {
+        return $this->belongsTo(StudentDetails::class, 'student_id');
+    }
+    public function curriculum_subject_class()
+    {
+        return $this->hasOne(SubjectClass::class, 'section_id')/* ->where('curriculum_subject_id', $_data->id) */;
     }
 }
