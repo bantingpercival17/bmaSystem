@@ -118,7 +118,7 @@ $_title = 'Grade Verification';
                                                 @endif
                                             </div>
                                             <div class="ms-2">
-                                                @if ($item->finals_grade_submission || $item->midterm_grade_submission)
+                                                @if ($item->finals_grade_submission && $item->midterm_grade_submission)
                                                     @if ($item->finals_grade_submission->is_approved === 1 && $item->midterm_grade_submission->is_approved === 1)
                                                         @if ($item->grade_final_verification)
                                                             <span class="badge bg-primary float-start">Grade Verified</span>
