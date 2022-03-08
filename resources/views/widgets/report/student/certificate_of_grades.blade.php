@@ -91,7 +91,7 @@ $_average = 0;
                     </tbody>
                     <tfoot>
                         <tr class="text-center">
-                            <td colspan="2"><b>AVERAGE</b></td>
+                            <td colspan="2"><b>GENERAL WEIGHTED AVERAGE</b></td>
                             <td colspan="2">
                                 <h3><b>{{ number_format($_average / count($_section->subject_class), 2) }}</b></h3>
                             </td>
