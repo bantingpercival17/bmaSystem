@@ -7,7 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title-report')</title>
     <style>
-         @page{margin: 0.1in 0.1in 0.9in 0.1in;}
+        @page {
+            margin: 0.1in 0.1in 0.9in 0.1in;
+        }
+
         * {
             padding: 0;
             font-family: "Times New Roman", Times, serif;
@@ -153,6 +156,8 @@
             margin-top: -10px
         }
 
+      
+
     </style>
 </head>
 
@@ -163,7 +168,7 @@
                 <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
     </header>
     @yield('content')
-   {{--  <footer>
+    {{-- <footer>
         <label><i>This is a system generated report
                 @php
                     date_default_timezone_set('Asia/Manila');

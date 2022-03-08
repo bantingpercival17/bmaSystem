@@ -55,7 +55,7 @@ $_average = 0;
                 </table>
             </div>
             <div class="report-card">
-                <table class="table-2">
+                <table class="subject-list-table">
                     <thead>
                         <tr>
                             <th rowspan="2" width="15%">COURSE CODE</th>
@@ -110,8 +110,20 @@ $_average = 0;
                             </td>
                         </tr>
                         <tr class="text-center">
-                            <td><b>{{ strtoupper(Auth::user()->staff->academic_head($_section->course_id)) }}</b></td>
-                            <td> <b>{{ strtoupper(Auth::user()->staff->registrar()) }}</b></td>
+                            <td>
+                                <img class="image-signature"
+                                    src="{{ public_path() .'/assets/img/signature/' .Auth::user()->staff->academic_head_signature($_section->course_id) .'.png' }}"
+                                    alt="department-head">
+                                <br>
+                                <b>{{ strtoupper(Auth::user()->staff->academic_head($_section->course_id)) }}</b>
+                            </td>
+                            <td>
+                                <img class="image-signature"
+                                    src="{{ public_path() .'/assets/img/signature/' .Auth::user()->staff->department_head_signature('REGISTRAR') .'.png' }}"
+                                    alt="department-head">
+                                <br>
+                                <b>{{ strtoupper(Auth::user()->staff->registrar()) }}</b>
+                            </td>
                         </tr>
                         <tr class="text-center">
                             <td><small>Department Head</small> </td>
@@ -121,10 +133,18 @@ $_average = 0;
                     <tbody>
                         <tr class="text-center">
                             <td colspan="2"> Approved By:</td>
+
                         </tr>
 
                         <tr class="text-center">
-                            <td colspan="2"> <b>Capt. Maximo M. Pesta&ntilde;o</b></td>
+                            <td colspan="2">
+                                <br><br>
+                                <img class="image-signature"
+                                    src="{{ public_path() . '/assets/img/signature/' . Auth::user()->staff->dean_signature('ADMINISTRATIVE') . '.png' }}"
+                                    alt="department-head">
+                                <br>
+                                <b>Capt. Maximo M. Pesta&ntilde;o</b>
+                            </td>
                         </tr>
                         <tr class="text-center">
                             <td colspan="2"><small>Dean of Maritime Studies</small></td>

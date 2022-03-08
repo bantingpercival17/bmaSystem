@@ -224,6 +224,10 @@
             text-align: center;
         }
 
+        .image-signature {
+            width: 30%;
+        }
+
     </style>
 </head>
 

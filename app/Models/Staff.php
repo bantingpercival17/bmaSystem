@@ -103,12 +103,28 @@ class Staff extends Model
     public function registrar()
     {
         $_staff = Staff::where('job_description', 'DEPARTMENT HEAD')->where('department', 'REGISTRAR')->first();
-        return $_staff->user->name;
+        return  trim($_staff->first_name) . " " . trim($_staff->middle_name) . " " . trim($_staff->last_name);
+    }
+    public function department_head_signature($_department)
+    {
+        $_staff = Staff::where('job_description', 'DEPARTMENT HEAD')->where('department', $_department)->first();
+        return $_staff->user->email;
     }
     public function academic_head($_course)
     {
         $_course = $_course == 1 ? 'MARINE ENGINEERING' : ($_course == 2 ? 'MARINE TRANSPORTATION' : '');
         $_staff = Staff::where('job_description', 'DEPARTMENT HEAD')->where('department', $_course)->first();
-        return $_staff->first_name . " " . $_staff->last_name;
+        return trim($_staff->first_name) . " " . trim($_staff->middle_name) . " " . trim($_staff->last_name);
+    }
+    public function academic_head_signature($_course)
+    {
+        $_course = $_course == 1 ? 'MARINE ENGINEERING' : ($_course == 2 ? 'MARINE TRANSPORTATION' : '');
+        $_staff = Staff::where('job_description', 'DEPARTMENT HEAD')->where('department', $_course)->first();
+        return $_staff->user->email;
+    }
+    public function dean_signature($_department)
+    {
+        $_staff = Staff::where('job_description', 'SCHOOL DIRECTOR')->where('department', $_department)->first();
+        return $_staff->user->email;
     }
 }
