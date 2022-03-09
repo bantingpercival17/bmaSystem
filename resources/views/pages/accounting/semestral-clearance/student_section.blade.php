@@ -82,6 +82,8 @@ $_title = 'Semestral Clearance';
                                                             <br>
                                                             <span class="badge bg-primary">
                                                                 {{ $_data->student->non_academic_clearance('accounting')->staff->user->name }}
+                                                            </span> - <span class="badge bg-secondary">
+                                                                {{ $_data->student->non_academic_clearance('accounting')->created_at->format('F d, Y') }}
                                                             </span>
                                                         @endif
                                                     @endif
