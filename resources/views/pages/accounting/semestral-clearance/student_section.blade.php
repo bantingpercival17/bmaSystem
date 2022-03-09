@@ -31,7 +31,7 @@ $_title = 'Semestral Clearance';
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="header-title">
-                        <h4 class="card-title">{{$_section->section_name}}</h4>
+                        <h4 class="card-title">{{ $_section->section_name }}</h4>
                         <h6 class="card-title">E-Clearance</h6>
                     </div>
                     <div class="card-tool">
@@ -42,7 +42,7 @@ $_title = 'Semestral Clearance';
                                 Select All
                             </label>
                         </div>
-                        <input type="hidden" name="_academic" value="{{Auth::user()->staff->current_academic()->id}}">
+                        <input type="hidden" name="_academic" value="{{ Auth::user()->staff->current_academic()->id }}">
                         <input type="hidden" name="_clearance_data" value="accounting">
                         <button type="submit" class="btn btn-primary">SUBMIT</button>
                     </div>
@@ -72,11 +72,19 @@ $_title = 'Semestral Clearance';
                                                         type="checkbox" id="flexCheckChecked-3-{{ $_key }}"
                                                         name="data[{{ $_key }}][e_clearance]"
                                                         value="{{ $_data->student->id }}"
-                                                        {{ $_data->student->non_academic_clearance('accounting') ? ($_data->student->non_academic_clearance('accounting')->is_approved == 1 ? 'checked' : '') : '' }}>
+                                                        {{ $_data->student->non_academic_clearance('accounting')? ($_data->student->non_academic_clearance('accounting')->is_approved == 1? 'checked': ''): '' }}>
                                                     <label class="form-check-label"
                                                         for="flexCheckChecked-3-{{ $_key }}">
                                                         CLEARED
                                                     </label>
+                                                    @if ($_data->student->non_academic_clearance('accounting'))
+                                                        @if ($_data->student->non_academic_clearance('accounting')->is_approved == 1)
+                                                            <br>
+                                                            <span class="badge bg-primary">
+                                                                {{ $_data->student->non_academic_clearance('accounting')->staff->user->name }}
+                                                            </span>
+                                                        @endif
+                                                    @endif
                                                 </div>
                                             </td>
                                             <td>
@@ -85,7 +93,7 @@ $_title = 'Semestral Clearance';
                                                     </label>
                                                     <input type="text" class="form-control"
                                                         name="data[{{ $_key }}][comment]"
-                                                        value="{{ $_data->student->non_academic_clearance('accounting') ? $_data->student->non_academic_clearance('accounting')->comments : '' }}">
+                                                        value="{{ $_data->student->non_academic_clearance('accounting')? $_data->student->non_academic_clearance('accounting')->comments: '' }}">
                                                     <input type="hidden" name="data[{{ $_key }}][sId]"
                                                         value="{{ base64_encode($_data->student->id) }}">
                                                 </div>
