@@ -28,7 +28,7 @@ class PaymentAssessment extends Model
     }
     public function total_paid_amount()
     {
-        return $this->hasMany(PaymentTransaction::class, 'assessment_id')->where('payment_transaction', 'TUITION FEE');
+        return $this->hasMany(PaymentTransaction::class, 'assessment_id')->where('payment_transaction', 'TUITION FEE')->where('is_removed', false);
     }
     public function payment_transaction()
     {
@@ -44,6 +44,6 @@ class PaymentAssessment extends Model
     }
     public function payment_assessment_paid()
     {
-        return $this->hasOne(PaymentTransaction::class, 'assessment_id')->where('remarks', 'Upon Enrollment');
+        return $this->hasOne(PaymentTransaction::class, 'assessment_id')->where('remarks', 'Upon Enrollment')->where('is_removed', false);
     }
 }
