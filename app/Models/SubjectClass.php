@@ -71,6 +71,6 @@ class SubjectClass extends Model
     }
     public function class_schedule()
     {
-        return $this->hasMany(SubjectClassSchedule::class, 'subject_class_id');
+        return $this->hasMany(SubjectClassSchedule::class, 'subject_class_id')->where('is_removed', false);
     }
 }

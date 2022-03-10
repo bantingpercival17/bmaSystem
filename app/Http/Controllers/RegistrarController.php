@@ -238,6 +238,13 @@ class RegistrarController extends Controller
 
         return back()->with('success', 'Successfully Add Scheduled!!');
     }
+    public function classes_schedule_removed(Request $_request)
+    {
+        $_schedule = SubjectClassSchedule::find(base64_decode($_request->_schedule));
+        $_schedule->is_removed = 1;
+        $_schedule->save();
+        return back()->with('success', 'Successfully Removed Schedule');
+    }
     public function curriculum_view(Request $_request)
     {
         $_curriculum = base64_decode($_request->view);
