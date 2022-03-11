@@ -78,21 +78,13 @@
         @yield('page-content')
     @endif
 
-    <!-- Library Bundle Script -->
-    <script src="{{ asset('resources/js/core/libs.min.js') }}"></script>
-
-    <!-- External Library Bundle Script -->
-    <script src="{{ asset('resources/js/core/external.min.js') }}"></script>
-
-    <!-- Widgetchart Script -->
-    <script src="{{ asset('resources/js/charts/widgetcharts.js') }}"></script>
-
-    <!-- mapchart Script -->
-    <script src="{{ asset('resources/js/charts/vectore-chart.js') }}"></script>
+    {{-- <script src="{{ asset('js/app-1.js') }}"></script> --}}
+    <script src="{{ asset('resources/js/core/libs.min.js') }}"></script><!-- Library Bundle Script -->
+    <script src="{{ asset('resources/js/core/external.min.js') }}"></script> <!-- External Library Bundle Script -->
+    <script src="{{ asset('resources/js/charts/widgetcharts.js') }}"></script><!-- Widgetchart Script -->
+    <script src="{{ asset('resources/js/charts/vectore-chart.js') }}"></script><!-- mapchart Script -->
     <script src="{{ asset('resources/js/charts/dashboard.js') }}" defer></script>
-
-    <!-- fslightbox Script -->
-    <script src="{{ asset('resources/js/plugins/fslightbox.js') }}"></script>
+    <script src="{{ asset('resources/js/plugins/fslightbox.js') }}"></script> <!-- fslightbox Script -->
 
     <!-- GSAP Animation -->
     <script src="{{ asset('resources/vendor/gsap/gsap.min.js') }}"></script>
@@ -106,10 +98,13 @@
     <script src="{{ asset('resources/js/gigz.js') }}" defer></script>
     {{-- documents Viewr --}}
     <script src="{{ asset('resources/js/plugins/custom-document-viewer.js') }}"></script>
-
     <script src="{{ asset('resources/js/plugins/viewer.1.0.0.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('resources\plugin\select\js\select2.min.js') }}">
+    </script>
+
     <script>
+        $('.select').select2()
         @if (Session::has('success'))
             Swal.fire({
             title: 'Complete!',

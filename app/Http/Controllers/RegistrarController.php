@@ -236,7 +236,7 @@ class RegistrarController extends Controller
         );
         SubjectClassSchedule::create($_schedule);
 
-        return back()->with('success', 'Successfully Add Scheduled!!');
+        return back()->with('success', 'Successfully Add Scheduled!!'); 
     }
     public function classes_schedule_removed(Request $_request)
     {

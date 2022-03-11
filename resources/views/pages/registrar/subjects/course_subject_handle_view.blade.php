@@ -45,7 +45,7 @@ $_title = 'Subjects';
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="" class="form-label">Instructor</label>
-                                    <select name="_teacher" class="form-select">
+                                    <select name="_teacher" class="form-select select">
                                         @foreach ($_teachers as $teacher)
                                             <option value="{{ $teacher->staff->id }}">
                                                 {{ $teacher->name }}
@@ -84,7 +84,7 @@ $_title = 'Subjects';
                                     $_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
                                 @endphp
                                 <label for="" class="form-label">Weekday</label>
-                                <select name="_week" id="" class="form-select">
+                                <select name="_week" class="form-select">
                                     @foreach ($_week as $week)
                                         <option value="{{ $week }}">{{ $week }}</option>
                                     @endforeach
@@ -131,7 +131,7 @@ $_title = 'Subjects';
                                         $_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
                                     @endphp
                                     <label for="">Weekday</label>
-                                    <select name="_week" id="" class="form-select form-select-sm">
+                                    <select name="_week" class="form-select form-select-sm">
                                         @foreach ($_week as $week)
                                             <option value="{{ $week }}">{{ $week }}</option>
                                         @endforeach
