@@ -30,6 +30,7 @@ use App\Models\User;
 use App\Models\UserPasswordReset;
 use App\Report\AttendanceSheetReport;
 use App\Report\StudentListReport;
+use App\Report\StudentLogs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -507,6 +508,14 @@ class AdministratorController extends Controller
         );
         Role::create($_details);
         return back()->with('success', 'Successfully Created');
+    }
+
+    public function student_handbook_logs(Request $_request)
+    {
+        $_academic = AcademicYear::find(base64_decode($_request->_academic));
+        $_report = new StudentLogs();
+        return $_report->student_handbook_logs($_academic);
+        return $_academic->enrollment_list;
     }
     // Academic Year Store
 

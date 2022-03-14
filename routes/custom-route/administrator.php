@@ -62,4 +62,5 @@ Route::prefix('administrator')->group(function () {
     Route::get('/setting', [AdministratorController::class, 'setting_view'])->name('admin.setting');
     Route::post('/setting/store-role', [AdministratorController::class, 'store_role'])->name('setting.store-role');
     Route::post('/setting/store-academic', [AdministratorController::class, 'store_academic'])->name('setting.store-academic');
+    Route::get('/settong/student-handbook-logs', [AdministratorController::class, 'student_handbook_logs'])->name('admin.student-handbook-logs');
 });

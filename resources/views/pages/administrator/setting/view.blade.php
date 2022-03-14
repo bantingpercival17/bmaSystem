@@ -40,7 +40,6 @@ $_title = 'Setting';
 
                                 @if (count($_roles) > 0)
                                     @foreach ($_roles as $_data)
-
                                         <tr>
                                             <th>
                                                 <b class="text-primary">
@@ -93,7 +92,6 @@ $_title = 'Setting';
 
                                 @if (count($_academic) > 0)
                                     @foreach ($_academic as $_data)
-
                                         <tr>
                                             <th>
                                                 <b class="text-primary">
@@ -110,6 +108,34 @@ $_title = 'Setting';
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-header">
+                    TERMS & AGREEMENT FOR STUDENT HANDBOOK REPORT
+                </div>
+                <div class="card-body">
+                    @if (count($_academic) > 0)
+                        @foreach ($_academic as $_data)
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <b class="text-primary">
+                                        {{ $_data->semester }}
+                                    </b>
+                                    {{ $_data->school_year }}
+                                </div>
+                                <div class="col">
+                                    <a class="btn btn-sm btn-info text-white"
+                                        href="{{ route('admin.student-handbook-logs') }}?_academic={{ base64_encode($_data->id) }}">view
+                                        logs</a>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <p>SCHOOL YEAR</p>
+                    @endif
                 </div>
             </div>
         </div>
