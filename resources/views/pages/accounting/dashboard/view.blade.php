@@ -140,6 +140,9 @@
                         <tr class="text-center">
                             <th>COURSE</th>
                             <th>EXPECTED <br> ENROLLEE</th>
+                            <th>NOT <br> CLEARED</th>
+                            <th>CLEARED</th>
+                            <th>ENROLLMENT <br> ASSESSMENT</th>
                             <th>FOR <br> ASSESSMENT</th>
                             <th>PAYMENT <br> VERIFICATION</th>
                             <th>TOTAL <br> ENROLLED</th>
@@ -152,7 +155,23 @@
                                 <td>
                                     {{ count($_course->previous_enrolled) }}
                                 </td>
+                                <td>
+                                    <a
+                                        href="{{ route('registrar.dashboard-student-clearance-list') . '?_course=' . base64_encode($_course->id) }}&_clearance_status=not-cleared">
+                                        {{ count($_course->students_not_clearance) }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a
+                                        href="{{ route('registrar.dashboard-student-clearance-list') . '?_course=' . base64_encode($_course->id) }}">
+                                        {{ count($_course->students_clearance) }}
+                                    </a>
+                                </td>
 
+                                <td>
+                                    <a
+                                        href="{{ route('registrar.enrollment') }}?_course={{ base64_encode($_course->id) }}">{{ count($_course->enrollment_application) }}</a>
+                                </td>
                                 <td>
                                     <a
                                         href="{{ route('accounting.payment-assessment') . '?_course=' . base64_encode($_course->id) }}">
@@ -167,7 +186,7 @@
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ route('registrar.course-enrolled') }}?_course={{ base64_encode($_course->id) }}&_academic={{ request()->input('_academic') }}">
+                                        href="{{ route('accounting.course-enrolled') }}?_course={{ base64_encode($_course->id) }}&_academic={{ request()->input('_academic') }}">
                                         {{ count($_course->enrollment_list) }}
                                     </a>
                                 </td>

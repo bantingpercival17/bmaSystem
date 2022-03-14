@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\EnrolledStudentList;
 use App\Models\CourseOffer;
 use App\Models\CourseSemestralFees;
 use App\Models\Curriculum;
@@ -18,6 +19,7 @@ use App\Models\StudentNonAcademicClearance;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AccountingController extends Controller
 {
@@ -42,6 +44,13 @@ class AccountingController extends Controller
     {
         $_course = CourseOffer::find(base64_decode($_request->_course));
         return view('pages.accounting.dashboard.payment-assessment', compact('_course'));
+    }
+    public function enrolled_list(Request $_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_students = $_request->_year_level ?  $_course->enrolled_list($_request->_year_level)->get() : $_course->enrollment_list;
+        $_file_name = $_course->course_name . "-" . Auth::user()->staff->current_academic()->school_year . '-' . strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester)) . '.xlsx';
+        return Excel::download(new EnrolledStudentList($_course), $_file_name); // Download the File 
     }
     public function particular_view(Request $_request)
     {
@@ -305,7 +314,7 @@ class AccountingController extends Controller
             ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'ea.id')
             ->join('payment_trasanction_onlines as pto', 'pto.assessment_id', 'pa.id')
-            ->where('pto.is_removed',false)
+            ->where('pto.is_removed', false)
             ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
             ->whereNull('pto.is_approved')
             ->get();
