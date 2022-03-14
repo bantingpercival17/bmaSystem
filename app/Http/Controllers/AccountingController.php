@@ -49,7 +49,7 @@ class AccountingController extends Controller
     {
         $_course = CourseOffer::find(base64_decode($_request->_course));
         $_students = $_request->_year_level ?  $_course->enrolled_list($_request->_year_level)->get() : $_course->enrollment_list;
-        $_file_name = $_course->course_name . "-" . Auth::user()->staff->current_academic()->school_year . '-' . strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester)) . '.xlsx';
+        $_file_name = $_course->course_name . "-" . Auth::user()->staff->current_academic()->school_year . '-' . strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester)) . '.csv';
         return Excel::download(new EnrolledStudentList($_course), $_file_name); // Download the File 
     }
     public function particular_view(Request $_request)
