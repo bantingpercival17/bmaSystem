@@ -29,8 +29,8 @@ class OnboardTrainingController extends Controller
 
     public function embarked_monitoring_view(Request $_request)
     {
-        $_shipboard_monitoring_bsme = ShipBoardInformation::join('enrollment_assessments as ea', 'ea.student_id', 'ship_board_information.student_id')->where('ea.course_id', 1)->orderBy('ship_board_information.embarked', 'DESC')->where('ship_board_infomation.shipboard_status', '!=', 'complete')->distinct()->get('ea.student_id');
-        $_shipboard_monitoring_bsmt = ShipBoardInformation::join('enrollment_assessments as ea', 'ea.student_id', 'ship_board_information.student_id')->where('ea.course_id', 2)->orderBy('ship_board_information.embarked', 'DESC')->where('ship_board_infomation.shipboard_status', '!=', 'complete')->distinct()->get('ea.student_id');
+        $_shipboard_monitoring_bsme = ShipBoardInformation::join('enrollment_assessments as ea', 'ea.student_id', 'ship_board_information.student_id')->where('ea.course_id', 1)->orderBy('ship_board_information.embarked', 'DESC')/* ->where('ship_board_infomation.shipboard_status', '!=', 'complete') */->distinct()->get('ea.student_id');
+        $_shipboard_monitoring_bsmt = ShipBoardInformation::join('enrollment_assessments as ea', 'ea.student_id', 'ship_board_information.student_id')->where('ea.course_id', 2)->orderBy('ship_board_information.embarked', 'DESC')/* ->where('ship_board_infomation.shipboard_status', '!=', 'complete') */->distinct()->get('ea.student_id');
         //return count($_shipboard_monitoring);
         return view('onboardtraining.dashboard.embarked_list_view', compact('_shipboard_monitoring_bsme', '_shipboard_monitoring_bsmt'));
     }
