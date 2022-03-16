@@ -44,7 +44,9 @@ class StudentDetails extends Model
     }
     public function enrollment_assessment()
     {
-        return $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->orderBy('id', 'desc');
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+            /* ->where('academic_id', Auth::user()->staff->current_academic()->id) */
+            ->where('is_removed', 0)->orderBy('id', 'desc');
     }
     public function enrollment_status()
     {

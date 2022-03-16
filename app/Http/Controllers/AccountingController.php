@@ -32,12 +32,12 @@ class AccountingController extends Controller
     {
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            /* ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment') */
+            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment')
             ->where('enrollment_assessments.is_removed', false)
-            ->where('academic_id', Auth::user()->staff->current_academic()->id)
-            ->with('payment_transactions')
-            ->get();
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->groupBy('pt.assessment_id')
+            ->orderBy('pa.created_at', 'DESC')->get();
         return view('pages.accounting.dashboard.view', compact('_courses', '_total_population'));
     }
     public function payment_pending_view(Request $_request)

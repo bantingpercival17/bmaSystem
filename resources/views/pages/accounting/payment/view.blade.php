@@ -48,19 +48,22 @@
                         <a class=" dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false"
                             aria-expanded="false">
                             <span class="text-muted">Academic Year :</span>
-                            <b>{{ Auth::user()->staff->current_academic()->semester }} |
-                                {{ Auth::user()->staff->current_academic()->school_year }}</b>
+                            <b>{{ request()->input('_academic')? Auth::user()->staff->current_academic()->semester: $_student->enrollment_assessment->academic->semester }}
+                                |
+                                {{ request()->input('_academic')? Auth::user()->staff->current_academic()->school_year: $_student->enrollment_assessment->academic->school_year }}</b>
                         </a>
+                        {{-- {{ $_student->enrollment_history }} --}}
                         <ul class="dropdown-menu w-100" data-popper-placement="bottom-start">
                             @php
                                 $_url = request()->is('accounting/particular/fee*') ? route('accounting.particular-fee-view') : '';
                             @endphp
-                            @if (Auth::user()->staff->academics()->count() > 0)
-                                @foreach (Auth::user()->staff->academics() as $_academic)
+                            @if ($_student->enrollment_history->count() > 0)
+                                @foreach ($_student->enrollment_history as $_enrollment)
                                     <li>
                                         <a class="dropdown-item "
-                                            href="{{ $_url }}?_academic={{ base64_encode($_academic->id) }} {{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
-                                            {{ $_academic->semester }} | {{ $_academic->school_year }}</a>
+                                            href="{{ $_url }}?_academic={{ base64_encode($_enrollment->academic_id) }}&_midshipman={{ request()->input('_midshipman') }}{{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
+                                            {{ $_enrollment->academic->semester }} |
+                                            {{ $_enrollment->academic->school_year }}</a>
                                     </li>
                                 @endforeach
                             @endif
@@ -78,7 +81,7 @@
                                 </b>
                             </label>
                             @php
-                                $_payment_details = $_student->enrollment_assessment->payment_assessments;
+                                $_payment_details = $_student->enrollment_status->payment_assessments;
                             @endphp
                             <div class=" row mt-2">
                                 <div class="col-md-4">
@@ -95,7 +98,12 @@
                                         <small class="form-label">Total Payable:</small>
                                         <br>
                                         <label class="h5 text-primary form-label">
-                                            {{ $_payment_details? ($_payment_details->course_semestral_fee_id? number_format($_payment_details->course_semestral_fee->total_payments($_payment_details), 2): number_format($_payment_details->total_paid_amount, 2)): '-' }}
+                                            {{ $_payment_details
+                                                ? ($_payment_details->course_semestral_fee_id
+                                                    ? number_format($_payment_details->course_semestral_fee->total_payments($_payment_details), 2)
+                                                    : number_format($_payment_details->total_payment, 2) 
+                                                    )
+                                                : '-' }}
                                         </label>
                                     </div>
                                 </div>
