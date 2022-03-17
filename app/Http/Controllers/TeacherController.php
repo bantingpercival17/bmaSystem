@@ -232,4 +232,24 @@ class TeacherController extends Controller
             ->get();
         return view('teacher.department-head.clearance.view_list', compact('_section', '_students'));
     }
+
+    public function schedule_view(Request $_request)
+    {
+        $_subject = SubjectClass::find(base64_decode($_request->_subject));
+        /*   $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name')
+            ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
+            ->where('ss.section_id', $_section->id)
+            ->orderBy('student_details.last_name', 'ASC')
+            ->where('ss.is_removed', false)
+            ->get(); */
+        return view('teacher.subject-class.schedule_view', compact('_subject'));
+    }
+    public function subject_schedule_week_log_store(Request $_request)
+    {
+        $_request->validate([
+            '_week' => 'required',
+            '_topic.*' => "required"
+        ]);
+        return $_request;
+    }
 }

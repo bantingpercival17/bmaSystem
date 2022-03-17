@@ -21,40 +21,70 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
     <li class="breadcrumb-item active" aria-current="page">{{ $_title }}</li>
 @endsection
 @section('page-content')
-    <div class="nav-scroller text-center">
-        <nav class="nav nav-underline bg-soft-primary  pb-0" aria-label="Secondary navigation ">
-            <div class="d-flex" id="head-check">
-                <a href="{{ route('teacher.subject-view') . '?_subject=' . request()->input('_subject') }}"
-                    class="nav-link {{ request()->routeIs('teacher.subject-view') ? 'active' : '' }}">Student</a>
-                <a href="{{ route('teacher.semestral-clearance') . '?_subject=' . request()->input('_subject') }}"
-                    class="nav-link {{ request()->routeIs('teacher.semestral-clearance') ? 'active' : '' }}">Semestral
-                    Clearance</a>
-                <a href="{{ route('teacher.grading-sheet') }}?_subject={{ base64_encode($_subject->id) }}&_period=midterm"
-                    class="nav-link {{ request()->routeIs('teacher.grading-sheet') ? 'active' : '' }}">Grading
-                    Sheet</a>
-            </div>
-        </nav>
-    </div>
-    @if (request()->input('_work_panel') == '' || request()->input('_work_panel') == 'student-list')
-        <div class="conatiner-fluid content-inner mt-6 py-0">
+    @include('layouts.navigation-teacher')
+    @yield('teacher-navbar')
+
+    <div class="conatiner-fluid content-inner mt-6 py-0">
+        <form action="{{ route('teacher.e-clearance') }}" method="post">
+            @csrf
             <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <div class="header-title">
+                        <h4 class="card-title">E-Clearance</h4>
+                    </div>
+                    <div class="card-tool">
+                        <div class="form-check d-block">
+                            <input class="form-check-input input-select" data-check="subject-clearance" type="checkbox"
+                                id="flexCheckChecked-4">
+                            <label class="form-check-label" for="flexCheckChecked-4">
+                                Select All
+                            </label>
+                        </div>
+                        <input type="hidden" name="_subject_class" value="{{ base64_encode($_subject->id) }}">
+                        <button type="submit" class="btn btn-primary">SUBMIT</button>
+                    </div>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="datatable" class="table table-striped" data-toggle="data-table">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>No</th>
                                     <th>Student Number</th>
                                     <th>Midshipman Name</th>
+                                    <th>Clearance Status</th>
+                                    <th>Comment</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @if (count($_students))
                                     @foreach ($_students as $_key => $_student)
                                         <tr>
-                                            <td>{{ $_key + 1 }}</td>
                                             <td>{{ $_student->student->account->student_number }}</td>
                                             <td>{{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
+                                            </td>
+                                            <td>
+                                                <div class="form-check d-block">
+                                                    <input class="form-check-input input-select-subject-clearance"
+                                                        type="checkbox" id="flexCheckChecked-3-{{ $_key }}"
+                                                        name="data[{{ $_key }}][e_clearance]"
+                                                        value="{{ $_student->student->id }}"
+                                                        {{ $_student->student->clearance($_subject->id)? ($_student->student->clearance($_subject->id)->is_approved == 1? 'checked': ''): '' }}>
+                                                    <label class="form-check-label"
+                                                        for="flexCheckChecked-3-{{ $_key }}">
+                                                        CLEARED
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <label for="" class="text-muted"><small><b>COMMENT</b></small>
+                                                    </label>
+                                                    <input type="text" class="form-control"
+                                                        name="data[{{ $_key }}][comment]"
+                                                        value="{{ $_student->student->clearance($_subject->id) ? $_student->student->clearance($_subject->id)->comments : '' }}">
+                                                    <input type="hidden" name="data[{{ $_key }}][sId]"
+                                                        value="{{ base64_encode($_student->student->id) }}">
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -68,86 +98,8 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                     </div>
                 </div>
             </div>
-        </div>
-    @endif
-    @if (request()->input('_work_panel') == 'e-clearance')
-        <div class="conatiner-fluid content-inner mt-6 py-0">
-            <form action="{{ route('teacher.e-clearance') }}" method="post">
-                @csrf
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between">
-                        <div class="header-title">
-                            <h4 class="card-title">E-Clearance</h4>
-                        </div>
-                        <div class="card-tool">
-                            <div class="form-check d-block">
-                                <input class="form-check-input input-select" data-check="subject-clearance" type="checkbox"
-                                    id="flexCheckChecked-4">
-                                <label class="form-check-label" for="flexCheckChecked-4">
-                                    Select All
-                                </label>
-                            </div>
-                            <input type="hidden" name="_subject_class" value="{{ base64_encode($_subject->id) }}">
-                            <button type="submit" class="btn btn-primary">SUBMIT</button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Student Number</th>
-                                        <th>Midshipman Name</th>
-                                        <th>Clearance Status</th>
-                                        <th>Comment</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (count($_students))
-                                        @foreach ($_students as $_key => $_student)
-                                            <tr>
-                                                <td>{{ $_student->account->student_number }}</td>
-                                                <td>{{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
-                                                </td>
-                                                <td>
-                                                    <div class="form-check d-block">
-                                                        <input class="form-check-input input-select-subject-clearance"
-                                                            type="checkbox" id="flexCheckChecked-3-{{ $_key }}"
-                                                            name="data[{{ $_key }}][e_clearance]"
-                                                            value="{{ $_student->id }}"
-                                                            {{ $_student->clearance($_subject->id)? ($_student->clearance($_subject->id)->is_approved == 1? 'checked': ''): '' }}>
-                                                        <label class="form-check-label"
-                                                            for="flexCheckChecked-3-{{ $_key }}">
-                                                            CLEARED
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="form-group">
-                                                        <label for="" class="text-muted"><small><b>COMMENT</b></small>
-                                                        </label>
-                                                        <input type="text" class="form-control"
-                                                            name="data[{{ $_key }}][comment]"
-                                                            value="{{ $_student->clearance($_subject->id) ? $_student->clearance($_subject->id)->comments : '' }}">
-                                                        <input type="hidden" name="data[{{ $_key }}][sId]"
-                                                            value="{{ base64_encode($_student->id) }}">
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <th colspan="3">No Data</th>
-                                        </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </form>
+        </form>
 
-        </div>
+    </div>
 
-    @endif
 @endsection

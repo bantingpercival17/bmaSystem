@@ -10,6 +10,8 @@ Route::prefix('teacher')->group(function () {
     Route::get('/subjects/view', [TeacherController::class, 'subject_class_view'])->name('teacher.subject-view'); // Subject Content View
     Route::get('/subjects/semestral-clearance', [TeacherController::class, 'subject_clearance'])->name('teacher.semestral-clearance'); // Subject Clearance
     Route::get('/subjects/grading-sheet', [TeacherController::class, 'subject_grading_view'])->name('teacher.grading-sheet'); // Subject Grading Sheet View
+    Route::get('/subjects/schedule-view', [TeacherController::class, 'schedule_view'])->name('teacher.schedule-view'); // Schedule View
+    Route::post('/subjects/schedule-view/weekly-lesson-log', [TeacherController::class, 'subject_schedule_week_log_store'])->name('teacher.weekly-lesson-log'); // Schedule View
     //Route::get('/subjects/grading-sheet-frame', [TeacherController::class, 'subject_grading_main_view'])->name('teacher.grading-sheet-main'); // Subject Grading Sheet View
 
     Route::post('/subjects/grade-submission', [TeacherController::class, 'subject_grade_submission']); // Subject Submission
