@@ -90,8 +90,7 @@ $_title = 'Shipboard Monitoring';
 
                                         @if ($_journal->remark != null)
                                             <label for="" class="text-muted h6"><b><small>REMARKS</small></b></label>
-                                            <textarea class="form-control" id="" cols="30" rows="4"
-                                                disabled>{{ $_journal->remark }}</textarea>
+                                            <textarea class="form-control" id="" cols="30" rows="4" disabled>{{ $_journal->remark }}</textarea>
                                         @endif
                                         <label for="" class="text-muted h6"><b><small>DOCUMENTS</small></b></label>
                                         <div class="d-grid gap-card grid-cols-4">
@@ -135,8 +134,7 @@ $_title = 'Shipboard Monitoring';
                                                 <div
                                                     class="d-flex justify-content-between align-items-center mb-2  flex-wrap">
                                                     <small class="text-muted"><b>FEEDBACK</b></small>
-                                                    <textarea name="_feedback" class="form-control" cols="30" rows="3"
-                                                        required></textarea>
+                                                    <textarea name="_feedback" class="form-control" cols="30" rows="3" required></textarea>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md">
@@ -175,15 +173,14 @@ $_title = 'Shipboard Monitoring';
                 </div>
                 <div class="modal-body">
                     <div class="btn-group " role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="view.rotate(-Math.PI/2)">Rotate
+                        <button type="button" class="btn btn-primary btn-sm" onclick="rotateImg(Math.PI/2)">Rotate
                             Left</button>
-                        <button type="button" class="btn btn-primary btn-sm" onclick="initDraw()">Reset</button>
+                        {{-- <button type="button" class="btn btn-primary btn-sm" onclick="initDraw()">Reset</button> --}}
                         <button type="button" class="btn btn-primary btn-sm" onclick="view.rotate(Math.PI/2)">Rotate
                             Right</button>
                     </div>
                 </div>
-                <canvas width="100%" height="600px"></canvas>
-                <iframe class="iframe-container form-view iframe-placeholder" src="" width="100%" height="600px" style="display: none" id="iframe">
+                <iframe class="iframe-container form-view iframe-placeholder" width="100%" height="600px">
                 </iframe>
             </div>
         </div>

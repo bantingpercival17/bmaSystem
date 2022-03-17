@@ -29,65 +29,62 @@ $_title = 'Subjects';
                 @endphp
                 <label for="" class="text-primary h5"><b>| {{ strtoupper($curriculum->curriculum_name) }}</b></label>
                 @foreach ($_year_level as $_level)
-                    @if (count($_course->course_subject([$curriculum->id, $_level,
-                    Auth::user()->staff->current_academic()->semester])) > 0)
-                    <div class="card">
-                        <div class="card-header">
-                            <label class="card-title text-muted">
-                                <b>{{ $_course->id == 3 ? 'GRADE ' . $_level : $_level . ' CLASS' }}
-                                </b>
-                            </label>
-                        </div>
-                        <div class="card-body table-responsive p-0">
-                            <table class="table table-head-fixed text-nowrap">
-                                <thead>
-                                    <tr>
-                                        <th>SUBJECT CODE / DESCRIPTION</th>
-                                        <th>SECTION</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if ($_subject = $_course->course_subject([$curriculum->id, $_level, Auth::user()->staff->current_academic()->semester]))
-                                        @foreach ($_subject as $_subject)
-                                            <tr>
-                                                <td>
-                                                    <a
-                                                        href="{{ route('registrar.course-subject-handle-view') }}?_subject={{ base64_encode($_subject->id) }}">
-                                                        <span class="text-primary"><b>
-                                                                {{ $_subject->subject_code }}</b></span>
-                                                        <br>
-                                                        <small> {{ $_subject->subject_name }}</small>
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    @if ($_subject->section($_academic->id)->count() > 0)
-                                                        @foreach ($_subject->section($_academic->id)->get() as $_section)
-                                                            <small class="mt-2 badge bg-primary">
-                                                                {{ $_section->section->section_name }}
-                                                                <br>[
-                                                                {{ $_section->staff->first_name . ' ' . $_section->staff->last_name }}]</small>
-                                                        @endforeach
-                                                    @else
-                                                        <span class="badge badge-secondary">ADD SECTION</span>
-                                                    @endif
-                                                </td>
-
-                                            </tr>
-
-                                        @endforeach
-                                    @else
+                    @if (count($_course->course_subject([$curriculum->id, $_level, Auth::user()->staff->current_academic()->semester])) > 0)
+                        <div class="card">
+                            <div class="card-header">
+                                <label class="card-title text-muted">
+                                    <b>{{ $_course->id == 3 ? 'GRADE ' . $_level : $_level . ' CLASS' }}
+                                    </b>
+                                </label>
+                            </div>
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-head-fixed text-nowrap">
+                                    <thead>
                                         <tr>
-                                            <td colspan="2">NO SUBJECT</td>
+                                            <th>SUBJECT CODE / DESCRIPTION</th>
+                                            <th>SECTION</th>
                                         </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                @endif
+                                    </thead>
+                                    <tbody>
+                                        @if ($_subject = $_course->course_subject([$curriculum->id, $_level, Auth::user()->staff->current_academic()->semester]))
+                                            @foreach ($_subject as $_subject)
+                                                <tr>
+                                                    <td>
+                                                        <a
+                                                            href="{{ route('registrar.course-subject-handle-view') }}?_subject={{ base64_encode($_subject->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                                            <span class="text-primary"><b>
+                                                                    {{ $_subject->subject_code }}</b></span>
+                                                            <br>
+                                                            <small> {{ $_subject->subject_name }}</small>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        @if ($_subject->section($_academic->id)->count() > 0)
+                                                            @foreach ($_subject->section($_academic->id)->get() as $_section)
+                                                                <small class="mt-2 badge bg-primary">
+                                                                    {{ $_section->section->section_name }}
+                                                                    <br>[
+                                                                    {{ $_section->staff->first_name . ' ' . $_section->staff->last_name }}]</small>
+                                                            @endforeach
+                                                        @else
+                                                            <span class="badge badge-secondary">ADD SECTION</span>
+                                                        @endif
+                                                    </td>
 
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="2">NO SUBJECT</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
             @endforeach
-        @endforeach
 
         @endif
     </div>
