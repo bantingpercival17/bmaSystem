@@ -7,6 +7,7 @@ use Closure;
 use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Worksheet\Row as SpreadsheetRow;
 
+/** @mixin SpreadsheetRow */
 class Row implements ArrayAccess
 {
     use DelegatedMacroable;
@@ -32,8 +33,8 @@ class Row implements ArrayAccess
     protected $rowCache;
 
     /**
-     * @param SpreadsheetRow $row
-     * @param array          $headingRow
+     * @param  SpreadsheetRow  $row
+     * @param  array  $headingRow
      */
     public function __construct(SpreadsheetRow $row, array $headingRow = [])
     {
@@ -50,12 +51,10 @@ class Row implements ArrayAccess
     }
 
     /**
-     * @param null        $nullValue
-     * @param bool        $calculateFormulas
-     * @param bool        $formatData
-     *
-     * @param string|null $endColumn
-     *
+     * @param  null  $nullValue
+     * @param  bool  $calculateFormulas
+     * @param  bool  $formatData
+     * @param  string|null  $endColumn
      * @return Collection
      */
     public function toCollection($nullValue = null, $calculateFormulas = false, $formatData = true, ?string $endColumn = null): Collection
@@ -64,11 +63,10 @@ class Row implements ArrayAccess
     }
 
     /**
-     * @param null        $nullValue
-     * @param bool        $calculateFormulas
-     * @param bool        $formatData
-     * @param string|null $endColumn
-     *
+     * @param  null  $nullValue
+     * @param  bool  $calculateFormulas
+     * @param  bool  $formatData
+     * @param  string|null  $endColumn
      * @return array
      */
     public function toArray($nullValue = null, $calculateFormulas = false, $formatData = true, ?string $endColumn = null)
@@ -102,11 +100,13 @@ class Row implements ArrayAccess
     }
 
     /**
+     * @param  bool  $calculateFormulas
+     * @param  string|null  $endColumn
      * @return bool
      */
-    public function isEmpty($calculateFormulas = false): bool
+    public function isEmpty($calculateFormulas = false, ?string $endColumn = null): bool
     {
-        return count(array_filter($this->toArray(null, $calculateFormulas, false))) === 0;
+        return count(array_filter($this->toArray(null, $calculateFormulas, false, $endColumn))) === 0;
     }
 
     /**
@@ -117,28 +117,33 @@ class Row implements ArrayAccess
         return $this->row->getRowIndex();
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset(($this->toArray())[$offset]);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return ($this->toArray())[$offset];
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         //
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         //
     }
 
     /**
-     * @param \Closure $preparationCallback
+     * @param  \Closure  $preparationCallback
+     *
      * @internal
      */
     public function setPreparationCallback(Closure $preparationCallback = null)

@@ -136,10 +136,10 @@ class PrettyPageHandler extends Handler
      */
     public function __construct()
     {
-        if (ini_get('xdebug.file_link_format') || extension_loaded('xdebug')) {
+        if (ini_get('xdebug.file_link_format') || get_cfg_var('xdebug.file_link_format')) {
             // Register editor using xdebug's file_link_format option.
             $this->editors['xdebug'] = function ($file, $line) {
-                return str_replace(['%f', '%l'], [$file, $line], ini_get('xdebug.file_link_format'));
+                return str_replace(['%f', '%l'], [$file, $line], ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format'));
             };
 
             // If xdebug is available, use it as default editor.
@@ -812,12 +812,12 @@ class PrettyPageHandler extends Handler
      * Non-string values will be replaced with a fixed asterisk count.
      * We intentionally dont rely on $GLOBALS as it depends on the 'auto_globals_jit' php.ini setting.
      *
-     * @param array  $superGlobal     One of the superglobal arrays
+     * @param array|\ArrayAccess  $superGlobal     One of the superglobal arrays
      * @param string $superGlobalName The name of the superglobal array, e.g. '_GET'
      *
      * @return array $values without sensitive data
      */
-    private function masked(array $superGlobal, $superGlobalName)
+    private function masked($superGlobal, $superGlobalName)
     {
         $blacklisted = $this->blacklist[$superGlobalName];
 

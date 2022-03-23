@@ -10,20 +10,21 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\Macroable;
 use Throwable;
 
 abstract class Factory
 {
-    use ForwardsCalls, Macroable {
+    use Conditionable, ForwardsCalls, Macroable {
         __call as macroCall;
     }
 
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string
+     * @var string|null
      */
     protected $model;
 
@@ -203,6 +204,17 @@ abstract class Factory
     }
 
     /**
+     * Create a single model and persist it to the database.
+     *
+     * @param  array  $attributes
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function createOneQuietly($attributes = [])
+    {
+        return $this->count(null)->createQuietly($attributes);
+    }
+
+    /**
      * Create a collection of models and persist them to the database.
      *
      * @param  iterable  $records
@@ -215,6 +227,19 @@ abstract class Factory
                 return $this->state($record)->create();
             })
         );
+    }
+
+    /**
+     * Create a collection of models and persist them to the database.
+     *
+     * @param  iterable  $records
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function createManyQuietly(iterable $records)
+    {
+        return Model::withoutEvents(function () use ($records) {
+            return $this->createMany($records);
+        });
     }
 
     /**
@@ -243,6 +268,20 @@ abstract class Factory
         }
 
         return $results;
+    }
+
+    /**
+     * Create a collection of models and persist them to the database.
+     *
+     * @param  array  $attributes
+     * @param  \Illuminate\Database\Eloquent\Model|null  $parent
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+     */
+    public function createQuietly($attributes = [], ?Model $parent = null)
+    {
+        return Model::withoutEvents(function () use ($attributes, $parent) {
+            return $this->create($attributes, $parent);
+        });
     }
 
     /**
@@ -453,6 +492,17 @@ abstract class Factory
     }
 
     /**
+     * Add a new cross joined sequenced state transformation to the model definition.
+     *
+     * @param  array  $sequence
+     * @return static
+     */
+    public function crossJoinSequence(...$sequence)
+    {
+        return $this->state(new CrossJoinSequence(...$sequence));
+    }
+
+    /**
      * Define a child relationship for the model.
      *
      * @param  \Illuminate\Database\Eloquent\Factories\Factory  $factory
@@ -636,12 +686,16 @@ abstract class Factory
     public function modelName()
     {
         $resolver = static::$modelNameResolver ?: function (self $factory) {
+            $namespacedFactoryBasename = Str::replaceLast(
+                'Factory', '', Str::replaceFirst(static::$namespace, '', get_class($factory))
+            );
+
             $factoryBasename = Str::replaceLast('Factory', '', class_basename($factory));
 
             $appNamespace = static::appNamespace();
 
-            return class_exists($appNamespace.'Models\\'.$factoryBasename)
-                        ? $appNamespace.'Models\\'.$factoryBasename
+            return class_exists($appNamespace.'Models\\'.$namespacedFactoryBasename)
+                        ? $appNamespace.'Models\\'.$namespacedFactoryBasename
                         : $appNamespace.$factoryBasename;
         };
 

@@ -92,7 +92,7 @@ class InstallCommand extends Command
             ->filter(function ($service) {
                 return in_array($service, ['mysql', 'pgsql', 'mariadb', 'redis', 'meilisearch', 'minio']);
             })->map(function ($service) {
-                return "    sail{$service}:\n        driver: local";
+                return "    sail-{$service}:\n        driver: local";
             })->whenNotEmpty(function ($collection) {
                 return $collection->prepend('volumes:');
             })->implode("\n");
@@ -102,6 +102,11 @@ class InstallCommand extends Command
         $dockerCompose = str_replace('{{depends}}', empty($depends) ? '' : '        '.$depends, $dockerCompose);
         $dockerCompose = str_replace('{{services}}', $stubs, $dockerCompose);
         $dockerCompose = str_replace('{{volumes}}', $volumes, $dockerCompose);
+
+        // Replace Selenium with ARM base container on Apple Silicon...
+        if (in_array('selenium', $services) && php_uname('m') === 'arm64') {
+            $dockerCompose = str_replace('selenium/standalone-chrome', 'seleniarm/standalone-chromium', $dockerCompose);
+        }
 
         // Remove empty lines...
         $dockerCompose = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $dockerCompose);
