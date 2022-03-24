@@ -9,6 +9,8 @@ Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin
 Route::prefix('administrator')->group(function () {
     Route::get('/', [AdministratorController::class, 'index'])->name('admin.dashboard');
     Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
+    Route::get('/enrollment/enrolled-list', [AdministratorController::class, 'dashboard_enrolled_list_view'])->name('admin.course-enrolled');
+    Route::get('/enrollment/enrolled-list/report', [AdministratorController::class, 'course_enrolled_report'])->name('admin.course-enrolled-report');
     /* Students */
     Route::get('/students', [AdministratorController::class, 'student_view'])->name('admin.students'); // View Students
     Route::get('/students/view', [AdministratorController::class, 'student_profile'])->name('admin.student-profile');

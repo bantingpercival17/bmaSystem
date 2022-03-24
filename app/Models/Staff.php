@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\EmployeeController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -126,5 +125,145 @@ class Staff extends Model
     {
         $_staff = Staff::where('job_description', 'SCHOOL DIRECTOR')->where('department', $_department)->first();
         return $_staff->user->email;
+    }
+
+    public function enrollment_count()
+    {
+        return EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment')
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->groupBy('pt.assessment_id')
+            ->orderBy('pa.created_at', 'DESC')->get();
+    }
+
+
+
+    public function side_bar_items()
+    {
+        return  [
+            [
+                'role_id' => 0,
+                'role_name' => 'Employee',
+                'role_icon' => 'icon-user',
+                'role_routes' => [['Attendance', 'employee.attendance'], ['Profile', 'employee.change-password']],
+            ],
+            [
+                'role_id' => 1,
+                'role_name' => 'Administrator',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting']],
+            ],
+            [
+                'role_id' => 2,
+                'role_name' => 'Administrative',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Dashboard', 'administrative.dashboard'], ['Attendace', 'administrative.attendance'], ['Employees', 'administrative.employees']],
+            ],
+            [
+                'role_id' => 3,
+                'role_name' => 'Registrar',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance']],
+            ],
+            [
+                'role_id' => 4,
+                'role_name' => 'Accounting',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Payment Transaction', 'accounting.payment-transactions'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars'], ['Semestral Clearance', 'accounting.semestral-clearance']],
+            ],
+            [
+                'role_id' => 5,
+                'role_name' => 'Onboard Training',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Dashboard', 'onboard.dashboard'], ['Midshipman', 'onboard.midshipman'], ['Shipboard', 'onboard.shipboard']],
+            ],
+            [
+                'role_id' => 6,
+                'role_name' => 'Teacher',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Subjects', 'teacher.subject-list']],
+            ],
+
+            [
+                'role_id' => 7,
+                'role_name' => 'Maintenance',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Dashboard', 'administrative.dashboard'], ['Enrollment', 'admin.enrollment']],
+            ],
+            [
+                'role_id' => 8,
+                'role_name' => 'Executive',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Dashboard', 'exo.dashboard'], ['Staff Attendance', 'exo.staff-attendance'], ['Semestral Clearance', 'exo.semestral-clearance']],
+            ],
+            [
+                'role_id' => 9,
+                'role_name' => 'Department Head',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Grade Submission', 'department-head.grade-submission'], ['E-Clearance', 'department-head.e-clearance']],
+            ],
+            [
+                'role_id' => 10,
+                'role_name' => 'Dean',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Grade Submission', 'dean.grade-submission'], ['E-Clearance', 'dean.e-clearance']],
+            ],
+            [
+                'role_id' => 11,
+                'role_name' => 'Librarian',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Semestral Clearance', 'librarian.semestral-clearance']],
+            ],
+        ];
+    }
+    public function navigation_dropdown_url()
+    {
+        $_url = route('registrar.enrollment');
+        $_url = request()->is('registrar/dashboard*') ? route('registrar.dashboard') : $_url;
+        $_url = request()->is('registrar/semestral-clearance*') ? route('registrar.semestral-clearance') : $_url;
+        $_url = request()->is('registrar/sections*') ? route('registrar.section-view') : $_url;
+        $_url = request()->is('registrar/subjects*') ? route('registrar.subject-view') : $_url;
+        $_url = request()->is('teacher/subjects*') ? route('teacher.subject-list') : $_url;
+        $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
+        $_url = request()->is('department-head/semestral-clearance*') ? route('department-head.e-clearance') : $_url;
+        $_url = request()->is('dean/e-clearance*') ? route('dean.e-clearance') : $_url;
+        $_url = request()->is('dean/grading-verification*') ? route('dean.grade-submission') : $_url;
+        $_url = request()->is('accounting/particular/fee*') ? route('accounting.particular-fee-view') : $_url;
+        $_url = request()->is('accounting/fees*') ? route('accounting.fees') : $_url;
+        $_url = request()->is('accounting/semestral-clearance*') ? route('accounting.semestral-clearance') : $_url;
+        $_url = request()->is('executive/semestral-clearance*') ? route('exo.semestral-clearance') : $_url;
+        $_url = request()->is('librarian/semestral-clearance*') ? route('librarian.semestral-clearance') : $_url;
+        $_url = request()->is('administrator/semestral-clearance*') ? route('admin.semestral-clearance') : $_url;
+        $_url = request()->is('registrar/semestral-grade*') ? route('registrar.semestral-grades') : $_url;
+        $_url = request()->is('administrator/dashboard*') ? route('admin.dashboard') : $_url;
+        $_url = request()->is('dashboard*') ? route('admin.dashboard') : $_url;
+        $_url = request()->is('administrator/enrollment*') ? route('admin.dashboard') : $_url;
+        return $_url;
+    }
+    public function routes_navigation()
+    {
+        return  [
+            'registrar/dashboard*',
+            'registrar/enrollment*',
+            'registrar/semestral-clearance*',
+            'registrar/semestral-grade*',
+            'registrar/sections*',
+            'registrar/subjects*',
+            'teacher/subjects*',
+            'department-head/grade-submission*',
+            'department-head/semestral-clearance*',
+            'dean/e-clearance*', 'accounting/fees*',
+            'accounting/dashboard*',
+            'accounting/particular/fee*',
+            'accounting/semestral-clearance*',
+            'executive/semestral-clearance*',
+            'librarian/semestral-clearance*',
+            'administrator/semestral-clearance*',
+            'dean/grading-verification*',
+            'administrator/dashboard*',
+            'administrator/enrollment*'
+        ];
     }
 }

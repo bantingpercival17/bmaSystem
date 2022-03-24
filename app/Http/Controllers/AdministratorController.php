@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CourseStudentEnrolled;
+use App\Exports\EnrolledStudentList;
 use App\Imports\ShipboardInformationImport;
 use App\Imports\StaffImport;
 use App\Imports\StudentInformationImport;
@@ -50,11 +52,29 @@ class AdministratorController extends Controller
     public function index()
     {
         $_academics = AcademicYear::where('is_removed', false)->get();
-        $_course = CourseOffer::where('is_removed', false)->get();
-        $_total_population = EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')->where('enrollment_assessments.is_removed', false)->get();
-        return view('pages.administrator.dashboard', compact('_academics', '_course', '_total_population'));
+        $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
+        $_total_population = Auth::user()->staff->enrollment_count();
+        return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population'));
     }
+    public function dashboard_enrolled_list_view(Request $_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_students = $_request->_year_level ?  $_course->enrolled_list($_request->_year_level)->get() : $_course->enrollment_list; // Year Level
+        $_students = $_request->_sort ? $_course->sort_enrolled_list($_request)->get() : $_students; // Sorting
+        return view('pages.general-view.enrollment.enrolled_list_view', compact('_course', '_students'));
+    }
+    public function course_enrolled_report(Request $_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        // Excell Report
+        if ($_request->_report == 'excel-report') {
+            //$_file_name = $_course->course_code ./*  "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester))  .*/ '.xlsx';
+            $_file_name = 'sample.xlsx';
+            $_file_export = new CourseStudentEnrolled($_course);
+            return Excel::download($_file_export, $_file_name); // Download the File 
 
+        }
+    }
     /* Students */
     public function student_view(Request $_request)
     {

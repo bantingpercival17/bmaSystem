@@ -38,7 +38,7 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.is_removed', false)
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->groupBy('pt.assessment_id')
-            ->orderBy('pa.created_at', 'DESC');
+            ->orderBy('pt.created_at', 'DESC');
     }
     public function enrolled_list($_data)
     {
@@ -52,6 +52,36 @@ class CourseOffer extends Model
             ->orderBy('enrollment_assessments.created_at', 'DESC')
             ->where('enrollment_assessments.year_level', $_data)
             ->where('enrollment_assessments.is_removed', false);
+    }
+    public function sort_enrolled_list($_request)
+    {
+        $_query = $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('student_details as sd', 'sd.id', 'enrollment_assessments.student_id')
+            ->join('student_accounts as sa', 'sa.student_id', 'sd.id')
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment')
+            ->groupBy('pt.assessment_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('pt.is_removed', false)
+            ->where('enrollment_assessments.is_removed', false);
+        //Get Year Level
+        $_query = $_request->_year_level ? $_query->where('enrollment_assessments.year_level', $_request->_year_leve) : $_query;
+        //Sorting index & value
+        $_query = $_request->_sort == 'enrollment-date' ?  $_query->orderBy('enrollment_assessments.created_at', 'DESC') : $_query;
+        $_query = $_request->_sort == 'lastname' ?  $_query->orderBy('sd.last_name', 'ASC')->orderBy('sd.first_name', 'ASC') : $_query;
+        $_query = $_request->_sort == 'student-number' ?  $_query->orderBy('sa.student_number', 'ASC') : $_query;
+        if ($_request->_students) {
+            $_student = explode(',', $_request->_students);
+            $_count = count($_student);
+            if ($_count > 1) {
+                $_query = $_query->where('sd.last_name', 'like', "%" . trim($_student[0]) . "%")
+                    ->where('sd.first_name', 'like', "%" . trim($_student[1]) . "%");
+            } else {
+                $_query = $_query->where('sd.last_name', 'like', "%" . trim($_student[0]) . "%");
+            }
+        }
+        return $_query;
     }
     public function student_list()
     {

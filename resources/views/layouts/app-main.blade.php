@@ -56,13 +56,10 @@
             </div>
             {{-- @yield('extra-navigation') --}}
             @if (request()->is('teacher/subjects/*'))
-
                 @yield('page-content')
             @else
-                @php
-                    $_route = ['registrar/dashboard*', 'registrar/enrollment*', 'registrar/semestral-clearance*', 'registrar/semestral-grade*', 'registrar/sections*', 'registrar/subjects*', 'teacher/subjects*', 'department-head/grade-submission*', 'department-head/semestral-clearance*', 'dean/e-clearance*', 'accounting/fees*', 'accounting/particular/fee*', 'accounting/semestral-clearance*', 'executive/semestral-clearance*', 'librarian/semestral-clearance*', 'administrator/semestral-clearance*', 'dean/grading-verification*'];
-                @endphp
-                @foreach ($_route as $route)
+                
+                @foreach (Auth::user()->staff->routes_navigation() as $route)
                     @if (request()->is($route))
                         @yield('sub-navigation')
                     @endif

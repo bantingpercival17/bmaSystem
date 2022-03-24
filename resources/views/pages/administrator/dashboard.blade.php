@@ -15,4 +15,5 @@ $_title = 'Dashboard';
     </li>
 @endsection
 @section('page-content')
+    @include('layouts.widgets.enrollment_overview')
 @endsection
