@@ -16,4 +16,5 @@ $_title = 'Dashboard';
 @endsection
 @section('page-content')
     @include('layouts.widgets.enrollment_overview')
+    @include('layouts.widgets.entrance_examination_overview')
 @endsection

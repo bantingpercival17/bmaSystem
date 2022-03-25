@@ -108,7 +108,7 @@ class OnboardTrainingController extends Controller
     }
     public function  onboard_journal_view(Request $_request)
     {
-        $_journals = ShipboardJournal::where('month', base64_decode($_request->_j))->where('student_id', base64_decode($_request->_midshipman))->get();
+        $_journals = ShipboardJournal::where('month', base64_decode($_request->_j))->where('student_id', base64_decode($_request->_midshipman))->where('is_removed', false)->get();
         $_midshipman = $_journals[0]->student;
 
         return view('onboardtraining.shipboard.document', compact('_midshipman', '_journals'));

@@ -14,6 +14,125 @@ $_title = 'Setting';
     </li>
 @endsection
 @section('page-content')
+    <div class="card">
+        <div class="card-header">
+            <span class="h4 fw-bolder">DOCUMENTS</span>
+            <form action="{{ route('admin.store-documents') }}" method="post">
+                @csrf
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="" class="form-label">DOCUMENT NAME</label>
+                            <input type="text" class="form-control" name="document_name"
+                                value="{{ old('document_name') }}">
+                            @error('document_name')
+                                <span class="badge bg-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="" class="form-label">DOCUMENT DESCRIPTION</label>
+                            <input type="text" class="form-control" name="document_details"
+                                value="{{ old('document_details') }}">
+                            @error('document_details')
+                                <span class="badge bg-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="" class="form-label">DOCUMENT PROPOSE</label>
+                            <input type="text" class="form-control" name="document_propose"
+                                value="{{ old('document_propose') }}">
+                            @error('document_propose')
+                                <span class="badge bg-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="" class="form-label">DEPARTMENT NEED</label>
+                            <select name="department" class="form-select">
+                                @foreach ($_department as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('department')
+                                <span class="badge bg-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="" class="form-label">YEAR LEVEL</label>
+                            <select name="year_level" class="form-select">
+                                <option value="11">Grade 11</option>
+                                <option value="12">Grade 12</option>
+                                <option value="1">1st Class</option>
+                                <option value="2">2nd Class</option>
+                                <option value="3">3rd Class</option>
+                                <option value="4">4th Class</option>
+                            </select>
+                            @error('year_level')
+                                <span class="badge bg-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary mt-5 w-100">CREATE</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive mt-4">
+                @include('layouts.icon-main')
+                <table id="basic-table" class="table table-striped mb-0" role="grid">
+                    <thead>
+                        <tr>
+                            <th>Document Name</th>
+                            <th>Documents Details</th>
+                            <th>Document Propose</th>
+                            <th>Year Level</th>
+                            <th>Department</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($_documents as $document)
+                            <tr>
+                                <td>
+                                    {{ $document->document_name }}
+                                </td>
+                                <td>
+                                    {{ $document->document_details }}
+                                </td>
+                                <td>
+                                    {{ $document->document_propose }}
+                                </td>
+                                <td>
+                                    {{ $document->year_level }}
+                                </td>
+                                <td>
+                                    {{ $document->department->name }}
+                                </td>
+                                <td>
+                                    {{ $document->document_name }}
+                                </td>
+
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-5">
             <label for="" class="text-primary h4">ROLES</label>

@@ -13,6 +13,8 @@ use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\CurriculumSubject;
+use App\Models\Department;
+use App\Models\Documents;
 use App\Models\EducationalDetails;
 use App\Models\EnrollmentAssessment;
 use App\Models\ParentDetails;
@@ -501,7 +503,9 @@ class AdministratorController extends Controller
     {
         $_roles = Role::all();
         $_academic = AcademicYear::where('is_removed', false)->orderBy('id', 'desc')->get();
-        return view('pages.administrator.setting.view', compact('_roles', '_academic'));
+        $_department = Department::all();
+        $_documents = Documents::where('is_removed', false)->get();
+        return view('pages.administrator.setting.view', compact('_roles', '_academic', '_department', '_documents'));
     }
     // Academic 
     public function store_academic(Request $_request)
@@ -539,5 +543,26 @@ class AdministratorController extends Controller
     }
     // Academic Year Store
 
-    // Department
+    // Documents
+    public function store_documents(Request $_request)
+    {
+        $_field = $_request->validate([
+            'document_name' => 'required|string',
+            'document_details' => 'required|string',
+            'document_propose' => 'required|string',
+            'year_level' => 'required',
+            'department' => 'required',
+        ]);
+        $_data = array(
+            'document_name' => $_field['document_name'],
+            'document_details' => $_field['document_details'],
+            'document_propose' => $_field['document_propose'],
+            'year_level' => $_field['year_level'],
+            'department_id' => $_field['department'],
+            'is_removed' => false
+        );
+        //return $_data;
+        Documents::create($_data);
+        return back()->with('success', 'Successfuly Created');
+    }
 }

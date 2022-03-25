@@ -232,7 +232,7 @@ class StudentDetails extends Model
     }
     public function narative_report()
     {
-        return $this->hasMany(ShipboardJournal::class, 'student_id')->select('month', DB::raw('count(*) as total'), DB::raw('count(is_approved) as is_approved'))->groupBy('month');
+        return $this->hasMany(ShipboardJournal::class, 'student_id')->select('month', DB::raw('count(*) as total'), DB::raw('count(is_approved) as is_approved'))->groupBy('month')->where('is_removed',false);
     }
     public function clearance($_data)
     {

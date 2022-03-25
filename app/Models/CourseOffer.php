@@ -202,4 +202,10 @@ class CourseOffer extends Model
             ->where('curriculum_subjects.semester', $_data->academic->semester)
             ->first();
     }
+
+    /* Applicant Model */
+    public function student_applicants()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id');
+    }
 }
