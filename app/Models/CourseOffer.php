@@ -206,6 +206,11 @@ class CourseOffer extends Model
     /* Applicant Model */
     public function student_applicants()
     {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+        ->join('applicant_detials as ad','ad.applicant_id','applicant_accounts.id');
+    }
+    public function student_pre_registrations()
+    {
         return $this->hasMany(ApplicantAccount::class, 'course_id');
     }
 }

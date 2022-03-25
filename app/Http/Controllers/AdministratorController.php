@@ -10,6 +10,7 @@ use App\Imports\StudentInformationImport;
 use App\Imports\StudentSection as ImportsStudentSection;
 use App\Imports\SubjectHandle;
 use App\Models\AcademicYear;
+use App\Models\ApplicantAccount;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\CurriculumSubject;
@@ -56,7 +57,8 @@ class AdministratorController extends Controller
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
-        return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population'));
+        $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
+        return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population','_total_applicants'));
     }
     public function dashboard_enrolled_list_view(Request $_request)
     {

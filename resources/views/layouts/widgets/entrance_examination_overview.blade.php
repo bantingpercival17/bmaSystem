@@ -15,7 +15,7 @@ foreach ($_url_role as $key => $_data) {
             data-iq-ease="power.out" data-iq-opacity="0">
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
-                    <h3 class="counter">{{ count($_total_population) }}</h3>
+                    <h3 class="counter">{{ count($_total_applicants) }}</h3>
                     {{-- {{$_course->enrollment_list}} --}}
                     <a href="javascript:void(0);">
                         <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -129,9 +129,18 @@ foreach ($_url_role as $key => $_data) {
             <table id="basic-table" class="table table-striped mb-0" role="grid">
                 <thead>
                     <tr class="text-center">
-                        <th>COURSE</th>
-                        <th>TOTAL <br> APPLICANTS</th>
-                        <th>DETAILS & <br> DOCUMENTS VERIFICATION</th>
+                        <th rowspan="2">COURSE</th>
+                        <th rowspan="2">PRE-REGISTRATION</th>
+                        <th rowspan="2">INFORMATION VERIFICATION</th>
+                        <td colspan="3">ENTRANCE EXAMINATION</td>
+                        <th rowspan="2">BRIEFING</th>
+                        <th rowspan="2">MEDICAL</th>
+                        <th rowspan="2">QUALIFIED FOR ENROLLMENT</th>
+                    </tr>
+                    <tr>
+                        <th>PAYMENT</th>
+                        <th>EXAMINATION</th>
+                        <th>RESULT</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -139,14 +148,20 @@ foreach ($_url_role as $key => $_data) {
                         <tr>
                             <td>{{ $_course->course_name }}</td>
                             <td>
-                                {{ count($_course->student_applicants) }}
+                                {{ count($_course->student_pre_registrations) }}
                             </td>
                             <td>
                                 <a
                                     href="{{ route('registrar.dashboard-student-clearance-list') . '?_course=' . base64_encode($_course->id) }}&_clearance_status=not-cleared">
-                                    {{ count($_course->students_not_clearance) }}
+                                    {{ count($_course->student_applicants) }}
                                 </a>
                             </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     @endforeach
                 </tbody>
