@@ -84,6 +84,7 @@ return array(
     'App\\Models\\EnrollmentAssessment' => $baseDir . '/app/Models/EnrollmentAssessment.php',
     'App\\Models\\GradeComputed' => $baseDir . '/app/Models/GradeComputed.php',
     'App\\Models\\GradeEncode' => $baseDir . '/app/Models/GradeEncode.php',
+    'App\\Models\\GradePublish' => $baseDir . '/app/Models/GradePublish.php',
     'App\\Models\\GradeSubmission' => $baseDir . '/app/Models/GradeSubmission.php',
     'App\\Models\\GradeVerification' => $baseDir . '/app/Models/GradeVerification.php',
     'App\\Models\\OfficalCleared' => $baseDir . '/app/Models/OfficalCleared.php',

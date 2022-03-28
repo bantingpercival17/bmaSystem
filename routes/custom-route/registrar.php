@@ -50,4 +50,5 @@ Route::prefix('registrar')->group(function () {
     Route::get('/semestral-grade/view', [RegistrarController::class, 'semestral_grade_section_view'])->name('registrar.semestral-grade-view');
     Route::get('/semestral-grade/report-form', [RegistrarController::class, 'semestral_grade_report_form'])->name('registrar.semestral-grade-form-ad2');
     Route::get('/semestral-grade/report-summary', [RegistrarController::class, 'semestral_grade_summary_report'])->name('registrar.semestral-grade-semestral-report');
+    Route::get('/smestral-grade/publish-grade',[RegistrarController::class,'semestral_grade_publish'])->name('registrar.semestral-grade-publish');
 });

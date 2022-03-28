@@ -72,6 +72,14 @@ $_title = 'Semestral Grades';
                                             <td>
                                                 <a href="{{ route('registrar.semestral-grade-form-ad2') }}?_student={{ base64_encode($_data->id) }}&_section={{ request()->input('_section') }}"
                                                     class="btn btn-sm btn-primary" target="_blank">FORM AD-02-A</a>
+                                                @if ($_data->student->grade_publish)
+                                                    <span class="badge bg-secondary">GRADE PUBLISHED <br>
+                                                        {{ $_data->student->grade_publish->staff->user->name .' - ' .$_data->student->grade_publish->created_at->format('F d, Y') }}</span>
+                                                @else
+                                                    <a href="{{ route('registrar.semestral-grade-publish') }}?_student={{ base64_encode($_data->id) }}&_academic={{ request()->input('_academic') }}"
+                                                        class="btn btn-sm btn-info text-white">PUBLISH GRADE</a>
+                                                @endif
+
                                             </td>
                                         </tr>
                                     @endforeach

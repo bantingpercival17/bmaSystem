@@ -219,7 +219,10 @@ class StudentDetails extends Model
         }
         return $_percentage;
     }
-
+    public function grade_publish()
+    {
+        return $this->hasOne(GradePublish::class, 'student_id')/* ->where('is_removed', false) */;
+    }
     /* Shipboard Model */
 
     public function shipboard_training()
@@ -232,7 +235,7 @@ class StudentDetails extends Model
     }
     public function narative_report()
     {
-        return $this->hasMany(ShipboardJournal::class, 'student_id')->select('month', DB::raw('count(*) as total'), DB::raw('count(is_approved) as is_approved'))->groupBy('month')->where('is_removed',false);
+        return $this->hasMany(ShipboardJournal::class, 'student_id')->select('month', DB::raw('count(*) as total'), DB::raw('count(is_approved) as is_approved'))->groupBy('month')->where('is_removed', false);
     }
     public function clearance($_data)
     {

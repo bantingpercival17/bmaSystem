@@ -8,6 +8,7 @@ use App\Models\Curriculum;
 use App\Models\CurriculumSubject;
 use App\Models\EnrollmentApplication;
 use App\Models\EnrollmentAssessment;
+use App\Models\GradePublish;
 use App\Models\Section;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
@@ -236,7 +237,7 @@ class RegistrarController extends Controller
         );
         SubjectClassSchedule::create($_schedule);
 
-        return back()->with('success', 'Successfully Add Scheduled!!'); 
+        return back()->with('success', 'Successfully Add Scheduled!!');
     }
     public function classes_schedule_removed(Request $_request)
     {
@@ -474,5 +475,16 @@ class RegistrarController extends Controller
             ->get();
         $_report = new StudentListReport();
         return $_report->summary_grade($_enrollment_curriculum, $_request);
+    }
+
+    public function semestral_grade_publish(Request $_request)
+    {
+        GradePublish::create([
+            'student_id' => base64_decode($_request->_student),
+            'academic_id' => base64_decode($_request->_academic),
+            'staff_id' => Auth::user()->staff->id,
+            'is_removed' => 0,
+        ]);
+        return back()->with('success', 'Grade Publish.');
     }
 }

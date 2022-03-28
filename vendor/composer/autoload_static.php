@@ -690,6 +690,7 @@ class ComposerStaticInitad9a3fefd2e4c6a7edf47485ac1509a3
         'App\\Models\\EnrollmentAssessment' => __DIR__ . '/../..' . '/app/Models/EnrollmentAssessment.php',
         'App\\Models\\GradeComputed' => __DIR__ . '/../..' . '/app/Models/GradeComputed.php',
         'App\\Models\\GradeEncode' => __DIR__ . '/../..' . '/app/Models/GradeEncode.php',
+        'App\\Models\\GradePublish' => __DIR__ . '/../..' . '/app/Models/GradePublish.php',
         'App\\Models\\GradeSubmission' => __DIR__ . '/../..' . '/app/Models/GradeSubmission.php',
         'App\\Models\\GradeVerification' => __DIR__ . '/../..' . '/app/Models/GradeVerification.php',
         'App\\Models\\OfficalCleared' => __DIR__ . '/../..' . '/app/Models/OfficalCleared.php',
