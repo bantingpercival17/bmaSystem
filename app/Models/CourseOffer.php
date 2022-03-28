@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class CourseOffer extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql';
     protected $fillable = ['course_name', 'course_code', 'school_level', 'is_removed'];
     public function course_subject($_data)
     {
@@ -207,6 +208,7 @@ class CourseOffer extends Model
     public function student_applicants()
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
+        ->select('applicant_accounts.*')
         ->join('applicant_detials as ad','ad.applicant_id','applicant_accounts.id');
     }
     public function student_pre_registrations()

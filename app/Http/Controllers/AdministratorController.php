@@ -58,7 +58,7 @@ class AdministratorController extends Controller
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
         $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
-        return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population','_total_applicants'));
+        return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population', '_total_applicants'));
     }
     public function dashboard_enrolled_list_view(Request $_request)
     {
@@ -566,5 +566,17 @@ class AdministratorController extends Controller
         //return $_data;
         Documents::create($_data);
         return back()->with('success', 'Successfuly Created');
+    }
+    /* Applicant Panel */
+    public function applicant_view(Request $_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_applicants =  $_course->student_applicants;
+        return view('pages.general-view.applicants.list_view', compact('_applicants','_course'));
+    }
+    public function applicant_profile(Request $_request)
+    {
+        $_account = ApplicantAccount::find(base64_decode($_request->_student));
+        return view('pages.general-view.applicants.profile_view',compact('_account'));
     }
 }

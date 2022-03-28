@@ -1,11 +1,10 @@
 @php
-$_url_role = ['administrator/dashboard', 'accounting/dashboard', 'registrar/dashboard'];
-$_course_enrolled = ['admin.course-enrolled', 'accounting.course-enrolled', 'registrar.course-enrolled'];
+$_url_role = ['dashboard', 'administrator/dashboard', 'accounting/dashboard', 'registrar/dashboard'];
+$_course_enrolled = ['admin.applicant-lists', 'admin.applicant-lists', 'accounting.course-enrolled', 'registrar.course-enrolled'];
 
 $_course_url = route($_course_enrolled[0]);
 foreach ($_url_role as $key => $_data) {
     $_course_url = request()->is($_data . '*') ? route($_course_enrolled[$key]) : $_course_url;
-    //$_course_url = $value; //request()->is(route($value))
 }
 @endphp
 
@@ -16,7 +15,6 @@ foreach ($_url_role as $key => $_data) {
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
                     <h3 class="counter">{{ count($_total_applicants) }}</h3>
-                    {{-- {{$_course->enrollment_list}} --}}
                     <a href="javascript:void(0);">
                         <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -151,8 +149,7 @@ foreach ($_url_role as $key => $_data) {
                                 {{ count($_course->student_pre_registrations) }}
                             </td>
                             <td>
-                                <a
-                                    href="{{ route('registrar.dashboard-student-clearance-list') . '?_course=' . base64_encode($_course->id) }}&_clearance_status=not-cleared">
+                                <a href="{{ $_course_url . '?_course=' . base64_encode($_course->id) }}">
                                     {{ count($_course->student_applicants) }}
                                 </a>
                             </td>

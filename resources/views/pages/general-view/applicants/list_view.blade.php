@@ -1,6 +1,15 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Enrolled List';
+$_url_role = ['dashboard', 'administrator/applicants', 'accounting/applicants', 'registrar/applicants'];
+$_course_enrolled = ['admin.applicant-lists', 'admin.applicant-lists', 'accounting.course-enrolled', 'registrar.course-enrolled'];
+$_applicant_view = ['admin.applicant-profile', 'admin.applicant-profile', 'admin.applicant-profile', 'admin.applicant-profile'];
+$_course_url = route($_course_enrolled[0]);
+$_profile_link = route($_applicant_view[0]);
+foreach ($_url_role as $key => $_data) {
+    $_course_url = request()->is($_data . '*') ? route($_course_enrolled[$key]) : $_course_url;
+    $_profile_link = request()->is($_data . '*') ? route($_applicant_view[$key]) : $_profile_link;
+}
+$_title = 'Applicant List';
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -13,7 +22,6 @@ $_title = 'Enrolled List';
                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
             </svg>Dashboard
         </a>
-
     </li>
     <li class="breadcrumb-item active" aria-current="page">
         {{ $_title }}
@@ -45,8 +53,7 @@ $_title = 'Enrolled List';
                         <small class="text-primary"><b>SORT BY</b></small>
                         <div class="form-group search-input">
                             <select name="_sort" class="form-select">
-                                <option value="enrollment-date">Enrollment Date</option>
-                                <option value="student-number">Student Number</option>
+                                <option value="applicant-number">Applicant Number</option>
                                 <option value="lastname">Lastname</option>
                             </select>
                         </div>
@@ -81,37 +88,35 @@ $_title = 'Enrolled List';
                     </div>
                 </div>
                 <span class="text-muted h6">
-                    No. Result: <b>{{ count($_students) }}</b>
+                    No. Result: <b>{{ count($_applicants) }}</b>
                 </span>
             </div>
-            @if (count($_students) > 0)
-                @foreach ($_students as $_data)
+            @if (count($_applicants) > 0)
+                @foreach ($_applicants as $_data)
                     <div class="card">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between {{-- align-itmes-center --}}">
+                            <div class="d-flex justify-content-between">
                                 <div>
-                                    <span><b>{{ $_data->student->account ? $_data->student->account->student_number : '-' }}</b></span>
-                                    <a
-                                        href="{{ route('registrar.student-profile') }}?_student={{ base64_encode($_data->student->id) }}">
+                                    <span><b>{{ $_data->applicant ? $_data->applicant_number : '-' }}</b></span>
+                                    <a href="{{ $_profile_link }}?_student={{ base64_encode($_data->id) }}">
                                         <div class="mt-2">
                                             <h2 class="counter" style="visibility: visible;">
-                                                {{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
+                                                {{ strtoupper($_data->applicant->last_name . ', ' . $_data->applicant->first_name) }}
                                             </h2>
                                         </div>
 
                                     </a>
-                                    <span>{{ $_data->student->account ? $_data->student->account->campus_email : '-' }}</span>
+                                    <span>{{ $_data->applicant ? $_data->email : '-' }}</span>
                                     <br>
-                                    <span
-                                        class="badge bg-primary">{{ $_data->student->enrollment_assessment->course->course_name }}</span>
+                                    <span class="badge bg-primary">{{ $_data->course->course_name }}</span>
 
                                 </div>
                                 <div>
                                     <div class="badge bg-primary">
-                                        <span>{{ $_data->student->enrollment_status->payment_assessments->payment_assessment_paid->created_at->format('F d, Y') }}</span>
+                                        <span>{{ $_data->created_at->format('F d, Y') }}</span>
                                     </div>
 
-                                    <a href="{{ route('registrar.student-information-report') }}?_assessment={{ base64_encode($_data->student->enrollment_assessment->id) }}"
+                                    <a href="{{ route('registrar.student-information-report') }}?_assessment={{ base64_encode($_data->id) }}"
                                         class="badge bg-info text-white"> <svg width="18" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
@@ -158,68 +163,6 @@ $_title = 'Enrolled List';
                 </div>
             </div>
 
-            @php
-                $_level = [11, 12];
-                $_level = $_course->id == 3 ? $_level : [1, 2, 3, 4];
-            @endphp
-            @foreach ($_level as $level)
-                <div class="col-md">
-                    <a
-                        href="{{ request()->url() }}?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&_year_level={{ $level }}">
-                        <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
-                            data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <h5 class="text-primary">
-                                        @if ($_course->id == 3)
-                                            Grade {{ $level }}
-                                        @else
-                                            {{ $_course->course_code . ' ' . $level }}/C
-                                        @endif
-                                    </h5>
-                                    <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M17.8877 10.8967C19.2827 10.7007 20.3567 9.50473 20.3597 8.05573C20.3597 6.62773 19.3187 5.44373 17.9537 5.21973"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                        </path>
-                                        <path
-                                            d="M19.7285 14.2505C21.0795 14.4525 22.0225 14.9255 22.0225 15.9005C22.0225 16.5715 21.5785 17.0075 20.8605 17.2815"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                        </path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M11.8867 14.6638C8.67273 14.6638 5.92773 15.1508 5.92773 17.0958C5.92773 19.0398 8.65573 19.5408 11.8867 19.5408C15.1007 19.5408 17.8447 19.0588 17.8447 17.1128C17.8447 15.1668 15.1177 14.6638 11.8867 14.6638Z"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                        </path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M11.8869 11.888C13.9959 11.888 15.7059 10.179 15.7059 8.069C15.7059 5.96 13.9959 4.25 11.8869 4.25C9.7779 4.25 8.0679 5.96 8.0679 8.069C8.0599 10.171 9.7569 11.881 11.8589 11.888H11.8869Z"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                        </path>
-                                        <path
-                                            d="M5.88509 10.8967C4.48909 10.7007 3.41609 9.50473 3.41309 8.05573C3.41309 6.62773 4.45409 5.44373 5.81909 5.21973"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                        </path>
-                                        <path
-                                            d="M4.044 14.2505C2.693 14.4525 1.75 14.9255 1.75 15.9005C1.75 16.5715 2.194 17.0075 2.912 17.2815"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h3 class="conter">{{ count($_course->enrolled_list($level)->get()) }}</h3>
-                                    {{-- <p class="mb-0 ms-2">+3 last/d</p> --}}
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-
-                </div>
-            @endforeach
         </div>
 
     </div>
