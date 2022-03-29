@@ -18,13 +18,13 @@ class ApplicantController extends Controller
     {
         $_courses = CourseOffer::all();
         $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_applicants =  $_course->student_applicants;
+        $_applicants =  $_course->applicant_not_verified;
         return view('pages.general-view.applicants.list_view', compact('_applicants', '_course', '_courses'));
     }
     public function applicant_profile(Request $_request)
     {
         $_account = ApplicantAccount::find(base64_decode($_request->_student));
-        $_applicants = $_account->course->student_applicants;
+        $_applicants = $_account->course->applicant_not_verified;
         return view('pages.general-view.applicants.profile_view', compact('_account', '_applicants'));
     }
     public function applicant_document_notification(Request $_request)
