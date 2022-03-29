@@ -209,13 +209,13 @@ class CourseOffer extends Model
 
     public function student_pre_registrations()
     {
-        return $this->hasMany(ApplicantAccount::class, 'course_id');
+        return $this->hasMany(ApplicantAccount::class, 'course_id')->where('is_removed', 0);
     }
     public function student_applicants()
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
-            ->join('applicant_detials as ad', 'ad.applicant_id', 'applicant_accounts.id');
+            ->join('applicant_detials as ad', 'ad.applicant_id', 'applicant_accounts.id')->where('applicant_accounts.is_removed', 0);
     }
     public function applicant_verified()
     {
@@ -224,6 +224,7 @@ class CourseOffer extends Model
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             //->select('applicant_accounts.*')
             ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_accounts.is_removed',false)
             ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '>=', $_documents)
             ->groupBy('applicant_accounts.id');
     }
@@ -234,8 +235,9 @@ class CourseOffer extends Model
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
             ->join('applicant_detials as ad', 'ad.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_accounts.is_removed',false)
             ->leftJoin('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
-            ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'),'<',$_documents)
+            ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '<', $_documents)
             ->groupBy('applicant_accounts.id');
     }
 }

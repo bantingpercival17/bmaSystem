@@ -59,4 +59,11 @@ class ApplicantController extends Controller
             //echo "Disapproved";
         }
     }
+    public function applicant_removed(Request $_request)
+    {
+        $_account = ApplicantAccount::find(base64_decode($_request->_applicant));
+        $_account->is_removed = 1;
+        $_account->save();
+        return back()->with("success",'Successfully Removed');
+    }
 }

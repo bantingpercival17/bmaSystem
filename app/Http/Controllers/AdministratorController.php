@@ -60,7 +60,7 @@ class AdministratorController extends Controller
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
-        $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
+        $_total_applicants = ApplicantAccount::join('applicant_detials','applicant_detials.applicant_id','applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
         return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population', '_total_applicants'));
     }
     public function dashboard_enrolled_list_view(Request $_request)
@@ -576,7 +576,7 @@ class AdministratorController extends Controller
         $_courses = CourseOffer::all();
         $_course = CourseOffer::find(base64_decode($_request->_course));
         $_applicants =  $_course->student_applicants;
-       
+
         return view('pages.general-view.applicants.list_view', compact('_applicants', '_course', '_courses'));
     }
     public function applicant_profile(Request $_request)
