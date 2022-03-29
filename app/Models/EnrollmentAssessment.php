@@ -56,6 +56,7 @@ class EnrollmentAssessment extends Model
             ->where('curriculum_id', $_assessment->curriculum_id)
             ->where('year_level', $_assessment->year_level)
             ->where('semester', $_assessment->academic->semester)
+            ->where('is_removed', false)
             ->get();
     }
     public function course_semestral_fees($_data)

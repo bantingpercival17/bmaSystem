@@ -20,6 +20,7 @@ class CourseOffer extends Model
             ->where('curriculum_subjects.curriculum_id', $_data[0])
             ->where('curriculum_subjects.year_level', $_data[1])
             ->where('curriculum_subjects.semester', $_data[2])
+            ->where('curriculum_subjects.is_removed', false)
             ->get();
     }
     public function section($_data)
@@ -202,6 +203,7 @@ class CourseOffer extends Model
             ->where('curriculum_subjects.year_level', $_data->year_level)
             ->where('curriculum_subjects.curriculum_id', $_data->curriculum_id)
             ->where('curriculum_subjects.semester', $_data->academic->semester)
+            ->where('curriculum_subjects.is_removed', false)
             ->first();
     }
 
@@ -224,7 +226,7 @@ class CourseOffer extends Model
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             //->select('applicant_accounts.*')
             ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_accounts.is_removed',false)
+            ->where('applicant_accounts.is_removed', false)
             ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '>=', $_documents)
             ->groupBy('applicant_accounts.id');
     }
@@ -235,7 +237,7 @@ class CourseOffer extends Model
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
             ->join('applicant_detials as ad', 'ad.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_accounts.is_removed',false)
+            ->where('applicant_accounts.is_removed', false)
             ->leftJoin('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
             ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '<', $_documents)
             ->groupBy('applicant_accounts.id');
