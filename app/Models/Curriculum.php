@@ -17,7 +17,8 @@ class Curriculum extends Model
             ->join('subjects', 'subjects.id', 'curriculum_subjects.subject_id')
             ->where('curriculum_subjects.course_id', $_data[0])
             ->where('curriculum_subjects.year_level', $_data[1])
-            ->where('curriculum_subjects.semester', $_data[2]);
+            ->where('curriculum_subjects.semester', $_data[2])
+            ->where('curriculum_subjects.is_removed', false);
     }
     public function subject_lists($_data)
     {
@@ -26,6 +27,7 @@ class Curriculum extends Model
             ->join('subjects', 'subjects.id', 'curriculum_subjects.subject_id')
             ->where('curriculum_subjects.course_id', $_data[0])
             ->where('curriculum_subjects.year_level', $_data[1])
-            ->where('curriculum_subjects.semester', $_data[2]);
+            ->where('curriculum_subjects.semester', $_data[2])
+            ->where('curriculum_subjects.is_removed', false);
     }
 }
