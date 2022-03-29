@@ -13,4 +13,12 @@ class ApplicantDocuments extends Model
     {
         return $this->belongsTo(Documents::class, 'document_id');
     }
+    public function account()
+    {
+        return $this->belongsTo(ApplicantAccount::class, 'applicant_id');
+    }
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
+    }
 }

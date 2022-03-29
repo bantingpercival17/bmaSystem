@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 class Staff extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql';
     protected $fillable = [
         'user_id',
         'staff_no',

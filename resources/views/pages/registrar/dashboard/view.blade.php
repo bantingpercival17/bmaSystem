@@ -197,4 +197,5 @@
             </div>
         </div>
     </div>
+    @include('layouts.widgets.entrance_examination_overview')
 @endsection

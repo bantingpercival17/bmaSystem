@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CourseOffer extends Model
 {
@@ -205,14 +206,36 @@ class CourseOffer extends Model
     }
 
     /* Applicant Model */
-    public function student_applicants()
-    {
-        return $this->hasMany(ApplicantAccount::class, 'course_id')
-        ->select('applicant_accounts.*')
-        ->join('applicant_detials as ad','ad.applicant_id','applicant_accounts.id');
-    }
+
     public function student_pre_registrations()
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id');
+    }
+    public function student_applicants()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_detials as ad', 'ad.applicant_id', 'applicant_accounts.id');
+    }
+    public function applicant_verified()
+    {
+        $_level = $this->course_id == 3 ? 11 : 4;
+        $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            //->select('applicant_accounts.*')
+            ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
+            ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '>=', $_documents)
+            ->groupBy('applicant_accounts.id');
+    }
+    public function applicant_not_verified()
+    {
+        $_level = $this->course_id == 3 ? 11 : 4;
+        $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_detials as ad', 'ad.applicant_id', 'applicant_accounts.id')
+            ->leftJoin('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
+            ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'),'<',$_documents)
+            ->groupBy('applicant_accounts.id');
     }
 }

@@ -1,14 +1,14 @@
 @extends('layouts.app-main')
 @php
 $_url_role = ['dashboard', 'administrator/applicants', 'accounting/applicants', 'registrar/applicants'];
-$_course_enrolled = ['admin.applicant-lists', 'admin.applicant-lists', 'accounting.course-enrolled', 'registrar.course-enrolled'];
-$_applicant_view = ['admin.applicant-profile', 'admin.applicant-profile', 'admin.applicant-profile', 'admin.applicant-profile'];
+$_course_enrolled = ['applicant-lists', 'applicant-lists', 'accounting.course-enrolled', 'registrar.course-enrolled'];
+$_applicant_view = ['applicant-profile', 'applicant-profile', 'applicant-profile', 'applicant-profile'];
 $_course_url = route($_course_enrolled[0]);
 $_profile_link = route($_applicant_view[0]);
-foreach ($_url_role as $key => $_data) {
+/* foreach ($_url_role as $key => $_data) {
     $_course_url = request()->is($_data . '*') ? route($_course_enrolled[$key]) : $_course_url;
     $_profile_link = request()->is($_data . '*') ? route($_applicant_view[$key]) : $_profile_link;
-}
+} */
 $_title = 'Profile View';
 @endphp
 @section('page-title', $_title)
@@ -37,7 +37,8 @@ $_title = 'Profile View';
                 <div class="row no-gutters">
                     <div class="col-md-4 col-lg-2">
 
-                        <img src="" class="avatar-130 rounded" alt="applicant-profile">
+                        <img src="http://bma.edu.ph/img/student-picture/midship-man.jpg" class="avatar-130 rounded"
+                            alt="applicant-profile">
                     </div>
                     <div class="col-md col-lg">
                         <div class="card-body">
@@ -330,32 +331,89 @@ $_title = 'Profile View';
                                                             class="ms-1 fw-bolder">{{ $item->document->document_name }}</span>
                                                     </div>
                                                     <div class="">
-                                                        <a class="btn-form-document col" data-bs-toggle="modal"
-                                                            data-bs-target=".document-view-modal"
+                                                        <a class="badge bg-primary btn-form-document col"
+                                                            data-bs-toggle="modal" data-bs-target=".document-view-modal"
                                                             data-document-url="{{ json_decode($item->file_links)[0] }}">
                                                             view
                                                         </a>
                                                     </div>
                                                 </div>
+                                                @if ($_account->document_history($item->document_id)->count() > 0)
+                                                    <div class="history">
+                                                        <a tabindex="0" class="badge bg-secondary text-white" role="button"
+                                                            data-bs-toggle="popover" data-trigger="focus"
+                                                            title="List of Dissapproved Requirments"
+                                                            data-bs-content="We have {{ $_account->document_history($item->document_id)->count() }} disapproved Document/s">Document
+                                                            History</a>
+                                                    </div>
+                                                @endif
+
                                             </div>
-                                            <form class="comment-text d-flex align-items-center mt-3"
-                                                action="javascript:void(0);">
-                                                <input type="text" class="form-control rounded-pill"
-                                                    placeholder="Comment!">
-                                                <div class="comment-attagement d-flex">
-                                                    <button type="submit"
-                                                        class=" me-2 btn btn-danger btn-sm rounded-pill">DISAPPROVE
-                                                    </button>
-                                                    <a href="" class="me btn btn-primary btn-sm rounded-pill">
-                                                        APPROVE
-                                                    </a>
+                                            @if ($item->is_approved === 1)
+                                                <span class="fw-bolder text-primary">DOCUMENT APPROVED</span>
+                                                <div class="row">
+                                                    <div class="col-md"><small><i>VERIFIED
+                                                                BY:</i></small>
+                                                        <b>{{ $item->staff ? $item->staff->user->name : '-' }}</b>
+                                                    </div>
+                                                    <div class="col-md"><small><i>VERIFIED DATE:</i></small>
+                                                        {{ $item->created_at->format('F d,Y') }}</div>
                                                 </div>
-                                            </form>
-                                            <hr>
-                                        @endforeach
-                                    @else
-                                        Remind Email for the Attachment of Documents
-                                    @endif
+                                                @endif @if ($item->is_approved === 2)
+                                                    <span class="fw-bolder text-danger">DOCUMENT DISAPPROVED</span><br>
+                                                    <span class="text-muted"><i>Remarks: </i>
+                                                        <b> {{ $item->feedback }}</b></span>
+                                                    <div class="row">
+                                                        <div class="col-md"><small><i>VERIFIED
+                                                                    BY:</i></small>
+                                                            <b>{{ $item->staff ? $item->staff->user->name : '-' }}</b>
+                                                        </div>
+                                                        <div class="col-md"><small><i>VERIFIED DATE:</i></small>
+                                                            {{ $item->created_at->format('F d,Y') }}</div>
+                                                    </div>
+                                                @endif
+                                                @if ($item->is_approved === null)
+                                                    <form class="comment-text d-flex align-items-center mt-3"
+                                                        action="{{ route('document-verification') }}">
+                                                        <input type="hidden" name="_document"
+                                                            value="{{ base64_encode($item->id) }}">
+                                                        <input type="hidden" name="_verification_status" value="0">
+                                                        <input type="text" class="form-control rounded-pill"
+                                                            name="_comment" placeholder="Comment!">
+                                                        <div class="comment-attagement d-flex">
+                                                            <button type="submit"
+                                                                class=" me-2 btn btn-danger btn-sm rounded-pill">DISAPPROVE
+                                                            </button>
+                                                            <a href="{{ route('document-verification') }}?_document={{ base64_encode($item->id) }}&_verification_status=1"
+                                                                class="me btn btn-primary btn-sm rounded-pill">
+                                                                APPROVE
+                                                            </a>
+                                                        </div>
+                                                    </form>
+                                                @endif
+
+                                                <hr>
+                                            @endforeach
+                                        @else
+                                            <div class="mt-5">
+                                                No Attach Requirement. <a
+                                                    href="{{ route('document-notification') }}?_applicant={{ base64_encode($_account->id) }}"
+                                                    class="badge bg-info">click here</a> to
+                                                notify the applicant.
+                                                @foreach ($_account->empty_documents() as $item)
+                                                    <div
+                                                        class="d-flex flex-wrap justify-content-between align-items-center">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="d-flex align-items-center message-icon me-3">
+                                                                <span
+                                                                    class="ms-1 fw-bolder">{{ $item->document_name }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                 </div>
                             </div>
                         @endif
@@ -364,7 +422,59 @@ $_title = 'Profile View';
             @endif
         </div>
         <div class="col-md-4">
+            <div class="d-flex justify-content-between mb-3">
+                <div>
+                    <span class="fw-bolder">
+                        {{ strtoupper($_account->course->course_name) }}
+                    </span>
 
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between">
+                        No. Result:
+                        <span class="text-muted fw-bolder"> {{ count($_applicants) }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="list-view">
+                @if (count($_applicants) > 0)
+                    @foreach ($_applicants as $item)
+                        <div class="card mb-2">
+                            <a href="{{ $_profile_link }}?_student={{ base64_encode($item->id) }}">
+                                <div class="row no-gutters">
+                                    <div class="col-md col-lg">
+                                        <div class="card-body">
+                                            <span class="card-title text-primary h5">
+                                                <b>{{ $item->applicant? strtoupper($item->applicant->last_name . ', ' . $item->applicant->first_name): 'APPLICANT NAME' }}</b>
+                                            </span> <br>
+                                            <small class="fw-bolder">
+                                                {{ $item->applicant ? $item->applicant_number : 'APPLICANT NO.' }} |
+                                                {{ $item->applicant ? $item->course->course_name : 'COURSE' }}
+                                            </small>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="card mb-2">
+                        <a href="{{ $_profile_link }}?_student={{ base64_encode($item->id) }}">
+                            <div class="row no-gutters">
+                                <div class="col-md col-lg">
+                                    <div class="card-body">
+                                        <span class="card-title text-primary h5">
+                                            <b>No Data Result</b>
+                                        </span> <br>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                @endif
+            </div>
         </div>
 
     </div>

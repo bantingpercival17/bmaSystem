@@ -18,7 +18,7 @@ Route::prefix('registrar')->group(function () {
     Route::post('/subjects/classes', [RegistrarController::class, 'classes_store'])->name('registrar.classes-handled'); // Store Subjects Classes Handled
     Route::get('/subjects/classes/subject-handle', [RegistrarController::class, 'classes_subject_handle'])->name('registrar.course-subject-handle-view');
     Route::post('/subjects.classes/subject-handle', [RegistrarController::class, 'classes_schedule'])->name('registrar.class-schedule');
-    Route::get('/subjects.classes/subject-handle',[RegistrarController::class,'classes_schedule_removed'])->name('registrar.class-schedule-remove');
+    Route::get('/subjects.classes/subject-handle', [RegistrarController::class, 'classes_schedule_removed'])->name('registrar.class-schedule-remove');
     Route::get('/subjects/classes/removed', [RegistrarController::class, 'classes_removed']); // Remove Subjects Clases Handled
     Route::get('/subjects/curriculum', [RegistrarController::class, 'curriculum_view'])->name('registrar.curriculum-view'); // Curriculum Subject View
     Route::post('/subjects/curriculum', [RegistrarController::class, 'curriculum_subject_store'])->name('registrar.curriculum-store'); // Store Curriculum Subject
@@ -50,5 +50,10 @@ Route::prefix('registrar')->group(function () {
     Route::get('/semestral-grade/view', [RegistrarController::class, 'semestral_grade_section_view'])->name('registrar.semestral-grade-view');
     Route::get('/semestral-grade/report-form', [RegistrarController::class, 'semestral_grade_report_form'])->name('registrar.semestral-grade-form-ad2');
     Route::get('/semestral-grade/report-summary', [RegistrarController::class, 'semestral_grade_summary_report'])->name('registrar.semestral-grade-semestral-report');
-    Route::get('/smestral-grade/publish-grade',[RegistrarController::class,'semestral_grade_publish'])->name('registrar.semestral-grade-publish');
+    Route::get('/smestral-grade/publish-grade', [RegistrarController::class, 'semestral_grade_publish'])->name('registrar.semestral-grade-publish');
+    /* Applicants */
+    //require __DIR__ . '\extra\applicant-route.php'; // Applicant Route
+
+    // Applicant 
+    //Route::get('/applicant');
 });

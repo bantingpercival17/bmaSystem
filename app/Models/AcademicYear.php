@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class AcademicYear extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql';
     protected $fillable = ['school_year', 'semester', 'is_active', 'created_by', 'is_removed'];
 
     public function teacher_subjects()

@@ -1,11 +1,11 @@
 @php
 $_url_role = ['dashboard', 'administrator/dashboard', 'accounting/dashboard', 'registrar/dashboard'];
-$_course_enrolled = ['admin.applicant-lists', 'admin.applicant-lists', 'accounting.course-enrolled', 'registrar.course-enrolled'];
+$_course_enrolled = ['applicant-lists', 'applicant-lists', 'accounting.course-enrolled', 'registrar.course-enrolled'];
 
 $_course_url = route($_course_enrolled[0]);
-foreach ($_url_role as $key => $_data) {
+/* foreach ($_url_role as $key => $_data) {
     $_course_url = request()->is($_data . '*') ? route($_course_enrolled[$key]) : $_course_url;
-}
+} */
 @endphp
 
 <div class="row">
@@ -129,13 +129,15 @@ foreach ($_url_role as $key => $_data) {
                     <tr class="text-center">
                         <th rowspan="2">COURSE</th>
                         <th rowspan="2">PRE-REGISTRATION</th>
-                        <th rowspan="2">INFORMATION VERIFICATION</th>
+                        <th colspan="2">INFORMATION VERIFICATION</th>
                         <td colspan="3">ENTRANCE EXAMINATION</td>
                         <th rowspan="2">BRIEFING</th>
                         <th rowspan="2">MEDICAL</th>
                         <th rowspan="2">QUALIFIED FOR ENROLLMENT</th>
                     </tr>
                     <tr>
+                        <th>FOR CHECKING</th>
+                        <th>VERIFIED</th>
                         <th>PAYMENT</th>
                         <th>EXAMINATION</th>
                         <th>RESULT</th>
@@ -150,7 +152,12 @@ foreach ($_url_role as $key => $_data) {
                             </td>
                             <td>
                                 <a href="{{ $_course_url . '?_course=' . base64_encode($_course->id) }}">
-                                    {{ count($_course->student_applicants) }}
+                                    {{ count($_course->applicant_not_verified) }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ $_course_url . '?_course=' . base64_encode($_course->id) }}">
+                                    {{ count($_course->applicant_verified) }}
                                 </a>
                             </td>
                             <td></td>

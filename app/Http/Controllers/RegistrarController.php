@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYear;
+use App\Models\ApplicantAccount;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\CurriculumSubject;
@@ -33,21 +34,11 @@ class RegistrarController extends Controller
     }
     public function index()
     {
+        $_academics = AcademicYear::where('is_removed', false)->get();
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
-        /* $_total_population = EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment')
-            ->where('enrollment_assessments.is_removed', false)
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-            ->get(); */
-        $_total_population = EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment')
-            ->where('enrollment_assessments.is_removed', false)
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-            ->groupBy('pt.assessment_id')
-            ->orderBy('pa.created_at', 'DESC')->get();
-        return view('pages.registrar.dashboard.view', compact('_courses', '_total_population'));
+        $_total_population = Auth::user()->staff->enrollment_count();
+        $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
+        return view('pages.registrar.dashboard.view', compact('_academics', '_courses', '_total_population', '_total_applicants'));
     }
     public function dashboard_payment_assessment(Request $_request)
     {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdministratorController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Controllers\PaymongoApi;
 use Illuminate\Support\Facades\Route;
 
@@ -12,8 +13,7 @@ Route::prefix('administrator')->group(function () {
     Route::get('/enrollment/enrolled-list', [AdministratorController::class, 'dashboard_enrolled_list_view'])->name('admin.course-enrolled');
     Route::get('/enrollment/enrolled-list/report', [AdministratorController::class, 'course_enrolled_report'])->name('admin.course-enrolled-report');
     /* Applicants */
-    Route::get('/applicants', [AdministratorController::class, 'applicant_view'])->name('admin.applicant-lists');
-    Route::get('/applicant-profile/view', [AdministratorController::class, 'applicant_profile'])->name('admin.applicant-profile');
+    require __DIR__ . '\extra\applicant-route.php'; // Applicant Route
     /* Students */
     Route::get('/students', [AdministratorController::class, 'student_view'])->name('admin.students'); // View Students
     Route::get('/students/view', [AdministratorController::class, 'student_profile'])->name('admin.student-profile');
