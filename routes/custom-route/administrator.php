@@ -7,7 +7,7 @@ use App\Http\Controllers\PaymongoApi;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
-Route::prefix('administrator')->group(function () {
+Route::prefix('administrator')->middleware(['administrator'])->group(function () {
     Route::get('/', [AdministratorController::class, 'index'])->name('admin.dashboard');
     Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
     Route::get('/enrollment/enrolled-list', [AdministratorController::class, 'dashboard_enrolled_list_view'])->name('admin.course-enrolled');
