@@ -70,7 +70,7 @@ $_title = 'Semestral Grades';
                                             <td>{{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
                                             </td>
                                             <td>
-                                                <a href="{{ route('registrar.semestral-grade-form-ad2') }}?_student={{ base64_encode($_data->id) }}&_section={{ request()->input('_section') }}"
+                                                <a href="{{ route('registrar.semestral-grade-form-ad2') }}?_student={{ base64_encode($_data->id) }}&_section={{ request()->input('_section') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
                                                     class="btn btn-sm btn-primary" target="_blank">FORM AD-02-A</a>
                                                 @if ($_data->student->grade_publish)
                                                     <span class="badge bg-secondary">GRADE PUBLISHED <br>

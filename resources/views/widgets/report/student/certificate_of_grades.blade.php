@@ -69,31 +69,38 @@ $_average = 0;
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $_subject_count = 0;
+                        @endphp
                         @foreach ($_section->subject_class as $item)
                             @php
+                                $_status = $_student->enrollment_status->bridging_program == 'with' || $item->curriculum_subject->subject->subject_code != 'BRDGE';
                                 $_final_grade = number_format($_student->final_grade($item->id, 'finals'), 2);
                                 $_final_grade = $_student->percentage_grade($_final_grade);
-                                $_average += $_final_grade;
+                                $_average = $_status ? $_average + $_final_grade : $_average;
+                                $_subject_count = $_status ? $_subject_count + 1 : $_subject_count;
                             @endphp
-                            <tr class="text-center">
-                                <td><b>{{ $item->curriculum_subject->subject->subject_code }}</b></td>
-                                <td><b>{{ $item->curriculum_subject->subject->subject_name }}</b></td>
-                                <td> {{ number_format($_student->final_grade($item->id, 'finals'), 2) }}</td>
-                                <td>
-                                    {{ number_format($_student->percentage_grade(number_format($_student->final_grade($item->id, 'finals'), 2)), 2) }}
-                                </td>
+                            @if ($_status)
+                                <tr class="text-center">
+                                    <td><b>{{ $item->curriculum_subject->subject->subject_code }}</b></td>
+                                    <td><b>{{ $item->curriculum_subject->subject->subject_name }}</b></td>
+                                    <td> {{ number_format($_student->final_grade($item->id, 'finals'), 2) }}</td>
+                                    <td>
+                                        {{ number_format($_student->percentage_grade(number_format($_student->final_grade($item->id, 'finals'), 2)), 2) }}
+                                    </td>
 
-                                <td>
-                                    {{ $_student->percentage_grade(number_format($_student->final_grade($item->id, 'finals'), 2)) >= 5? 'FAILED': 'PASSED' }}
-                                </td>
-                            </tr>
+                                    <td>
+                                        {{ $_student->percentage_grade(number_format($_student->final_grade($item->id, 'finals'), 2)) >= 5? 'FAILED': 'PASSED' }}
+                                    </td>
+                                </tr>
+                            @endif
                         @endforeach
                     </tbody>
                     <tfoot>
                         <tr class="text-center">
                             <td colspan="2"><b>GENERAL WEIGHTED AVERAGE</b></td>
                             <td colspan="2">
-                                <h3><b>{{ number_format($_average / count($_section->subject_class), 2) }}</b></h3>
+                                <h3><b>{{ number_format($_average / $_subject_count, 2) }}</b></h3>
                             </td>
                             <td></td>
                         </tr>
