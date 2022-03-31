@@ -162,6 +162,98 @@
                             </div>
                         </div>
                     </div>
+                    @if (request()->input('_user') == 'employee')
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="h4 text-success"><b>Attendance List</b></p>
+                            </div>
+                            <div class="card">
+                                <table class="table table-head-fixed text-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>EMPLOYEE</th>
+                                            <th>TIME IN</th>
+                                            <th>TIME OUT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-body-100">
+                                        @if (count($_employees) > 0)
+                                            @foreach ($_employees as $_data)
+                                                <tr>
+                                                    <td>
+                                                        <span class="text-muted">
+                                                            {{ strtoupper($_data->staff->first_name . ' ' . $_data->staff->last_name) }}<br>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">
+                                                            {{ $_data->staff ? ($_data->time_in ? date_format(date_create($_data->time_in), 'h:i:s a') : '-') : '-' }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {{ $_data->staff? ($_data->time_in? ($_data->time_out != null? date_format(date_create($_data->time_out), 'h:i:s a'): '-'): '-'): '-' }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="3"><b>NO DATA</b></td>
+                                            </tr>
+                                        @endif
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+                    @if (request()->input('_user') == 'student')
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="h4 text-success"><b>ATTENDANCE LIST</b></p>
+                            </div>
+                            <div class="card">
+                                <table class="table table-head-fixed text-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>CADET'S NAME</th>
+                                            <th>COURSE</th>
+                                            <th>TIME IN</th>
+                                            <th>TIME OUT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-body-100">
+                                        @if (count($_students) > 0)
+                                            @foreach ($_students as $_data)
+                                                <tr>
+                                                    <td>
+                                                        <span class="text-muted">
+                                                            {{ strtoupper($_data->student->first_name . ' ' . $_data->student->last_name) }}<br>
+                                                        </span>
+                                                    </td>
+                                                    <td> {{ $_data->student->enrollment_assessment->course->course_name }}
+                                                    </td>
+                                                    <td>
+                                                        <span class="text-muted">
+                                                            {{ $_data->student ? ($_data->time_in ? date_format(date_create($_data->time_in), 'h:i:s a') : '-') : '-' }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {{ $_data->student? ($_data->time_in? ($_data->time_out != null? date_format(date_create($_data->time_out), 'h:i:s a'): '-'): '-'): '-' }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="3"><b>NO DATA</b></td>
+                                            </tr>
+                                        @endif
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
             </div>
         </div>
@@ -286,26 +378,28 @@
             //audioCadetTimeIn.play()
             $.get('/executive/attendance-checket/scan-code/' + user + '/' + _data, function(res) {
                 var res = res._data._data;
-                console.log(res)
                 if (res.respond == 200) {
-                    audio_success.play()
+
                     var file_name = res.details.link
                     var audio_custom = new Audio(file_name);
+                    audio_success.play()
                     audio_custom.play()
                     alertNotification(res.time_status, res.message, 'success')
                     displayData(res.details)
+                    tableDisplayData()
                 }
                 if (res.respond == 404) {
                     var file_name = res.details.link
                     var audio_custom = new Audio(file_name);
+                    audio_erroe.play()
                     audio_custom.play()
                     alertNotification('Error!', res.message, 'error')
                 }
             }).fail(function() {
-                alertNotification('Error!', 'Invalid QR Code', 'error')
-                audio_erroe.play()
                 var audio_custom = new Audio("{{ asset('assets/audio/invalid_qr_code_1.mp3') }}");
+                audio_erroe.play()
                 audio_custom.play()
+                alertNotification('Error!', 'Invalid QR Code', 'error')
                 clear_details()
             })
         }
@@ -358,13 +452,39 @@
                 } else {
                     respond._data.forEach(data => {
                         var time_out = data.time_out != null ? data.time_out : '-';
-
                         $('.table-body-100').append(
                             "<tr>" +
                             "<td>" + data.first_name + " " + data.last_name + "</td>" +
                             "<td>" + data.time_in + "</td>" +
                             "<td>" + time_out + "</td>" +
 
+                            "</tr>"
+                        );
+                    });
+                }
+            });
+        }
+
+        function tableDisplayData() {
+            $.get('/executive/fetch-attendance?_user=' + user, function(respond) {
+                $('.table-body-100').empty()
+                console.log(respond._data)
+                if (respond._data.length == 0) {
+                    $('.table-body-100').append(
+                        "<tr>" +
+                        "<td colspan='3'> <b> NO DATA </b> </td>" +
+                        "</tr>"
+                    );
+                } else {
+                    respond._data.forEach(data => {
+                        var time_out = data.time_out != null ? data.time_out : '-';
+                        var name = data.student.first_name + " " + data.student.last_name
+                        $('.table-body-100').append(
+                            "<tr>" +
+                            "<td>" + name + "</td>" +
+                            "<td>" + data.student.enrollment_assessment.course.course_name + "</td>" +
+                            "<td>" + data.time_in + "</td>" +
+                            "<td>" + time_out + "</td>" +
                             "</tr>"
                         );
                     });

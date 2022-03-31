@@ -7,6 +7,7 @@ use App\Models\EmployeeAttendance;
 use App\Models\Section;
 use App\Models\Staff;
 use App\Models\StudentAccount;
+use App\Models\StudentAttendance;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use Illuminate\Http\Request;
@@ -37,19 +38,24 @@ class ExecutiveOfficeController extends Controller
             ->get();
         //return view('administrator.employee.attendance', compact('_employees'));
     }
-    public function json_attendance()
+    public function json_attendance(Request $_request)
     {
         $_data = Staff::select('staff.id', 'staff.user_id', 'staff.first_name', 'staff.last_name', 'staff.department', 'ea.staff_id', 'ea.description', 'ea.time_in', 'ea.time_out', 'ea.created_at')
             ->leftJoin('employee_attendances as ea', 'ea.staff_id', 'staff.id')
             ->where('ea.created_at', 'like', '%' . now()->format('Y-m-d') . '%')
             ->groupBy('staff.id')
             ->orderBy('ea.updated_at', 'desc')->get();
+        $_data = $_request->_user == 'employee' ?  EmployeeAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : $_data;
+        $_data = $_request->_user == 'student' ? StudentAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->with('student','student.enrollment_assessment.course')->orderBy('updated_at', 'desc')->get() : $_data;
+
         return compact('_data');
     }
 
-    public function qrcode_scanner_view()
+    public function qrcode_scanner_view(Request $_request)
     {
-        return view('pages.exo.gatekeeper.qrcode-scanner');
+        $_employees = $_request->_user == 'employee' ?  EmployeeAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : [];
+        $_students = $_request->_user == 'student' ? StudentAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : [];
+        return view('pages.exo.gatekeeper.qrcode-scanner', compact('_employees', '_students'));
     }
     public function qrcode_scanner($_user, $_data)
     {
@@ -130,6 +136,8 @@ class ExecutiveOfficeController extends Controller
         $_account = StudentAccount::where('campus_email', $_email)->first();
         if ($_account) {
             if ($_date == $_time_in) {
+                $_attendance = StudentAttendance::where('student_id', $_account->student_id)
+                    ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first();
                 $_details = array(
                     'name' => strtoupper(trim($_account->student->first_name . " " . $_account->student->last_name)),
                     'course' => $_account->student->enrollment_assessment->course->course_name,
@@ -138,7 +146,32 @@ class ExecutiveOfficeController extends Controller
                     'image' =>  '/assets/img/student-profile/' . $_account->student_number,
                     'link' => '/assets/audio/cadet_timein.mp3'
                 );
-                $_data = array('respond' => '200', 'message' => 'Welcome ' . $_account->student->first_name . "!", 'details' => $_details);
+                if (!$_attendance) {
+                    // Store Attendance
+                    $_description = json_decode($_data[1]);
+                    $_attendance_details = array(
+                        'student_id' => $_account->student_id,
+                        'description' => json_encode(array(
+                            'body_temprature' => $_description[0],
+                            'have_any' => $_description[1],
+                            'experience' => $_description[2],
+                            'positive' => $_description[3],
+                            'gatekeeper_in' => Auth::user()->name
+                        )),
+                        'time_in' => date('Y-m-d H:i:s'),
+                    );
+                    StudentAttendance::create($_attendance_details);
+                    $_data = array('respond' => '200', 'message' => 'Welcome ' . $_account->student->first_name . " have a Great Day!", 'details' => $_details);
+                } else {
+                    $_attendance->time_out = now();
+                    $_attendance->save();
+                    $_details['time_status'] = 'TIME OUT!';
+                    $_details['link'] = '/assets/audio/cadet_timeout.mp3';
+                    $_data = array('respond' => '200', 'message' => 'Good Bye and Keep Safe ' . $_account->student->first_name . "!", 'details' => $_details);
+                    # code...
+                }
+                return compact('_data');
+                // $_data = array('respond' => '200', 'message' => 'Welcome ' . $_account->student->first_name . "!", 'details' => $_details);
             } else {
                 $_details = array(
                     'name' => strtoupper(trim($_account->student->name)),
