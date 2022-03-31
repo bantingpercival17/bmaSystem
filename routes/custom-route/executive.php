@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('executive')->group(function () {
     Route::get('/', [ExecutiveOfficeController::class, 'index'])->name('exo.dashboard'); // Dashboard View
     Route::get('/attendance', [ExecutiveOfficeController::class, 'index'])->name('exo.dashboard'); // Dashboard View
-    Route::get('/attendance-checker', [EmployeeController::class, 'qr_scanner']);
+    Route::get('/attendance-checker', [ExecutiveOfficeController::class, 'qrcode_scanner_view'])->name('exo.qrcode-scanner');
+    Route::get('/attendance-checket/scan-code/{data}/{data1}',[ExecutiveOfficeController::class,'qrcode_scanner'])->name('exo.qrcode-scanner-general');
     Route::get('/scan-code/{data}', [EmployeeController::class, 'scanner']);
     Route::get('/scan-code-v2/{data}', [EmployeeController::class, 'scanner_v2']);
     Route::post('/attendance', [EmployeeController::class, 'store']);

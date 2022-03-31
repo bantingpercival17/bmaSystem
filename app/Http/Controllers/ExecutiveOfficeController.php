@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\CourseOffer;
+use App\Models\EmployeeAttendance;
 use App\Models\Section;
 use App\Models\Staff;
+use App\Models\StudentAccount;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use Illuminate\Http\Request;
@@ -45,9 +47,117 @@ class ExecutiveOfficeController extends Controller
         return compact('_data');
     }
 
+    public function qrcode_scanner_view()
+    {
+        return view('pages.exo.gatekeeper.qrcode-scanner');
+    }
+    public function qrcode_scanner($_user, $_data)
+    {
+        $_data = base64_decode($_data); // Decrypt the Data
+        $_data = json_decode($_data); // Decode the Data
+        $_date = date('Y-m-d'); // Get Date Now
 
+        if ($_user == 'student') {
+            $_data = $this->student_qrcode_data($_data, $_date);
+        }
 
+        return compact('_data');
+    }
+    public function employee_qrcode_data($_data, $_date)
+    {
+        $_email = $_data[0]; // Email 
+        $_time_in = date_create($_data[2]);
+        $_time_in =   date_format($_time_in, "Y-m-d");
+        $_staff = Staff::select('staff.id', 'staff.user_id')->join('users', 'users.id', 'staff.user_id')->where('users.email', $_data[0])->first(); // Get Staff Id
+        if ($_date == $_time_in) {
+            if ($_staff) {
+                $_attendance = EmployeeAttendance::where('staff_id', $_staff->id)
+                    ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first();
+                $_staff_details = array(
+                    'name' => strtoupper(trim($_staff->user->name)),
+                    'department' => $_staff->user->staff->department,
+                    'time_status' => 'TIME IN',
+                    'time' =>  date('H:i:s'),
+                    'image' =>  strtolower(str_replace(' ', '_', $_staff->user->name)) . '.jpg',
+                    'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_staff->user->staff->first_name))))) . '-good-morning.mp3'
+                );
+                if ($_attendance) {
+                    $_attendance->time_out = now();
+                    $_attendance->save();
+                    $_staff_details['time_status'] = 'TIME OUT';
+                    $_staff_details['link'] = '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_staff->user->staff->first_name))))) . '-good-bye.mp3';
+                    //$_staff_details = json_encode($_staff_details);
+                    $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe ' . $_staff->user->staff->first_name . "!", 'data' => $_staff_details);
+                } else {
+                    $_description = json_decode($_data[1]);
+                    $_staff_ = array(
+                        'staff_id' => $_staff->id,
+                        'description' => json_encode(array(
+                            'body_temprature' => $_description[0],
+                            'have_any' => $_description[1],
+                            'experience' => $_description[2],
+                            'positive' => $_description[3],
+                            'gatekeeper_in' => Auth::user()->name
 
+                        )),
+                        'time_in' => date('Y-m-d H:i:s'),
+                    );
+                    EmployeeAttendance::create($_staff_);
+                    $_staff_details['time_status'] = 'TIME IN';
+                    $_data = array('respond' => '200', 'message' => 'Welcome' . $_staff->user->staff->first_name . "!", 'data' => $_staff_details);
+                }
+            } else {
+                $_data = array('respond' => '404', 'message' => 'Invalid Email');
+            }
+        } else {
+            $_staff_details = array(
+                'name' => strtoupper(trim($_staff->user->name)),
+                'department' => $_staff->user->staff->department,
+                'time_status' => 'invalid qr code',
+                'time' =>  date('H:i:s'),
+                'image' =>  '',
+                'link' => '/assets/audio/expired_qr_code.mp3'
+            );
+            $_data = array('respond' => '404', 'message' => 'Qr Code is Expired', 'data' => $_staff_details);
+        }
+
+        return compact('_data');
+    }
+    public function student_qrcode_data($_data, $_date)
+    {
+        $_email = $_data[0]; // Get Email 
+        $_time_in =   date_format(date_create($_data[2]), "Y-m-d"); // Get Date and Convert
+        $_account = StudentAccount::where('campus_email', $_email)->first();
+        if ($_account) {
+            if ($_date == $_time_in) {
+                $_details = array(
+                    'name' => strtoupper(trim($_account->student->first_name . " " . $_account->student->last_name)),
+                    'course' => $_account->student->enrollment_assessment->course->course_name,
+                    'time_status' => 'Time In',
+                    'time' =>  date('H:i:s'),
+                    'image' =>  '/assets/img/student-profile/' . $_account->student_number,
+                    'link' => '/assets/audio/cadet_timein.mp3'
+                );
+                $_data = array('respond' => '200', 'message' => 'Welcome ' . $_account->student->first_name . "!", 'details' => $_details);
+            } else {
+                $_details = array(
+                    'name' => strtoupper(trim($_account->student->name)),
+                    'department' => $_account->student->enrollment_assessment->course->course_name,
+                    'time_status' => 'invalid qr code',
+                    'time' =>  date('H:i:s'),
+                    'image' =>  '',
+                    'link' => '/assets/audio/expired_qr_code.mp3'
+                );
+                $_data = array('respond' => '404', 'message' => 'Qr Code is Expired', 'details' => $_details);
+            }
+        } else {
+            $_details = array(
+                'link' => '/assets/audio/invalid-user.mp3'
+            );
+            $_data = array('respond' => '404', 'message' => 'Invalid User', 'details' => $_details);
+        }
+        return compact('_data');
+    }
     public function semestral_clearance_view(Request $_request)
     {
         $_courses = CourseOffer::all();
@@ -104,7 +214,6 @@ class ExecutiveOfficeController extends Controller
             //echo "Saved: " . $_student_id . "<br>";
             $_student = StudentDetails::find($_student_id);
             $_student->offical_clearance_cleared();
-
         }
         return back()->with('success', 'Successfully Submitted Clearance');
     }
