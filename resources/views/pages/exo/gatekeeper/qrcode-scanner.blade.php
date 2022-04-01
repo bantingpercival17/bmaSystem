@@ -138,7 +138,7 @@
                                             <div class="col-6">
                                                 <img src="{{ asset('/assets/img/student-picture/midship-man.jpg') }}"
                                                     alt="user-avatar" class="rounded img-fluid  image"
-                                                    onerror="imageError()">
+                                                    >
                                             </div>
                                             <div class="col-6">
                                                 <span class="text-muted  h4">

@@ -143,7 +143,7 @@ class ExecutiveOfficeController extends Controller
                     'course' => $_account->student->enrollment_assessment->course->course_name,
                     'time_status' => 'Time In',
                     'time' =>  date('H:i:s'),
-                    'image' =>  '/assets/img/student-profile/' . $_account->student_number,
+                    'image' =>  '/assets/img/staff/student/' .trim( $_account->student_number).".png",
                     'link' => '/assets/audio/cadet_timein.mp3'
                 );
                 if (!$_attendance) {
