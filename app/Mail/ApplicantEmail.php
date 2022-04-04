@@ -31,13 +31,22 @@ class ApplicantEmail extends Mailable
     {
         return $this->view('view.name');
     }
+    // Pre Registration Notification Email
+    public function pre_registration_notificaiton($_applicant)
+    {
+        return $this->from(Auth::user()->email, 'Baliwag Maritime Academy, Inc.')
+            ->subject("PRE-REGISTRATION : " . $_applicant->applicant_number)
+            ->markdown('widgets.mail.applicant-mail.pre-registration-notification')
+            ->with(['data' => $_applicant]);
+    }
+
     // Document Attachment Notification Email
     public function document_notificaiton($_applicant)
     {
         return $this->from(Auth::user()->email, 'Baliwag Maritime Academy, Inc.')
             ->subject("DOCUMENT ATTACHMENT : " . $_applicant->applicant_number)
-            ->markdown('widgets.mail.applicant-mail.document-notification');
-        //->with('_content', $this->subject_class);
+            ->markdown('widgets.mail.applicant-mail.document-notification')
+            ->with(['data' => $_applicant]);
     }
     // Approved Documents Email
     public function document_approved($_applicant, $_document)

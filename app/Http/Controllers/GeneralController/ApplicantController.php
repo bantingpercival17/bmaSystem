@@ -64,6 +64,33 @@ class ApplicantController extends Controller
         $_account = ApplicantAccount::find(base64_decode($_request->_applicant));
         $_account->is_removed = 1;
         $_account->save();
-        return back()->with("success",'Successfully Removed');
+        return back()->with("success", 'Successfully Removed');
+    }
+
+    public function applicant_list(Request $_request)
+    {
+        $applicant = ApplicantAccount::where('course_id', $_request->course)->where('is_removed', 0)->get();
+        return compact('applicant');
+    }
+    public function send_email_notification(Request $_request)
+    {
+        $_applicant = ApplicantAccount::find($_request->_applicant);
+        $_email_model = new ApplicantEmail();
+        $data = array('respond' => '404', 'message' => '');
+        if (!$_applicant->applicant) {
+             Mail::to($_applicant->email)->send($_email_model->pre_registration_notificaiton($_applicant));
+            $data['respond'] = '200';
+            $data['message'] = 'Sent Pre Registration Notification ' . $_applicant->applicant_number;
+        } else {
+            if ($_applicant->applicant_documents) {
+                Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant));
+                $data['respond'] = '200';
+                $data['message'] = 'Sent Document Attachment Notification ' . $_applicant->applicant_number;
+            } else {
+                $data['respond'] = '200';
+                $data['message'] = 'Done all Step' . $_applicant->applicant_number;
+            }
+        }
+        return compact('data');
     }
 }

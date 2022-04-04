@@ -79,7 +79,6 @@ class AdministratorController extends Controller
             $_file_name = 'sample.xlsx';
             $_file_export = new CourseStudentEnrolled($_course);
             return Excel::download($_file_export, $_file_name); // Download the File 
-
         }
     }
     /* Students */

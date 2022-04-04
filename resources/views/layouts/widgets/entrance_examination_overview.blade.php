@@ -146,7 +146,8 @@ $_course_url = route($_course_enrolled[0]);
                 <tbody>
                     @foreach ($_courses as $_course)
                         <tr>
-                            <td>{{ $_course->course_name }}</td>
+                            <td class="course-btn" data-course="{{ $_course->id }}">{{ $_course->course_name }}
+                            </td>
                             <td>
                                 {{ count($_course->student_pre_registrations) }}
                             </td>
@@ -173,3 +174,19 @@ $_course_url = route($_course_enrolled[0]);
         </div>
     </div>
 </div>
+@section('js')
+    <script>
+        $(document).on('click', '.course-btn', function() {
+            var data = $(this).data('course')
+            $.get('applicant-list?course=' + data, function(respond) {
+                respond.applicant.forEach(element => {
+                    $.get('applicant/notification?_applicant=' + element.id, function(respond) {
+                        if (respond.data.respond == '200') {
+                            console.info(respond.data.message)
+                        }
+                    })
+                });
+            })
+        })
+    </script>
+@endsection
