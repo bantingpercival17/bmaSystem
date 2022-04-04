@@ -22,7 +22,7 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                     <tr>
                         <th></th>
                         <th width="15%">Names</th>
-                        @foreach ($curriculum->curriculum->subject([$_course->id, 4, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
+                        @foreach ($curriculum->curriculum->subject([$_course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
                             <th>
                                 {{ $_subject->subject->subject_code }}
                             </th>
