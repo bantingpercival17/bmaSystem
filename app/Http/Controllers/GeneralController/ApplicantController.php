@@ -82,7 +82,7 @@ class ApplicantController extends Controller
             $data['respond'] = '200';
             $data['message'] = 'Sent Pre Registration Notification ' . $_applicant->applicant_number;
         } else {
-            if ($_applicant->applicant_documents) {
+            if (!$_applicant->applicant_documents) {
                 Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant));
                 $data['respond'] = '200';
                 $data['message'] = 'Sent Document Attachment Notification ' . $_applicant->applicant_number;
