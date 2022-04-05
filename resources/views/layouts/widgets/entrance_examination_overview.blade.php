@@ -157,7 +157,7 @@ $_course_url = route($_course_enrolled[0]);
                                 </a>
                             </td>
                             <td>
-                                <a href="{{ $_course_url . '?_course=' . base64_encode($_course->id) }}">
+                                <a href="{{ route('applicant-verified') . '?_course=' . base64_encode($_course->id) }}">
                                     {{ count($_course->applicant_verified) }}
                                 </a>
                             </td>

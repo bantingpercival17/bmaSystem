@@ -224,7 +224,7 @@ class CourseOffer extends Model
         $_level = $this->course_id == 3 ? 11 : 4;
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
         return $this->hasMany(ApplicantAccount::class, 'course_id')
-            //->select('applicant_accounts.*')
+            ->select('applicant_accounts.*')
             ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false)
             ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '>=', $_documents)
