@@ -59,6 +59,13 @@ class ApplicantController extends Controller
             //echo "Disapproved";
         }
     }
+    public function applicant_verified(Request $_request)
+    {
+        $_courses = CourseOffer::all();
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_applicants =  $_course->applicant_verified;
+        return view('pages.general-view.applicants.list_view', compact('_applicants', '_course', '_courses'));
+    }
     public function applicant_removed(Request $_request)
     {
         $_account = ApplicantAccount::find(base64_decode($_request->_applicant));
@@ -78,7 +85,7 @@ class ApplicantController extends Controller
         $_email_model = new ApplicantEmail();
         $data = array('respond' => '404', 'message' => '');
         if (!$_applicant->applicant) {
-             Mail::to($_applicant->email)->send($_email_model->pre_registration_notificaiton($_applicant));
+            Mail::to($_applicant->email)->send($_email_model->pre_registration_notificaiton($_applicant));
             $data['respond'] = '200';
             $data['message'] = 'Sent Pre Registration Notification ' . $_applicant->applicant_number;
         } else {
