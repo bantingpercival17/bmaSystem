@@ -2,8 +2,8 @@
 # CONGRATULATIONS
 Good day {{ucwords($data->account->applicant->first_name)}},
 <p>
-We are glad to notify you that you are eligible to take the Examination Exam for the 2022-2023 academic year.
-You may now pay the Php 300.00 online examination fee.
+We are glad to inforn you that you are eligible to take the Online Entrance Examination for the 2022-2023 academic year.
+You may now pay the Php 300.00 examination fee.
 </p>
 
 **Payment Method:** <br>
