@@ -154,7 +154,7 @@ class Staff extends Model
                 'role_id' => 1,
                 'role_name' => 'Administrator',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting']],
+                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket']],
             ],
             [
                 'role_id' => 2,
@@ -197,7 +197,7 @@ class Staff extends Model
                 'role_id' => 8,
                 'role_name' => 'Executive',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'exo.dashboard'], ['Staff Attendance', 'exo.staff-attendance'], ['Semestral Clearance', 'exo.semestral-clearance'], ['Qr Code Scanner','exo.qrcode-scanner']],
+                'role_routes' => [['Dashboard', 'exo.dashboard'], ['Staff Attendance', 'exo.staff-attendance'], ['Semestral Clearance', 'exo.semestral-clearance'], ['Qr Code Scanner', 'exo.qrcode-scanner']],
             ],
             [
                 'role_id' => 9,

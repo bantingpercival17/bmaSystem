@@ -12,28 +12,12 @@
     <link rel="stylesheet" href="{{ asset('css/app-1.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <style>
-        /* .iframe-container {
-            box-sizing: border-box;
-            width: 100%;
-            padding: 5px;
-        } */
-
-        /* .iframe-container iframe {
-            border: 0;
-            height: 100%;
-            left: 0;
-            position: absolute;
-            top: 0;
-            width: 100%;
-        } */
         .iframe-placeholder {
             background: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100% 100%"><text fill="%23FF0000" x="50%" y="50%" font-family="\'Lucida Grande\', sans-serif" font-size="24" text-anchor="middle">LOADING.....</text></svg>') 0px 0px no-repeat;
         }
 
     </style>
-    {{-- <script src="{{ asset('js/app-1.js') }}"></script>
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script> --}}
-
+    @yield('css')
 </head>
 
 <body class=" ">
@@ -51,23 +35,25 @@
         @include('layouts.navigation-main')
         @yield('side-navigation')
         <main class="main-content">
-            <div class="position-relative">
-                @yield('navigation')
-            </div>
-            {{-- @yield('extra-navigation') --}}
+            @yield('navigation')
             @if (request()->is('teacher/subjects/*'))
                 @yield('page-content')
             @else
-                
-                @foreach (Auth::user()->staff->routes_navigation() as $route)
-                    @if (request()->is($route))
-                        @yield('sub-navigation')
-                    @endif
-                @endforeach
+                <div style="margin-top:7%;">
+                    <ol class="breadcrumb">
+                        @yield('beardcrumb-content')
+                    </ol>
+                    @foreach (Auth::user()->staff->routes_navigation() as $route)
+                        @if (request()->is($route))
+                            @yield('sub-navigation')
+                        @endif
+                    @endforeach
 
-                <div class="conatiner-fluid content-inner mt-6 py-0">
-                    @yield('page-content')
+                    <div class="conatiner-fluid content-inner mt-5 py-0">
+                        @yield('page-content')
+                    </div>
                 </div>
+
             @endif
 
         </main>

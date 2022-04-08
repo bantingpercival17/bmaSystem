@@ -285,7 +285,7 @@ $_title = 'Profile View';
                                             </div>
                                         </div>
                                     </div>
-                                    @if ($_account->applicant->senior_high_school_nmae)
+                                    @if ($_account->applicant->senior_high_school_name)
                                         <label for="" class="form-label fw-bolder">SENIOR HIGH SCHOOL</label>
                                         <div class="row">
                                             <div class="col-xl-8 col-md mb-xl-0">
