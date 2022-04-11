@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\CourseStudentEnrolled;
 use App\Exports\EnrolledStudentList;
+use App\Imports\ImportExamination;
 use App\Imports\ShipboardInformationImport;
 use App\Imports\StaffImport;
 use App\Imports\StudentInformationImport;
@@ -20,6 +21,7 @@ use App\Models\Department;
 use App\Models\Documents;
 use App\Models\EducationalDetails;
 use App\Models\EnrollmentAssessment;
+use App\Models\Examination;
 use App\Models\ParentDetails;
 use App\Models\PaymentAssessment;
 use App\Models\PaymentTransaction;
@@ -60,7 +62,7 @@ class AdministratorController extends Controller
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
-        $_total_applicants = ApplicantAccount::join('applicant_detials','applicant_detials.applicant_id','applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
+        $_total_applicants = ApplicantAccount::join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
         return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population', '_total_applicants'));
     }
     public function dashboard_enrolled_list_view(Request $_request)
@@ -615,7 +617,42 @@ class AdministratorController extends Controller
             return back()->with('success', 'Successfully Transact.');
             //echo "Disapproved";
         }
-
         // Disapproved
+    }
+    public function examination_view(Request $_request)
+    {
+        if ($_request->_view) {
+            $_examination = Examination::find(base64_decode($_request->_view));
+            return view('pages.administrator.examination.category_view', compact('_examination'));
+        } else {
+            $_examination = Examination::where('is_removed', false)->get();
+            return view('pages.administrator.examination.view', compact('_examination'));
+        }
+    }
+    public function examination_store(Request $_request)
+    {
+        $_request->validate([
+            'exam_name' => 'required',
+            'exam_descrip' => 'required',
+            'exam_department' => 'required'
+        ]);
+        $_data = array(
+            'examination_name' => $_request->exam_name,
+            'description' => $_request->exam_descrip,
+            'department' => $_request->exam_department,
+            'due_date' => now(),
+            'exp_date' => now(),
+        );
+        Examination::create($_data);
+        return back()->with('success', 'Successfully Add an Examination');
+    }
+    public function examination_import(Request $_request)
+    {
+        $_request->validate([
+            'files' => 'required|mimes:xlsx',
+        ]);
+        $_file = $_request->file('files');
+        Excel::import(new ImportExamination($_request->exam), $_file);
+        return back()->with('success', 'Excel File Successfully Imported');
     }
 }
