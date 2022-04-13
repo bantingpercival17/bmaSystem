@@ -45,4 +45,8 @@ Route::prefix('accounting')->group(function () {
     Route::get('/semestral-clearance', [AccountingController::class, 'semestral_clearance_view'])->name('accounting.semestral-clearance'); // Course View
     Route::get('/semestral-clearance/view', [AccountingController::class, 'semestral_student_list_view'])->name('accounting.semestral-student-list'); // Section view
     Route::post('/semestral-clearance', [AccountingController::class, 'semestral_clearance_store'])->name('accounting.semestral-clearance-store');
+
+    // Applicant
+    Route::get('/applicant-transaction', [AccountingController::class, 'applicant_transaction_view'])->name('accounting.applicant-transaction');
+    Route::get('/applicant-transaction/verification', [AccountingController::class, 'applicant_transaction_verification'])->name('accounting.applicant-transaction-verification');
 });

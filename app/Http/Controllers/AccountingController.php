@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exports\EnrolledStudentList;
+use App\Models\ApplicantAccount;
+use App\Models\ApplicantPayment;
 use App\Models\CourseOffer;
 use App\Models\CourseSemestralFees;
 use App\Models\Curriculum;
@@ -374,5 +376,28 @@ class AccountingController extends Controller
         $_online_payment->comment_remarks =  $_request->remarks;
         $_online_payment->save();
         return back()->with('success', 'Transaction Complete');
+    }
+
+    public function applicant_transaction_view(Request $_request)
+    {
+        $_applicants = new ApplicantAccount;
+        $_payment_transaction = $_request->_applicants ? $_applicants->search_applicants($_request->_applicants) :  $_applicants->applicant_payments();
+        $_student = $_request->_applicant ? ApplicantAccount::find(base64_decode($_request->_applicant)) : [];
+        $_applicant_payment = $_request->payment_approved ?  ApplicantPayment::find(base64_decode($_request->payment_approved)) : [];
+        return view('pages.accounting.applicant.view', compact('_payment_transaction', '_student', '_applicant_payment'));
+    }
+    public function applicant_transaction_verification(Request $_request)
+    {
+        $_payment = ApplicantPayment::find(base64_decode($_request->transaction));
+        if ($_request->status == 'approved') {
+            $_payment->is_approved = 1;
+            $_payment->save();
+        }
+        if ($_request->status == 'disapproved') {
+            $_payment->is_approved = 0;
+            $_payment->comment_remarks = $_request->remarks;
+            $_payment->save();
+        }
+        return back()->with('success', 'Successfully Transact!');
     }
 }

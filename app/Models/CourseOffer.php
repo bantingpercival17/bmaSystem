@@ -226,6 +226,7 @@ class CourseOffer extends Model
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
             ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
+            //->leftJoin('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false)
             ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '>=', $_documents)
             ->groupBy('applicant_accounts.id');
@@ -241,5 +242,23 @@ class CourseOffer extends Model
             ->leftJoin('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
             ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '<', $_documents)
             ->groupBy('applicant_accounts.id');
+    }
+    public function applicant_payment()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
+            ->leftjoin('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_accounts.is_removed', false)
+            ->where('applicant_payments.is_removed', false);
+        //->where('aee.is_removed', false);
+    }
+    public function applicant_examination()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_accounts.is_removed', false)
+            ->where('applicant_payments.is_removed', false);
     }
 }
