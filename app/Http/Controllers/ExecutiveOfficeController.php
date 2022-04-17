@@ -46,7 +46,7 @@ class ExecutiveOfficeController extends Controller
             ->groupBy('staff.id')
             ->orderBy('ea.updated_at', 'desc')->get();
         $_data = $_request->_user == 'employee' ?  EmployeeAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : $_data;
-        $_data = $_request->_user == 'student' ? StudentAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->with('student','student.enrollment_assessment.course')->orderBy('updated_at', 'desc')->get() : $_data;
+        $_data = $_request->_user == 'student' ? StudentAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->with('student', 'student.enrollment_assessment.course')->orderBy('updated_at', 'desc')->get() : $_data;
 
         return compact('_data');
     }
@@ -135,7 +135,42 @@ class ExecutiveOfficeController extends Controller
         $_time_in =   date_format(date_create($_data[2]), "Y-m-d"); // Get Date and Convert
         $_account = StudentAccount::where('campus_email', $_email)->first();
         if ($_account) {
-            if ($_date == $_time_in) {
+            $_attendance = StudentAttendance::where('student_id', $_account->student_id)
+                ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first();
+            $_details = array(
+                'name' => strtoupper(trim($_account->student->first_name . " " . $_account->student->last_name)),
+                'course' => $_account->student->enrollment_assessment->course->course_name,
+                'time_status' => 'Time In',
+                'time' =>  date('H:i:s'),
+                'image' =>  '/assets/img/staff/student/' . trim($_account->student_number) . ".png",
+                'link' => '/assets/audio/cadet_timein.mp3'
+            );
+            if (!$_attendance) {
+                // Store Attendance
+                $_description = json_decode($_data[1]);
+                $_attendance_details = array(
+                    'student_id' => $_account->student_id,
+                    'description' => json_encode(array(
+                        'body_temprature' => $_description[0],
+                        'have_any' => $_description[1],
+                        'experience' => $_description[2],
+                        'positive' => $_description[3],
+                        'gatekeeper_in' => Auth::user()->name
+                    )),
+                    'time_in' => date('Y-m-d H:i:s'),
+                );
+                StudentAttendance::create($_attendance_details);
+                $_data = array('respond' => '200', 'message' => 'Welcome ' . $_account->student->first_name . " have a Great Day!", 'details' => $_details);
+            } else {
+                $_attendance->time_out = now();
+                $_attendance->save();
+                $_details['time_status'] = 'TIME OUT!';
+                $_details['link'] = '/assets/audio/cadet_timeout.mp3';
+                $_data = array('respond' => '200', 'message' => 'Good Bye and Keep Safe ' . $_account->student->first_name . "!", 'details' => $_details);
+                # code...
+            }
+            return compact('_data');
+            /*   if ($_date == $_time_in) {
                 $_attendance = StudentAttendance::where('student_id', $_account->student_id)
                     ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first();
                 $_details = array(
@@ -182,7 +217,7 @@ class ExecutiveOfficeController extends Controller
                     'link' => '/assets/audio/expired_qr_code.mp3'
                 );
                 $_data = array('respond' => '404', 'message' => 'Qr Code is Expired', 'details' => $_details);
-            }
+            } */
         } else {
             $_details = array(
                 'link' => '/assets/audio/invalid-user.mp3'
