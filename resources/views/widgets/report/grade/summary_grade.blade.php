@@ -72,6 +72,7 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                             <th>{{ $_total_units }} UNITS</th>
                             <th></th>
                         </tr>
+                        {{-- if( $i % 10 == 0 ){ echo '<div class="breakNow"></div>'; .... } --}}
                         @php
                             $count += 1;
                         @endphp
@@ -79,12 +80,25 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                             @php
                                 $count = 0;
                             @endphp
+                            <tr>
+                                <th></th>
+                                <th width="15%">NAMES</th>
+                                @foreach ($curriculum->curriculum->subject([$_course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
+                                    <th>
+                                        {{ $_subject->subject->subject_code }}
+                                    </th>
+                                    <td class="text-center">UNITS</td>
+                                @endforeach
+                                <th>REMARKS</th>
+                                <th>GEN AVERAGE</th>
+                            </tr>
                             <div class="page-break"></div>
                         @endif
                     @endforeach
 
                 </tbody>
             </table>
+            <div class="page-break"></div>
         @endforeach
     </div>
     {{-- {{ $_course->student_list}} --}}

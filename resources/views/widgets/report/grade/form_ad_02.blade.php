@@ -30,7 +30,8 @@
                             <td class="text-center">{{ $_key + 1 }}</td>
                             <td class="text-center">{{ $_student->student->account->student_number }}</td>
                             <td style="padding-left: 10px;">
-                                {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}</td>
+                                {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
+                            </td>
                             <td class="text-center">
                                 @php
                                     $_final = $_student->student->final_grade($_subject->id, 'midterm');
@@ -38,7 +39,8 @@
                                 {{ $_final >= 0 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
-                                <b> {{ $_final >= 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
+                                <b>
+                                    {{ $_final >= 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
                             <td class="text-center">
                                 @php
@@ -47,7 +49,8 @@
                                 {{ $_final > 49 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
-                                <b> {{ $_final > 49 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
+                                <b>
+                                    {{ $_final > 49 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
                             <td class="text-center">
                                 <b>
@@ -56,13 +59,26 @@
 
                             </td>
                         </tr>
-                       
+                        @if ($_key == 48)
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                            <div class="page-break"></div>
+                            
+                        @endif
                     @endforeach
                 @endif
 
             </tbody>
         </table>
-        
+
         <table class="table">
             <tbody>
                 <tr>

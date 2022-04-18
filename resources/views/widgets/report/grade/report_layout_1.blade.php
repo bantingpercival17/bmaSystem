@@ -47,7 +47,7 @@
             top: 1.3in;
             margin-right: 25px;
             margin-left: 25px;
-            page-break-after: always;
+           
 
         }
 
@@ -64,6 +64,8 @@
         .page-break {
             page-break-before: always;
         }
+
+
 
         .text-center {
             text-align: center;
@@ -100,13 +102,15 @@
         }
 
         .table-2 {
-            page-break-before: auto;
             font-family: "Times New Roman", Times, serif;
             border-collapse: collapse;
             width: 100%;
             border: 1px solid rgb(0, 0, 0);
-            margin-top: 10px
+            margin-top: 10px;
+            page-break-inside: always;
         }
+
+
 
         .table-2 td,
         .table-2 th {
@@ -121,6 +125,11 @@
             padding-top: 5px;
             padding-bottom: 5px;
             text-align: center;
+        }
+
+        .breakNow {
+            page-break-inside: avoid;
+            page-break-after: always;
         }
 
         .th-1 {

@@ -51,6 +51,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/semestral-grade/report-form', [RegistrarController::class, 'semestral_grade_report_form'])->name('registrar.semestral-grade-form-ad2');
     Route::get('/semestral-grade/report-summary', [RegistrarController::class, 'semestral_grade_summary_report'])->name('registrar.semestral-grade-semestral-report');
     Route::get('/smestral-grade/publish-grade', [RegistrarController::class, 'semestral_grade_publish'])->name('registrar.semestral-grade-publish');
+    Route::get('/semstral-grade/subject-grade', [RegistrarController::class, 'semestral_subject_grade'])->name('registrar.subject-grade');
     /* Applicants */
     //require __DIR__ . '\extra\applicant-route.php'; // Applicant Route
 

@@ -19,6 +19,7 @@ use App\Models\SubjectClass;
 use App\Models\SubjectClassSchedule;
 use App\Models\User;
 use App\Report\Clearance\SemestralClearanceReport;
+use App\Report\GradingSheetReport;
 use App\Report\StudentListReport;
 use App\Report\Students\StudentReport;
 use Illuminate\Http\Request;
@@ -477,5 +478,17 @@ class RegistrarController extends Controller
             'is_removed' => 0,
         ]);
         return back()->with('success', 'Grade Publish.');
+    }
+    public function semestral_subject_grade(Request $_request)
+    {
+        $_subject = SubjectClass::find(base64_decode($_request->_subject));
+        $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
+        if ($_subject_code == 'BRDGE') {
+            $_students = $_subject->section->student_with_bdg_sections;
+        } else {
+            $_students = $_subject->section->student_sections;
+        }
+        $_report = new GradingSheetReport($_students, $_subject);
+        return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
     }
 }
