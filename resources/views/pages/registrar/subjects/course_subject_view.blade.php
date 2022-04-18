@@ -18,6 +18,14 @@ $_title = 'Subjects';
         {{ $_course->course_name }}
     </li>
 @endsection
+@section('js')
+    <script>
+        $(document).on('click', '.btn-form-grade', function(evt) {
+            $('.form-view').attr('src', $(this).data('grade-url'))
+            console.log($(this).data('grade-url'))
+        });
+    </script>
+@endsection
 @section('page-content')
     <div class="content">
         @if ($_course)
@@ -61,13 +69,12 @@ $_title = 'Subjects';
                                                     <td>
                                                         @if ($_subject->section($_academic->id)->count() > 0)
                                                             @foreach ($_subject->section($_academic->id)->get() as $_section)
-                                                              <small class="mt-2 badge bg-primary" data-bs-toggle="modal"
+                                                                <small class="mt-2 btn-form-grade badge bg-primary" data-bs-toggle="modal"
                                                                     data-bs-target=".grade-view-modal"
                                                                     data-grade-url="{{ route('registrar.subject-grade') }}?_subject={{ base64_encode($_section->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2">
                                                                     {{ $_section->section->section_name }}
                                                                     <br>[
                                                                     {{ $_section->staff->first_name . ' ' . $_section->staff->last_name }}]</small>
-                                                               
                                                             @endforeach
                                                         @else
                                                             <span class="badge badge-secondary">ADD SECTION</span>
@@ -91,6 +98,7 @@ $_title = 'Subjects';
 
         @endif
     </div>
+
     <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
