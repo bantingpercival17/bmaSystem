@@ -21,9 +21,6 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
     <li class="breadcrumb-item active" aria-current="page">{{ $_title }}</li>
 @endsection
 @section('page-content')
-    @include('layouts.navigation-teacher')
-    @yield('teacher-navbar')
-
     <div class="conatiner-fluid content-inner mt-6 py-0">
         <div class="row">
             <div class="col-8">

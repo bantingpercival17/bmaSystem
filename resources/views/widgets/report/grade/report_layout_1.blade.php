@@ -14,8 +14,7 @@
         * {
             padding: 0;
             margin: 0;
-            font-family: "Times New Roman", Times, serif;
-
+            font-family: "Times New Roman", Times, serif
         }
 
         header {
@@ -48,7 +47,12 @@
             top: 1.3in;
             margin-right: 25px;
             margin-left: 25px;
+            page-break-after: always;
 
+        }
+
+        .content: last-child {
+            page-break-after: avoid;
         }
 
         .align {
@@ -74,6 +78,10 @@
         }
 
         .table {
+            page-break-before: auto;
+        }
+
+        .table {
             font-family: "Times New Roman", Times, serif;
             border-collapse: collapse;
             width: 100%;
@@ -92,6 +100,7 @@
         }
 
         .table-2 {
+            page-break-before: auto;
             font-family: "Times New Roman", Times, serif;
             border-collapse: collapse;
             width: 100%;
@@ -193,11 +202,12 @@
 
         .form-label {
             float: left;
-            text-combine-upright:unset ;
+            text-combine-upright: unset;
             margin-top: 0.2em;
             margin-left: 2.0em;
-           
+
         }
+
         .subject-list-table {
             font-family: "Times New Roman", Times, serif;
             border-collapse: collapse;

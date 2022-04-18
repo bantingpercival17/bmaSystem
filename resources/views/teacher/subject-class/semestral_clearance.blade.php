@@ -21,21 +21,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
     <li class="breadcrumb-item active" aria-current="page">{{ $_title }}</li>
 @endsection
 @section('page-content')
-    <div class="nav-scroller text-center">
-        <nav class="nav nav-underline bg-soft-primary  pb-0" aria-label="Secondary navigation ">
-            <div class="d-flex" id="head-check">
-                <a href="{{ route('teacher.subject-view') . '?_subject=' . request()->input('_subject') }}"
-                    class="nav-link {{ request()->routeIs('teacher.subject-view') ? 'active' : '' }}">Student</a>
-                <a href="{{ route('teacher.semestral-clearance') . '?_subject=' . request()->input('_subject') }}"
-                    class="nav-link {{ request()->routeIs('teacher.semestral-clearance') ? 'active' : '' }}">Semestral
-                    Clearance</a>
-                <a href="{{ route('teacher.grading-sheet') }}?_subject={{ base64_encode($_subject->id) }}&_period=midterm"
-                    class="nav-link {{ request()->routeIs('teacher.grading-sheet') ? 'active' : '' }}">Grading
-                    Sheet</a>
-            </div>
-        </nav>
-    </div>
-
+   
     <div class="conatiner-fluid content-inner mt-6 py-0">
         <form action="{{ route('teacher.e-clearance') }}" method="post">
             @csrf

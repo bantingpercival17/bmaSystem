@@ -8,7 +8,7 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
 @endphp
 @section('form-code', '')
 @section('content')
-    <div class="content" style="margin-bottom: 5%;">
+    <div class="content" {{-- style="margin-bottom: 5%;" --}}>
         <h3 class="text-center">REPORT OF FINAL GRADES</h3>
         <h4 class="text-center">{{ $_year_level . ', ' . Auth::user()->staff->current_academic()->semester }}
         </h4>
@@ -21,7 +21,7 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                 <thead>
                     <tr>
                         <th></th>
-                        <th width="15%">Names</th>
+                        <th width="15%">NAMES</th>
                         @foreach ($curriculum->curriculum->subject([$_course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
                             <th>
                                 {{ $_subject->subject->subject_code }}
@@ -33,6 +33,9 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $count = 0;
+                    @endphp
                     @foreach ($_course->student_list as $_key => $_data)
                         <tr>
                             <td width="2%" class="text-center">{{ $_key + 1 }}
@@ -69,6 +72,15 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                             <th>{{ $_total_units }} UNITS</th>
                             <th></th>
                         </tr>
+                        @php
+                            $count += 1;
+                        @endphp
+                        @if ($count == 25)
+                            @php
+                                $count = 0;
+                            @endphp
+                            <div class="page-break"></div>
+                        @endif
                     @endforeach
 
                 </tbody>
