@@ -63,7 +63,7 @@ $_title = 'Subjects';
                                                             <span class="text-primary"><b>
                                                                     {{ $_subject->subject_code }}</b></span>
                                                             <br>
-                                                            <small> {{ $_subject->subject_name }}</small>
+                                                            <small> {{ $_subject->subject_name }}< /small>
                                                         </a>
                                                     </td>
                                                     <td>
