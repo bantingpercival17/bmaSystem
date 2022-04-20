@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\ApplicantEntranceExamination;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -71,5 +72,21 @@ class ApplicantEmail extends Mailable
             ->subject("APPLICATION QUALIFIED : " . $_document->account->applicant_number)
             ->markdown('widgets.mail.applicant-mail.applicantion-qualified')
             ->with(['data' => $_document]);
+    }
+    // Approved Entrance Examination Payment 
+    public function payment_approved($_applicant)
+    {
+        $length = 10;
+        $_exam_code = 'CODE-' . substr(str_shuffle(str_repeat($x = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+        ApplicantEntranceExamination::create(
+            [
+                'applicant_id' => $_applicant->id,
+                'examination_code' => $_exam_code
+            ]
+        );
+        /*  return $this->from(Auth::user()->email, "BMA ACCOUNTING'S OFFICE")
+            ->subject("ENTRANCE EXAMINATION PAYMENT APPROVED: " . $_applicant->applicant_number)
+            ->markdown('widgets.mail.applicant-mail.entrance-examination-payment-approved')
+            ->with(['data' => $_applicant]); */
     }
 }

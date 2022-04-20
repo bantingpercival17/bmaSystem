@@ -49,4 +49,5 @@ Route::prefix('accounting')->group(function () {
     // Applicant
     Route::get('/applicant-transaction', [AccountingController::class, 'applicant_transaction_view'])->name('accounting.applicant-transaction');
     Route::get('/applicant-transaction/verification', [AccountingController::class, 'applicant_transaction_verification'])->name('accounting.applicant-transaction-verification');
+    Route::post('/applicant-transaction',[AccountingController::class,'applicant_transaction_store'])->name('accounting.applicant-payment-transaction');
 });

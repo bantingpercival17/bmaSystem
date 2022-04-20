@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\EnrolledStudentList;
+use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantPayment;
 use App\Models\CourseOffer;
@@ -389,9 +390,12 @@ class AccountingController extends Controller
     public function applicant_transaction_verification(Request $_request)
     {
         $_payment = ApplicantPayment::find(base64_decode($_request->transaction));
+        $_applicant = new ApplicantEmail();
         if ($_request->status == 'approved') {
             $_payment->is_approved = 1;
+            $_payment->or_number = $_request->or_number;
             $_payment->save();
+            $_applicant->payment_approved(ApplicantAccount::find($_payment->applicant_id));
         }
         if ($_request->status == 'disapproved') {
             $_payment->is_approved = 0;
@@ -399,5 +403,25 @@ class AccountingController extends Controller
             $_payment->save();
         }
         return back()->with('success', 'Successfully Transact!');
+    }
+    public function applicant_transaction_store(Request $_request)
+    {
+        $_request->validate([
+            'or_number' => 'required',
+            'amount' => 'required'
+        ]);
+        ApplicantPayment::create([
+            'applicant_id' => $_request->applicant,
+            'amount_paid' => $_request->amount,
+            'reference_number' => $_request->or_number,
+            'reciept_attach_path' => $_request->payment_method,
+            'transaction_type' => $_request->remarks,
+            'or_number' => $_request->or_number,
+            'is_approved' => 1
+        ]);
+        // Send Email Notification
+        $_applicant = new ApplicantEmail();
+        $_applicant->payment_approved(ApplicantAccount::find($_request->applicant));
+        //return back()->with('success', 'Successfully Transact!');
     }
 }

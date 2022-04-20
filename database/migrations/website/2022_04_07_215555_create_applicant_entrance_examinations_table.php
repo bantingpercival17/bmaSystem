@@ -17,6 +17,7 @@ class CreateApplicantEntranceExaminationsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('applicant_id');
             $table->foreign('applicant_id')->references('id')->on('applicant_accounts');
+            $table->string('examination_code');
             $table->boolean('is_finish')->nullable();
             $table->integer('is_reset')->nullable();
             $table->boolean('is_removed')->default(0);

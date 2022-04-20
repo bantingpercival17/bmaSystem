@@ -61,7 +61,8 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     }
     public function search_applicants($_data)
     {
-        return ApplicantAccount::where('name', 'like', '%' . $_data . '%')->get();
+        //return ApplicantAccount::where('name', 'like', '%' . $_data . '%')->with('applicant_details')->get();
+        return $this->where('name', 'like', '%' . $_data . '%')->orWhere('applicant_number', 'like', '%' . $_data . '%')->get();
     }
     public function applicant_payments()
     {
