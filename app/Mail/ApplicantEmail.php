@@ -84,9 +84,9 @@ class ApplicantEmail extends Mailable
                 'examination_code' => $_exam_code
             ]
         );
-        /*  return $this->from(Auth::user()->email, "BMA ACCOUNTING'S OFFICE")
+        return $this->from(Auth::user()->email, "BMA ACCOUNTING'S OFFICE")
             ->subject("ENTRANCE EXAMINATION PAYMENT APPROVED: " . $_applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.entrance-examination-payment-approved')
-            ->with(['data' => $_applicant]); */
+            ->with(['data' => $_applicant, 'exam_code' => $_exam_code]);
     }
 }

@@ -79,16 +79,17 @@
                                                         <div class="col-md">
                                                             <small>OR NUMBER: </small> <br>
                                                             <h5><span
-                                                                    class="text-primary">{{ $item->or_number }}</span>
+                                                                    class="text-primary">{{ $item->or_number ?: '-' }}</span>
                                                             </h5>
                                                         </div>
-                                                        <div class="col-md-12">
-
+                                                        <div class="col-md">
+                                                            <small>PROOF OF PAYMENT: </small> <br>
                                                             <button type="button"
                                                                 class="btn btn-primary btn-sm btn-form-document w-100 mt-2"
                                                                 data-bs-toggle="modal" data-bs-target=".document-view-modal"
                                                                 data-document-url="{{ $item->reciept_attach_path }}">
                                                                 VIEW</button>
+                                                            </h5>
                                                         </div>
                                                     </div>
                                                     @if ($item->is_approved === 0)
@@ -118,37 +119,48 @@
                                                                         <input type="hidden" name="transaction"
                                                                             value="{{ base64_encode($item->id) }}">
                                                                         <input type="hidden" name="status" value="approved">
-                                                                        <button type="submit"
-                                                                            class="btn btn-primary btn-sm">APPROVED
-                                                                            PAYMENT</button>
-                                                                        <div class="mt-2">
-                                                                            <input type="text" class="form-control"
-                                                                                placeholder="Or Number" name="or_number"
-                                                                                required>
+                                                                        <label for="" class="form-label fw-bolder">APPROVED
+                                                                            PAYMENT</label>
+                                                                        <div class="form-group">
+                                                                            <div class="mt-2">
+                                                                                <input type="text" class="form-control"
+                                                                                    placeholder="Or Number" name="or_number"
+                                                                                    required>
+                                                                            </div>
                                                                         </div>
+                                                                        <div class="form-group">
+                                                                            <button type="submit"
+                                                                                class="btn btn-primary btn-sm w-100">Submit</button>
+                                                                        </div>
+
+
                                                                     </form>
-                                                                    {{-- <a href="{{ route('accounting.applicant-transaction-verification') }}?_applicant-transaction={{ base64_encode($item->id) }}"
-                                                                        class="btn btn-primary btn-sm">
-                                                                        APPROVED PAYMENT</a> --}}
                                                                 </div>
                                                                 <div class="d-flex justify-content-between ms-2">
                                                                     <form
                                                                         action="{{ route('accounting.applicant-transaction-verification') }}"
                                                                         method="get" class="">
                                                                         @csrf
+                                                                        <label for=""
+                                                                            class="form-label fw-bolder">DISAPPROVED
+                                                                            PAYMENT</label>
                                                                         <input type="hidden" name="transaction"
                                                                             value="{{ base64_encode($item->id) }}">
-                                                                        <input type="hidden" name="status"
-                                                                            value="disapproveds">
+                                                                        <div class="form-group">
+                                                                            <input type="hidden" name="status"
+                                                                                value="disapproved">
+                                                                            <div class="mt-2">
+                                                                                <input type="text" class="form-control"
+                                                                                    placeholder="remarks" name="remarks"
+                                                                                    required>
+                                                                            </div>
+                                                                        </div>
+
                                                                         <div>
                                                                             <button type="submit"
-                                                                                class="btn btn-danger btn-sm w-100">DISSAPPROVED</button>
+                                                                                class="btn btn-danger btn-sm w-100">SUBMIT</button>
                                                                         </div>
-                                                                        <div class="mt-2">
-                                                                            <input type="text" class="form-control"
-                                                                                placeholder="remarks" name="remarks"
-                                                                                required>
-                                                                        </div>
+
 
                                                                     </form>
                                                                 </div>
@@ -161,7 +173,6 @@
                                                 </div>
 
                                             </li>
-                                            <hr>
                                         @endforeach
                                     @else
                                         <div class="payment-transaction">

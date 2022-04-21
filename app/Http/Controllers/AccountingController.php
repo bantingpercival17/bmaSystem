@@ -22,6 +22,7 @@ use App\Models\StudentNonAcademicClearance;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AccountingController extends Controller
@@ -395,7 +396,9 @@ class AccountingController extends Controller
             $_payment->is_approved = 1;
             $_payment->or_number = $_request->or_number;
             $_payment->save();
-            $_applicant->payment_approved(ApplicantAccount::find($_payment->applicant_id));
+            //return $_payment->account->email;
+            Mail::to($_payment->account->email)->send($_applicant->payment_approved(ApplicantAccount::find($_payment->applicant_id)));
+            // $_applicant->payment_approved(ApplicantAccount::find($_payment->applicant_id));
         }
         if ($_request->status == 'disapproved') {
             $_payment->is_approved = 0;
@@ -421,7 +424,7 @@ class AccountingController extends Controller
         ]);
         // Send Email Notification
         $_applicant = new ApplicantEmail();
-        $_applicant->payment_approved(ApplicantAccount::find($_request->applicant));
+        Mail::to($_applicant->email)->send($_applicant->payment_approved(ApplicantAccount::find($_request->applicant)));
         //return back()->with('success', 'Successfully Transact!');
     }
 }
