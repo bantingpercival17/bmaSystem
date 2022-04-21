@@ -20,7 +20,7 @@ class CreateApplicantExaminationAnswersTable extends Migration
             $table->foreign('examination_id')->references('id')->on('applicant_entrance_examinations');
             $table->unsignedBigInteger('question_id');
             $table->foreign('question_id')->references('id')->on(new Expression('bma_portal.examination_questions'));
-            $table->unsignedBigInteger('choices_id');
+            $table->unsignedBigInteger('choices_id')->nullable();
             $table->foreign('choices_id')->references('id')->on(new Expression('bma_portal.examination_question_choices'));
             $table->boolean('is_removed')->default(false);
             $table->timestamps();
