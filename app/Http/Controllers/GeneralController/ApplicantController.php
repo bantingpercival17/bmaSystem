@@ -125,7 +125,7 @@ class ApplicantController extends Controller
         $_applicants =  $_course->applicant_payment_verified;
         foreach ($_applicants as $key => $applicant) {
             $_applicant = new ApplicantEmail();
-            Mail::to($applicant->email)->send($_applicant->payment_approved(ApplicantAccount::find($applicant)));
+            Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
             //Mail::to('percivalbanting@gmail.com')->send($_applicant->payment_approved($applicant));
         }
         return back()->with('success', 'Successfully Send');
