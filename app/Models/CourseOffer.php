@@ -245,15 +245,57 @@ class CourseOffer extends Model
             ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '<', $_documents)
             ->groupBy('applicant_accounts.id');
     }
-    public function applicant_payment()
+    public function applicant_payment_verification()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
+            //->leftjoin('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_accounts.is_removed', false)
+            ->where('applicant_payments.is_removed', false)
+            ->whereNull('applicant_payments.is_approved');
+        //->where('aee.is_removed', false);
+    }
+    public function applicant_payment_verified()
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
             ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
             ->leftjoin('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
+            ->whereNull('aee.applicant_id')
             ->where('applicant_accounts.is_removed', false)
+            ->where('applicant_payments.is_approved', true)
             ->where('applicant_payments.is_removed', false);
         //->where('aee.is_removed', false);
+    }
+    public function applicant_examination_ready()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
+            ->whereNull('aee.is_finish');
+    }
+    public function applicant_examination_ongoing()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
+            ->where('aee.is_finish', 0);
+    }
+
+    public function applicant_examination_passed()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
+            ->where('aee.is_finish', 0);
+    }
+    public function applicant_examination_failed()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
+            ->where('aee.is_finish', 0);
     }
     public function applicant_examination()
     {

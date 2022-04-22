@@ -130,7 +130,8 @@ $_course_url = route($_course_enrolled[0]);
                         <th rowspan="2">COURSE</th>
                         <th rowspan="2">PRE-REGISTRATION</th>
                         <th colspan="2">INFORMATION VERIFICATION</th>
-                        <td colspan="3">ENTRANCE EXAMINATION</td>
+                        <th colspan="2">ENTRANCE EXAMINATION PAYMENT</th>
+                        <td colspan="4">ENTRANCE EXAMINATION</td>
                         <th rowspan="2">BRIEFING</th>
                         <th rowspan="2">MEDICAL</th>
                         <th rowspan="2">QUALIFIED FOR ENROLLMENT</th>
@@ -138,9 +139,12 @@ $_course_url = route($_course_enrolled[0]);
                     <tr>
                         <th>FOR CHECKING</th>
                         <th>VERIFIED</th>
-                        <th>PAYMENT</th>
-                        <th>EXAMINATION</th>
-                        <th>RESULT</th>
+                        <th>FOR VERIFICATION</th>
+                        <th>PAYMENT VERIFED</th>
+                        <th>READY FOR EXAM</th>
+                        <th>ONGOING</th>
+                        <th>PASSED</th>
+                        <th>FAILED</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -162,9 +166,18 @@ $_course_url = route($_course_enrolled[0]);
                                     {{ count($_course->applicant_verified) }}
                                 </a>
                             </td>
-                            <td><a href=""> {{ count($_course->applicant_payment) }}</a></td>
-                            <td></td>
-                            <td></td>
+                            <td><a
+                                    href="{{ route('applicant-payment-verification') . '?_course=' . base64_encode($_course->id) }}">
+                                    {{ count($_course->applicant_payment_verification) }}</a></td>
+                            <td><a
+                                    href="{{ route('applicant-payment-verified') . '?_course=' . base64_encode($_course->id) }}">
+                                    {{ count($_course->applicant_payment_verified) }}</a></td>
+                            <td>
+                                <a href="">{{ count($_course->applicant_examination_ready) }}</a>
+                            </td>
+                            <td>
+                                <a href="">{{ count($_course->applicant_examination_ongoing) }}</a>
+                            </td>
                             <td></td>
                             <td></td>
                             <td></td>

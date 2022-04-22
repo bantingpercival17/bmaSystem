@@ -100,4 +100,34 @@ class ApplicantController extends Controller
         }
         return compact('data');
     }
+
+    /* Applicant Payment Verification */
+    public function applicant_payment_verification(Request $_request)
+    {
+        $_courses = CourseOffer::all();
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_applicants =  $_course->applicant_payment_verification;
+        return view('pages.general-view.applicants.payment-verification', compact('_applicants', '_course', '_courses'));
+    }
+    /* Applicant Payment Verified */
+    public function applicant_payment_verified(Request $_request)
+    {
+        $_courses = CourseOffer::all();
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_applicants =  $_course->applicant_payment_verified;
+        return view('pages.general-view.applicants.payment-verified', compact('_applicants', '_course', '_courses'));
+    }
+
+    public function entrance_examination_notification(Request $_request)
+    {
+        $_courses = CourseOffer::all();
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_applicants =  $_course->applicant_payment_verified;
+        foreach ($_applicants as $key => $applicant) {
+            $_applicant = new ApplicantEmail();
+            //Mail::to($_applicant->email)->send($_applicant->payment_approved(ApplicantAccount::find($applicant)));
+            Mail::to('percivalbanting@gmail.com')->send($_applicant->payment_approved($applicant));
+        }
+        return back()->with('success', 'Successfully Send');
+    }
 }
