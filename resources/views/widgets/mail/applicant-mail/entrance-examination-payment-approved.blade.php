@@ -5,8 +5,8 @@
 Good day {{ ucwords($data->applicant->first_name) }},
 </p>
 <p>
-    Your payment has been approved.
-    You may now proceed with the Entrance Examination using this code:<h2><b>{{ $exam_code }}</b></h2>
+Your payment has been approved. <br>
+You may now proceed with the <b><i>Entrance Examination</i></b>  using this code: <b>{{ $exam_code }}</b>
 </p>
 
 <p>Kindly login to your Applicant Portal to Proceed to the Entrance Examination. </p>

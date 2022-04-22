@@ -129,7 +129,7 @@ $_title = 'Entrance Examination Payment Verified';
             @foreach ($_courses as $_course)
                 <div class="col-md">
                     <a
-                        href="{{ route('applicant-payment-verification') }}?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                        href="{{ route('applicant-payment-verified') }}?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                         <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
                             data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
                             <div class="card-body">
