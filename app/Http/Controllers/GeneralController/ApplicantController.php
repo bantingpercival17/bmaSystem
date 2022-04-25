@@ -156,7 +156,7 @@ class ApplicantController extends Controller
     {
         $applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
         $_examination = $applicant->examination;
-        $_examination->is_removed = true;
+        $_examination->is_removed != true ? $_examination->is_removed = true : 0;
         $_examination->is_reset = true;
         $_examination->save();
         $_applicant = new ApplicantEmail();
