@@ -295,7 +295,7 @@ class CourseOffer extends Model
             ->where('aee.is_removed', false)->where('aee.is_finish', true)
             ->where(
                 DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
-                FROM bma_website_v2.applicant_examination_answers as aea
+                FROM bma_website.applicant_examination_answers as aea
                 inner join bma_portal.examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = aee.id)"),
@@ -312,7 +312,7 @@ class CourseOffer extends Model
             ->where('aee.is_removed', false)->where('aee.is_finish', true)
             ->where(
                 DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
-                FROM bma_website_v2.applicant_examination_answers as aea
+                FROM bma_website.applicant_examination_answers as aea
                 inner join bma_portal.examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = aee.id)"),
