@@ -155,12 +155,13 @@ class ApplicantController extends Controller
     public function applicant_examination_reset(Request $_request)
     {
         $applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
-        $_examination = $applicant->applicant_examination;
+        $_examination = $applicant->examination;
         $_examination->is_removed = true;
+        $_examination->is_reset = true;
         $_examination->save();
         $_applicant = new ApplicantEmail();
         Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
 
-        return back()->with('success','Successfully Reset');
+        return back()->with('success', 'Successfully Reset');
     }
 }

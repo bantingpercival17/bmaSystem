@@ -72,4 +72,8 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->where('is_removed', false)->where('is_finish', true);
     }
+    public function examination()
+    {
+        return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->where('is_finish', true);
+    }
 }
