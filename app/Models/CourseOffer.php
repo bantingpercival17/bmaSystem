@@ -281,6 +281,8 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_finish', 0)
+            ->where('aee.is_removed', 0)
+
             ->orderby('aee.updated_at', 'ASC');
     }
 
