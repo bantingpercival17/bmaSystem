@@ -136,6 +136,7 @@ class ApplicantController extends Controller
         $_status = ['ready-for-examination', 'on-going', 'passed', 'failed'];
         $_courses = CourseOffer::all();
         $_course = CourseOffer::find(base64_decode($_request->_course));
+        //return $_course->applicant_examination_ongoing;
         $_data = array($_course->applicant_examination_ready, $_course->applicant_examination_ongoing, $_course->applicant_examination_passed, $_course->applicant_examination_failed);
         $_titles = array('Applicant Examination Ready', 'On-going Examination', 'Applicant Passed', 'Applicant Failed');
         if ($_request->_status) {
@@ -150,5 +151,16 @@ class ApplicantController extends Controller
         }
 
         return view('pages.general-view.applicants.entrance-examination-status', compact('_courses', '_applicants', '_course', '_title'));
+    }
+    public function applicant_examination_reset(Request $_request)
+    {
+        $applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
+        $_examination = $applicant->applicant_examination;
+        $_examination->is_removed = true;
+        $_examination->save();
+        $_applicant = new ApplicantEmail();
+        Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
+
+        return back()->with('success','Successfully Reset');
     }
 }

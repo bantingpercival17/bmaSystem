@@ -265,7 +265,8 @@ class CourseOffer extends Model
             ->whereNull('aee.applicant_id') */
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_payments.is_approved', true)
-            ->where('applicant_payments.is_removed', false);
+            ->where('applicant_payments.is_removed', false)
+            ->orderBy('applicant_payments.updated_at','asc');
         //->where('aee.is_removed', false);
     }
     public function applicant_examination_ready()
@@ -281,7 +282,7 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_finish', 0)
-            ->where('aee.is_removed', 0)
+            ->where('aee.is_removed', false)
 
             ->orderby('aee.updated_at', 'ASC');
     }

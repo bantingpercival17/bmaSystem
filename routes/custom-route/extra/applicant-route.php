@@ -15,4 +15,5 @@ Route::get('/applicants/payment-verification', [ApplicantController::class, 'app
 Route::get('/applicants/payment-verified', [ApplicantController::class, 'applicant_payment_verified'])->name('applicant-payment-verified');
 Route::get('/applicants/examination-notification', [ApplicantController::class, 'entrance_examination_notification'])->name('applicant-entrance-examination-notification');
 /* Examination  */
-Route::get('/applicant/examinaiton', [ApplicantController::class, 'applicant_entrance_examination'])->name('applicant-examination-status');
+Route::get('/applicant/examination', [ApplicantController::class, 'applicant_entrance_examination'])->name('applicant-examination-status');
+Route::get('/applicant/examination-reset', [ApplicantController::class, 'applicant_examination_reset'])->name('applicant-examination-reset');

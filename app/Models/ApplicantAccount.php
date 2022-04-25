@@ -70,6 +70,6 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     }
     public function applicant_examination()
     {
-        return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->with('examination_result')->where('total', '<=', 50)->where('is_removed', false)->where('is_finish', true);
+        return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->where('is_removed', false)->where('is_finish', true);
     }
 }

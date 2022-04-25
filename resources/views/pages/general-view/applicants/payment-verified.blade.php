@@ -100,6 +100,26 @@ $_title = 'Entrance Examination Payment Verified';
                                     </a>
                                     <span class="badge bg-primary">{{ $_data->course->course_name }}</span> -
                                     <span>{{ $_data->applicant ? $_data->email : '-' }}</span>
+                                </div>
+                                <div class="col-md-4">
+                                    @if ($_data->applicant_examination)
+                                        @if ($_data->applicant_examination->is_finish == 0)
+                                            <small class="badge bg-info">On-going</small>
+                                        @else
+                                            @if ($_data->applicant_examination->is_finish == 1)
+                                                <small class="badge bg-primary">Examination Done</small>
+                                            @endif
+                                        @endif
+                                        @foreach (Auth::user()->roles as $role)
+                                            @if ($role->id == 1)
+                                                <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
+                                                    class="btn btn-secondary btn-sm mt-3">Reset Examination</a>
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        <small class="badge bg-info">Ready for Examination</small>
+                                    @endif
+
 
                                 </div>
 

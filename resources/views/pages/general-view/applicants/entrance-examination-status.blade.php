@@ -99,7 +99,9 @@
                                     <span>{{ $_data->applicant ? $_data->email : '-' }}</span>
 
                                 </div>
-
+                                <div class="col-md-4">
+                                    <small class="badge bg-info">{{$_data->applicant_examination/* ->updated_at->format('F d, Y') */}}</small>
+                                </div>
                             </div>
                         </div>
                     </div>
