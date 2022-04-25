@@ -163,7 +163,7 @@ class ApplicantController extends Controller
         }
 
         $_applicant = new ApplicantEmail();
-        //Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
+        Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
 
         return back()->with('success', 'Successfully Reset');
     }
