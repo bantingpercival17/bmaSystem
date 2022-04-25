@@ -110,16 +110,22 @@ $_title = 'Entrance Examination Payment Verified';
                                                 <small class="badge bg-primary">Examination Done</small>
                                             @endif
                                         @endif
+                                        @foreach (Auth::user()->roles as $role)
+                                            @if ($role->id == 1)
+                                                <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
+                                                    class="btn btn-secondary btn-sm mt-3">Reset Examination</a>
+                                            @endif
+                                        @endforeach
                                     @else
                                         <small class="badge bg-info">Ready for Examination</small>
+                                        @foreach (Auth::user()->roles as $role)
+                                            @if ($role->id == 1)
+                                                <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
+                                                    class="btn btn-warning btn-sm mt-3">Reset Examination</a>
+                                            @endif
+                                        @endforeach
                                     @endif
 
-                                    @foreach (Auth::user()->roles as $role)
-                                        @if ($role->id == 1)
-                                            <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
-                                                class="btn btn-secondary btn-sm mt-3">Reset Examination</a>
-                                        @endif
-                                    @endforeach
 
                                 </div>
 
