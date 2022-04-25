@@ -130,4 +130,25 @@ class ApplicantController extends Controller
         }
         return back()->with('success', 'Successfully Send');
     }
+
+    public function applicant_entrance_examination(Request $_request)
+    {
+        $_status = ['ready-for-examination', 'on-going', 'passed', 'failed'];
+        $_courses = CourseOffer::all();
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_data = array($_course->applicant_examination_ready, $_course->applicant_examination_ongoing, $_course->applicant_examination_passed, $_course->applicant_examination_failed);
+        $_titles = array('Applicant Examination Ready', 'On-going Examination', 'Applicant Passed', 'Applicant Failed');
+        if ($_request->_status) {
+            foreach ($_status as $key => $value) {
+                if (base64_decode($_request->_status) == $value) {
+                    $_applicants = $_data[$key];
+                    $_title = $_titles[$key];
+                }
+            }
+        } else {
+            return back();
+        }
+
+        return view('pages.general-view.applicants.entrance-examination-status', compact('_courses', '_applicants', '_course', '_title'));
+    }
 }

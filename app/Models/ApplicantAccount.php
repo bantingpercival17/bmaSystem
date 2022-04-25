@@ -68,4 +68,8 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     {
         return $this->select('applicant_accounts.*')->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')->whereNull('is_approved')->where('applicant_payments.is_removed', false)->get();
     }
+    public function applicant_examination()
+    {
+        return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->with('examination_result')->where('total', '<=', 50)->where('is_removed', false)->where('is_finish', true);
+    }
 }

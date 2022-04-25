@@ -13,7 +13,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
     Route::get('/enrollment/enrolled-list', [AdministratorController::class, 'dashboard_enrolled_list_view'])->name('admin.course-enrolled');
     Route::get('/enrollment/enrolled-list/report', [AdministratorController::class, 'course_enrolled_report'])->name('admin.course-enrolled-report');
     /* Applicants */
-    require __DIR__ . '\extra\applicant-route.php'; // Applicant Route
+    require(__DIR__ . '\extra\applicant-route.php'); // Applicant Route
     /* Students */
     Route::get('/students', [AdministratorController::class, 'student_view'])->name('admin.students'); // View Students
     Route::get('/students/view', [AdministratorController::class, 'student_profile'])->name('admin.student-profile');
@@ -69,7 +69,8 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
     Route::post('/setting/store-academic', [AdministratorController::class, 'store_academic'])->name('setting.store-academic');
     Route::get('/settong/student-handbook-logs', [AdministratorController::class, 'student_handbook_logs'])->name('admin.student-handbook-logs');
     Route::post('/setting/store-documents', [AdministratorController::class, 'store_documents'])->name('admin.store-documents');
-    require __DIR__ . '\extra\ticket-route.php'; // Applicant Route
+
+    require(__DIR__ . '\extra\ticket-route.php'); // Applicant Route
 
     /* Examination */
     Route::get('/examination', [AdministratorController::class, 'examination_view'])->name('admin.examination');
