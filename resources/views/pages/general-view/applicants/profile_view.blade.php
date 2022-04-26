@@ -66,6 +66,9 @@ $_title = 'Profile View';
                         <div class="header-title">
                             <h5 class="mb-1"><b>APPLICANT DETAILS</b></h5>
                         </div>
+                        <div>
+                            <a href="" class="btn btn-sm btn-info mb-3 text-white">OVERVIEW</a>
+                        </div>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-pills nav-pill mb-3" id="pills-tab" role="tablist">
@@ -78,6 +81,15 @@ $_title = 'Profile View';
                                     class="nav-link {{ request()->input('_fill') != 'document' ? '' : 'active' }}">Document
                                     Cheking</a>
                             </li>
+                            @if ($_account->applicant_examination)
+                                @if ($_account->applicant_examination->is_finish == 1)
+                                    <li class="nav-item">
+                                        <a href="{{ request()->url() . '?_student=' . request()->input('_student') }}&_fill=document"
+                                            class="nav-link {{ request()->input('_fill') != 'document' ? '' : 'active' }}">Entrance
+                                            Examination</a>
+                                    </li>
+                                @endif
+                            @endif
                         </ul>
                         @if (!request()->input('_fill'))
                             <div class="tab-content" id="pills-tabContent-2">
@@ -220,7 +232,8 @@ $_title = 'Profile View';
                                             </div>
                                             <div class="col-xl-6 col-md-6 mb-xl-0">
                                                 <div class="form-group">
-                                                    <small for="example-text-input" class="form-control-label">Email</small>
+                                                    <small for="example-text-input"
+                                                        class="form-control-label">Email</small>
                                                     <span class="form-control">{{ $_account->email }}</span>
                                                 </div>
                                             </div>
