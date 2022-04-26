@@ -36,7 +36,7 @@ $_title = 'Entrance Examination Payment Verification';
                     <div class="col-6">
                         <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                         <div class="form-group search-input">
-                            <input type="search" class="form-control" placeholder="Search Patteran: Lastname, Firstname"
+                            <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
                                 name="_students">
                         </div>
                     </div>

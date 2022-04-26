@@ -33,7 +33,7 @@
                     <div class="col-6">
                         <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                         <div class="form-group search-input">
-                            <input type="search" class="form-control" placeholder="Search Patteran: Lastname, Firstname"
+                            <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
                                 name="_students">
                         </div>
                     </div>
@@ -100,7 +100,12 @@
 
                                 </div>
                                 <div class="col-md-4">
-                                    <small class="badge bg-info">{{$_data->applicant_examination/* ->updated_at->format('F d, Y') */}}</small>
+                                    <small
+                                        class="badge bg-info">{{ $_data->applicant_examination->updated_at->format('F d, Y') }}</small>
+                                    @if ($_data->applicant_examination->is_finish == 1)
+                                        <small
+                                            class="badge bg-info">{{ $_data->applicant_examination->examination_result }}</small>
+                                    @endif
                                 </div>
                             </div>
                         </div>
