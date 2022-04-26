@@ -104,7 +104,7 @@
                                         class="badge bg-info">{{ $_data->applicant_examination->updated_at->format('F d, Y') }}</small>
                                     @if ($_data->applicant_examination->is_finish == 1)
                                         <small
-                                            class="badge bg-info">{{ $_data->applicant_examination->examination_result() }}</small>
+                                            class="badge bg-info">{{ count($_data->applicant_examination->examination_result) }}</small>
                                     @endif
                                 </div>
                             </div>
