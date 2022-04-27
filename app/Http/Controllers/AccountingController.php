@@ -424,7 +424,8 @@ class AccountingController extends Controller
         ]);
         // Send Email Notification
         $_applicant = new ApplicantEmail();
-        Mail::to($_applicant->email)->send($_applicant->payment_approved(ApplicantAccount::find($_request->applicant)));
+        $applicant = ApplicantAccount::find($_request->applicant);
+        Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
         //return back()->with('success', 'Successfully Transact!');
     }
 }
