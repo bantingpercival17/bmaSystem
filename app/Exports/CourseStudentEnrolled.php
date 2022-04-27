@@ -18,9 +18,9 @@ class CourseStudentEnrolled implements WithMultipleSheets
     {
         $sheets = [];
         $_levels = [11, 12];
-        $_levels = $this->course->id == 3 ? [1, 2, 3, 4] : $_levels;
+        $_levels = $this->course->id != 3 ? [1, 2, 3, 4] : $_levels;
         foreach ($_levels as $key => $_level) {
-            $sheets[] = new YearLevelStudentEnrolled($this->course, $_level);
+            $sheets[$key] = new YearLevelStudentEnrolled($this->course, $_level);
         }
         return $sheets;
     }
