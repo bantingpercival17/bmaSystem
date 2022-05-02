@@ -75,12 +75,16 @@ class AdministratorController extends Controller
     public function course_enrolled_report(Request $_request)
     {
         $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+        $_file_export = new CourseStudentEnrolled($_course);
         // Excell Report
         if ($_request->_report == 'excel-report') {
-            //$_file_name = $_course->course_code ./*  "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester))  .*/ '.xlsx';
-            $_file_name = 'sample.xlsx';
-            $_file_export = new CourseStudentEnrolled($_course);
-            return Excel::download($_file_export, $_file_name); // Download the File 
+            $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+            ob_end_clean();
+            return $_respond;
+        }
+        if ($_request->_report == 'pdf-report') {
+            return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File 
         }
     }
     /* Students */

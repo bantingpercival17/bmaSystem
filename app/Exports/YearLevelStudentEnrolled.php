@@ -13,7 +13,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithMapping,/*  WithHeadings, */ WithEvents, WithTitle
+class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithMapping, WithHeadings, WithEvents, WithTitle
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -27,23 +27,24 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
     {
         return $this->course->enrolled_list($this->level)->get();
     }
-    /*  public function headings(): array
+    public function headings(): array
     {
         return [
+            'EMAIL ACCOUNT',
             'STUDENT NUMBER',
             'LAST NAME',
             'FIRST NAME',
             'MIDDLE NAME',
         ];
-    } */
+    }
     public function map($_data): array
     {
-        /* return $_data; */
         return [
-            '123456789', //$_data->account->student_number,
-            $_data->last_name,
-            $_data->first_name,
-            $_data->middle_name,
+            $_data->student->account->campus_email,
+            $_data->student->account->student_number,
+            $_data->student->last_name,
+            $_data->student->first_name,
+            $_data->student->middle_name,
         ];
     }
     public function registerEvents(): array

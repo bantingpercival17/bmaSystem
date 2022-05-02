@@ -153,7 +153,7 @@ $_title = 'Enrolled List';
                     <div class="d-flex justify-content-between">
                         <a href="{{ request()->url() }}/report?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&_report=excel-report"
                             class="btn btn-primary btn-sm">Excel</a>
-                        <a href="" class="btn btn-danger btn-sm ms-2">PDF</a>
+                        <a href="{{ request()->url() }}/report?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&_report=pdf-report" class="btn btn-danger btn-sm ms-2">PDF</a>
                     </div>
                 </div>
             </div>
