@@ -100,7 +100,6 @@
 
                                 </div>
                                 <div class="col-md-4">
-                                    {{$_data->applicant_examination}}
                                     @if ($_data->applicant_examination)
                                     {{$_data->applicant_examination}}
                                         <small
