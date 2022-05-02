@@ -719,6 +719,7 @@ class ComposerStaticInitad9a3fefd2e4c6a7edf47485ac1509a3
         'App\\Models\\ShipboardJournal' => __DIR__ . '/../..' . '/app/Models/ShipboardJournal.php',
         'App\\Models\\ShippingAgencies' => __DIR__ . '/../..' . '/app/Models/ShippingAgencies.php',
         'App\\Models\\Staff' => __DIR__ . '/../..' . '/app/Models/Staff.php',
+        'App\\Models\\StaffSalaryDetailes' => __DIR__ . '/../..' . '/app/Models/StaffSalaryDetailes.php',
         'App\\Models\\StudentAccount' => __DIR__ . '/../..' . '/app/Models/StudentAccount.php',
         'App\\Models\\StudentAttendance' => __DIR__ . '/../..' . '/app/Models/StudentAttendance.php',
         'App\\Models\\StudentClearance' => __DIR__ . '/../..' . '/app/Models/StudentClearance.php',

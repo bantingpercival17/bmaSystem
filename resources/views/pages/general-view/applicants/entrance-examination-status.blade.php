@@ -100,7 +100,9 @@
 
                                 </div>
                                 <div class="col-md-4">
+                                    {{$_data->applicant_examination}}
                                     @if ($_data->applicant_examination)
+                                    {{$_data->applicant_examination}}
                                         <small
                                             class="badge bg-info">{{ $_data->applicant_examination->updated_at->format('F d, Y') }}</small>
                                         @if ($_data->applicant_examination->is_finish == 1)

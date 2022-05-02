@@ -181,12 +181,14 @@ $_course_url = route($_course_enrolled[0]);
                                     href="{{ route('applicant-examination-status') .'?_course=' .base64_encode($_course->id) .'&_status=' .base64_encode('on-going') }}">{{ count($_course->applicant_examination_ongoing) }}</a>
                             </td>
                             <td> <a
-                                    href="{{ route('applicant-examination-status') .'?_course=' .base64_encode($_course->id) .'&_status=' .base64_encode('passed') }}">{{ count($_course->applicant_examination_passed) }}</a>
+                                    href="{{ route('applicant-examination-status') .'?_course=' .base64_encode($_course->id) .'&_status=' .base64_encode('passed') }}">{{ count($_course->applicant_examination_result('passed')) }}</a>
                             </td>
                             <td>
                                 <a
-                                    href="{{ route('applicant-examination-status') .'?_course=' .base64_encode($_course->id) .'&_status=' .base64_encode('failed') }}">{{ count($_course->applicant_examination_failed) }}</a>
+                                    href="{{ route('applicant-examination-status') .'?_course=' .base64_encode($_course->id) .'&_status=' .base64_encode('failed') }}">{{ count($_course->applicant_examination_result('failed')) }}</a>
                             </td>
+                            <td></td>
+                            <td></td>
                             <td></td>
                         </tr>
                     @endforeach

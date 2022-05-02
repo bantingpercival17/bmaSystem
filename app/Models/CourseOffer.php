@@ -217,6 +217,7 @@ class CourseOffer extends Model
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
             ->join('applicant_detials as ad', 'ad.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', 0);
     }
@@ -226,6 +227,7 @@ class CourseOffer extends Model
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
             ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
             //->leftJoin('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false)
@@ -238,6 +240,7 @@ class CourseOffer extends Model
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
             ->join('applicant_detials as ad', 'ad.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false)
             //->leftJoin('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id') // Without Documents
@@ -249,6 +252,7 @@ class CourseOffer extends Model
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
             ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
             //->leftjoin('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false)
@@ -260,38 +264,69 @@ class CourseOffer extends Model
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
-            ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
-            /* ->leftjoin('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
-            ->whereNull('aee.applicant_id') */
             ->where('applicant_accounts.is_removed', false)
+            ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
             ->where('applicant_payments.is_approved', true)
             ->where('applicant_payments.is_removed', false)
-            ->orderBy('applicant_payments.updated_at','asc');
-        //->where('aee.is_removed', false);
+            ->orderBy('applicant_payments.updated_at', 'asc')
+            ->groupBy('applicant_accounts.id');
     }
     public function applicant_examination_ready()
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
-            ->whereNull('aee.is_finish')->orderBy('aee.created_at', 'desc');
+            ->whereNull('aee.is_finish')->where('aee.is_removed', false)->orderBy('aee.created_at', 'desc');
     }
     public function applicant_examination_ongoing()
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_finish', 0)
             ->where('aee.is_removed', false)
-
             ->orderby('aee.updated_at', 'ASC');
     }
-
+    public function applicant_examination_result($_data)
+    {
+        $_item =  $this->id == 3 ? 100 : 200;
+        $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
+            ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
+            ->where('aee.is_removed', false)->where('aee.is_finish', true);
+        if ($_data == 'passed') {
+            $_query = $_query->where(
+                DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
+            FROM bma_website.applicant_examination_answers as aea
+            inner join bma_portal.examination_question_choices as eqc
+            on eqc.id = aea.choices_id
+            where eqc.is_answer = true and aea.examination_id = aee.id)"),
+                '>=',
+                '50'
+            );
+        }
+        if ($_data == 'failed') {
+            $_query = $_query->where(
+                DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
+            FROM bma_website.applicant_examination_answers as aea
+            inner join bma_portal.examination_question_choices as eqc
+            on eqc.id = aea.choices_id
+            where eqc.is_answer = true and aea.examination_id = aee.id)"),
+                '<',
+                '50'
+            );
+        }
+        return $_query->get();
+    }
     public function applicant_examination_passed()
     {
         $_item =  $this->id == 3 ? 100 : 200;
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_removed', false)->where('aee.is_finish', true)
             ->where(
@@ -309,6 +344,7 @@ class CourseOffer extends Model
         $_item =  $this->id == 3 ? 100 : 200;
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_removed', false)->where('aee.is_finish', true)
             ->where(

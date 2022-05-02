@@ -113,6 +113,7 @@ return array(
     'App\\Models\\ShipboardJournal' => $baseDir . '/app/Models/ShipboardJournal.php',
     'App\\Models\\ShippingAgencies' => $baseDir . '/app/Models/ShippingAgencies.php',
     'App\\Models\\Staff' => $baseDir . '/app/Models/Staff.php',
+    'App\\Models\\StaffSalaryDetailes' => $baseDir . '/app/Models/StaffSalaryDetailes.php',
     'App\\Models\\StudentAccount' => $baseDir . '/app/Models/StudentAccount.php',
     'App\\Models\\StudentAttendance' => $baseDir . '/app/Models/StudentAttendance.php',
     'App\\Models\\StudentClearance' => $baseDir . '/app/Models/StudentClearance.php',
