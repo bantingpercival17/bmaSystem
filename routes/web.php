@@ -15,21 +15,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 require __DIR__ . '/auth.php';
+require __DIR__ . '/custom-route/administrator.php'; // Administrator Route
+require __DIR__ . '/custom-route/administrative.php'; // Administrative Route
+require __DIR__ . '/custom-route/registrar.php'; // Registrar Route
+require __DIR__ . '/custom-route/accounting.php'; // Accounting Route
+require __DIR__ . '/custom-route/teacher.php'; // Teacher Route
+require __DIR__ . '/custom-route/executive.php'; // Executive Route
+require __DIR__ . '/custom-route/onboard.php'; // Onboard Route
+require __DIR__ . '/custom-route/department-head.php'; // Department-Head Route
+require __DIR__ . '/custom-route/dean.php'; // Dean Route
+require __DIR__ . '/custom-route/librarian.php'; // Dean Route
 Route::get('/', [Controller::class, 'index']);
 Route::get('/setup', [Controller::class, 'setup']);
 Route::post('/setup', [Controller::class, 'setup_store']);
 Route::get('/attendance', [EmployeeController::class, 'attendance_form_view']);
 Route::post('/attendance', [EmployeeController::class, 'attendance_generate_qr']);
-require(__DIR__ . '/custom-route/administrator.php'); // Administrator Route
-require(__DIR__ . '/custom-route/administrative.php'); // Administrative Route
-require(__DIR__ . '/custom-route/registrar.php'); // Registrar Route
-require(__DIR__ . '/custom-route/accounting.php'); // Accounting Route
-require(__DIR__ . '/custom-route/teacher.php'); // Teacher Route
-require(__DIR__ . '/custom-route/executive.php'); // Executive Route
-require(__DIR__ . '/custom-route/onboard.php'); // Onboard Route
-require(__DIR__ . '/custom-route/department-head.php'); // Department-Head Route
-require(__DIR__ . '/custom-route/dean.php'); // Dean Route
-require(__DIR__ . '/custom-route/librarian.php'); // Dean Route
+
 Route::prefix('employee')->group(function () {
     Route::get('/attendance', [EmployeeController::class, 'attendance_view'])->name('employee.attendance');
     Route::post('/attendance', [EmployeeController::class, 'attendance_store']);
