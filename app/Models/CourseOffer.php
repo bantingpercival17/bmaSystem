@@ -365,4 +365,32 @@ class CourseOffer extends Model
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_payments.is_removed', false);
     }
+
+
+    // COURSE COLLECTION
+    public function student_payment_mode($_data)
+    {
+       return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+       ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+       ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+       ->where('pt.remarks', 'Upon Enrollment')
+       ->where('pt.is_removed', false)
+       ->where('enrollment_assessments.is_removed', false)
+       ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+       ->groupBy('pt.assessment_id')
+       ->orderBy('pt.created_at', 'DESC')
+        ->where('pa.payment_mode',$_data)->get();
+    } 
+    public function student_payment_schedule($_data)
+    {
+       return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+       ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+       ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+       ->where('pt.remarks', $_data)
+       ->where('pt.is_removed', false)
+       ->where('enrollment_assessments.is_removed', false)
+       ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+       ->groupBy('pt.assessment_id')
+       ->orderBy('pt.created_at', 'DESC')->get();
+    } 
 }

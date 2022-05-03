@@ -12,4 +12,5 @@
 @endsection
 @section('page-content')
     @include('layouts.widgets.enrollment_overview')
+    @include('pages.general-view.dashboard-panels.collection_overview')
 @endsection
