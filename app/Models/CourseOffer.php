@@ -211,7 +211,11 @@ class CourseOffer extends Model
 
     public function student_pre_registrations()
     {
-        return $this->hasMany(ApplicantAccount::class, 'course_id')->where('is_removed', 0);
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+        ->select('applicant_accounts.*')
+        ->join('applicant_detials as ad','ad.applicant_id','applicant_accounts.id')
+        //->where('ad.is_removed', false)
+        ->where('applicant_accounts.is_removed',false);
     }
     public function student_applicants()
     {

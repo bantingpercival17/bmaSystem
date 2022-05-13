@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Exports\CourseSectionStudentList;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\CourseOffer;
@@ -25,7 +27,8 @@ use App\Report\Students\StudentReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
-
+use Maatwebsite\Excel\Facades\Excel;
+    
 class RegistrarController extends Controller
 {
     public function __construct()
@@ -365,6 +368,22 @@ class RegistrarController extends Controller
         ]);
         $_section = Section::find(base64_decode($_request->_section));
         return back()->with('success', 'Successfully Added to ' . $_section->section_name);
+    }
+    public function section_export_file(Request $_request)
+    {
+       $_course = CourseOffer::find(base64_decode($_request->_course));
+       $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+       $_file_export = new CourseSectionStudentList($_course,$_request->_year_level);
+       // Excell Report
+       
+       if ($_request->_report_type == 'excel-file') {
+           $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+           ob_end_clean();
+           return $_respond;
+       }
+       if ($_request->_report_type == 'pdf-report') {
+           return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File 
+       }
     }
     // Semestral clearance
     public function clearance_view(Request $_request)
