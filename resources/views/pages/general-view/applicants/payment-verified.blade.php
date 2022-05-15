@@ -102,6 +102,8 @@ $_title = 'Entrance Examination Payment Verified';
                                     <span>{{ $_data->applicant ? $_data->email : '-' }}</span>
                                 </div>
                                 <div class="col-md-4">
+                                    @foreach (Auth::user()->roles as $role)
+                                    @if ($role->id == 1 )
                                     @if ($_data->applicant_examination)
                                         @if ($_data->applicant_examination->is_finish == 0)
                                             <small class="badge bg-info">On-going</small>
@@ -111,7 +113,7 @@ $_title = 'Entrance Examination Payment Verified';
                                             <small class="badge bg-info">Ready for Examination</small>
                                         @endif
                                         @foreach (Auth::user()->roles as $role)
-                                            @if ($role->id == 1 || $role->id == 3 )
+                                            @if ($role->id == 1)
                                             <p>
                                                 <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
                                                     class="">Reset Examination</a>
@@ -120,14 +122,12 @@ $_title = 'Entrance Examination Payment Verified';
                                         @endforeach
                                     @else
                                         <small class="badge bg-info">Generate Examination Code</small>
-                                        @foreach (Auth::user()->roles as $role)
-                                            @if ($role->id == 1 || $role->id == 3)
                                                 <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
                                                     class="btn btn-primary btn-sm mt-3">Generate Code</a>
-                                            @endif
-                                        @endforeach
+                                          
                                     @endif
-
+                                    @endif
+                                    @endforeach
 
                                 </div>
 
