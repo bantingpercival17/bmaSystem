@@ -64,7 +64,8 @@
                                 <th style="width: 20px;">R{{ $i }}</th>
                             @endfor
                             <th style="width: 20px; text-align: center;"><b>15%</b></th>
-                            <th style="width: 22px; text-align: center;">{{ strtoupper(request()->input('_period'))[0] }}E</th>
+                            <th style="width: 22px; text-align: center;">{{ strtoupper(request()->input('_period'))[0] }}E
+                            </th>
                             <th style="width: 22px; text-align: center;"><b>55%</b></th>
                             <th style="width: 30px; text-align: center;"><b>40%</b></th>
                             @for ($i = 1; $i <= 10; $i++)
@@ -77,9 +78,9 @@
                     </thead>
                     <tbody>
                         @if ($_students->count() > 0)
-                        @php
-                            $count = 0;
-                        @endphp
+                            @php
+                                $count = 0;
+                            @endphp
                             @foreach ($_students as $_key => $_student)
                                 @php
                                     // Quiz
@@ -91,6 +92,15 @@
                                     // Output
                                     $_output_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), 'R']);
                                     $_output_percent = $_student->student->subject_score([$_subject->id, request()->input('_period'), 'O' . 0]) ? ($_output_avg >= 0 ? number_format($_output_avg, 2) : '') : '';
+                                    // Quiz
+                                    $_exam_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E']);
+                                    $_exam_percent = $_student->student->subject_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E1']) ? ($_exam_avg >= 0 ? number_format($_exam_avg, 2) : '') : '';
+                                    // Lecture Grade
+                                    $_lec_grade = $_student->student->lec_grade([$_subject->id, request()->input('_period')]);
+                                    $_lecture_grade = $_quiz_percent != '' && $_output_percent != '' ? ($_lec_grade >= 0 ? number_format($_lec_grade, 2) : '') : '';
+                                    // Laboratory Grade
+                                    $_lab_grade = $_student->student->lab_grade([$_subject->id, request()->input('_period')]);
+                                    $_lab_grade = $_student->student->subject_score([$_subject->id, request()->input('_period'), 'A' . 0]) ? ($_lab_grade >= 0 ? number_format($_lab_grade, 2) : '') : '';
                                     
                                     $count += 1;
                                 @endphp
@@ -127,17 +137,11 @@
                                         {{ $_student->student->subject_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E1']) }}
                                     </td>
                                     <th>
-                                        @php
-                                            $_exam_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E']);
-                                        @endphp
-                                        {{ $_exam_avg >= 0 ? number_format($_exam_avg, 2) : '' }}
+                                        {{ $_exam_percent }}
 
                                     </th>
                                     <th>
-                                        @php
-                                            $_lec_grade = $_student->student->lec_grade([$_subject->id, request()->input('_period')]);
-                                        @endphp
-                                        {{ $_lec_grade >= 0 ? number_format($_lec_grade, 2) : '' }}
+                                        {{ $_lecture_grade }}
                                     </th>
                                     @for ($i = 1; $i <= 10; $i++)
                                         <td>
@@ -145,19 +149,20 @@
                                         </td>
                                     @endfor
                                     <th>
-                                        @php
-                                            $_lab_grade = $_student->student->lab_grade([$_subject->id, request()->input('_period')]);
-                                        @endphp
-                                        {{ $_lab_grade >= 0 ? number_format($_lab_grade, 2) : '' }}
+                                        {{ $_lab_grade }}
                                     </th>
                                     <th>
                                         @php
                                             $_final = $_student->student->final_grade($_subject->id, request()->input('_period'));
+                                            $_final = $_lecture_grade != '' && $_lab_grade != '' ? ($_final >= 0 && $_exam_avg >= 0 ? number_format($_final, 2) : '') : '';
                                         @endphp
-                                        {{ $_final >= 0 && $_exam_avg >= 0 ? number_format($_final, 2) : '' }}
+                                        {{ $_final }}
                                     </th>
                                     <th>
-                                        {{ $_final >= 0 && $_exam_avg >= 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : 'INC' }}
+                                        @php
+                                            $_final_grade = $_final != '' ? ($_final >= 0 && $_exam_avg >= 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : 'INC') : '';
+                                        @endphp
+                                        {{ $_final_grade }}
                                     </th>
                                 </tr>
                             @endforeach
