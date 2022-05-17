@@ -172,7 +172,7 @@ class Staff extends Model
                 'role_id' => 4,
                 'role_name' => 'Accounting',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Payment Transaction', 'accounting.payment-transactions'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars'], ['Semestral Clearance', 'accounting.semestral-clearance'], ['Applicant Payment', 'accounting.applicant-transaction']],
+                'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Payment Transaction', 'accounting.payment-transactions'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars'], ['Semestral Clearance', 'accounting.semestral-clearance'], ['Applicant Payment', 'accounting.applicant-transaction'], ['Payroll', 'accounting.payroll-view']],
             ],
             [
                 'role_id' => 5,
@@ -266,5 +266,9 @@ class Staff extends Model
             'administrator/dashboard*',
             'administrator/enrollment*'
         ];
+    }
+    public function salary_details()
+    {
+        return $this->hasOne(StaffSalaryDetailes::class, 'staff_id')->where('is_removed', false);
     }
 }

@@ -49,5 +49,15 @@ Route::prefix('accounting')->group(function () {
     // Applicant
     Route::get('/applicant-transaction', [AccountingController::class, 'applicant_transaction_view'])->name('accounting.applicant-transaction');
     Route::get('/applicant-transaction/verification', [AccountingController::class, 'applicant_transaction_verification'])->name('accounting.applicant-transaction-verification');
-    Route::post('/applicant-transaction',[AccountingController::class,'applicant_transaction_store'])->name('accounting.applicant-payment-transaction');
+    Route::post('/applicant-transaction', [AccountingController::class, 'applicant_transaction_store'])->name('accounting.applicant-payment-transaction');
+
+
+
+    // Staff
+    Route::get('/staff/payroll-view', [AccountingController::class, 'staff_payroll_view'])->name('accounting.payroll-view');
+    Route::get('/staff/salary-details', [AccountingController::class, 'staff_salary_details'])->name('accounting.staff-salary');
+    Route::get('/staff/salary-details-template', [AccountingController::class, 'staff_salary_details_template'])->name('accounting.salary-details-template');
+    Route::post('/staff/employees-salay-details', [AccountingController::class, 'upload_salary_details'])->name('accounting.employees-upload-salary-details');
+    Route::post('/staff/create-payroll', [AccountingController::class, 'payroll_store'])->name('accounting.employees-create-payroll');
+    Route::get('/staff/generate-payroll', [AccountingController::class, 'payroll_view'])->name('accounting.generate-payroll');
 });

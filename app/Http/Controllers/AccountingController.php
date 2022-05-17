@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exports\EnrolledStudentList;
+use App\Exports\SalaryDetailsTemplate;
+use App\Imports\ImportSalaryDetails;
 use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantPayment;
@@ -17,6 +19,9 @@ use App\Models\PaymentTransaction;
 use App\Models\PaymentTrasanctionOnline;
 use App\Models\Section;
 use App\Models\SemestralFee;
+use App\Models\Staff;
+use App\Models\StaffPayroll;
+use App\Models\StaffPayrollDetails;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\Voucher;
@@ -426,6 +431,56 @@ class AccountingController extends Controller
         $_applicant = new ApplicantEmail();
         $applicant = ApplicantAccount::find($_request->applicant);
         Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
-        //return back()->with('success', 'Successfully Transact!');
+        return back()->with('success', 'Successfully Transact!');
+    }
+    public function staff_payroll_view(Request $_request)
+    {
+        $_payroll = StaffPayroll::where('is_removed', false)->get();
+        return view('pages.accounting.payroll.view', compact('_payroll'));
+    }
+    public function staff_salary_details(Request $_request)
+    {
+        $_employees = Staff::select('staff.*')
+            ->orderBy('staff.last_name', 'asc')->where('is_removed', false)->get();
+        return view('pages.accounting.payroll.employee_list', compact('_employees'));
+    }
+    public function staff_salary_details_template(Request $_request)
+    {
+        $_respond =  Excel::download(new SalaryDetailsTemplate, 'Employee-Salary-Detials' . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+        ob_end_clean();
+        return $_respond;
+    }
+    public function upload_salary_details(Request $_request)
+    {
+        Excel::import(new ImportSalaryDetails, $_request->file('_file'));
+        return back()->with('success', 'Successfully Upload Employees Salary Details');
+    }
+    public function payroll_store(Request $_request)
+    {
+        $_request->validate([
+            'cutoff_range' => 'required',
+            'month' => 'required'
+        ]);
+        $_details =  array('period' => $_request->cutoff_range, 'cut_off' => $_request->month . "-01");
+        $_payroll = StaffPayroll::create($_details);
+        $_employees = Staff::select('staff.*')
+            ->orderBy('staff.last_name', 'asc')->where('is_removed', false)->get();
+        foreach ($_employees as $key => $data) {
+            $_details = array('payroll_id' => $_payroll->id, 'salary_id' => $data->id);
+            $_payroll_details = StaffPayrollDetails::where($_details)->first();
+            if (!$_payroll_details) {
+                StaffPayrollDetails::create($_details);
+            }
+        }
+        return back()->with('success', 'Successfully Create Payroll');
+    }
+    public function payroll_view(Request $_request)
+    {
+        if ($_request->_payroll) {
+            $_payroll = StaffPayroll::find(base64_decode($_request->_payroll));
+            return view('pages.accounting.payroll.payroll_view', compact('_payroll'));
+        } else {
+            return redirect(route('accounting.payroll-view'));
+        }
     }
 }

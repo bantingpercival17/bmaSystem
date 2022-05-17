@@ -58,4 +58,5 @@ Route::prefix('registrar')->group(function () {
     // Applicant 
     //Route::get('/applicant');
     require __DIR__ . '/extra/applicant-route.php'; // Applicant Route
+    require __DIR__ . '/extra/ticket-route.php'; // Applicant Route
 });
