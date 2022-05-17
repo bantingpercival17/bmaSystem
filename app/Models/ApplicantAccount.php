@@ -70,10 +70,17 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     }
     public function applicant_examination()
     {
-        return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->where('is_removed', false)->where('is_finish', true);
+        return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->where('is_removed', false)/* ->where('is_finish', true) */;
     }
     public function examination()
     {
         return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->where('is_finish', true);
     }
+    public function image()
+    {
+        $_level = $this->course_id == 3 ? 11 : 4;
+        $_document = Documents::where('department_id', 2)->where('year_level', $_level)->where('document_name','2x2 Picture')->where('is_removed', false)->first();
+    return $this->hasOne(ApplicantDocuments::class,'applicant_id')->where('document_id',$_document->id)->where('is_removed',false);
+    }
+   
 }

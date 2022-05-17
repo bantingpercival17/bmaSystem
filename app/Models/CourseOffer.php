@@ -211,7 +211,11 @@ class CourseOffer extends Model
 
     public function student_pre_registrations()
     {
-        return $this->hasMany(ApplicantAccount::class, 'course_id')->where('is_removed', 0);
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+        ->select('applicant_accounts.*')
+        ->join('applicant_detials as ad','ad.applicant_id','applicant_accounts.id')
+        //->where('ad.is_removed', false)
+        ->where('applicant_accounts.is_removed',false);
     }
     public function student_applicants()
     {
@@ -277,7 +281,8 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
-            ->whereNull('aee.is_finish')->where('aee.is_removed', false)->orderBy('aee.created_at', 'desc');
+            ->whereNull('aee.is_finish')->where('aee.is_removed', false)->orderBy('aee.created_at', 'desc')
+            ->groupBy('applicant_accounts.id');
     }
     public function applicant_examination_ongoing()
     {
@@ -287,7 +292,8 @@ class CourseOffer extends Model
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_finish', 0)
             ->where('aee.is_removed', false)
-            ->orderby('aee.updated_at', 'ASC');
+            ->orderby('aee.updated_at', 'ASC')
+            ->groupBy('applicant_accounts.id');
     }
     public function applicant_examination_result($_data)
     {
@@ -296,7 +302,7 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
-            ->where('aee.is_removed', false)->where('aee.is_finish', true);
+            ->where('aee.is_removed', false)->where('aee.is_finish', true)->groupBy('applicant_accounts.id');
         if ($_data == 'passed') {
             $_query = $_query->where(
                 DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 

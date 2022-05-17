@@ -64,8 +64,9 @@
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
                         <thead>
                             <tr>
-                                <th>Year Level</th>
-                                <th>Sections</th>
+                                <th>YEAR LEVEL</th>
+                                <th>SECTIONS</th>
+                                <th>EXPORT</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -86,9 +87,9 @@
                                         @else
                                             <span class="badge bg-info">No Section</span>
                                         @endif
-
-
-
+                                    </td>
+                                    <td>
+                                        <a href="{{route('registrar.section-export')}}?_course={{base64_encode($_course->id)}}&_year_level={{$level}}&_report_type=excel-file" class="btn btn-primary btn-sm">EXCEL</a>
                                     </td>
                                 </tr>
                             @endforeach
