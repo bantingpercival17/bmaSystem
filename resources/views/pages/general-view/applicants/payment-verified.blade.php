@@ -103,30 +103,29 @@ $_title = 'Entrance Examination Payment Verified';
                                 </div>
                                 <div class="col-md-4">
                                     @foreach (Auth::user()->roles as $role)
-                                    @if ($role->id == 1 )
-                                    @if ($_data->applicant_examination)
-                                        @if ($_data->applicant_examination->is_finish == 0)
-                                            <small class="badge bg-info">On-going</small>
-                                        @elseif ($_data->applicant_examination->is_finish === 1)
-                                            <small class="badge bg-primary">Examination Done</small>
-                                        @else
-                                            <small class="badge bg-info">Ready for Examination</small>
-                                        @endif
-                                        @foreach (Auth::user()->roles as $role)
-                                            @if ($role->id == 1)
-                                            <p>
-                                                <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
-                                                    class="">Reset Examination</a>
-                                            </p>
-                                            @endif
-                                        @endforeach
-                                    @else
-                                        <small class="badge bg-info">Generate Examination Code</small>
+                                        @if ($role->id == 1 || $role->id == 4)
+                                            @if ($_data->applicant_examination)
+                                                @if ($_data->applicant_examination->is_finish == 0)
+                                                    <small class="badge bg-info">On-going</small>
+                                                @elseif ($_data->applicant_examination->is_finish === 1)
+                                                    <small class="badge bg-primary">Examination Done</small>
+                                                @else
+                                                    <small class="badge bg-info">Ready for Examination</small>
+                                                @endif
+                                                @foreach (Auth::user()->roles as $role)
+                                                    @if ($role->id == 1)
+                                                        <p>
+                                                            <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
+                                                                class="">Reset Examination</a>
+                                                        </p>
+                                                    @endif
+                                                @endforeach
+                                            @else
+                                                <small class="badge bg-info">Generate Examination Code</small>
                                                 <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
                                                     class="btn btn-primary btn-sm mt-3">Generate Code</a>
-                                          
-                                    @endif
-                                    @endif
+                                            @endif
+                                        @endif
                                     @endforeach
 
                                 </div>
