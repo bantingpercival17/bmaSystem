@@ -133,7 +133,7 @@ class StudentDetails extends Model
             ->where('period', $_data[1])
             ->where('is_removed', false)
             ->where('type', $_data[2])->first();
-        return $_score ? $_score->score : '';
+        return $_score ? $_score->score : null;
     }
     public function subject_average_score($_data)
     {
@@ -143,6 +143,15 @@ class StudentDetails extends Model
             ->where('period', $_data[1])
             ->where('is_removed', false)
             ->where('type', 'like',  $_data[2] . "%")->average('score') * $_percent;
+    }
+    public function lecture_grade($_data)
+    {
+        $_tScore = 0;
+        $_categories = ['Q', 'O', 'R', $_data[1][0] . 'E'];
+        foreach ($_categories as $key => $value) {
+            $_tScore += $this->subject_average_score([$_data[0], $_data[1], $value]);
+        }
+        return $_tScore * .4;
     }
     function lec_grade($_data)
     {
@@ -167,6 +176,36 @@ class StudentDetails extends Model
             ->where('period', $_data[1])
             ->where('type', 'like',  "A%")
             ->where('is_removed', false)->average('score') * .60;
+    }
+    public function final_grade_v2($_data, $_period)
+    {
+        $_final_grade = 0;
+        $midtermGradeLecture = $this->lecture_grade([$_data, 'midterm']);
+        $midtermGradeLaboratory = $this->lab_grade([$_data, 'midterm']);;
+        $finalGradeLecture = $this->lecture_grade([$_data, 'finals']);
+        $finalGradeLaboratory = $this->lab_grade([$_data, 'finals']);
+        if ($_period == 'midterm') {
+            if ($midtermGradeLaboratory > 0) {
+                $_final_grade = $midtermGradeLecture + $midtermGradeLaboratory; // Midterm Grade Formula With Laboratory
+            } else {
+                $_final_grade = $midtermGradeLecture / .4; // Midterm Grade Formula without Laboratory
+            }
+        } else {
+            if ($finalGradeLaboratory > 0) {
+                if ($midtermGradeLaboratory > 0) {
+                    $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                } else {
+                    $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                }
+            } else {
+                if ($midtermGradeLaboratory > 0) {
+                    $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                } else {
+                    $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture / .4) * .5);
+                }
+            }
+        }
+        return $_final_grade;
     }
     public function final_grade($_data, $_period)
     {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\EmployeeController;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,9 @@ Route::post('/setup', [Controller::class, 'setup_store']);
 Route::get('/attendance', [EmployeeController::class, 'attendance_form_view']);
 Route::post('/attendance', [EmployeeController::class, 'attendance_generate_qr']);
 
+Route::get('/password-hash/{data}', function($data){
+return Hash::make($data);
+});
 Route::prefix('employee')->group(function () {
     Route::get('/attendance', [EmployeeController::class, 'attendance_view'])->name('employee.attendance');
     Route::post('/attendance', [EmployeeController::class, 'attendance_store']);

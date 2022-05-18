@@ -95,12 +95,19 @@ $_average = 0;
                                 </tr>
                             @endif
                         @endforeach
+                        <tr class="text-center">
+                            <td><b>NROTC 1</b></td>
+                            <td><b>NAVAL RESERVE 1</b></td>
+                            <td>95.21</td>
+                            <td>1.50</td>
+                            <td>PASSED</td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr class="text-center">
                             <td colspan="2"><b>GENERAL WEIGHTED AVERAGE</b></td>
                             <td colspan="2">
-                                <h3><b>{{ number_format($_average / $_subject_count, 2) }}</b></h3>
+                                <h3><b>{{ number_format(($_average+1.50) / $_subject_count, 2) }}</b></h3>
                             </td>
                             <td></td>
                         </tr>
