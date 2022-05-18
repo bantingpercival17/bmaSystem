@@ -103,7 +103,7 @@ $_title = 'Entrance Examination Payment Verified';
                                 </div>
                                 <div class="col-md-4">
                                     @foreach (Auth::user()->roles as $role)
-                                        @if ($role->id == 1 || $role->id == 4)
+                                        @if ($role->id == 1 || $role->id == 3)
                                             @if ($_data->applicant_examination)
                                                 @if ($_data->applicant_examination->is_finish == 0)
                                                     <small class="badge bg-info">On-going</small>
