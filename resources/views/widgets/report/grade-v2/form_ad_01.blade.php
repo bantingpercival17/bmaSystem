@@ -13,7 +13,7 @@
                         </td>
                         <td style="width: 50%"></td>
                         <td><small>SCHOOL YEAR:</small>
-                            <span><b>{{ strtoupper($_subject->academic->school_year . ' | ' . $_subject->academic->semester) }}</b></span>
+                            <span><b>{{ strtoupper($_subject->academic->school_year) }}</b></span>
                         </td>
                     </tr>
                     <tr>
@@ -23,6 +23,19 @@
                         </td>
                         <td style="width: 50%" class="text-center">
                             <b> OFFICIAL CLASS RECORD</b>
+                        </td>
+                        <td>
+                            <small>SEMESTER:</small>
+                            <span><b>{{ strtoupper($_subject->academic->semester) }}</b></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <small>YEAR & SECTION: </small>
+                            <span><b>{{ $_subject->section->section_name }}</b></span>
+                        </td>
+                        <td style="width: 50%" class="text-center">
+
                         </td>
                         <td>
                             <small>PERIOD</small>
@@ -64,7 +77,8 @@
                                 <th style="width: 20px;">R{{ $i }}</th>
                             @endfor
                             <th style="width: 20px; text-align: center;"><b>15%</b></th>
-                            <th style="width: 22px; text-align: center;">{{ strtoupper(request()->input('_period'))[0] }}E
+                            <th style="width: 22px; text-align: center;">
+                                {{ strtoupper(request()->input('_period'))[0] }}E
                             </th>
                             <th style="width: 22px; text-align: center;"><b>55%</b></th>
                             <th style="width: 30px; text-align: center;"><b>40%</b></th>
@@ -100,8 +114,8 @@
                                     $_lec_grade = $_student->student->lecture_grade([$_subject->id, request()->input('_period')]);
                                     $_lecture_grade = $_quiz_percent !== null && $_oral_percent !== null && $_output_percent !== null && $_exam_percent !== null ? number_format($_lec_grade, 2) : '';
                                     // Laboratory Grade
-                                    $_lab_grade = $_student->student->lab_grade([$_subject->id, request()->input('_period')]);
-                                    $_lab_grade = $_student->student->subject_score([$_subject->id, request()->input('_period'), 'A1']) ? ($_lab_grade >= 0 ? number_format($_lab_grade, 2) : '') : '';
+                                    $_lab_grade = $_student->student->laboratory_grade([$_subject->id, request()->input('_period')]);
+                                    $_lab_grade = $_student->student->subject_score([$_subject->id, request()->input('_period'), 'A1']) !== null ? ($_lab_grade >= 0 ? number_format($_lab_grade, 2) : '') : '';
                                     
                                     $count += 1;
                                 @endphp

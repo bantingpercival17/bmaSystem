@@ -33,7 +33,7 @@ class GradingSheetReport
     {
         $_subject = $this->subject;
         $_students = $this->student;
-        $pdf = PDF::loadView("widgets.report.grade.form_ad_02", compact('_students', '_subject'));
+        $pdf = PDF::loadView("widgets.report.grade-v2.form_ad_02", compact('_students', '_subject'));
         $file_name = strtoupper($this->subject->curriculum_subject->subject->subject_code) . " - FORM AD 02";
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }

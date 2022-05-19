@@ -177,15 +177,32 @@ class StudentDetails extends Model
             ->where('type', 'like',  "A%")
             ->where('is_removed', false)->average('score') * .60;
     }
+    public function laboratory_grade($_data)
+    {
+        return $this->hasMany(GradeEncode::class, 'student_id')
+            ->where('subject_class_id', $_data[0])
+            ->where('period', $_data[1])
+            ->where('type', 'like',  "A%")
+            ->where('is_removed', false)->average('score') * .60;
+    }
+    public function laboratory_item($_data)
+    {
+        return $this->hasMany(GradeEncode::class, 'student_id')
+            ->where('subject_class_id', $_data[0])
+            ->where('period', $_data[1])
+            ->where('type', 'like',  "A%")
+            ->where('is_removed', false)->count();
+    }
     public function final_grade_v2($_data, $_period)
     {
         $_final_grade = 0;
         $midtermGradeLecture = $this->lecture_grade([$_data, 'midterm']);
-        $midtermGradeLaboratory = $this->lab_grade([$_data, 'midterm']);;
+        $midtermGradeLaboratory = $this->laboratory_grade([$_data, 'midterm']);
+        $midtermLaboratoryItem = $this->laboratory_item([$_data, 'midterm']);
         $finalGradeLecture = $this->lecture_grade([$_data, 'finals']);
         $finalGradeLaboratory = $this->lab_grade([$_data, 'finals']);
         if ($_period == 'midterm') {
-            if ($midtermGradeLaboratory > 0) {
+            if ($midtermLaboratoryItem > 0) {
                 $_final_grade = $midtermGradeLecture + $midtermGradeLaboratory; // Midterm Grade Formula With Laboratory
             } else {
                 $_final_grade = $midtermGradeLecture / .4; // Midterm Grade Formula without Laboratory
@@ -205,6 +222,7 @@ class StudentDetails extends Model
                 }
             }
         }
+        //return $midtermGradeLaboratory;
         return $_final_grade;
     }
     public function final_grade($_data, $_period)
