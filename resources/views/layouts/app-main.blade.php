@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" href="{{ asset('css/app-1.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="{{ asset('resources\plugin/toastify/toastify.css') }}">
     <style>
         .iframe-placeholder {
             background: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100% 100%"><text fill="%23FF0000" x="50%" y="50%" font-family="\'Lucida Grande\', sans-serif" font-size="24" text-anchor="middle">LOADING.....</text></svg>') 0px 0px no-repeat;
@@ -87,36 +88,36 @@
     <script src="{{ asset('resources/js/plugins/custom-document-viewer.js') }}"></script>
     <script src="{{ asset('resources/js/plugins/viewer.1.0.0.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('resources\plugin\select\js\select2.min.js') }}">
-    </script>
+    <script src="{{ asset('resources\plugin\select\js\select2.min.js') }}"></script>
+    <script src="{{ asset('resources\plugin/toastify/toastify.js') }}"></script>
 
     <script>
         $('.select').select2()
         @if (Session::has('success'))
             Swal.fire({
-            title: 'Complete!',
-            text:"{{ session('success') }}",
-            icon: 'success',
-            confirmButtonText: 'Okay'
+                title: 'Complete!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                confirmButtonText: 'Okay'
             })
             /* toastr.success("{{ session('message') }}") */
         @endif
         @if (Session::has('error'))
             Swal.fire({
-            title: 'Existing Data!',
-            text:"{{ session('error') }}",
-            icon: 'error',
-            confirmButtonText: 'Okay'
+                title: 'Existing Data!',
+                text: "{{ session('error') }}",
+                icon: 'error',
+                confirmButtonText: 'Okay'
             })
             /* toastr.success("{{ session('message') }}") */
         @endif
         var message = "<?php echo session('reset-password'); ?>"
         @if (Session::has('reset-password'))
             Swal.fire({
-            title: 'Complete!',
-            text:/* "{{ session('reset-password') }}" */ message,
-            icon: 'success',
-            confirmButtonText: 'Okay'
+                title: 'Complete!',
+                text: /* "{{ session('reset-password') }}" */ message,
+                icon: 'success',
+                confirmButtonText: 'Okay'
             })
         @endif
         $('.input-select').click(function() {

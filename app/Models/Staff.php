@@ -271,4 +271,13 @@ class Staff extends Model
     {
         return $this->hasOne(StaffSalaryDetailes::class, 'staff_id')->where('is_removed', false);
     }
+    public function message_ticket_concern()
+    {
+        $_department = Department::where('code', $this->department)->first();;
+        $_issues =  TicketIssue::select('ticket_concerns.*')
+            ->join('ticket_concerns', 'ticket_concerns.issue_id', 'ticket_issues.id')
+            ->where('ticket_concerns.is_removed', false)
+            ->where('ticket_issues.department_id', $_department->id)
+            /* ->where('ticket_issues.is_removed', false) */->orderBy('ticket_concerns.created_at', 'desc')->get();
+    }
 }

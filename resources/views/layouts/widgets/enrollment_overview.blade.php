@@ -188,3 +188,17 @@ foreach ($_url_role as $key => $_data) {
         </div>
     </div>
 </div>
+@section('js')
+    <script>
+        @if (Auth::user()->staff)
+            Toastify({
+                text: "You have 3 unread concern",
+                //duration: 3000,
+                //close: true,
+                //gravity: "top",
+                position: "right",
+                backgroundColor: "#4fbe87",
+            }).showToast();
+        @endif
+    </script>
+@endsection
