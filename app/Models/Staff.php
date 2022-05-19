@@ -274,9 +274,10 @@ class Staff extends Model
     public function message_ticket_concern()
     {
         $_department = Department::where('code', $this->department)->first();;
-        $_issues =  TicketIssue::select('ticket_concerns.*')
+        return $_issues =  TicketIssue::select('ticket_concerns.*')
             ->join('ticket_concerns', 'ticket_concerns.issue_id', 'ticket_issues.id')
             ->where('ticket_concerns.is_removed', false)
+            ->where('ticket_concerns.is_ongoing',false)
             ->where('ticket_issues.department_id', $_department->id)
             /* ->where('ticket_issues.is_removed', false) */->orderBy('ticket_concerns.created_at', 'desc')->get();
     }
