@@ -97,8 +97,8 @@ class TicketingController extends Controller
     public function ticket_concern_remove(Request $_request)
     {
         $_ticket = Ticket::find(base64_decode($_request->_concern));
-        $_ticket->tickect_concern->is_removed = true;
-        $_ticket->tickect_concern->save();
+        $_ticket->is_removed = true;
+        $_ticket->save();
         return redirect(route('ticket.view'))->with('success', 'Successfully Removed');
     }
     public function ticket_concern_unseen(Request $_request)
