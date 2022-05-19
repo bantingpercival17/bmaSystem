@@ -113,10 +113,10 @@ $_title = 'Ticketing';
                                     {{ $data->ticket_number }}
                                 </td>
                                 <td>
-                                    {{ $data->ticket_concern->ticket_issue->issue_name }}
+                                    {{ $data->ticket ? $data->ticket_concern->ticket_issue->issue_name : null }}
                                 </td>
                                 <td>
-                                    {{ $data->ticket_concern->is_resolved }}
+                                    {{ $data->ticket ? $data->ticket_concern->is_resolved : '' }}
                                 </td>
                                 <td>
                                     {{-- <a href="{{ route('concern-removed') }}?concern={{ base64_encode($concern->id) }}"

@@ -285,9 +285,10 @@ $_title = 'Ticket Concern';
 
                                             <div
                                                 class="{{ request()->input('_ticket') ? (request()->input('_ticket') == base64_encode($data->id) ? 'text-white' : 'text-secondary') : 'text-secondary' }} ">
-                                                <small
-                                                    class="float-end">{{ $data->ticket->created_at->diffForHumans() }}</small>
+                                              
                                                 <label class="m-0 ">{{ $data->ticket->name }}</label> <br>
+                                                <small
+                                                class="float-end">{{ $data->ticket->created_at->diffForHumans() }}</small>
                                                 <small class="mb-0">
                                                     {{ $data->ticket->ticket_number }}</small>
 

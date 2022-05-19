@@ -53,7 +53,7 @@ class TicketingController extends Controller
             ->join('ticket_concerns', 'ticket_concerns.issue_id', 'ticket_issues.id')
             ->where('ticket_concerns.is_removed', false)
             ->where('ticket_issues.department_id', $_department->id)
-            ->where('ticket_issues.is_removed', false)->orderBy('ticket_concerns.created_at', 'desc')->get();
+            /* ->where('ticket_issues.is_removed', false) */->orderBy('ticket_concerns.created_at', 'desc')->get();
         $_ticket = $_request->_ticket ? TicketConcern::find(base64_decode($_request->_ticket)) : [];
 
         if ($_request->_ticket) {
@@ -96,14 +96,18 @@ class TicketingController extends Controller
     }
     public function ticket_concern_remove(Request $_request)
     {
-        $_ticket = Ticket::find(base64_decode($_request->_concern));
+        $_ticket = TicketConcern::find(base64_decode($_request->_concern));
         $_ticket->is_removed = true;
         $_ticket->save();
+        /*   $_ticket->ticket_issue->is_removed = true;
+        $_ticket->ticket_issue->save(); */
         return redirect(route('ticket.view'))->with('success', 'Successfully Removed');
     }
     public function ticket_concern_unseen(Request $_request)
     {
-        $_ticket = Ticket::find(base64_decode($_request->_concern));
-        return $_ticket->ticket_concern;
+        $_ticket = TicketConcern::find(base64_decode($_request->_concern));
+        $_ticket->is_ongoing = false;
+        $_ticket->save();
+        return redirect(route('ticket.view'))->with('success', 'Successfully Unseen');
     }
 }
