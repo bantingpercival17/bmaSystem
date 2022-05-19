@@ -73,12 +73,51 @@ $_title = 'Ticket Concern';
                                         <h6 class="m-0 fw-bolder">{{ $_ticket->ticket->name }}</h6>
                                         <small>{{ $_ticket->ticket->ticket_number }}</small> | <small
                                             class="m-0 text-primary ">{{ $_ticket->ticket_issue->issue_name }}</small>
-
                                     </div>
                                 </div>
                             </div>
                             <span>
-                                {{ $_ticket->ticket->updated_at->diffForHumans() }}
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a href="{{ route('ticket.concern-unseen') }}?_concern={{ base64_encode($_ticket->id) }}"
+                                        class="btn btn-outline-primary btn-sm rounded-pill" data-bs-toggle="tooltip"
+                                        title="" data-bs-original-title="Make as unread!">
+                                        <svg width="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M9.76045 14.3667C9.18545 13.7927 8.83545 13.0127 8.83545 12.1377C8.83545 10.3847 10.2474 8.97168 11.9994 8.97168C12.8664 8.97168 13.6644 9.32268 14.2294 9.89668"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M15.1049 12.6987C14.8729 13.9887 13.8569 15.0067 12.5679 15.2407"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path
+                                                d="M6.65451 17.4722C5.06751 16.2262 3.72351 14.4062 2.74951 12.1372C3.73351 9.85823 5.08651 8.02823 6.68351 6.77223C8.27051 5.51623 10.1015 4.83423 11.9995 4.83423C13.9085 4.83423 15.7385 5.52623 17.3355 6.79123"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path
+                                                d="M19.4473 8.99072C20.1353 9.90472 20.7403 10.9597 21.2493 12.1367C19.2823 16.6937 15.8063 19.4387 11.9993 19.4387C11.1363 19.4387 10.2853 19.2987 9.46729 19.0257"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M19.8868 4.24951L4.11279 20.0235" stroke="currentColor"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </a>
+                                    <a href="{{ route('ticket.concern-remove') }}?_concern={{ base64_encode($_ticket->id) }}"
+                                        class="btn btn-outline-danger btn-sm rounded-pill" data-bs-toggle="tooltip" title=""
+                                        data-bs-original-title="Removed Ticket!">
+                                        <svg width="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M20.708 6.23975H3.75" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path
+                                                d="M17.4406 6.23973C16.6556 6.23973 15.9796 5.68473 15.8256 4.91573L15.5826 3.69973C15.4326 3.13873 14.9246 2.75073 14.3456 2.75073H10.1126C9.53358 2.75073 9.02558 3.13873 8.87558 3.69973L8.63258 4.91573C8.47858 5.68473 7.80258 6.23973 7.01758 6.23973"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg>
+                                    </a>
+                                </div>
                             </span>
 
                         </div>
@@ -168,12 +207,7 @@ $_title = 'Ticket Concern';
                                 <input type="hidden" class="ticket" value="{{ $_ticket->id }}">
                                 <input type="hidden" class="staff" value="{{ Auth::user()->staff->id }}">
                                 <div class="comment-attagement d-flex">
-                                    <a class="me-4 text-body">
-                                        <svg width="20" height="20" viewBox="0 0 24 24">
-                                            <path fill="currentColor"
-                                                d="M20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12M22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12M10,9.5C10,10.3 9.3,11 8.5,11C7.7,11 7,10.3 7,9.5C7,8.7 7.7,8 8.5,8C9.3,8 10,8.7 10,9.5M17,9.5C17,10.3 16.3,11 15.5,11C14.7,11 14,10.3 14,9.5C14,8.7 14.7,8 15.5,8C16.3,8 17,8.7 17,9.5M12,17.23C10.25,17.23 8.71,16.5 7.81,15.42L9.23,14C9.68,14.72 10.75,15.23 12,15.23C13.25,15.23 14.32,14.72 14.77,14L16.19,15.42C15.29,16.5 13.75,17.23 12,17.23Z" />
-                                        </svg>
-                                    </a>
+
                                     <a href="#" class="me-2" data-bs-toggle="tooltip" title=""
                                         data-bs-original-title="Resolved Concern!">
                                         <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -185,6 +219,29 @@ $_title = 'Ticket Concern';
                                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                         </svg>
                                     </a>
+                                    <a class="btn btn-outline-secondary rounded-pill btn-sm me-2" data-bs-toggle="modal"
+                                        data-bs-target=".view-modal" data-bs-toggle="tooltip" title=""
+                                        data-bs-original-title="Attach Image">
+                                        <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M16.8397 20.1642V6.54639" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M20.9173 16.0681L16.8395 20.1648L12.7617 16.0681" stroke="currentColor"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M6.91102 3.83276V17.4505" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round"></path>
+                                            <path d="M2.8335 7.92894L6.91127 3.83228L10.9891 7.92894" stroke="currentColor"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </a>
+                                    <button type="submit" class="btn btn-outline-primary rounded-pill btn-sm"
+                                        data-bs-toggle="tooltip" title="" data-bs-original-title="Send Message!">
+                                        <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M15.8325 8.17463L10.109 13.9592L3.59944 9.88767C2.66675 9.30414 2.86077 7.88744 3.91572 7.57893L19.3712 3.05277C20.3373 2.76963 21.2326 3.67283 20.9456 4.642L16.3731 20.0868C16.0598 21.1432 14.6512 21.332 14.0732 20.3953L10.106 13.9602"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg>
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -215,7 +272,7 @@ $_title = 'Ticket Concern';
                         @if (count($_issues) > 0)
                             @foreach ($_issues as $data)
                                 <li
-                                    class="d-flex border-bottom p-2  {{ request()->input('_ticket')? (request()->input('_ticket') == base64_encode($data->id)? 'bg-primary rounded': ''): '' }} ">
+                                    class="d-flex border-bottom p-2  {{ request()->input('_ticket') ? (request()->input('_ticket') == base64_encode($data->id) ? 'bg-primary rounded' : '') : '' }} ">
                                     <div class="news-icon me-3">
                                         <img src="https://ui-avatars.com/api/?name={{ $data->ticket->name }}"
                                             alt="header" class="img-fluid avatar avatar-50 rounded">
@@ -225,12 +282,15 @@ $_title = 'Ticket Concern';
                                             @if ($data->is_ongoing == 0)
                                                 <span class="badge text-end bg-primary  float-end">NEW</span>
                                             @endif
-                                            <div
-                                                class="{{ request()->input('_ticket')? (request()->input('_ticket') == base64_encode($data->id)? 'text-white': 'text-secondary'): 'text-secondary' }} ">
 
+                                            <div
+                                                class="{{ request()->input('_ticket') ? (request()->input('_ticket') == base64_encode($data->id) ? 'text-white' : 'text-secondary') : 'text-secondary' }} ">
+                                                <small
+                                                    class="float-end">{{ $data->ticket->created_at->diffForHumans() }}</small>
                                                 <label class="m-0 ">{{ $data->ticket->name }}</label> <br>
-                                                <small class="mb-0">{{-- {{ $data->ticket->created_at->diffForHumans() }} --}}
+                                                <small class="mb-0">
                                                     {{ $data->ticket->ticket_number }}</small>
+
                                             </div>
 
                                         </a>
@@ -244,9 +304,9 @@ $_title = 'Ticket Concern';
                                 </li>
                             @endforeach
                         @else
-                            <li class="d-flex border-bottom">
+                            <li class="d-flex border-bottom  p-2">
                                 <div>
-                                    <h5 class="mb-2">No Concern</h5>
+                                    <h5 class="mb-2 text-center">No Concern</h5>
                                 </div>
                             </li>
                         @endif

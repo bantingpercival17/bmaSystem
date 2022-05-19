@@ -11,6 +11,6 @@ class Ticket extends Model
     protected $connection = 'mysql2';
     public function ticket_concern()
     {
-        return $this->hasOne(TicketConcern::class, 'ticket_id');
+       return $this->hasOne(TicketConcern::class, 'ticket_id')->where('is_removed', false);
     }
 }

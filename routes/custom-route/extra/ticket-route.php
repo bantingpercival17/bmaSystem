@@ -10,4 +10,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('ticket/view', [TicketingController::class, 'ticket_concern_view'])->name('ticket.view');
     Route::post('/ticket/chat-message', [TicketingController::class, 'ticket_message_chat'])->name('ticket.chat-store');
+    Route::get('/ticket/concern-remove', [TicketingController::class, 'ticket_concern_remove'])->name('ticket.concern-remove');
+    Route::get('/ticket/concern-unseen', [TicketingController::class, 'ticket_concern_unseen'])->name('ticket.concern-unseen');
 });

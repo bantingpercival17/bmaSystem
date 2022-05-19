@@ -51,6 +51,7 @@ class TicketingController extends Controller
         $_department = Department::where('code', Auth::user()->staff->department)->first();;
         $_issues =  TicketIssue::select('ticket_concerns.*')
             ->join('ticket_concerns', 'ticket_concerns.issue_id', 'ticket_issues.id')
+            ->where('ticket_concerns.is_removed', false)
             ->where('ticket_issues.department_id', $_department->id)
             ->where('ticket_issues.is_removed', false)->orderBy('ticket_concerns.created_at', 'desc')->get();
         $_ticket = $_request->_ticket ? TicketConcern::find(base64_decode($_request->_ticket)) : [];
@@ -92,5 +93,17 @@ class TicketingController extends Controller
         }
 
         return compact('data');
+    }
+    public function ticket_concern_remove(Request $_request)
+    {
+        $_ticket = Ticket::find(base64_decode($_request->_concern));
+        $_ticket->tickect_concern->is_removed = true;
+        $_ticket->tickect_concern->save();
+        return redirect(route('ticket.view'))->with('success', 'Successfully Removed');
+    }
+    public function ticket_concern_unseen(Request $_request)
+    {
+        $_ticket = Ticket::find(base64_decode($_request->_concern));
+        return $_ticket->ticket_concern;
     }
 }
