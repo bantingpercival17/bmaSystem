@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\GeneralController;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TicketMail;
 use App\Models\Department;
 use App\Models\Ticket;
 use App\Models\TicketChat;
@@ -10,6 +11,7 @@ use App\Models\TicketConcern;
 use App\Models\TicketIssue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class TicketingController extends Controller
 {
@@ -80,7 +82,9 @@ class TicketingController extends Controller
             'group_id' => ($_request->staff > $_request->ticket) ? $_request->staff . $_request->ticket : $_request->ticket . $_request->staff,
         );
         try {
-            TicketChat::create($_data);
+            $_ticket_chat = TicketChat::create($_data);
+            //return $_ticket_chat->ticket->email;
+            Mail::to($_ticket_chat->ticket->email)->send(new TicketMail($_ticket_chat->ticket));
             $data = array(
                 'respond' => 200,
                 'data' => $_data
@@ -108,6 +112,13 @@ class TicketingController extends Controller
         $_ticket = TicketConcern::find(base64_decode($_request->_concern));
         $_ticket->is_ongoing = false;
         $_ticket->save();
-        return redirect(route('ticket.view'))->with('success', 'Successfully Unseen');
+        return redirect(route('ticket.view'))->with('success', 'Successfully');
+    }
+    public function ticket_concern_solve(Request $_request)
+    {
+        $_ticket = TicketConcern::find(base64_decode($_request->_concern));
+        $_ticket->is_resolved = false;
+        $_ticket->save();
+        return redirect(route('ticket.view'))->with('success', 'Ticket Close');
     }
 }

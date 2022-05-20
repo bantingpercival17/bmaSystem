@@ -80,7 +80,7 @@ $_title = 'Ticket Concern';
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     <a href="{{ route('ticket.concern-unseen') }}?_concern={{ base64_encode($_ticket->id) }}"
                                         class="btn btn-outline-primary btn-sm rounded-pill" data-bs-toggle="tooltip"
-                                        title="" data-bs-original-title="Make as unread!">
+                                        title="" data-bs-original-title="Mark as unread!">
                                         <svg width="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path
                                                 d="M9.76045 14.3667C9.18545 13.7927 8.83545 13.0127 8.83545 12.1377C8.83545 10.3847 10.2474 8.97168 11.9994 8.97168C12.8664 8.97168 13.6644 9.32268 14.2294 9.89668"
@@ -103,7 +103,7 @@ $_title = 'Ticket Concern';
                                     </a>
                                     <a href="{{ route('ticket.concern-remove') }}?_concern={{ base64_encode($_ticket->id) }}"
                                         class="btn btn-outline-danger btn-sm rounded-pill" data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="Removed Ticket!">
+                                        data-bs-original-title="Report as Spam">
                                         <svg width="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path
                                                 d="M19.3248 9.46826C19.3248 9.46826 18.7818 16.2033 18.4668 19.0403C18.3168 20.3953 17.4798 21.1893 16.1088 21.2143C13.4998 21.2613 10.8878 21.2643 8.27979 21.2093C6.96079 21.1823 6.13779 20.3783 5.99079 19.0473C5.67379 16.1853 5.13379 9.46826 5.13379 9.46826"
@@ -158,7 +158,9 @@ $_title = 'Ticket Concern';
                                                     </div>
                                                     <div class="toast fade show bg-secondary text-white border-0">
                                                         <div class="toast-body">
-                                                            {{ $item->message }}
+                                                            @php
+                                                                echo $item->message;
+                                                            @endphp
                                                         </div>
                                                     </div>
                                                     <div class="d-flex flex-wrap float-end">
@@ -183,7 +185,9 @@ $_title = 'Ticket Concern';
                                                     </small>
                                                     <div class="toast fade show bg-secondary text-white border-0 mb-1">
                                                         <div class="toast-body">
-                                                            {{ $item->message }}
+                                                            @php
+                                                                echo $item->message;
+                                                            @endphp
                                                         </div>
                                                     </div>
                                                     <div class="d-flex flex-wrap align-items-center">
@@ -200,16 +204,29 @@ $_title = 'Ticket Concern';
                             @endif
                         </div>
                         <div class="card-footer">
-                            <form action="" class="comment-text d-flex align-items-center mt-3" id="chat-inputs">
+                            <form action="" class="comment-text d-flex align-items-center mt-3 mb-3" id="chat-inputs">
                                 <input type="text" id="message-input" class="form-control rounded-pill"
                                     placeholder="Compose message!">
                                 {!! csrf_field() !!}
                                 <input type="hidden" class="ticket" value="{{ $_ticket->id }}">
                                 <input type="hidden" class="staff" value="{{ Auth::user()->staff->id }}">
                                 <div class="comment-attagement d-flex">
-
-                                    <a href="#" class="me-2" data-bs-toggle="tooltip" title=""
-                                        data-bs-original-title="Resolved Concern!">
+                                    <button type="submit" class="btn btn-outline-primary rounded-pill btn-sm"
+                                        data-bs-toggle="tooltip" title="" data-bs-original-title="Send Message!">
+                                        <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M15.8325 8.17463L10.109 13.9592L3.59944 9.88767C2.66675 9.30414 2.86077 7.88744 3.91572 7.57893L19.3712 3.05277C20.3373 2.76963 21.2326 3.67283 20.9456 4.642L16.3731 20.0868C16.0598 21.1432 14.6512 21.332 14.0732 20.3953L10.106 13.9602"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="comment-text d-flex align-items-center mt-3 mb-3">
+                                <div class="comment-attagement d-flex mt-3">
+                                    <a href="{{ route('ticket.concern-solve') }}?_concern={{ base64_encode($_ticket->id) }}"
+                                        class="btn btn-outline-secondary rounded-pill btn-sm me-2" data-bs-toggle="tooltip"
+                                        title="" data-bs-original-title="Mark as solved">
                                         <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path fill-rule="evenodd" clip-rule="evenodd"
                                                 d="M16.3345 2.75024H7.66549C4.64449 2.75024 2.75049 4.88924 2.75049 7.91624V16.0842C2.75049 19.1112 4.63549 21.2502 7.66549 21.2502H16.3335C19.3645 21.2502 21.2505 19.1112 21.2505 16.0842V7.91624C21.2505 4.88924 19.3645 2.75024 16.3345 2.75024Z"
@@ -233,17 +250,9 @@ $_title = 'Ticket Concern';
                                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                         </svg>
                                     </a>
-                                    <button type="submit" class="btn btn-outline-primary rounded-pill btn-sm"
-                                        data-bs-toggle="tooltip" title="" data-bs-original-title="Send Message!">
-                                        <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M15.8325 8.17463L10.109 13.9592L3.59944 9.88767C2.66675 9.30414 2.86077 7.88744 3.91572 7.57893L19.3712 3.05277C20.3373 2.76963 21.2326 3.67283 20.9456 4.642L16.3731 20.0868C16.0598 21.1432 14.6512 21.332 14.0732 20.3953L10.106 13.9602"
-                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                stroke-linejoin="round"></path>
-                                        </svg>
-                                    </button>
+
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 @else
@@ -285,10 +294,10 @@ $_title = 'Ticket Concern';
 
                                             <div
                                                 class="{{ request()->input('_ticket') ? (request()->input('_ticket') == base64_encode($data->id) ? 'text-white' : 'text-secondary') : 'text-secondary' }} ">
-                                              
+
                                                 <label class="m-0 ">{{ $data->ticket->name }}</label> <br>
                                                 <small
-                                                class="float-end">{{ $data->ticket->created_at->diffForHumans() }}</small>
+                                                    class="float-end">{{ $data->ticket->created_at->diffForHumans() }}</small>
                                                 <small class="mb-0">
                                                     {{ $data->ticket->ticket_number }}</small>
 
