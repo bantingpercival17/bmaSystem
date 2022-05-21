@@ -44,7 +44,7 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     public function empty_documents()
     {
         $_level = $this->course_id == 3 ? 11 : 4;
-        return Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->get();
+        return Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->orderBy('id')->get();
     }
     public function document_status()
     {
@@ -75,6 +75,10 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     public function examination()
     {
         return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->where('is_finish', true);
+    }
+    public function examination_list()
+    {
+        return $this->hasMany(ApplicantEntranceExamination::class,'applicant_id');
     }
     public function image()
     {

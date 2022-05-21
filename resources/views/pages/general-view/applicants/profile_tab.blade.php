@@ -1,6 +1,38 @@
 @if (request()->input('_fill') == 'document')
     <div class="tab-content" id="pills-tabContent-2">
         <div class="tab-pane fade active show">
+            @if (count($_account->empty_documents()) > 0)
+                @foreach ($_account->empty_documents() as $docu)
+                    @php
+                        $applicant_docu = $docu->applicant_document;
+                    @endphp
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="d-flex align-items-center message-icon me-3">
+                                <span class="ms-1 fw-bolder">{{ $docu->document_name }}</span>
+                            </div>
+                            <div class="">
+                                <a class="badge bg-primary btn-form-document col" data-bs-toggle="modal"
+                                    data-bs-target=".document-view-modal" data-document-url="{{-- {{ json_decode($item->file_links)[0] }} --}}">
+                                    view
+                                </a>
+                            </div>
+                        </div>
+                        {{ $applicant_docu }}
+                        {{-- @if ($_account->document_history($item->document_id)->count() > 0)
+                        <div class="history">
+                            <a tabindex="0" class="badge bg-secondary text-white" role="button"
+                                data-bs-toggle="popover" data-trigger="focus"
+                                title="List of Dissapproved Requirments"
+                                data-bs-content="We have {{ $_account->document_history($item->document_id)->count() }} disapproved Document/s">Document
+                                History</a>
+                        </div>
+                    @endif --}}
+
+                    </div>
+                @endforeach
+            @else
+            @endif
             @if (count($_account->applicant_documents) > 0)
                 @foreach ($_account->applicant_documents as $item)
                     <div class="d-flex flex-wrap justify-content-between align-items-center">
@@ -110,7 +142,39 @@
                     </p>
                 </div>
             </div>
-
+            @foreach (Auth::user()->roles as $role)
+                @if ($role->id == 1)
+                    @foreach ($_account->examination_list as $data)
+                        <div class="row">
+                            <div class="col-md">
+                                <label for="" class="text-info">EXAMINATION STATUS</label>
+                                {{ $data->is_finish }}
+                                @if ($data->is_finish === 1)
+                                    <span class="fw-bolder">Examination Done</span>
+                                @elseif($data->is_finish === 0)
+                                    <span class="fw-bolder">Examination Ongoing</span>
+                                @else
+                                    <span class="fw-bolder">Ready for Examination</span>
+                                @endif
+                            </div>
+                            <div class="col-md">
+                                <label for="" class="text-info">EXAMINATION CODE</label>
+                                <span class="fw-bolder">{{ $data->examination_code }}</span>
+                            </div>
+                            <div class="col-md">
+                                <label for="" class="text-info">IS REMOVE</label>
+                                @if ($data->is_removed == false)
+                                    <br>
+                                    <a href="{{ route('examination.remove') }}?examination={{ $data->id }}" class="btn btn-sm btn-danger">remove</a>
+                                @else
+                                    <br>
+                                    <span class="badge bg-info">REMOVED</span>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            @endforeach
         </div>
     </div>
 @else

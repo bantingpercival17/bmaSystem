@@ -282,7 +282,7 @@ class CourseOffer extends Model
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             
-            ->whereNull('aee.is_finish')/* ->where('aee.is_removed', false) */->orderBy('aee.created_at', 'desc')
+            ->whereNull('aee.is_finish')->where('aee.is_removed', false)->orderBy('aee.created_at', 'desc')
             ->groupBy('applicant_accounts.id');
     }
     public function applicant_examination_ongoing()

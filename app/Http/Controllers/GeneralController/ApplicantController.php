@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDocuments;
+use App\Models\ApplicantEntranceExamination;
+use App\Models\ApplicantExaminationAnswer;
 use App\Models\CourseOffer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -166,5 +168,12 @@ class ApplicantController extends Controller
         Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
 
         return back()->with('success', 'Successfully Reset');
+    }
+    public function examination_remove(Request $_request)
+    {
+        $_examination = ApplicantEntranceExamination::find($_request->examination);
+        $_examination->is_removed = true;
+        $_examination->save();
+        return back();
     }
 }
