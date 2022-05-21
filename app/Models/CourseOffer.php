@@ -227,7 +227,7 @@ class CourseOffer extends Model
     }
     public function applicant_verified()
     {
-        $_level = $this->course_id == 3 ? 11 : 4;
+        $_level = $this->id == 3 ? 11 : 4;
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
@@ -240,7 +240,7 @@ class CourseOffer extends Model
     }
     public function applicant_not_verified()
     {
-        $_level = $this->course_id == 3 ? 11 : 4;
+        $_level = $this->id == 3 ? 11 : 4;
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')

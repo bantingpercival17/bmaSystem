@@ -24,7 +24,7 @@ class Documents extends Model
     }
     public function applicant_document()
     {
-        return $this->belongsTo(ApplicantDocuments::class, 'document_id');
-        //->where('applicant_id', base64_decode(request()->input('_student')))->where('is_removed', false);
+        return $this->hasOne(ApplicantDocuments::class, 'document_id')
+        ->where('applicant_id', base64_decode(request()->input('_student')))->where('is_removed', false);
     }
 }
