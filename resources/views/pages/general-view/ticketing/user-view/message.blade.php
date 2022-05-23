@@ -72,7 +72,8 @@ $_title = 'Ticket Concern';
                                     <div class="media-support-info">
                                         <h6 class="m-0 fw-bolder">{{ $_ticket->ticket->name }}</h6>
                                         <small>{{ $_ticket->ticket->ticket_number }}</small> | <small
-                                            class="m-0 text-primary ">{{ $_ticket->ticket_issue->issue_name }}</small>
+                                            class="m-0 text-primary ">{{ $_ticket->ticket_issue->issue_name }}</small> <br>
+                                            <small>{{$_ticket->ticket->email}}</small>
                                     </div>
                                 </div>
                             </div>
