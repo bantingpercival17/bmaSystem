@@ -20,7 +20,7 @@ class ApplicantController extends Controller
     {
         $_courses = CourseOffer::all();
         $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_applicants =  $_course->pre;
+        $_applicants =  $_course->applicant_not_verified;
         return view('pages.general-view.applicants.list_view', compact('_applicants', '_course', '_courses'));
     }
     public function pre_applicant_view(Request $_request)

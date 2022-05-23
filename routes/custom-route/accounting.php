@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountingController;
 
 Route::prefix('accounting')->group(function () {
+    /* Applicants */
+    require __DIR__ . '/extra/applicant-route.php'; // Applicant Route
+    require __DIR__ . '/extra/ticket-route.php'; // Ticket Route
     Route::get('/', [AccountingController::class, 'index'])->name('accounting.dashboard');
     Route::get('/dashboard', [AccountingController::class, 'index'])->name('accounting.dashboard'); // Dashboard
     Route::get('/dashboard/payment-pending', [AccountingController::class, 'payment_pending_view'])->name('accounting.dashboard-payment-assessment');
