@@ -214,8 +214,10 @@ class CourseOffer extends Model
         return $this->hasMany(ApplicantAccount::class, 'course_id')
         ->select('applicant_accounts.*')
         ->join('applicant_detials as ad','ad.applicant_id','applicant_accounts.id')
+        //->leftJoin('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id') // Without Documents
         //->where('ad.is_removed', false)
-        ->where('applicant_accounts.is_removed',false);
+        ->where('applicant_accounts.is_removed',false)
+        ->groupBy('applicant_accounts.name');
     }
     public function student_applicants()
     {

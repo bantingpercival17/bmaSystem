@@ -187,3 +187,19 @@ foreach ($_url_role as $key => $_data) {
         </div>
     </div>
 </div>
+@section('js')
+    <script>
+        @if (Auth::user()->staff)
+            @if (count(Auth::user()->staff->message_ticket_concern()) > 0)
+                Toastify({
+                    text: "You have  {{ count(Auth::user()->staff->message_ticket_concern()) }} unread concern, <a href='{{ route('ticket.view') }}' class='text-warning'> see here </a> ",
+                    //duration: 3000,
+                    //close: true,
+                    //gravity: "top",
+                    position: "right",
+                    backgroundColor: "#4fbe87",
+                }).showToast();
+                @endif
+        @endif
+    </script>
+@endsection

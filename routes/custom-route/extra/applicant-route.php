@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/applicants', [ApplicantController::class, 'applicant_view'])->name('applicant-lists');
-    Route::get('/applicant-profile/view', [ApplicantController::class, 'applicant_profile'])->name('applicant-profile');
+    Route::get('/applicants/pre-register',[ApplicantController::class,'pre_applicant_view'])->name('applicant.pre-register')
+;    Route::get('/applicant-profile/view', [ApplicantController::class, 'applicant_profile'])->name('applicant-profile');
     Route::get('/applicant-profile/document-notification', [ApplicantController::class, 'applicant_document_notification'])->name('document-notification'); // Send Email for Document Attachment
     Route::get('/applicant-profile/document-verification', [ApplicantController::class, 'applicant_document_review'])->name('document-verification');
     Route::get('/applicants/removed', [ApplicantController::class, 'applicant_removed'])->name('applicant-removed');

@@ -11,6 +11,6 @@
     </li>
 @endsection
 @section('page-content')
-    @include('layouts.widgets.enrollment_overview')
-    @include('layouts.widgets.entrance_examination_overview')
+    @include('pages.general-view.dashboard-panels.enrollment_overview')
+    @include('pages.general-view.dashboard-panels.entrance_examination_overview')
 @endsection
