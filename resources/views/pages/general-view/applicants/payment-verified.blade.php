@@ -105,7 +105,7 @@ $_title = 'Entrance Examination Payment Verified';
                                     @foreach (Auth::user()->roles as $role)
                                         @if ($role->id == 1 || $role->id == 3)
                                             @if ($_data->applicant_examination)
-                                                @if ($_data->applicant_examination->is_finish == 0)
+                                                @if ($_data->applicant_examination->is_finish === 0)
                                                     <small class="badge bg-info">On-going</small>
                                                 @elseif ($_data->applicant_examination->is_finish === 1)
                                                     <small class="badge bg-primary">Examination Done</small>
