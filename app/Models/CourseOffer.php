@@ -310,30 +310,7 @@ class CourseOffer extends Model
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_removed', false)->where('aee.is_finish', true)->groupBy('applicant_accounts.id');
-        $_query->orderBy('aee.updated_at', 'desc')->get();
         $_operator = $_data == 'passed' ? '>=' : '<';
-        /*  if ($_data == 'passed') {
-            $_query = $_query->where(
-                DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
-            FROM bma_website.applicant_examination_answers as aea
-            inner join bma_portal.examination_question_choices as eqc
-            on eqc.id = aea.choices_id
-            where eqc.is_answer = true and aea.examination_id = aee.id)"),
-                '>=',
-                '50'
-            );
-        }
-        if ($_data == 'failed') {
-            $_query = $_query->where(
-                DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
-            FROM bma_website.applicant_examination_answers as aea
-            inner join bma_portal.examination_question_choices as eqc
-            on eqc.id = aea.choices_id
-            where eqc.is_answer = true and aea.examination_id = aee.id)"),
-                '<',
-                '50'
-            );
-        } */
         return $_query->where(
             DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
         FROM bma_website.applicant_examination_answers as aea

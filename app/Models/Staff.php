@@ -138,9 +138,15 @@ class Staff extends Model
             ->groupBy('pt.assessment_id')
             ->orderBy('pa.created_at', 'DESC')->get();
     }
-
-
-
+    public function total_applicants()
+    {
+        $_course = CourseOffer::all();
+        $_total = 0;
+        foreach ($_course as $key => $value) {
+            $_total += count($value->applicant_verified);
+        }
+        return $_total;
+    }
     public function side_bar_items()
     {
         return  [
@@ -277,7 +283,7 @@ class Staff extends Model
         return $_issues =  TicketIssue::select('ticket_concerns.*')
             ->join('ticket_concerns', 'ticket_concerns.issue_id', 'ticket_issues.id')
             ->where('ticket_concerns.is_removed', false)
-            ->where('ticket_concerns.is_ongoing',false)
+            ->where('ticket_concerns.is_ongoing', false)
             ->where('ticket_issues.department_id', $_department->id)
             /* ->where('ticket_issues.is_removed', false) */->orderBy('ticket_concerns.created_at', 'desc')->get();
     }
