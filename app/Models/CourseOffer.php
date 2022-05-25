@@ -212,12 +212,12 @@ class CourseOffer extends Model
     public function student_pre_registrations()
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
-        ->select('applicant_accounts.*')
-        ->join('applicant_detials as ad','ad.applicant_id','applicant_accounts.id')
-        //->leftJoin('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id') // Without Documents
-        //->where('ad.is_removed', false)
-        ->where('applicant_accounts.is_removed',false)
-        ->groupBy('applicant_accounts.name');
+            ->select('applicant_accounts.*')
+            ->join('applicant_detials as ad', 'ad.applicant_id', 'applicant_accounts.id')
+            //->leftJoin('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id') // Without Documents
+            //->where('ad.is_removed', false)
+            ->where('applicant_accounts.is_removed', false)
+            ->groupBy('applicant_accounts.name');
     }
     public function student_applicants()
     {
@@ -274,18 +274,22 @@ class CourseOffer extends Model
             ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
             ->where('applicant_payments.is_approved', true)
             ->where('applicant_payments.is_removed', false)
-            ->orderBy('applicant_payments.updated_at', 'asc')
+            ->orderBy('applicant_payments.updated_at', 'desc')
             ->groupBy('applicant_accounts.id');
     }
     public function applicant_examination_ready()
     {
+        /*  return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
+            ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
+            ->whereNull('aee.is_finish')->where('aee.is_removed', false)->orderBy('aee.created_at', 'desc')
+            ->groupBy('aee.applicant_id'); */
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
-            
-            ->whereNull('aee.is_finish')->where('aee.is_removed', false)->orderBy('aee.created_at', 'desc')
-            ->groupBy('applicant_accounts.id');
+            ->whereNull('aee.is_finish')->where('aee.is_removed', false)->groupBy('aee.applicant_id');
     }
     public function applicant_examination_ongoing()
     {
@@ -306,29 +310,16 @@ class CourseOffer extends Model
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_removed', false)->where('aee.is_finish', true)->groupBy('applicant_accounts.id');
-        if ($_data == 'passed') {
-            $_query = $_query->where(
-                DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
-            FROM bma_website.applicant_examination_answers as aea
-            inner join bma_portal.examination_question_choices as eqc
-            on eqc.id = aea.choices_id
-            where eqc.is_answer = true and aea.examination_id = aee.id)"),
-                '>=',
-                '50'
-            );
-        }
-        if ($_data == 'failed') {
-            $_query = $_query->where(
-                DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
-            FROM bma_website.applicant_examination_answers as aea
-            inner join bma_portal.examination_question_choices as eqc
-            on eqc.id = aea.choices_id
-            where eqc.is_answer = true and aea.examination_id = aee.id)"),
-                '<',
-                '50'
-            );
-        }
-        return $_query->get();
+        $_operator = $_data == 'passed' ? '>=' : '<';
+        return $_query->where(
+            DB::raw("(SELECT ((SUM(eqc.is_answer)/" . $_item . ")*100) as exam_result 
+        FROM bma_website.applicant_examination_answers as aea
+        inner join bma_portal.examination_question_choices as eqc
+        on eqc.id = aea.choices_id
+        where eqc.is_answer = true and aea.examination_id = aee.id)"),
+            $_operator,
+            '50'
+        )->orderBy('aee.updated_at', 'desc')->get();
     }
     public function applicant_examination_passed()
     {
@@ -346,7 +337,7 @@ class CourseOffer extends Model
                 where eqc.is_answer = true and aea.examination_id = aee.id)"),
                 '>=',
                 '50'
-            );
+            )->orderBy('aee.updated_at', 'desc');
     }
     public function applicant_examination_failed()
     {
@@ -364,7 +355,7 @@ class CourseOffer extends Model
                 where eqc.is_answer = true and aea.examination_id = aee.id)"),
                 '<',
                 '50'
-            );
+            )->orderBy('aee.updated_at', 'desc');
     }
     public function applicant_examination()
     {
@@ -379,27 +370,27 @@ class CourseOffer extends Model
     // COURSE COLLECTION
     public function student_payment_mode($_data)
     {
-       return $this->hasMany(EnrollmentAssessment::class, 'course_id')
-       ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-       ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-       ->where('pt.remarks', 'Upon Enrollment')
-       ->where('pt.is_removed', false)
-       ->where('enrollment_assessments.is_removed', false)
-       ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-       ->groupBy('pt.assessment_id')
-       ->orderBy('pt.created_at', 'DESC')
-        ->where('pa.payment_mode',$_data)->get();
-    } 
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', 'Upon Enrollment')
+            ->where('pt.is_removed', false)
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->groupBy('pt.assessment_id')
+            ->orderBy('pt.created_at', 'DESC')
+            ->where('pa.payment_mode', $_data)->get();
+    }
     public function student_payment_schedule($_data)
     {
-       return $this->hasMany(EnrollmentAssessment::class, 'course_id')
-       ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-       ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-       ->where('pt.remarks', $_data)
-       ->where('pt.is_removed', false)
-       ->where('enrollment_assessments.is_removed', false)
-       ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-       ->groupBy('pt.assessment_id')
-       ->orderBy('pt.created_at', 'DESC')->get();
-    } 
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
+            ->where('pt.remarks', $_data)
+            ->where('pt.is_removed', false)
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->groupBy('pt.assessment_id')
+            ->orderBy('pt.created_at', 'DESC')->get();
+    }
 }

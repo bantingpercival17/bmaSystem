@@ -42,7 +42,7 @@ class AccountingController extends Controller
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
         $_total_applicants = ApplicantAccount::join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
-        return view('pages.accounting.dashboard.view', compact('_courses', '_total_population'));
+        return view('pages.accounting.dashboard.view', compact('_courses', '_total_population','_total_applicants'));
     }
     public function payment_pending_view(Request $_request)
     {

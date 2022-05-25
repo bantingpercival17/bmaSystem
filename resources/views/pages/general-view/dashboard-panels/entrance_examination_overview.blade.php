@@ -15,7 +15,7 @@ $_course_url = route($_course_enrolled[0]);
                 data-iq-ease="power.out" data-iq-opacity="0">
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
-                        <h3 class="counter">{{ count($_total_applicants) }}</h3>
+                        <h3 class="counter">{{ Auth::user()->staff->total_applicants() }}</h3>
                         <a href="javascript:void(0);">
                             <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path

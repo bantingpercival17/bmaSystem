@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\GeneralController;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ApplicantBriefingNotification;
 use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDocuments;
@@ -182,5 +183,14 @@ class ApplicantController extends Controller
         $_examination->is_removed = true;
         $_examination->save();
         return back();
+    }
+    public function briefing_notification(Request $_request)
+    {
+        $_course = CourseOffer::find($_request->_course);
+        foreach ($_course->applicant_examination_result('passed') as $key => $value) {
+            $_mail_notification = new ApplicantBriefingNotification($value);
+            Mail::to('percivalbanting@gmail.com')->send($_mail_notification);
+        }
+        return back()->with('success', 'Sent');
     }
 }

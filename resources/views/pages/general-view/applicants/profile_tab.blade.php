@@ -14,9 +14,9 @@
                         </div>
                         @if ($item)
                             @if ($item->is_approved == null)
-                                <form class="row" action="{{ route('document-verification') }}"
-                                    method="get">
+                                <form class="row" action="{{ route('document-verification') }}">
                                     <div class="col-md-8">
+                                        <input type="hidden" name="_document" value="{{ base64_encode($item->id) }}">
                                         <input type="text" class="form-control form-control-sm rounded-pill mt-2"
                                             name="_comment" placeholder="Comment!" required>
                                     </div>
@@ -87,10 +87,8 @@
                                         </div>
                                         <div class="col-md">
                                             <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2 w-100"
-                                                
-                                            data-bs-toggle="modal" data-bs-target=".document-view-modal"
-                                                data-document-url="{{ json_decode($item->file_links)[0] }}"
-                                               >
+                                                data-bs-toggle="modal" data-bs-target=".document-view-modal"
+                                                data-document-url="{{ json_decode($item->file_links)[0] }}">
                                                 <svg width="20" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
