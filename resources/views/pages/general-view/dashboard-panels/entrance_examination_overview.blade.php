@@ -199,7 +199,9 @@ $_course_url = route($_course_enrolled[0]);
                                     <a
                                         href="{{ route('applicant-examination-status') . '?_course=' . base64_encode($_course->id) . '&_status=' . base64_encode('failed') }}">{{ count($_course->applicant_examination_result('failed')) }}</a>
                                 </td>
-                                <td></td>
+                                <td> <a
+                                        href="{{ route('applicant-examination-status') . '?_course=' . base64_encode($_course->id) . '&_status=' . base64_encode('failed') }}">{{ count($_course->applicant_briefing) }}</a>
+                                </td>
                                 <td></td>
                                 <td></td>
                             </tr>

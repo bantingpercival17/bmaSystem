@@ -365,7 +365,15 @@ class CourseOffer extends Model
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_payments.is_removed', false);
     }
-
+    public function applicant_briefing()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_accounts.is_removed', false)
+            ->where('applicant_briefings.is_removed', false)
+            ->groupBy('applicant_briefings.applicant_id');
+    }
 
     // COURSE COLLECTION
     public function student_payment_mode($_data)
