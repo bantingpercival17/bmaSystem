@@ -46,6 +46,7 @@ class CourseOffer extends Model
     public function enrolled_list($_data)
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
             ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
             ->where('pt.remarks', 'Upon Enrollment')

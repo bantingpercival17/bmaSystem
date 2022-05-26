@@ -54,8 +54,10 @@ Route::prefix('accounting')->group(function () {
     Route::get('/applicant-transaction/verification', [AccountingController::class, 'applicant_transaction_verification'])->name('accounting.applicant-transaction-verification');
     Route::post('/applicant-transaction', [AccountingController::class, 'applicant_transaction_store'])->name('accounting.applicant-payment-transaction');
 
-
-
+    // Report
+    Route::get('/generate-report', [AccountingController::class, 'generate_report_view'])->name('accounting.report');
+    Route::post('/generate-report/collection', [AccountingController::class, 'colletion_report'])->name('accounting.report-collection');
+    Route::post('/generate-report/balance', [AccountingController::class, 'balance_report'])->name('accounting.report-balance');
     // Staff
     Route::get('/staff/payroll-view', [AccountingController::class, 'staff_payroll_view'])->name('accounting.payroll-view');
     Route::get('/staff/salary-details', [AccountingController::class, 'staff_salary_details'])->name('accounting.staff-salary');

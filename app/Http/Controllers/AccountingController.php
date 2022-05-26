@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BalanceStudent;
+use App\Exports\CollectionReport;
+use App\Exports\DepartmentBalanceSheet;
 use App\Exports\EnrolledStudentList;
+use App\Exports\MonthlyCollectionReport;
 use App\Exports\SalaryDetailsTemplate;
 use App\Imports\ImportSalaryDetails;
 use App\Mail\ApplicantEmail;
@@ -25,6 +29,8 @@ use App\Models\StaffPayrollDetails;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\Voucher;
+use Carbon\Carbon;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -42,7 +48,7 @@ class AccountingController extends Controller
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
         $_total_applicants = ApplicantAccount::join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
-        return view('pages.accounting.dashboard.view', compact('_courses', '_total_population','_total_applicants'));
+        return view('pages.accounting.dashboard.view', compact('_courses', '_total_population', '_total_applicants'));
     }
     public function payment_pending_view(Request $_request)
     {
@@ -58,7 +64,6 @@ class AccountingController extends Controller
         $_respond =  Excel::download(new EnrolledStudentList($_course), $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
         ob_end_clean();
         return $_respond;
-    
     }
     public function particular_view(Request $_request)
     {
@@ -486,6 +491,52 @@ class AccountingController extends Controller
             return view('pages.accounting.payroll.payroll_view', compact('_payroll'));
         } else {
             return redirect(route('accounting.payroll-view'));
+        }
+    }
+    public function generate_report_view()
+    {
+        return view('pages.accounting.generate-report.view');
+    }
+    public function colletion_report(Request $_request)
+    {
+        try {
+            $_request->validate([
+                'collection_type' => 'required',
+                'collection_date' => 'required'
+            ]);
+            $_type = $_request->collection_type; // Category
+            $_date = $_request->collection_date; // Date
+            $_date = $_type == "monthly" ?  date_format(date_create($_date), "Y-m") : date_format(date_create($_date), "Y-m-d");
+            $_file_name = strtoupper($_type) . '-COLLECTION-' . $_date . '.xlsx'; // Name of the File
+            $_class = $_type === 'daily' ? new CollectionReport($_date) : new MonthlyCollectionReport($_date); // Get the Export Class
+            //$this->activities->setActivity(['Generate Collection with file name' . $_file_name, 'ACCOUNTING']);
+            $_file = Excel::download($_class, $_file_name); // Download the File
+            ob_end_clean();
+            return $_file;
+            /*   $_respond =  Excel::download(new SalaryDetailsTemplate, 'Employee-Salary-Detials' . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+            ob_end_clean();
+            return $_respond; */
+        } catch (Expression $er) {
+            return back()->with('error', $er);
+        }
+    }
+    public function balance_report(Request $_request)
+    {
+        try {
+            $_course = CourseOffer::find($_request->balance_course); // Course
+            $_data = $_request->balance_level; // Date
+            $_academic = $_request->collection_academic; // Academic
+            $_date = Carbon::today();
+            $_file_name = strtoupper($_course->course_code) . '-BALANCE-' . strtoupper($_data) . '-' . $_date . '.xlsx'; // Name of the File
+            //return $_course->enrolled_list(1)->get();
+            $_class = $_data == "all" ? new DepartmentBalanceSheet($_course) : new BalanceStudent($_course, $_data); // Get the Export Class
+            $_file = Excel::download($_class, $_file_name); // Download the File
+            ob_end_clean();
+            return $_file;
+            //$this->activities->setActivity(['Generate Collection with file name' . $_file_name, 'ACCOUNTING']);
+            // /return Excel::download($_class, $_file_name); // Download the File
+        } catch (Expression $er) {
+            return back()->with('error', $er);
         }
     }
 }

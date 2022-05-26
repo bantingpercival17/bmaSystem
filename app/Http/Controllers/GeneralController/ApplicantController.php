@@ -189,7 +189,8 @@ class ApplicantController extends Controller
         $_course = CourseOffer::find($_request->_course);
         foreach ($_course->applicant_examination_result('passed') as $key => $value) {
             $_mail_notification = new ApplicantBriefingNotification($value);
-            Mail::to('percivalbanting@gmail.com')->send($_mail_notification);
+            //Mail::to('percivalbanting@gmail.com')->send($_mail_notification);
+            Mail::to($value->email)->send($_mail_notification);
         }
         return back()->with('success', 'Sent');
     }

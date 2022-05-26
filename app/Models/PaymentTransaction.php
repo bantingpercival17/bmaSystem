@@ -23,4 +23,8 @@ class PaymentTransaction extends Model
     {
         return $this->belongsTo(EnrollmentAssessment::class, 'enrollment_id');
     }
+    public function payment_assessment()
+    {
+        return $this->belongsTo(PaymentAssessment::class, 'assessment_id');
+    }
 }
