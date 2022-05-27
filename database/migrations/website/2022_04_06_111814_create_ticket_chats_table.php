@@ -16,8 +16,8 @@ class CreateTicketChatsTable extends Migration
     {
         Schema::create('ticket_chats', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ticket_id');
-            $table->foreign('ticket_id')->references('id')->on('tickets');
+            $table->unsignedBigInteger('concern_id');
+            $table->foreign('concern_id')->references('id')->on('ticket_concerns');
             $table->unsignedBigInteger('staff_id');
             $table->foreign('staff_id')->references('id')->on(new Expression('bma_portal.staff'));
             $table->string('sender_column')->nullable();

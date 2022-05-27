@@ -163,146 +163,9 @@
                             </div>
                         @endif
                     </div>
-                    {{-- <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-                        @if ($item)
-                            @if ($item->is_approved === null)
-                                <form class="d-flex " action="{{ route('document-verification') }}"
-                                    method="post">
-                                    <div>
-
-                                    </div>
-                                    <div class="comment-text d-flex mt-3">
-                                        <input type="hidden" name="_document" value="{{ base64_encode($item->id) }}">
-                                        <input type="hidden" name="_verification_status" value="0">
-                                        <input type="text" class="form-control rounded-pill" name="_comment"
-                                            placeholder="Comment!">
-                                        <div class="comment-attagement d-flex">
-                                            <button type="submit"
-                                                class=" me-2 btn btn-danger btn-sm rounded-pill">DISAPPROVE
-                                            </button>
-                                            <a href="{{ route('document-verification') }}?_document={{ base64_encode($item->id) }}&_verification_status=1"
-                                                class="me btn btn-primary btn-sm rounded-pill">
-                                                APPROVE
-                                            </a>
-                                        </div>
-                                    </div>
-                                </form>
-                            @endif
-
-                            <button type="button" class="btn btn-outline-primary btn-sm btn-form-document"
-                                data-bs-toggle="modal" data-bs-target=".document-view-modal"
-                                data-document-url="{{ json_decode($item->file_links)[0] }}">
-                                <span class="btn-inner">
-                                    <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M15.1614 12.0531C15.1614 13.7991 13.7454 15.2141 11.9994 15.2141C10.2534 15.2141 8.83838 13.7991 8.83838 12.0531C8.83838 10.3061 10.2534 8.89111 11.9994 8.89111C13.7454 8.89111 15.1614 10.3061 15.1614 12.0531Z"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round"></path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M11.998 19.355C15.806 19.355 19.289 16.617 21.25 12.053C19.289 7.48898 15.806 4.75098 11.998 4.75098H12.002C8.194 4.75098 4.711 7.48898 2.75 12.053C4.711 16.617 8.194 19.355 12.002 19.355H11.998Z"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round"></path>
-                                    </svg>
-                                </span>
-                            </button>
-                        @else
-                            <div>
-                                <h5 class="fw-bolder text-muted">{{ $docu->document_name }}</h5>
-                                <p>Missing Document</p>
-                            </div>
-                        @endif
-
-                    </div> --}}
                 @endforeach
             @else
             @endif
-            {{-- @if (count($_account->applicant_documents) > 0)
-                @foreach ($_account->applicant_documents as $item)
-                    <div class="d-flex flex-wrap justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="d-flex align-items-center message-icon me-3">
-                                <span class="ms-1 fw-bolder">{{ $item->document->document_name }}</span>
-                            </div>
-                            <div class="">
-                                <a class="badge bg-primary btn-form-document col" data-bs-toggle="modal"
-                                    data-bs-target=".document-view-modal"
-                                    data-document-url="{{ json_decode($item->file_links)[0] }}">
-                                    view
-                                </a>
-                            </div>
-                        </div>
-                        @if ($_account->document_history($item->document_id)->count() > 0)
-                            <div class="history">
-                                <a tabindex="0" class="badge bg-secondary text-white" role="button"
-                                    data-bs-toggle="popover" data-trigger="focus"
-                                    title="List of Dissapproved Requirments"
-                                    data-bs-content="We have {{ $_account->document_history($item->document_id)->count() }} disapproved Document/s">Document
-                                    History</a>
-                            </div>
-                        @endif
-
-                    </div>
-                    @if ($item->is_approved === 1)
-                        <span class="fw-bolder text-primary">DOCUMENT APPROVED</span>
-                        <div class="row">
-                            <div class="col-md"><small><i>VERIFIED
-                                        BY:</i></small>
-                                <b>{{ $item->staff ? $item->staff->user->name : '-' }}</b>
-                            </div>
-                            <div class="col-md"><small><i>VERIFIED DATE:</i></small>
-                                {{ $item->created_at->format('F d,Y') }}</div>
-                        </div>
-                    @endif
-                    @if ($item->is_approved === 2)
-                        <span class="fw-bolder text-danger">DOCUMENT DISAPPROVED</span><br>
-                        <span class="text-muted"><i>Remarks: </i>
-                            <b> {{ $item->feedback }}</b></span>
-                        <div class="row">
-                            <div class="col-md"><small><i>VERIFIED
-                                        BY:</i></small>
-                                <b>{{ $item->staff ? $item->staff->user->name : '-' }}</b>
-                            </div>
-                            <div class="col-md"><small><i>VERIFIED DATE:</i></small>
-                                {{ $item->created_at->format('F d,Y') }}</div>
-                        </div>
-                    @endif
-                    @if ($item->is_approved === null)
-                        <form class="comment-text d-flex align-items-center mt-3"
-                            action="{{ route('document-verification') }}">
-                            <input type="hidden" name="_document" value="{{ base64_encode($item->id) }}">
-                            <input type="hidden" name="_verification_status" value="0">
-                            <input type="text" class="form-control rounded-pill" name="_comment" placeholder="Comment!">
-                            <div class="comment-attagement d-flex">
-                                <button type="submit" class=" me-2 btn btn-danger btn-sm rounded-pill">DISAPPROVE
-                                </button>
-                                <a href="{{ route('document-verification') }}?_document={{ base64_encode($item->id) }}&_verification_status=1"
-                                    class="me btn btn-primary btn-sm rounded-pill">
-                                    APPROVE
-                                </a>
-                            </div>
-                        </form>
-                    @endif
-
-                    <hr>
-                @endforeach
-            @else
-                <div class="mt-5">
-                    No Attach Requirement. <a
-                        href="{{ route('document-notification') }}?_applicant={{ base64_encode($_account->id) }}"
-                        class="badge bg-info">click here</a> to
-                    notify the applicant.
-                    @foreach ($_account->empty_documents() as $item)
-                        <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center message-icon me-3">
-                                    <span class="ms-1 fw-bolder">{{ $item->document_name }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                    @endforeach
-                </div>
-            @endif --}}
         </div>
     </div>
 @elseif(request()->input('_fill') == 'entrance-examination')
@@ -311,7 +174,6 @@
             <div class="row">
                 <div class="col-md">
                     <div class="form-view">
-                        {{-- {{$_account->applicant_examination->examination_result}} --}}
                         <small
                             class="badge bg-info">{{ $_account->applicant_examination->updated_at->format('F d, Y') }}</small>
                         <h3 class="text-primary fw-bolder mt-3">

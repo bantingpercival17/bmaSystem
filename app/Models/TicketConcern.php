@@ -9,7 +9,7 @@ class TicketConcern extends Model
 {
     use HasFactory;
     protected $connection = 'mysql2';
-
+    protected $fillable = ['ticket_id', 'issue_id', 'ticket_message',];
     /* public function ticket_concern()
     {
         return $this->belongsTo(Ticket::class, 'ticket_id');
@@ -21,5 +21,9 @@ class TicketConcern extends Model
     public function ticket()
     {
         return $this->belongsTo(Ticket::class, 'ticket_id');
+    }
+    public function chat_message()
+    {
+        return  $this->hasMany(TicketChat::class, 'concern_id');
     }
 }

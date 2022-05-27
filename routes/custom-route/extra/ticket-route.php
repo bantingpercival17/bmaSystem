@@ -13,4 +13,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/ticket/concern-remove', [TicketingController::class, 'ticket_concern_remove'])->name('ticket.concern-remove');
     Route::get('/ticket/concern-unseen', [TicketingController::class, 'ticket_concern_unseen'])->name('ticket.concern-unseen');
     Route::get('/ticket/concern-solve', [TicketingController::class, 'ticket_concern_solve'])->name('ticket.concern-solve');
+    Route::get('/ticket/transfer-concern', [TicketingController::class, 'ticket_transfer_concern'])->name('ticket.transfer-concern');
 });
