@@ -133,10 +133,10 @@ class TicketingController extends Controller
     {
         try {
             $_ticket_concern = TicketConcern::find(base64_decode($_request->_ticket)); // Get First the Previous ticket concern
-            //$_ticket_concern->is_resolved = true;
+            $_ticket_concern->is_resolved = true;
             $_ticket_concern->save();
             $_ticket = TicketConcern::create([
-                'ticket_id' => $_ticket_concern->id,
+                'ticket_id' => $_ticket_concern->ticket->id,
                 'issue_id' => base64_decode($_request->_transfer),
                 'ticket_message' => 'CONCERN TRANSFER BY ' . Auth::user()->staff->department
             ]);
