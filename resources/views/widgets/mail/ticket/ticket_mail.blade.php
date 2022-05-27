@@ -9,6 +9,5 @@ The Concern Department responded to your concern.
 Visit Here
 @endcomponent
 
-Thanks,<br>
-{{ config('app.name') }}
+@include('widgets.mail.footer')
 @endcomponent

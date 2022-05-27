@@ -54,11 +54,13 @@ class TicketingController extends Controller
             $_department = Department::where('code', Auth::user()->staff->department)->first();;
             $_issues =  TicketIssue::select('ticket_concerns.*')
                 ->join('ticket_concerns', 'ticket_concerns.issue_id', 'ticket_issues.id')
+                ->join('tickets', 'tickets.id', 'ticket_concerns.ticket_id')
                 ->where('ticket_concerns.is_removed', false)
                 ->where('ticket_concerns.is_resolved', false)
+                ->where('tickets.name','!=','HenryScord')
                 ->where('ticket_issues.department_id', $_department->id)
                 /* ->where('ticket_issues.is_removed', false) */->orderBy('ticket_concerns.created_at', 'desc')->get();
-            $_ticket_issue = TicketIssue::where('is_removed', false)->where('department_id', '!=', $_department->id)->groupBy('department_id')->get();
+            $_ticket_issue = TicketIssue::where('is_removed', false)->where('department_id', '!=', $_department->id)->orderBy('department_id')->get();
             $_ticket = $_request->_ticket ? TicketConcern::find(base64_decode($_request->_ticket)) : [];
 
             if ($_request->_ticket) {
@@ -81,18 +83,16 @@ class TicketingController extends Controller
     }
     public function ticket_message_chat(Request $_request)
     {
-        //(Auth::id() > $_request->user) ? Auth::id() . $_request->user : $_request->user . Auth::id();
-        $_data = array(
-            'concern_id' => $_request->ticket,
-            'staff_id' => $_request->staff,
-            'sender_column' => 'staff_id',
-            'message' => $_request->message,
-            'group_id' => ($_request->staff > $_request->ticket) ? $_request->staff . $_request->ticket : $_request->ticket . $_request->staff,
-        );
         try {
+            $_data = array(
+                'concern_id' => $_request->ticket,
+                'staff_id' => $_request->staff,
+                'sender_column' => 'staff_id',
+                'message' => $_request->message,
+                'group_id' => ($_request->staff > $_request->ticket) ? $_request->staff . $_request->ticket : $_request->ticket . $_request->staff,
+            );
             $_ticket_chat = TicketChat::create($_data);
-            //return $_ticket_chat->ticket->email;
-            Mail::to($_ticket_chat->ticket->email)->send(new TicketMail($_ticket_chat->ticket));
+            Mail::to($_ticket_chat->concern->ticket->email)->send(new TicketMail($_ticket_chat->concern->ticket));
             $data = array(
                 'respond' => 200,
                 'data' => $_data

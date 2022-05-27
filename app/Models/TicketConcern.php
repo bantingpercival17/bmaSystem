@@ -24,6 +24,6 @@ class TicketConcern extends Model
     }
     public function chat_message()
     {
-        return  $this->hasMany(TicketChat::class, 'concern_id');
+        return  $this->hasMany(TicketChat::class, 'concern_id')->where('is_removed', false);
     }
 }

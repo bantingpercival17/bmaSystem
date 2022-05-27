@@ -127,7 +127,7 @@ $_title = 'Ticket Concern';
                         <div class="chat-messages p-4">
                             @foreach ($_ticket_concerns as $key => $concern)
                                 @if ($key == 0)
-                                    <div class="chat-message-left">
+                                    <div class="chat-message-left mb-2">
                                         <div class="d-flex">
                                             <img src="https://ui-avatars.com/api/?name={{ $concern->ticket->name }}"
                                                 alt="header" class="img-fluid avatar avatar-40 rounded">
@@ -156,7 +156,7 @@ $_title = 'Ticket Concern';
                                 @if (count($concern->chat_message) > 0)
                                     @foreach ($concern->chat_message as $item)
                                         @if ($item->sender_column == 'staff_id')
-                                            <div class="chat-message-right">
+                                            <div class="chat-message-right mb-2">
                                                 <div class="d-flex">
                                                     <div class="ms-3">
                                                         <div class="row">
