@@ -200,7 +200,7 @@ class StudentDetails extends Model
         $midtermGradeLaboratory = $this->laboratory_grade([$_data, 'midterm']);
         $midtermLaboratoryItem = $this->laboratory_item([$_data, 'midterm']);
         $finalGradeLecture = $this->lecture_grade([$_data, 'finals']);
-        $finalGradeLaboratory = $this->lab_grade([$_data, 'finals']);
+        $finalGradeLaboratory = $this->laboratory_grade([$_data, 'finals']);
         if ($_period == 'midterm') {
             if ($midtermLaboratoryItem > 0) {
                 $_final_grade = $midtermGradeLecture + $midtermGradeLaboratory; // Midterm Grade Formula With Laboratory
@@ -215,10 +215,14 @@ class StudentDetails extends Model
                     $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
                 }
             } else {
-                if ($midtermGradeLaboratory > 0) {
-                    $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                if ($finalGradeLecture > 0) {
+                    if ($midtermGradeLaboratory > 0) {
+                        $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                    } else {
+                        $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture / .4) * .5);
+                    }
                 } else {
-                    $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture / .4) * .5);
+                    $_final_grade = null;
                 }
             }
         }

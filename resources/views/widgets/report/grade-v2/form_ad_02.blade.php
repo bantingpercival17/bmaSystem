@@ -4,7 +4,7 @@
 @section('content')
     <div class="content">
         <h3 class="text-center"><b>REPORT OF GRADES</b></h3>
-        <table class="table">
+        <table class="table-content">
             <tbody>
                 <tr>
                     <td style="width: 60%"><small>SUBJECT :</small>
@@ -65,32 +65,19 @@
                                 @php
                                     $_final = $_student->student->final_grade_v2($_subject->id, 'finals');
                                 @endphp
-                              {{--   {{ $_final > 49 ? number_format($_final, 2) : '' }} --}}
+                                {{ $_final !== 49 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
                                 <b>
-                                    {{ $_final > 49 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
+                                    {{ $_final !== null ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
                             <td class="text-center">
                                 <b>
-                                    {{-- {{ $_final > 49 ? ($_student->student->percentage_grade($_final) >= 5 ? 'FAILED' : 'PASSED') : '' }} --}}
+                                    {{ $_final !== null ? ($_student->student->percentage_grade($_final) >= 5 ? 'FAILED' : 'PASSED') : '' }}
                                 </b>
 
                             </td>
                         </tr>
-                        @if ($_key == 48)
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <div class="page-break"></div>
-                        @endif
                     @endforeach
                 @endif
 

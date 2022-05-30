@@ -22,6 +22,13 @@
             text-align: left;
             justify-content: center;
         }
+        footer {
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
+            right: 0px;
+            justify-content: center;
+        }
         .content {
             /* position: relative; */
             top: 1.3in;
@@ -81,7 +88,9 @@
             padding-left: 10px;
             margin-top: -10px
         }
-
+        .text-center {
+            text-align: center;
+        }
     </style>
     {{-- <style>
         @page {
@@ -314,7 +323,7 @@
     </header>
     @yield('content')
     <footer>
-        <table class="table text-center">
+        <table class="table-content text-center">
             <tbody>
                 <tr>
                     <td>
