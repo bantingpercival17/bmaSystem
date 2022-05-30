@@ -100,19 +100,22 @@
 
                                 </div>
                                 <div class="col-md-4">
-                                    
+
                                     @if ($_data->applicant_examination)
                                         @if ($_data->applicant_examination->is_finish === 0)
                                             <small
-                                            class="badge bg-info">{{ $_data->applicant_examination->updated_at->format('F d,Y') }}</small> <br>
+                                                class="badge bg-info">{{ $_data->applicant_examination->updated_at->format('F d,Y') }}</small>
+                                            <br>
                                             <small class="text-muted fw-bolder mb-0">Timing Start</small>
-                                            <h3 class="text-primary fw-bolder ">  {{ $_data->applicant_examination->updated_at->format('h:m:s')}}</h3>
+                                            <h3 class="text-primary fw-bolder ">
+                                                {{ $_data->applicant_examination->updated_at->format('h:m:s') }}</h3>
                                         @endif
-                                       
-                                        @if ($_data->applicant_examination->is_finish ===1)
-                                        <small class="badge bg-info">{{ $_data->applicant_examination->updated_at->format('F d, Y') }}</small>
+
+                                        @if ($_data->applicant_examination->is_finish === 1)
+                                            <small
+                                                class="badge bg-info">{{ $_data->applicant_examination->updated_at->format('F d, Y') }}</small>
                                             <h3 class="text-primary fw-bolder mt-3">
-                                                {{ count($_data->applicant_examination->examination_result) }}</h3>
+                                                {{ $_data->applicant_examination->examination_result() }}</h3>
                                         @endif
                                     @endif
 
