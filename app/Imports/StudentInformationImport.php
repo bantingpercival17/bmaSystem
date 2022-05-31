@@ -22,8 +22,9 @@ class StudentInformationImport implements ToCollection
                 $_student = StudentDetails::where([
                     'last_name' => ucwords(mb_strtolower(trim($_data[2]))),
                     'first_name' => ucwords(mb_strtolower(trim($_data[1]))),
-                ])->first();
+                ])->first(); // GET THE STUDENT DETIALIES
                 echo  ucwords(mb_strtolower(trim($_data[1] . ', ' . $_data[2]))) . " " . $_data[0] .  " <br>";
+                //CHECK IF THE STUDENT IS EXSITING
                 if ($_student) {
                     // Account Update
                     $_account = StudentAccount::where('student_number', $_data[0])->first();
@@ -194,16 +195,20 @@ class StudentInformationImport implements ToCollection
     }
     public function create_account($_student, $_data)
     {
-        $_details = array(
-            'student_id' => $_student->id,
-            'campus_email' => $_data[0] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[2]))) . "@bma.edu.ph",
-            'personal_email' => $_data[0] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[2]))) . "@bma.edu.ph",
-            'student_number' => $_data[0],
-            'password' => Hash::make($_data[0]),
-            'is_active' => true,
-            'is_removed' => false
-        );
-        StudentAccount::create($_details);
+        try {
+            $_details = array(
+                'student_id' => $_student->id,
+                'campus_email' => $_data[0] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[2]))) . "@bma.edu.ph",
+                'personal_email' => $_data[0] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[2]))) . "@bma.edu.ph",
+                'student_number' => $_data[0],
+                'password' => Hash::make($_data[0]),
+                'is_active' => true,
+                'is_removed' => false
+            );
+            StudentAccount::create($_details);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
     public function update_account($_account, $_data, $_student)
     {
