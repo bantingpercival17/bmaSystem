@@ -65,4 +65,6 @@ Route::prefix('accounting')->group(function () {
     Route::post('/staff/employees-salay-details', [AccountingController::class, 'upload_salary_details'])->name('accounting.employees-upload-salary-details');
     Route::post('/staff/create-payroll', [AccountingController::class, 'payroll_store'])->name('accounting.employees-create-payroll');
     Route::get('/staff/generate-payroll', [AccountingController::class, 'payroll_view'])->name('accounting.generate-payroll');
+    Route::post('/staff/payroll-report', [AccountingController::class, 'payroll_generated_report'])->name('accounting.payroll-generate
+    ');
 });

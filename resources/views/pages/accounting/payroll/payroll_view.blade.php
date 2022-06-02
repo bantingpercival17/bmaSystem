@@ -24,13 +24,13 @@
                 <small class="fw-bolder">{{ strtoupper(str_replace('-', ' ', $_payroll->period)) }}</small>
             </div>
             <div class="float-end">
-                <a href="{{ route('accounting.salary-details-template') }}" class="btn btn-sm btn-info text-white">Payroll
+                <a href="{{ route('accounting.payroll-generate') }}" class="btn btn-sm btn-info text-white">Payroll
                     without Deduction</a>
                 <a href="{{ route('accounting.salary-details-template') }}" class="btn btn-sm btn-info text-white">Payroll
                     with Deduction</a>
-                <button type="button" class="btn btn-primary btn-sm btn-form-document" data-bs-toggle="modal"
+                {{-- <button type="button" class="btn btn-primary btn-sm btn-form-document" data-bs-toggle="modal"
                     data-bs-target=".document-view-modal">
-                    Upload Salary Details</button>
+                    Upload Salary Details</button> --}}
             </div>
         </div>
         <div class="card-body p-0">
@@ -41,12 +41,11 @@
                             <th>EMPLOYEE'S NAME</th>
                             <th>DEPARTMENT</th>
                             <th>JOB DESCRIPTION</th>
-                            <th>SALARY DETAILS</th>
+                            <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
-
-                        {{-- @if (count($_employees) > 0)
+                        @if (count($_employees) > 0)
                             @foreach ($_employees as $_employee)
                                 <tr>
                                     <td>{{ $_employee->last_name . ', ' . trim(str_replace(['2/m', 'C/e', '2/o', '3/e', 'Engr.', 'Capt.', 'C/m'], '', $_employee->first_name)) }}
@@ -54,9 +53,7 @@
                                     <td>{{ $_employee->department }}</td>
                                     <td>{{ strtoupper($_employee->job_description) }}</td>
                                     <td>
-                                        @if ($_employee->salary_details)
-                                            salary Details
-                                        @endif
+                                        <a href="" class="btn btn-sm btn-secondary">ADD TO PAYROLL</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -64,13 +61,13 @@
                             <tr>
                                 <td colspan="2">No Data</td>
                             </tr>
-                        @endif --}}
+                        @endif
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-    <div class="modal fade document-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    {{-- <div class="modal fade document-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xs">
             <div class="modal-content">
                 <div class="modal-header">
@@ -93,5 +90,5 @@
             </div>
 
         </div>
-    </div>
+    </div> --}}
 @endsection

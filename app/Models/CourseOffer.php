@@ -98,6 +98,20 @@ class CourseOffer extends Model
             ->where('sections.year_level', $_level)
             ->orderBy('sd.last_name', 'asc')->orderBy('sd.first_name');
     }
+    public function grading_student_list($_curriculum)
+    {
+        $_level =  (string)request()->input('_year_level') . "/C";
+        return $this->hasMany(Section::class, 'course_id')
+            ->select('sd.first_name', 'sd.last_name', 'ss.student_id', 'ss.section_id', 'sd.middle_name')
+            ->join('student_sections as ss', 'ss.section_id', 'sections.id')
+            ->join('student_details as sd', 'ss.student_id', 'sd.id')
+            ->join('enrollment_assessments as ea', 'sd.id', 'ea.student_id')
+            ->where('sections.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('sections.year_level', $_level)
+            ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('ea.curriculum_id', $_curriculum->id)
+            ->orderBy('sd.last_name', 'asc')->orderBy('sd.first_name');
+    }
     public function previous_enrolled()
     {
         $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();

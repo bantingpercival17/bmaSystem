@@ -29,6 +29,7 @@ use App\Models\StaffPayrollDetails;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\Voucher;
+use App\Report\PayrollReport;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
@@ -488,10 +489,17 @@ class AccountingController extends Controller
     {
         if ($_request->_payroll) {
             $_payroll = StaffPayroll::find(base64_decode($_request->_payroll));
-            return view('pages.accounting.payroll.payroll_view', compact('_payroll'));
+            $_employees = Staff::select('staff.*')
+                ->orderBy('staff.last_name', 'asc')->where('is_removed', false)->get();
+            return view('pages.accounting.payroll.payroll_view', compact('_payroll', '_employees'));
         } else {
             return redirect(route('accounting.payroll-view'));
         }
+    }
+    public function payroll_generated_report(Request $_request)
+    {
+        $_report = new PayrollReport;
+        $_report->payroll_generated_report_without();
     }
     public function generate_report_view()
     {

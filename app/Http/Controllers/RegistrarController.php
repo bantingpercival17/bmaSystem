@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 
 use App\Exports\CourseSectionStudentList;
+use App\Exports\CurriculumSummaryGradeSheet;
+use App\Exports\SummaryGradeSheet;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\CourseOffer;
@@ -24,11 +26,12 @@ use App\Report\Clearance\SemestralClearanceReport;
 use App\Report\GradingSheetReport;
 use App\Report\StudentListReport;
 use App\Report\Students\StudentReport;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Maatwebsite\Excel\Facades\Excel;
-    
+
 class RegistrarController extends Controller
 {
     public function __construct()
@@ -371,19 +374,19 @@ class RegistrarController extends Controller
     }
     public function section_export_file(Request $_request)
     {
-       $_course = CourseOffer::find(base64_decode($_request->_course));
-       $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
-       $_file_export = new CourseSectionStudentList($_course,$_request->_year_level);
-       // Excell Report
-       
-       if ($_request->_report_type == 'excel-file') {
-           $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
-           ob_end_clean();
-           return $_respond;
-       }
-       if ($_request->_report_type == 'pdf-report') {
-           return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File 
-       }
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+        $_file_export = new CourseSectionStudentList($_course, $_request->_year_level);
+        // Excell Report
+
+        if ($_request->_report_type == 'excel-file') {
+            $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+            ob_end_clean();
+            return $_respond;
+        }
+        if ($_request->_report_type == 'pdf-report') {
+            return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File 
+        }
     }
     // Semestral clearance
     public function clearance_view(Request $_request)
@@ -487,7 +490,25 @@ class RegistrarController extends Controller
         $_report = new StudentListReport();
         return $_report->summary_grade($_enrollment_curriculum, $_request);
     }
-
+    public function summary_grade_report_excel(Request $_request)
+    {
+        try {
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            $_level =  $_request->_year_level;
+            $_academic = AcademicYear::find(base64_decode($_request->_academic));
+            $_file = new CurriculumSummaryGradeSheet($_course, $_request);
+            $_year_level = $_level == '4' ? 'First Year' : '';
+            $_year_level = $_level == '3' ? 'Second Year' : $_year_level;
+            $_year_level = $_level == '2' ? 'Third Year' : $_year_level;
+            $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
+            $_file_name = strtoupper($_course->course_name . '-' . $_year_level . '_' . $_academic->school_year . "-" . $_academic->semester) . '.xlsx';
+            $_file = Excel::download($_file, $_file_name); // Download the File
+            ob_end_clean();
+            return $_file;
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+        }
+    }
     public function semestral_grade_publish(Request $_request)
     {
         GradePublish::create([

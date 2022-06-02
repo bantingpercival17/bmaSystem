@@ -63,8 +63,11 @@ $_title = 'Semestral Grade';
                                 <div>
                                     <button type="button" class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
                                         data-bs-toggle="modal" data-bs-target=".grade-view-modal"
-                                        data-grade-url="{{ route('registrar.semestral-grade-semestral-report') }}?_year_level={{str_replace('/C','',$_data->year_level) }}&_course={{ request()->input('_course') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                        data-grade-url="{{ route('registrar.semestral-grade-semestral-report') }}?_year_level={{ str_replace('/C', '', $_data->year_level) }}&_course={{ request()->input('_course') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                                         SUMMARY GRADES</button>
+                                    <br>
+                                    <a href="{{ route('registrar.subject-grade-export') }}?_year_level={{ str_replace('/C', '', $_data->year_level) }}&_course={{ request()->input('_course') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                                        class="btn btn-sm btn-primary mt-3">EXPORT SUMMARY GRADE</a>
 
                                 </div>
                             </div>
