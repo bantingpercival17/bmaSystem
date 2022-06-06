@@ -35,6 +35,8 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
             'LAST NAME',
             'FIRST NAME',
             'MIDDLE NAME',
+            'FULL NAME',
+            'CONTACT NUMBER'
         ];
     }
     public function map($_data): array
@@ -45,6 +47,9 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
+            $_data->student->last_name . ', ' . $_data->student->first_name . " " . $_data->student->extention_name == 'n/a' ? $_data->student->extention_name : '',
+            $_data->student->contact_number
+
         ];
     }
     public function registerEvents(): array
