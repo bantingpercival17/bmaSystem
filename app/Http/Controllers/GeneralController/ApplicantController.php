@@ -10,6 +10,7 @@ use App\Models\ApplicantDocuments;
 use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantExaminationAnswer;
 use App\Models\CourseOffer;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -193,5 +194,16 @@ class ApplicantController extends Controller
             Mail::to($value->email)->send($_mail_notification);
         }
         return back()->with('success', 'Sent');
+    }
+    public function virtual_briefing_view(Request $_request)
+    {
+        try {
+            $_courses = CourseOffer::all();
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            $_applicants =  $_course->applicant_briefing;
+            return view('pages.general-view.applicants.briefing_list_view', compact('_applicants', '_course', '_courses'));
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+        }
     }
 }
