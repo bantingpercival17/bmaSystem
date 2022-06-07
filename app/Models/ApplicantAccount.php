@@ -78,13 +78,16 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     }
     public function examination_list()
     {
-        return $this->hasMany(ApplicantEntranceExamination::class,'applicant_id');
+        return $this->hasMany(ApplicantEntranceExamination::class, 'applicant_id');
     }
     public function image()
     {
         $_level = $this->course_id == 3 ? 11 : 4;
-        $_document = Documents::where('department_id', 2)->where('year_level', $_level)->where('document_name','2x2 Picture')->where('is_removed', false)->first();
-    return $this->hasOne(ApplicantDocuments::class,'applicant_id')->where('document_id',$_document->id)->where('is_removed',false);
+        $_document = Documents::where('department_id', 2)->where('year_level', $_level)->where('document_name', '2x2 Picture')->where('is_removed', false)->first();
+        return $this->hasOne(ApplicantDocuments::class, 'applicant_id')->where('document_id', $_document->id)->where('is_removed', false);
     }
-   
+    public function medical_appointment()
+    {
+        return $this->hasOne(ApplicantMedicalAppointment::class, 'applicant_id')->where('is_removed', false);
+    }
 }

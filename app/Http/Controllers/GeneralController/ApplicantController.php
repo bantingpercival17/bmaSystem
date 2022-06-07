@@ -213,10 +213,19 @@ class ApplicantController extends Controller
     {
         $_courses = CourseOffer::all();
         $_applicants = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->get();
-        $_for_medical = ApplicantBriefing::where('is_removed', false)->count();
-        $_scheduled = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->count();
-        $_result = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', true)->count();
-        $_details = array(array('for medical', $_for_medical), array('scheduled', $_scheduled), array('waiting for result', $_result),/*  array('pending'), array('fit to enroll'), array('disqualied') */);
+        $_for_medical = ApplicantBriefing::join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')->whereNull('ama.applicant_id')->where('applicant_briefings.is_removed', false)->get();
+        $_scheduled = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->get();
+        $_result = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', true)->get();
+
+        $_applicants = $_request->view == 'waiting_scheduled' ? $_for_medical : $_applicants;
+        $_applicants = $_request->view == 'scheduled' ? $_scheduled : $_applicants;
+        $_applicants = $_request->view == 'waiting_result' ? $_result : $_applicants;
+
+        $_details = array(
+            array('waiting for Scheduled', count($_for_medical), 'waiting_scheduled'),
+            array('scheduled', count($_scheduled), 'scheduled'),
+            array('waiting for Medical result', count($_result), 'waiting_result'),/*  array('pending'), array('fit to enroll'), array('disqualied') */
+        );
         return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants'));
         /* try {
         } catch (Exception $err) {

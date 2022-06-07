@@ -22,22 +22,30 @@ $_title = 'Applicant Medical Overview';
     <section>
         <p class="display-6 fw-bolder text-primary">Applicant Medical Overview</p>
         <div class="row">
-            @foreach ($_details as $item)
+            @foreach ($_details as $key => $item)
                 <div class="col-lg col-xl">
                     <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
                         data-iq-ease="power.out" data-iq-opacity="0">
                         <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <small class="text-primary">
-                                    {{ strtoupper($item[0]) }}
-                                </small>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ route('medical.overview') }}?view={{ $item[0] }}">
+                                    <div class="fw-bolder text-primary h4">
+                                        {{ strtoupper($item[0]) }}
+                                    </div>
 
+                                </a>
+                                <div class="text-end">
+                                    <h3 class="counter"> {{ strtoupper($item[1]) }}</h3>
+                                </div>
                             </div>
-                            <div class="text-center">
-                                <h3 class="counter">  {{ strtoupper($item[1]) }}</h3>
-
-                            </div>
-
+                            @foreach ($_courses as $course)
+                                <div class="row">
+                                    <div class="col-md">{{ $course->course_code }}</div>
+                                    <div class="col-md">
+                                        {{ count($course[$item[2]]) }}
+                                    </div>
+                                </div>
+                            @endforeach
 
                         </div>
                     </div>
@@ -86,7 +94,8 @@ $_title = 'Applicant Medical Overview';
                 <div class="d-flex justify-content-between mb-3">
                     <div>
                         <span class="fw-bolder">
-                            {{-- {{ $_course->course_name }} --}}
+                            {{ request()->input('view') ? strtoupper(request()->input('view')) : 'WAITING FOR SCHEDULED' }}
+                            LIST
                         </span>
                         <div class="d-flex justify-content-between">
                             @if (request()->input('_sort'))
@@ -129,10 +138,13 @@ $_title = 'Applicant Medical Overview';
 
                                     </div>
                                     <div class="col-md">
-                                        <small class="text-muted fw-bolder">APPOINTMENT SCHEDULE</small>
-                                        <div class="badge bg-primary w-100">
-                                            <span>{{ $_data->created_at->format('F d, Y') }}</span>
-                                        </div>
+                                        @if (request()->input('view') == 'scheduled')
+                                            <small class="text-muted fw-bolder">APPOINTMENT SCHEDULE</small>
+                                            <div class="badge bg-primary w-100">
+                                                <span>{{ $_data->account->medical_appointment->appointment_date }}</span>
+                                            </div>
+                                        @endif
+
 
 
                                     </div>

@@ -416,4 +416,35 @@ class CourseOffer extends Model
             ->groupBy('pt.assessment_id')
             ->orderBy('pt.created_at', 'DESC')->get();
     }
+    // Medical
+    public function waiting_scheduled()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
+            ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->where('ab.is_removed', false)
+            ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->whereNull('ama.applicant_id');
+    }
+    public function scheduled()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
+            ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->where('ab.is_removed', false)
+            ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->where('ama.is_removed', false)->where('is_approved', false);
+    }
+    public function waiting_result()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
+            ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->where('ab.is_removed', false)
+            ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->where('ama.is_removed', false)->where('is_approved', true);
+    }
 }
