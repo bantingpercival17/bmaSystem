@@ -43,6 +43,7 @@ class RedirectIfAuthenticated
             $redirectTo = $_auth == 9 ? '/deparment-head' : $redirectTo;
             $redirectTo = $_auth == 10 ? route('dean.grade-submission') : $redirectTo;
             $redirectTo = $_auth == 11 ? '/librarian' : $redirectTo;
+            $redirectTo = $_auth == 12 ? '/medical' : $redirectTo;
             return redirect($redirectTo);
         }
         return $next($request);

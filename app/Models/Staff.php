@@ -223,6 +223,12 @@ class Staff extends Model
                 'role_icon' => 'icon-job',
                 'role_routes' => [['Semestral Clearance', 'librarian.semestral-clearance']],
             ],
+            [
+                'role_id' => 12,
+                'role_name' => 'Medical',
+                'role_icon' => 'icon-job',
+                'role_routes' => [['Overview', 'medical.overview']],
+            ],
         ];
     }
     public function navigation_dropdown_url()
@@ -247,6 +253,7 @@ class Staff extends Model
         $_url = request()->is('administrator/dashboard*') ? route('admin.dashboard') : $_url;
         $_url = request()->is('dashboard*') ? route('admin.dashboard') : $_url;
         $_url = request()->is('administrator/enrollment*') ? route('admin.dashboard') : $_url;
+        $_url = request()->is('medical/overview*') ? route('medical.overview') : $_url;
         return $_url;
     }
     public function routes_navigation()

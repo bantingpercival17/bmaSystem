@@ -26,6 +26,7 @@ require __DIR__ . '/custom-route/onboard.php'; // Onboard Route
 require __DIR__ . '/custom-route/department-head.php'; // Department-Head Route
 require __DIR__ . '/custom-route/dean.php'; // Dean Route
 require __DIR__ . '/custom-route/librarian.php'; // Dean Route
+require __DIR__ . '/custom-route/medical.php'; // Medical Route
 Route::get('/', [Controller::class, 'index']);
 Route::get('/setup', [Controller::class, 'setup']);
 Route::post('/setup', [Controller::class, 'setup_store']);

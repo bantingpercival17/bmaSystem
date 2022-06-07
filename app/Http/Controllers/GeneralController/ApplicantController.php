@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Mail\ApplicantBriefingNotification;
 use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
+use App\Models\ApplicantBriefing;
 use App\Models\ApplicantDocuments;
 use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantExaminationAnswer;
+use App\Models\ApplicantMedicalAppointment;
 use App\Models\CourseOffer;
 use Exception;
 use Illuminate\Http\Request;
@@ -205,5 +207,20 @@ class ApplicantController extends Controller
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
         }
+    }
+
+    public function medical_overview(Request $_request)
+    {
+        $_courses = CourseOffer::all();
+        $_applicants = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->get();
+        $_for_medical = ApplicantBriefing::where('is_removed', false)->count();
+        $_scheduled = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->count();
+        $_result = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', true)->count();
+        $_details = array(array('for medical', $_for_medical), array('scheduled', $_scheduled), array('waiting for result', $_result),/*  array('pending'), array('fit to enroll'), array('disqualied') */);
+        return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants'));
+        /* try {
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+        } */
     }
 }

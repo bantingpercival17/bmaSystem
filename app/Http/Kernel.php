@@ -75,6 +75,7 @@ class Kernel extends HttpKernel
         'department-head' => \App\Http\Middleware\DepartmentHead::class,
         'dean' => \App\Http\Middleware\Dean::class,
         'librarian' => \App\Http\Middleware\Librarian::class,
+        'medical' => \App\Http\Middleware\Medical::class,
 
     ];
 }
