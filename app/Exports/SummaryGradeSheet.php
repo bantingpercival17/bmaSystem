@@ -16,7 +16,7 @@ class SummaryGradeSheet implements FromCollection, WithHeadings, WithTitle, With
         $this->request = $_request;
         $this->curriculum = $curriculum;
         $this->subject_curriculum = $curriculum->subject([$_course->id, $_request->_year_level, Auth::user()->staff->current_academic()->semester])->get();
-    $this->subject_list = $curriculum->subject_lists([$_course->id, $_request->_year_level, Auth::user()->staff->current_academic()->semester])->get();
+        $this->subject_list = $curriculum->subject_lists([$_course->id, $_request->_year_level, Auth::user()->staff->current_academic()->semester])->get();
     }
     /**
      * @return \Illuminate\Support\Collection

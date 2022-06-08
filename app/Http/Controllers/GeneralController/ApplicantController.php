@@ -232,4 +232,17 @@ class ApplicantController extends Controller
             return back()->with('error', $err->getMessage());
         } */
     }
+    public function medical_schedule_download(Request $_request)
+    {
+        try {
+            $_file = new ApplicantMedicalSchedule();
+           
+            $_file_name = strtoupper('Medical Appiontment') . '.xlsx';
+            $_file = Excel::download($_file, $_file_name); // Download the File
+            ob_end_clean();
+            return $_file;
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+        }
+    }
 }
