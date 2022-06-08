@@ -19,7 +19,10 @@
                         <small>COURSE:</small>
                         <span><b>{{ $_subject->section->section_name }}</b></span>
                     </td>
-                    <td></td>
+                    <td>
+                        <small>TEACHER:</small>
+                        <span><b>{{ $_subject->staff->first_name . ' '. $_subject->staff->last_name}}</b></span>
+                    </td>
                 </tr>
             </tbody>
         </table>

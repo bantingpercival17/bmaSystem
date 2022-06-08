@@ -52,7 +52,12 @@ class SummaryGradeSheet implements FromCollection, WithHeadings, WithTitle, With
             if ($_subject_class) {
                 if ($_subject_class->grade_final_verification) {
                     $_final_grade = number_format($_data->student->final_grade($_subject_class->id, 'finals'), 2);
-                    $_final_grade = $_data->student->percentage_grade($_final_grade);
+                    $_final_grade = number_format($_data->student->percentage_grade($_final_grade),2);
+                    if ($value->subject->subject_code == 'BRDGE') {
+                        $_final_grade = $_data->student->enrollment_status->bridging_program == 'with' ? $_final_grade : '';
+                    } else {
+                        $_final_grade = $_final_grade;
+                    }
                 } else {
                     $_final_grade = '-';
                 }

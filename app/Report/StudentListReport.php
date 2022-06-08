@@ -51,7 +51,7 @@ class StudentListReport
             ->where('enrollment_assessments.is_removed', false)
             ->get();
         $_level =  $_request->_year_level;
-        $pdf = PDF::loadView("widgets.report.grade.summary_grade", compact('_course', '_curriculum', '_level'));
+        $pdf = PDF::loadView("widgets.report.grade-v2.summary_grade", compact('_course', '_curriculum', '_level'));
         $_year_level = $_level == '4' ? 'First Year' : '';
         $_year_level = $_level == '3' ? 'Second Year' : $_year_level;
         $_year_level = $_level == '2' ? 'Third Year' : $_year_level;
