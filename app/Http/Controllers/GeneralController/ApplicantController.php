@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\GeneralController;
 
+use App\Exports\ApplicantMedicalSchedule;
 use App\Http\Controllers\Controller;
 use App\Mail\ApplicantBriefingNotification;
 use App\Mail\ApplicantEmail;
@@ -16,6 +17,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ApplicantController extends Controller
 {
@@ -235,8 +237,7 @@ class ApplicantController extends Controller
     public function medical_schedule_download(Request $_request)
     {
         try {
-            $_file = new ApplicantMedicalSchedule();
-           
+            $_file = new ApplicantMedicalSchedule;
             $_file_name = strtoupper('Medical Appiontment') . '.xlsx';
             $_file = Excel::download($_file, $_file_name); // Download the File
             ob_end_clean();

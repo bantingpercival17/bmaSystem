@@ -112,6 +112,9 @@ $_title = 'Applicant Medical Overview';
                             @endif
                         </div>
                     </div>
+                    @if (request()->input('view') == 'scheduled')
+                        <a href="{{route('medical.download-appointment')}}" class="btn btn-sm text-white btn-info">DONWLOAD APPOINTMENTS</a>
+                    @endif
                     <span class="text-muted h6">
                         No. Result: <b>{{ count($_applicants) }}</b>
                     </span>
