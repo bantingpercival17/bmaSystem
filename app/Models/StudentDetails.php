@@ -753,4 +753,12 @@ class StudentDetails extends Model
         Storage::disk('public')->append($_file_name, $_data_to_log, null);
         //dd($_student);
     }
+    public function student_shipboard_journals()
+    {
+        return StudentDetails::select('student_details.*')
+        ->join('shipboard_journals','shipboard_journals.student_id','student_details.id')
+
+        ->where('shipboard_journals.is_approved', null)->groupBy('shipboard_journals.student_id')->where('shipboard_journals.is_removed', false)->get();
+        //return $this->hasMany(ShipboardJournal::class,'student_id')/* ->where('is_approved', null)->groupBy('student_id')->where('is_removed', false) */;
+    }
 }

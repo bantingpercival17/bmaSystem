@@ -20,7 +20,7 @@ $_title = 'Shipboard Monitoring';
                 <div class="row no-gutters">
                     <div class="col-md-6 col-lg-4">
 
-                        <img src="{{ $_midshipman? $_midshipman->profile_pic($_midshipman->account): 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                        <img src="{{ $_midshipman ? $_midshipman->profile_pic($_midshipman->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
                             class="card-img" alt="#">
                     </div>
                     <div class="col-md-6 col-lg-8">
@@ -132,28 +132,36 @@ $_title = 'Shipboard Monitoring';
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($_midshipman->narative_report as $_journal)
+                                    @if (count($_midshipman->narative_report) > 0)
+                                        @foreach ($_midshipman->narative_report as $_journal)
+                                            <tr>
+                                                <td>
+                                                    <a
+                                                        href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->month) }}&_midshipman={{ base64_encode($_midshipman->id) }}">
+                                                        {{ date('F - Y', strtotime($_journal->month)) }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <h6>{{ ($_journal->is_approved / 5) * 100 }}%</h6>
+                                                    </div>
+                                                    <div class="progress bg-soft-info shadow-none w-100"
+                                                        style="height: 6px">
+                                                        <div class="progress-bar bg-info" data-toggle="progress-bar"
+                                                            role="progressbar"
+                                                            aria-valuenow="{{ ($_journal->is_approved / 5) * 100 }}"
+                                                            aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        @endforeach
+                                    @else
                                         <tr>
-                                            <td>
-                                                <a
-                                                    href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->month) }}&_midshipman={{ base64_encode($_midshipman->id) }}">
-                                                    {{ date('F - Y', strtotime($_journal->month)) }}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex align-items-center mb-2">
-                                                    <h6>{{ ($_journal->is_approved / 5) * 100 }}%</h6>
-                                                </div>
-                                                <div class="progress bg-soft-info shadow-none w-100" style="height: 6px">
-                                                    <div class="progress-bar bg-info" data-toggle="progress-bar"
-                                                        role="progressbar"
-                                                        aria-valuenow="{{ ($_journal->is_approved / 5) * 100 }}"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                            <td></td>
+                                            <td colspan="3">No Journal</td>
                                         </tr>
-                                    @endforeach
+                                    @endif
+
                                 </tbody>
                             </table>
                         </div>
@@ -164,21 +172,23 @@ $_title = 'Shipboard Monitoring';
             @endif
         </div>
         <div class="col-md-4">
-            <div class="form-group search-input">
-                <input type="search" class="form-control" placeholder="Search...">
-            </div>
+            <form action="?" method="get">
+                <div class="form-group search-input">
+                    <input type="search" class="form-control" name="_cadet" placeholder="Search...">
+                </div>
+            </form>
             @if ($_shipboard_monitoring)
                 @foreach ($_shipboard_monitoring as $item)
                     <div class="card border-bottom border-4 border-0 border-primary">
-                        <a href="?_midshipman={{ base64_encode($item->student_id) }}">
+                        <a href="?_midshipman={{ base64_encode($item->id) }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <span
-                                            class="text-primary"><b>{{ strtoupper($item->student->last_name . ', ' . $item->student->first_name) }}</b></span>
+                                            class="text-primary"><b>{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</b></span>
                                     </div>
                                     <div>
-                                        <span>{{ $item->student->account->student_number }}</span>
+                                        <span>{{ $item->account ? $item->account->student_number : '-' }}</span>
                                     </div>
                                 </div>
                             </div>

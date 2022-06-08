@@ -102,8 +102,10 @@ class OnboardTrainingController extends Controller
     }
     public function onboard_training_view(Request $_request)
     {
+        $_student_detials = new StudentDetails();
         $_midshipman = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
-        $_shipboard_monitoring = ShipboardJournal::select('student_id')->where('is_approved', null)->groupBy('student_id')->where('is_removed', false)->get();
+       // $_shipboard_monitoring = ShipboardJournal::select('student_id')->where('is_approved', null)->groupBy('student_id')->where('is_removed', false)->get();
+        $_shipboard_monitoring = $_request->_cadet ? $_student_detials->student_search($_request->_cadet) : $_student_detials->student_shipboard_journals();
         return view('onboardtraining.shipboard.view', compact('_midshipman', '_shipboard_monitoring'));
     }
     public function  onboard_journal_view(Request $_request)
