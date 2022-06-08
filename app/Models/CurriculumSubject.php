@@ -35,6 +35,6 @@ class CurriculumSubject extends Model
 
     public function curriculum_subject_class($_data)
     {
-        return $this->hasOne(SubjectClass::class, 'curriculum_subject_id')->where('section_id', $_data)->first();
+        return $this->hasOne(SubjectClass::class, 'curriculum_subject_id')->select('subject_classes.*')->where('section_id', $_data)->where('is_removed',false)->first();
     }
 }

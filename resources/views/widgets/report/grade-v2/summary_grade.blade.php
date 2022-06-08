@@ -46,11 +46,12 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                             @endphp
                             @foreach ($curriculum->curriculum->subject_lists([$_course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
                                 @php
-                                    $_subject_class = $_subject->curriculum_subject_class($_data->section_id);
+                                    $_subject_class= $_subject->curriculum_subject_class($_data->section_id);
                                     if ($_subject_class) {
                                         if ($_subject_class->grade_final_verification) {
                                             $_final_grade = number_format($_data->student->final_grade($_subject_class->id, 'finals'), 2);
                                             $_final_grade = number_format($_data->student->percentage_grade($_final_grade), 2);
+                                            
                                             if ($_subject->subject->subject_code == 'BRDGE') {
                                                 $_final_grade = $_data->student->enrollment_status->bridging_program == 'with' ? $_final_grade : '';
                                             } else {
@@ -59,11 +60,10 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                                         } else {
                                             $_final_grade = '-';
                                         }
-                                    
-                                        //$_average += $_final_grade;
                                     } else {
                                         $_final_grade = '';
                                     }
+                                    //$_final_grade = $_subject_section ? $_subject_section->id : '-';
                                     $_total_units += $_subject->subject->units;
                                 @endphp
                                 <th>
