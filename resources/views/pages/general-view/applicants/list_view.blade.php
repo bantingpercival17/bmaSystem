@@ -107,8 +107,8 @@ $_title = 'Applicant List';
 
                                     </a>
                                     <span class="badge bg-primary">{{ $_data->course->course_name }}</span> -
-                                    <span>{{ $_data->applicant ? $_data->email : '-' }}</span>
-
+                                    <span>{{ $_data->applicant ? $_data->email : '-' }}</span> <br>
+                                   <span class="badge bg-info"> {{$_data->applicant->check_duplicate()}}</span>
                                 </div>
                                 <div class="col-md">
                                     <div class="badge bg-primary w-100">
