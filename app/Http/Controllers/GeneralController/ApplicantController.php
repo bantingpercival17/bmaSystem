@@ -226,7 +226,7 @@ class ApplicantController extends Controller
         $_details = array(
             array('waiting for Scheduled', count($_for_medical), 'waiting_scheduled'),
             array('scheduled', count($_scheduled), 'scheduled'),
-            array('waiting for Medical result', count($_result), 'waiting_result'),/*  array('pending'), array('fit to enroll'), array('disqualied') */
+            array(' ', count($_result), 'waiting_result'),/*  array('pending'), array('fit to enroll'), array('disqualied') */
         );
         return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants'));
         /* try {
@@ -246,4 +246,5 @@ class ApplicantController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
+
 }
