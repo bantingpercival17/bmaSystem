@@ -16,10 +16,11 @@ class ApplicantMedicalSchedule implements FromCollection, WithHeadings, WithTitl
      */
     public function collection()
     {
-        $_query = ApplicantAccount::join('applicant_detials', 'applicant_accounts.id', 'applicant_detials.applicant_id')
+        return ApplicantAccount::select('applicant_accounts.*')->join('applicant_detials', 'applicant_accounts.id', 'applicant_detials.applicant_id')
             ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_accounts.is_removed', false)->where('ama.is_removed', false)->where('ama.is_approved', false)->get();
-        return $_query;
+            ->where('applicant_accounts.is_removed', false)->where('ama.is_removed', false)->where('ama.is_approved', false)
+            ->orderBy('ama.appointment_date','desc')->get();
+       
     }
     public function headings(): array
 
@@ -37,9 +38,9 @@ class ApplicantMedicalSchedule implements FromCollection, WithHeadings, WithTitl
     public function map($_data): array
     {
         return [
-            $_data->last_name . ', ' . $_data->first_name . ' ' . $_data->middle_name[0] . ". ",
-          $_data,
-            $_data->appoitment_date 
+            $_data->applicant->last_name . ', ' . $_data->applicant->first_name . ' ' . $_data->applicant->middle_name[0] . ". ",
+            $_data->contact_number,
+            $_data->medical_appointment->appointment_date 
         ];
     }
 }
