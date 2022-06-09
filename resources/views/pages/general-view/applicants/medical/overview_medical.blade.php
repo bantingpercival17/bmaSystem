@@ -113,7 +113,8 @@ $_title = 'Applicant Medical Overview';
                         </div>
                     </div>
                     @if (request()->input('view') == 'scheduled')
-                        <a href="{{route('medical.download-appointment')}}" class="btn btn-sm text-white btn-info">DONWLOAD APPOINTMENTS</a>
+                        <a href="{{ route('medical.download-appointment') }}"
+                            class="btn btn-sm text-white btn-info">DONWLOAD APPOINTMENTS</a>
                     @endif
                     <span class="text-muted h6">
                         No. Result: <b>{{ count($_applicants) }}</b>
@@ -147,9 +148,13 @@ $_title = 'Applicant Medical Overview';
                                                 <span>{{ $_data->account->medical_appointment->appointment_date }}</span>
                                             </div>
                                         @endif
-
-
-
+                                        @if (request()->input('view') == 'waiting for Medical result')
+                                            <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) }}"
+                                                class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
+                                            <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(2) }}"
+                                                class="btn btn-danger btn-sm w-100 mb-2">FAIL</a>
+                                            <a href="" class="btn btn-info btn-sm w-100 text-white mb-2">PENDING</a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
