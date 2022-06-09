@@ -177,7 +177,9 @@
                         <small
                             class="badge bg-info">{{ $_account->applicant_examination->updated_at->format('F d, Y') }}</small>
                         <h3 class="text-primary fw-bolder mt-3">
-                            {{ count($_account->applicant_examination->examination_result) }}</h3>
+                            {{ $_account->applicant_examination->examination_result() }}
+                            {{-- {{/*  count($_account->applicant_examination->examination_result)  */}} --}}</h3>
+
                     </div>
                 </div>
                 <div class="col-md">

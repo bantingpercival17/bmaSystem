@@ -251,7 +251,6 @@ class CourseOffer extends Model
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
             //->leftJoin('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_accounts.is_removed', false)
             ->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '>=', $_documents)
             ->groupBy('applicant_accounts.id');
     }
