@@ -38,9 +38,15 @@ class ApplicantController extends Controller
     }
     public function applicant_profile(Request $_request)
     {
-        $_account = ApplicantAccount::find(base64_decode($_request->_student));
-        $_applicants = $_account->course->applicant_not_verified;
-        return view('pages.general-view.applicants.profile_view', compact('_account', '_applicants'));
+        $_account_check = ApplicantAccount::where('id', base64_decode($_request->_student))->where('is_removed', true)->first();
+        if ($_account_check) {
+            return redirect(route('applicant-lists') . '?_course=' . base64_encode($_account_check->course_id));
+        } else {
+            $_account = ApplicantAccount::find(base64_decode($_request->_student));
+            $_applicants = $_account->course->applicant_not_verified;
+            $_similar_account = $_account->similar_account();
+            return view('pages.general-view.applicants.profile_view', compact('_account', '_applicants', '_similar_account'));
+        }
     }
     public function applicant_document_notification(Request $_request)
     {
@@ -226,7 +232,7 @@ class ApplicantController extends Controller
         $_details = array(
             array('waiting for Scheduled', count($_for_medical), 'waiting_scheduled'),
             array('scheduled', count($_scheduled), 'scheduled'),
-            array(' ', count($_result), 'waiting_result'),/*  array('pending'), array('fit to enroll'), array('disqualied') */
+            array('waiting for Medical result', count($_result), 'waiting_result'),/*  array('pending'), array('fit to enroll'), array('disqualied') */
         );
         return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants'));
         /* try {
@@ -246,5 +252,8 @@ class ApplicantController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
-
+    public function meidcal_result(Request $_request)
+    {
+        # code...
+    }
 }

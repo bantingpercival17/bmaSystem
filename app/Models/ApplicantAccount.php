@@ -90,4 +90,16 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(ApplicantMedicalAppointment::class, 'applicant_id')->where('is_removed', false);
     }
+    public function similar_account()
+    {
+        $_details = $this->applicant;
+        $_applicant = ApplicantAccount::select('applicant_accounts.*')->join('applicant_detials', 'applicant_accounts.id', 'applicant_detials.applicant_id')
+            /* ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id') */
+            ->where('applicant_detials.first_name', $_details->first_name)
+            ->where('applicant_detials.last_name', $_details->last_name)
+            ->where('applicant_detials.middle_name', $_details->middle_name)
+            ->where('applicant_accounts.id', '!=', $this->id)
+            ->where('applicant_accounts.is_removed', false)->first();
+        return $_applicant;
+    }
 }

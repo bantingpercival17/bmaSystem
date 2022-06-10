@@ -42,11 +42,12 @@ class ApplicantDetials extends Model
             ->where('applicant_accounts.is_removed', false)
             ->get();
         $_applicant = ApplicantDetials::join('applicant_accounts', 'applicant_accounts.id', 'applicant_detials.applicant_id')
-        ->where('applicant_detials.first_name', $this->first_name)
+            /* ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id') */
+            ->where('applicant_detials.first_name', $this->first_name)
             ->where('applicant_detials.last_name', $this->last_name)
             ->where('applicant_detials.middle_name', $this->middle_name)
             ->where('applicant_accounts.is_removed', false)->first();
-        $_message = $_applicant->account->applicant_number === $this->account->applicant_number ? 'NO DUPLICATE DETECTED' : 'DUPLICATE FOUND ON <a href="'.route('applicant-profile').'?_student='. base64_encode($_applicant->applicant_id).'">' . $_applicant->account->applicant_number."</a>";
+        $_message = $_applicant->account->applicant_number === $this->account->applicant_number ? 'NO DUPLICATE DETECTED' : 'DUPLICATE FOUND ON <a href="' . route('applicant-profile') . '?_student=' . base64_encode($_applicant->applicant_id) . '">' . $_applicant->account->applicant_number . "</a>";
         return count($_duplication) > 1 ? $_message : 'NO DUPLICATE DETECTED';
     }
 }
