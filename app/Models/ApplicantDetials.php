@@ -46,7 +46,7 @@ class ApplicantDetials extends Model
             ->where('applicant_detials.last_name', $this->last_name)
             ->where('applicant_detials.middle_name', $this->middle_name)
             ->where('applicant_accounts.is_removed', false)->first();
-        $_message = /* $_applicant->account->applicant_number === $this->account->applicant_number ? 'ORIGINAL APPLICANT' :  */'DUPLICATE FOUND ON ' . $_applicant->account->applicant_number;
+        $_message = $_applicant->account->applicant_number === $this->account->applicant_number ? 'NO DUPLICATE DETECTED' : 'DUPLICATE FOUND ON <a href="'.route('applicant-profile').'?_student='. base64_encode($_applicant->applicant_id).'">' . $_applicant->account->applicant_number."</a>";
         return count($_duplication) > 1 ? $_message : 'NO DUPLICATE DETECTED';
     }
 }
