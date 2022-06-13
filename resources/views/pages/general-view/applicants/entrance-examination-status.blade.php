@@ -114,8 +114,21 @@
                                         @if ($_data->applicant_examination->is_finish === 1)
                                             <small
                                                 class="badge bg-info">{{ $_data->applicant_examination->updated_at->format('F d, Y') }}</small>
-                                            <h3 class="text-primary fw-bolder mt-3">
-                                                {{ $_data->applicant_examination->examination_result() }}</h3>
+                                            <br>
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <small class="fw-bolder">SCORE</small>
+                                                    <h3 class="text-primary fw-bolder mt-3">
+
+                                                        {{ $_data->applicant_examination->examination_result()[0] }}</h3>
+                                                </div>
+                                                <div class="col-md">
+                                                    <small class="fw-bolder">PERCENTILE</small>
+                                                    <h3 class="text-primary fw-bolder mt-3">
+
+                                                        {{ $_data->applicant_examination->examination_result()[1] }}</h3>
+                                                </div>
+                                            </div>
                                         @endif
                                     @endif
 

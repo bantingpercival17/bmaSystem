@@ -37,7 +37,7 @@ class ApplicantEntranceExamination extends Model
             array(170, 179, 92),
             array(180, 189, 95),
             array(190, 199, 98),
-            array(100, 100, 100),
+            array(200, 200, 100),
         );
         $_transmutation_shs = array(
             array(0, 9, 20),
@@ -72,6 +72,6 @@ class ApplicantEntranceExamination extends Model
         foreach ($_percent as $key => $value) {
             $_percentage = $_grade >= $value[0]  && $_grade <= $value[1] ? $value[2] : $_percentage;
         }
-        return $_percentage;
+        return [$_grade,$_percentage];
     }
 }
