@@ -239,7 +239,11 @@ class ApplicantController extends Controller
         ->where('ama.is_removed', false)*/
         ->where('applicant_briefings.is_removed', false)
         ->get();
-        $_scheduled = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->orderBy('appointment_date','asc')->get();
+        $_scheduled = ApplicantMedicalAppointment::join('applicant_accounts','applicant_accounts.id','applicant_medical_appointments.applicant_id')
+        ->where('applicant_accounts.is_removed',false)
+        ->where('applicant_medical_appointments.is_removed', false)
+        ->where('applicant_medical_appointments.is_approved', false)
+        ->orderBy('appointment_date','asc')->get();
         $_result = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')->leftJoin('applicant_medical_results as amr','amr.applicant_id','applicant_medical_appointments.applicant_id')->whereNull('amr.applicant_id')->where('applicant_medical_appointments.is_removed', false)->where('applicant_medical_appointments.is_approved', true)->get();
 
         $_applicants = $_request->view == 'waiting for Scheduled' ? $_for_medical : $_applicants;
