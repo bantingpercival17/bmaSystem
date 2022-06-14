@@ -206,18 +206,18 @@ $_course_url = route($_course_enrolled[0]);
                                         href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_briefing) }}</a>
                                 </td>
                                 <td><a
-                                    href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_for_scheduling) }}</a></td>
+                                    href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_for_scheduling) }}</a></td>
                                 <td>
                                     <a
-                                    href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_scheduled) }}</a>
+                                    href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_scheduled) }}</a>
                                 </td>
                                 <td>
                                     <a
-                                    href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_medical_result) }}</a>
+                                    href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_medical_result) }}</a>
                                 </td>
                                 <td>
                                     <a
-                                    href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_qualified_to_enrolled) }}</a>
+                                    href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_qualified_to_enrolled) }}</a>
                                 </td>
                             </tr>
                         @endforeach
