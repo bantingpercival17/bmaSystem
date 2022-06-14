@@ -239,7 +239,7 @@ class ApplicantController extends Controller
         ->where('ama.is_removed', false)*/
         ->where('applicant_briefings.is_removed', false)
         ->get();
-        $_scheduled = ApplicantMedicalAppointment::join('applicant_accounts','applicant_accounts.id','applicant_medical_appointments.applicant_id')
+        $_scheduled = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')->join('applicant_accounts','applicant_accounts.id','applicant_medical_appointments.applicant_id')
         ->where('applicant_accounts.is_removed',false)
         ->where('applicant_medical_appointments.is_removed', false)
         ->where('applicant_medical_appointments.is_approved', false)
