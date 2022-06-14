@@ -140,7 +140,7 @@ $_course_url = route($_course_enrolled[0]);
                             <th colspan="2">ENTRANCE EXAMINATION PAYMENT</th>
                             <td colspan="4">ENTRANCE EXAMINATION</td>
                             <th rowspan="2">BRIEFING</th>
-                            <th rowspan="2">MEDICAL</th>
+                            <th colspan="3">MEDICAL EXAMINATION</th>
                             <th rowspan="2">QUALIFIED FOR ENROLLMENT</th>
                         </tr>
                         <tr>
@@ -152,6 +152,9 @@ $_course_url = route($_course_enrolled[0]);
                             <th>ONGOING</th>
                             <th>PASSED</th>
                             <th>FAILED</th>
+                            <th>FOR SCHEDULING</th>
+                            <th>SCHEDULED</th>
+                            <th>RESULT</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -202,8 +205,20 @@ $_course_url = route($_course_enrolled[0]);
                                 <td> <a
                                         href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_briefing) }}</a>
                                 </td>
-                                <td></td>
-                                <td></td>
+                                <td><a
+                                    href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_for_scheduling) }}</a></td>
+                                <td>
+                                    <a
+                                    href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->scheduled) }}</a>
+                                </td>
+                                <td>
+                                    <a
+                                    href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_medical_result) }}</a>
+                                </td>
+                                <td>
+                                    <a
+                                    href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_qualified_to_enrolled) }}</a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

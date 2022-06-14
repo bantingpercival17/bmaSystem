@@ -130,7 +130,7 @@ $_title = 'Applicant Medical Overview';
                                             class="badge {{ $_data->account->course_id == 3 ? 'bg-info' : 'bg-primary' }}">{{ $_data->account->course->course_code }}</span>
                                         <span><b>{{ $_data->account ? $_data->account->applicant_number : '-' }}</b></span>
                                         <a
-                                            href="{{ route('applicant-profile') }}?_student={{ base64_encode($_data->id) }}">
+                                            href="{{ route('applicant-profile') }}?_student={{ base64_encode($_data->applicant_id) }}">
                                             <div class="mt-2 h4 fw-bolder text-primary">
                                                 {{ strtoupper($_data->account->applicant->last_name . ', ' . $_data->account->applicant->first_name) }}
                                             </div>
@@ -253,7 +253,7 @@ $_title = 'Applicant Medical Overview';
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="get">
+                    <form action="{{route('medical.applicant-medical-result') }}" method="get">
                         <div class="form-group">
                             <label for="" class="form-label fw-bolder">REMARKS</label>
                             <input type="text" name="remarks" class="form-control">
@@ -277,7 +277,7 @@ $_title = 'Applicant Medical Overview';
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="get">
+                    <form action="{{route('medical.applicant-medical-result') }}" method="get">
                         <div class="form-group">
                             <label for="" class="form-label fw-bolder">REMARKS</label>
                             <input type="text" name="remarks" class="form-control">
