@@ -12,6 +12,7 @@ use App\Models\ApplicantDocuments;
 use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantExaminationAnswer;
 use App\Models\ApplicantMedicalAppointment;
+use App\Models\ApplicantMedicalResult;
 use App\Models\CourseOffer;
 use App\Report\ApplicantReport;
 use Exception;
@@ -232,13 +233,18 @@ class ApplicantController extends Controller
     {
         $_courses = CourseOffer::all();
         $_applicants = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->get();
-        $_for_medical = ApplicantBriefing::leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')/* ->where('ama.applicant_id', 'is', null) */->where('ama.is_removed', false)->where('applicant_briefings.is_removed', false)->get();
-        $_scheduled = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->get();
-        $_result = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', true)->get();
+       $_for_medical = ApplicantBriefing::select('applicant_briefings.*')->leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')
+        ->whereNull('ama.applicant_id')
+        /*->whereNull('ama.applicant_id')
+        ->where('ama.is_removed', false)*/
+        ->where('applicant_briefings.is_removed', false)
+        ->get();
+        $_scheduled = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->orderBy('appointment_date','asc')->get();
+        $_result = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')->leftJoin('applicant_medical_results as amr','amr.applicant_id','applicant_medical_appointments.applicant_id')->whereNull('amr.applicant_id')->where('applicant_medical_appointments.is_removed', false)->where('applicant_medical_appointments.is_approved', true)->get();
 
-        $_applicants = $_request->view == 'waiting_scheduled' ? $_for_medical : $_applicants;
+        $_applicants = $_request->view == 'waiting for Scheduled' ? $_for_medical : $_applicants;
         $_applicants = $_request->view == 'scheduled' ? $_scheduled : $_applicants;
-        $_applicants = $_request->view == 'waiting_result' ? $_result : $_applicants;
+        $_applicants = $_request->view == 'waiting for Medical result' ? $_result : $_applicants;
 
         $_details = array(
             array('waiting for Scheduled', count($_for_medical), 'waiting_scheduled'),
@@ -246,10 +252,7 @@ class ApplicantController extends Controller
             array('waiting for Medical result', count($_result), 'waiting_result'),/*  array('pending'), array('fit to enroll'), array('disqualied') */
         );
         return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants'));
-        /* try {
-        } catch (Exception $err) {
-            return back()->with('error', $err->getMessage());
-        } */
+       
     }
     public function medical_schedule_download(Request $_request)
     {
@@ -263,8 +266,26 @@ class ApplicantController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
+    public function medical_appointment_approved(Request $_request)
+    {
+        try {
+            $_appointment = ApplicantMedicalAppointment::find(base64_decode($_request->appointment));
+            $_appointment->is_approved = 1;
+            $_appointment->save();
+            return back()->with('success','Appointment Approved');
+        }  catch (Exception $error) {
+            return back()->with('error',$error->getMessage());
+          }
+    }
     public function meidcal_result(Request $_request)
     {
-        # code...
+     try {
+        $_details = array('applicant_id'=>base64_decode($_request->applicant),'is_fit'=> base64_decode($_request->result),'remarks');
+        
+        ApplicantMedicalResult::create($_details);
+        return back()->with('success','applicant_id'.base64_decode($_request->applicant).'is_fit'.base64_decode($_request->result));
+     } catch (Exception $error) {
+       return back()->with('error',$error->getMessage());
+     }
     }
 }

@@ -147,13 +147,18 @@ $_title = 'Applicant Medical Overview';
                                             <div class="badge bg-primary w-100">
                                                 <span>{{ $_data->account->medical_appointment->appointment_date }}</span>
                                             </div>
+                                            <a href="{{ route('medical.applicant-appointment') }}?appointment={{ base64_encode($_data->id) }}"
+                                                class="btn btn-sm btn-outline-info mt-2">APPROVED</a>
                                         @endif
                                         @if (request()->input('view') == 'waiting for Medical result')
-                                            <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) }}"
+                                            <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->applicant_id) }}"
                                                 class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
-                                            <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(2) }}"
-                                                class="btn btn-danger btn-sm w-100 mb-2">FAIL</a>
-                                            <a href="" class="btn btn-info btn-sm w-100 text-white mb-2">PENDING</a>
+                                            <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
+                                                data-applicant="{{ base64_encode($_data->applicant_id) }}"
+                                                data-bs-toggle="modal" data-bs-target=".modal-medical-fail">FAIL</a>
+                                            <a class="btn btn-info btn-sm w-100 text-white mb-2 btn-medical"
+                                                data-applicant="{{ base64_encode($_data->applicant_id) }}"
+                                                data-bs-toggle="modal" data-bs-target=".modal-medical-pending">PENDING</a>
                                         @endif
                                     </div>
                                 </div>
@@ -238,7 +243,53 @@ $_title = 'Applicant Medical Overview';
             </div>
         </div>
     </section>
+    <div class="modal fade modal-medical-fail" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Medical Examination - Fail</h5>
 
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="get">
+                        <div class="form-group">
+                            <label for="" class="form-label fw-bolder">REMARKS</label>
+                            <input type="text" name="remarks" class="form-control">
+                            <input type="hidden" name="result" value="{{ base64_encode(2) }}">
+                            <input type="hidden" name="applicant" class="applicant">
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">SUBMIT</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade modal-medical-pending" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Medical Examination - Pending</h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="get">
+                        <div class="form-group">
+                            <label for="" class="form-label fw-bolder">REMARKS</label>
+                            <input type="text" name="remarks" class="form-control">
+                            <input type="hidden" name="applicant" class="applicant">
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">SUBMIT</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 
@@ -246,17 +297,22 @@ $_title = 'Applicant Medical Overview';
 
 @section('js')
     <script>
-        $(document).on('click', '.course-btn', function() {
-            var data = $(this).data('course')
-            $.get('applicant-list?course=' + data, function(respond) {
-                respond.applicant.forEach(element => {
-                    $.get('applicant/notification?_applicant=' + element.id, function(respond) {
-                        if (respond.data.respond == '200') {
-                            console.info(respond.data.message)
-                        }
-                    })
-                });
-            })
-        })
+        $(document).on('click', '.btn-medical', function() {
+            var applicant = $(this).data('applicant');
+            $('.applicant').val(applicant)
+            console.log('Applicant: ' + applicant)
+        });
+        /*  $(document).on('click', '.course-btn', function() {
+             var data = $(this).data('course')
+             $.get('applicant-list?course=' + data, function(respond) {
+                 respond.applicant.forEach(element => {
+                     $.get('applicant/notification?_applicant=' + element.id, function(respond) {
+                         if (respond.data.respond == '200') {
+                             console.info(respond.data.message)
+                         }
+                     })
+                 });
+             })
+         }) */
     </script>
 @endsection

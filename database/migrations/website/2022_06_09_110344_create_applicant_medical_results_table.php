@@ -19,6 +19,7 @@ class CreateApplicantMedicalResultsTable extends Migration
             $table->foreign('applicant_id')->references('id')->on('applicant_accounts');
             $table->boolean('is_fit')->nullable();
             $table->boolean('is_pending')->nullable();
+            $table->text('image_path')->nullable();
             $table->string('remarks')->nullable();
             $table->boolean('is_removed')->default(0);
             $table->timestamps();

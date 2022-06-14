@@ -9,4 +9,8 @@ class ApplicantMedicalExamination extends Model
 {
     use HasFactory;
     protected $connection = 'mysql2';
+    public function account()
+    {
+        return $this->belongsTo(ApplicantAccount::class, 'applicant_id');
+    }
 }
