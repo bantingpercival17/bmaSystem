@@ -73,7 +73,7 @@ $_title = 'Profile View';
                             <h5 class="mb-1"><b>APPLICANT DETAILS</b></h5>
                         </div>
                         <div>
-                            <a href="" class="btn btn-sm btn-info mb-3 text-white">OVERVIEW</a>
+                            <a href="{{ route('applicant-form') }}?applicant={{ base64_encode($_account->id) }}" class="btn btn-sm btn-info mb-3 text-white">FORM RG-01</a>
                         </div>
                     </div>
                     <div class="card-body">

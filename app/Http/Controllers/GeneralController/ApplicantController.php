@@ -13,6 +13,7 @@ use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantExaminationAnswer;
 use App\Models\ApplicantMedicalAppointment;
 use App\Models\CourseOffer;
+use App\Report\ApplicantReport;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +47,16 @@ class ApplicantController extends Controller
             $_applicants = $_account->course->applicant_not_verified;
             $_similar_account = $_account->similar_account();
             return view('pages.general-view.applicants.profile_view', compact('_account', '_applicants', '_similar_account'));
+        }
+    }
+    public function applicant_registration_form(Request $_request)
+    {
+        try {
+            $_report = new ApplicantReport;
+            $_applicant = ApplicantAccount::find(base64_decode($_request->applicant));
+            return $_report->applicant_form($_applicant);
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
         }
     }
     public function applicant_document_notification(Request $_request)
@@ -221,7 +232,7 @@ class ApplicantController extends Controller
     {
         $_courses = CourseOffer::all();
         $_applicants = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->get();
-        $_for_medical = ApplicantBriefing::join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')->whereNull('ama.applicant_id')->where('applicant_briefings.is_removed', false)->get();
+        $_for_medical = ApplicantBriefing::leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')/* ->where('ama.applicant_id', 'is', null) */->where('ama.is_removed', false)->where('applicant_briefings.is_removed', false)->get();
         $_scheduled = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->get();
         $_result = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', true)->get();
 
