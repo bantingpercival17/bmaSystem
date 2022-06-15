@@ -89,4 +89,18 @@ class ApplicantEmail extends Mailable
             ->markdown('widgets.mail.applicant-mail.entrance-examination-payment-approved')
             ->with(['data' => $_applicant, 'exam_code' => $_exam_code]);
     }
+    public function medical_appointment_schedule($_applicant)
+    {
+        return $this->from(Auth::user()->email, "BMA SICKBAY'S OFFICE")
+            ->subject("MEDICAL APPOINTMENT CONFIRM: " . $_applicant->applicant_number)
+            ->markdown('widgets.mail.applicant-mail.medical-appointment')
+            ->with(['data' => $_applicant,]);
+    }
+    public function medical_result_passed($_applicant)
+    {
+        return $this->from(Auth::user()->email, "BMA SICKBAY'S OFFICE")
+            ->subject("MEDICAL RESULT: " . $_applicant->applicant_number)
+            ->markdown('widgets.mail.applicant-mail.medical-result-passed')
+            ->with(['data' => $_applicant,]);
+    }
 }

@@ -309,6 +309,7 @@ class CourseOffer extends Model
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_finish', 0)
@@ -321,6 +322,7 @@ class CourseOffer extends Model
         $_item =  $this->id == 3 ? 100 : 200;
         $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_removed', false)->where('aee.is_finish', true)->groupBy('applicant_accounts.id');
@@ -340,6 +342,7 @@ class CourseOffer extends Model
         $_item =  $this->id == 3 ? 100 : 200;
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_removed', false)->where('aee.is_finish', true)
@@ -358,6 +361,7 @@ class CourseOffer extends Model
         $_item =  $this->id == 3 ? 100 : 200;
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_entrance_examinations as aee', 'aee.applicant_id', 'applicant_accounts.id')
             ->where('aee.is_removed', false)->where('aee.is_finish', true)
@@ -375,6 +379,7 @@ class CourseOffer extends Model
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_payments.is_removed', false);
@@ -401,15 +406,6 @@ class CourseOffer extends Model
             ->leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
             ->whereNull('ama.applicant_id')
             ;
-        return $this->hasMany(ApplicantAccount::class, 'course_id')
-            ->select('applicant_accounts.*')
-            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
-            ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_accounts.is_removed', false)
-            ->where('applicant_briefings.is_removed', false)
-            ->groupBy('applicant_accounts.id')
-            ->leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
-            ->whereNull('ama.applicant_id');
     }
     public function applicant_scheduled()
     {
@@ -421,25 +417,29 @@ class CourseOffer extends Model
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
             ->where('ama.is_removed', false)
+            ->leftJoin('applicant_medical_results as amr','amr.applicant_id','applicant_accounts.id')
+            ->whereNull('amr.applicant_id')
             ;
-        return $this->hasMany(ApplicantAccount::class, 'course_id')
-            ->select('applicant_accounts.*')
-            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
-            ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_accounts.is_removed', false)
-            ->where('applicant_briefings.is_removed', false)
-            ->groupBy('applicant_briefings.applicant_id')
-            ->leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
-           ;
      
     }
     public function applicant_medical_result()
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
         ->select('applicant_accounts.*')
+        ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_briefings.is_removed', false)
+        ->groupBy('applicant_accounts.id')
+        ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id')
+        ->where('applicant_accounts.is_removed', false)
+        ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+        ->where('ama.is_removed', false)
+        ->leftJoin('applicant_medical_results as amr','amr.applicant_id','applicant_accounts.id')
+        ->whereNotNull('amr.applicant_id')
+        ;
+     /*    return $this->hasMany(ApplicantAccount::class, 'course_id')
+        ->select('applicant_accounts.*')
         ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
         ->groupBy('applicant_accounts.id')
-        ->join('applicant_medical_results as amr','amr.applicant_id','applicant_accounts.id');
+        ->join('applicant_medical_results as amr','amr.applicant_id','applicant_accounts.id'); */
        // ->where('amr.is_removed',false);
     }
     public function applicant_qualified_to_enrolled()
@@ -482,11 +482,14 @@ class CourseOffer extends Model
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('applicant_briefings.is_removed', false)
+            ->groupBy('applicant_accounts.id')
+            ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false)
-            ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
-            ->where('ab.is_removed', false)
-            ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
-            ->whereNull('ama.applicant_id');
+            ->leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+            ->whereNull('ama.applicant_id')
+            ;
     }
     public function scheduled()
     {

@@ -233,18 +233,18 @@ class ApplicantController extends Controller
     {
         $_courses = CourseOffer::all();
         $_applicants = ApplicantMedicalAppointment::where('is_removed', false)->where('is_approved', false)->get();
-       $_for_medical = ApplicantBriefing::select('applicant_briefings.*')->leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')
-        ->whereNull('ama.applicant_id')
-        /*->whereNull('ama.applicant_id')
+        $_for_medical = ApplicantBriefing::select('applicant_briefings.*')->leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')
+            ->whereNull('ama.applicant_id')
+            /*->whereNull('ama.applicant_id')
         ->where('ama.is_removed', false)*/
-        ->where('applicant_briefings.is_removed', false)
-        ->get();
-        $_scheduled = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')->join('applicant_accounts','applicant_accounts.id','applicant_medical_appointments.applicant_id')
-        ->where('applicant_accounts.is_removed',false)
-        ->where('applicant_medical_appointments.is_removed', false)
-        ->where('applicant_medical_appointments.is_approved', false)
-        ->orderBy('appointment_date','asc')->get();
-        $_result = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')->leftJoin('applicant_medical_results as amr','amr.applicant_id','applicant_medical_appointments.applicant_id')->whereNull('amr.applicant_id')->where('applicant_medical_appointments.is_removed', false)->where('applicant_medical_appointments.is_approved', true)->get();
+            ->where('applicant_briefings.is_removed', false)
+            ->get();
+        $_scheduled = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')->join('applicant_accounts', 'applicant_accounts.id', 'applicant_medical_appointments.applicant_id')
+            ->where('applicant_accounts.is_removed', false)
+            ->where('applicant_medical_appointments.is_removed', false)
+            ->where('applicant_medical_appointments.is_approved', false)
+            ->orderBy('appointment_date', 'asc')->get();
+        $_result = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')->leftJoin('applicant_medical_results as amr', 'amr.applicant_id', 'applicant_medical_appointments.applicant_id')->whereNull('amr.applicant_id')->where('applicant_medical_appointments.is_removed', false)->where('applicant_medical_appointments.is_approved', true)->get();
 
         $_applicants = $_request->view == 'waiting for Scheduled' ? $_for_medical : $_applicants;
         $_applicants = $_request->view == 'scheduled' ? $_scheduled : $_applicants;
@@ -256,7 +256,6 @@ class ApplicantController extends Controller
             array('waiting for Medical result', count($_result), 'waiting_result'),/*  array('pending'), array('fit to enroll'), array('disqualied') */
         );
         return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants'));
-       
     }
     public function medical_schedule_download(Request $_request)
     {
@@ -276,20 +275,33 @@ class ApplicantController extends Controller
             $_appointment = ApplicantMedicalAppointment::find(base64_decode($_request->appointment));
             $_appointment->is_approved = 1;
             $_appointment->save();
-            return back()->with('success','Appointment Approved');
-        }  catch (Exception $error) {
-            return back()->with('error',$error->getMessage());
-          }
+            $_email_model = new ApplicantEmail();
+            $_email = 'p.banting@bma.edu.ph';
+            //$_email = $_appointment->account->email;
+            Mail::to($_email)->send($_email_model->medical_appointment_schedule($_appointment->account));
+            
+            return back()->with('success', 'Appointment Approved');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
     }
     public function meidcal_result(Request $_request)
     {
-     try {
-        $_details = array('applicant_id'=>base64_decode($_request->applicant),'is_fit'=> base64_decode($_request->result),'remarks');
-        
-        ApplicantMedicalResult::create($_details);
-        return back()->with('success','applicant_id'.base64_decode($_request->applicant).'is_fit'.base64_decode($_request->result));
-     } catch (Exception $error) {
-       return back()->with('error',$error->getMessage());
-     }
+        try {
+            $_applicant = ApplicantAccount::find(base64_decode($_request->applicant));
+            $_details = array('applicant_id' => base64_decode($_request->applicant), 'is_fit' => base64_decode($_request->result), 'remarks');
+            $_email_model = new ApplicantEmail();
+            $_email = 'p.banting@bma.edu.ph';
+            //$_email = $_appointment->account->email;
+            if (base64_decode($_request->result) == 1) {
+                Mail::to($_email)->send($_email_model->medical_result_passed($_applicant));
+            }
+           
+            
+            //ApplicantMedicalResult::create($_details);
+            return back()->with('success', 'applicant_id' . base64_decode($_request->applicant) . 'is_fit' . base64_decode($_request->result));
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
     }
 }
