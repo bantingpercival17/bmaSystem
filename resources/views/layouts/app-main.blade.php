@@ -111,6 +111,15 @@
             })
             /* toastr.success("{{ session('message') }}") */
         @endif
+        @if (Session::has('warning'))
+            Swal.fire({
+                title: 'System Maintaince!',
+                text: "{{ session('warning') }}",
+                icon: 'warning',
+                confirmButtonText: 'Okay'
+            })
+            /* toastr.success("{{ session('message') }}") */
+        @endif
         var message = "<?php echo session('reset-password'); ?>"
         @if (Session::has('reset-password'))
             Swal.fire({
