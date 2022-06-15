@@ -33,7 +33,7 @@ Route::post('/setup', [Controller::class, 'setup_store']);
 Route::get('/attendance', [EmployeeController::class, 'attendance_form_view']);
 Route::post('/attendance', [EmployeeController::class, 'attendance_generate_qr']);
 Route::get('/maintance',function(){
-return back()->with('error','This Link is Under Development');
+return back()->with('warning','This Link is Under Development');
 })->name('underdeveloperment');
 Route::get('/password-hash/{data}', function($data){
 return Hash::make($data);

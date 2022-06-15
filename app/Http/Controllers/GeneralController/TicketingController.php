@@ -59,7 +59,7 @@ class TicketingController extends Controller
                 ->where('ticket_concerns.is_resolved', false)
                 ->where('tickets.name','!=','HenryScord')
                 ->where('ticket_issues.department_id', $_department->id)
-                /* ->where('ticket_issues.is_removed', false) */->orderBy('ticket_concerns.created_at', 'desc')->get();
+                /* ->where('ticket_issues.is_removed', false) */->orderBy('ticket_concerns.updated_at', 'desc')->get();
             $_ticket_issue = TicketIssue::where('is_removed', false)->where('department_id', '!=', $_department->id)->orderBy('department_id')->get();
             $_ticket = $_request->_ticket ? TicketConcern::find(base64_decode($_request->_ticket)) : [];
 

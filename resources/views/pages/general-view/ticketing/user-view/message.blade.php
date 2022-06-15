@@ -305,7 +305,7 @@ $_title = 'Ticket Concern';
 
                                                 <label class="m-0 ">{{ $data->ticket->name }}</label> <br>
                                                 <small
-                                                    class="float-end">{{ $data->ticket->created_at->diffForHumans() }}</small>
+                                                    class="float-end">{{ $data->updated_at->diffForHumans() }}</small>
                                                 <small class="mb-0">
                                                     {{ $data->ticket->ticket_number }}</small>
 
