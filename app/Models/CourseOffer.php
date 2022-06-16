@@ -434,6 +434,7 @@ class CourseOffer extends Model
         ->where('ama.is_removed', false)
         ->leftJoin('applicant_medical_results as amr','amr.applicant_id','applicant_accounts.id')
         ->whereNotNull('amr.applicant_id')
+        ->where('amr.is_removed',false)
         ;
      /*    return $this->hasMany(ApplicantAccount::class, 'course_id')
         ->select('applicant_accounts.*')

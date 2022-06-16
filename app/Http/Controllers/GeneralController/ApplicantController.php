@@ -277,8 +277,8 @@ class ApplicantController extends Controller
             $_appointment->save();
             $_email_model = new ApplicantEmail();
             $_email = 'p.banting@bma.edu.ph';
-            //$_email = $_appointment->account->email;
-            Mail::to($_email)->send($_email_model->medical_appointment_schedule($_appointment->account));
+            $_email = $_appointment->account->email;
+            Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_appointment_schedule($_appointment->account));
             
             return back()->with('success', 'Appointment Approved');
         } catch (Exception $error) {
@@ -289,16 +289,18 @@ class ApplicantController extends Controller
     {
         try {
             $_applicant = ApplicantAccount::find(base64_decode($_request->applicant));
-            $_details = array('applicant_id' => base64_decode($_request->applicant), 'is_fit' => base64_decode($_request->result), 'remarks');
+            if ($_request->result) {
+                $_details = array('applicant_id' => base64_decode($_request->applicant), 'is_fit' => base64_decode($_request->result), 'remarks'=>$_request->remarks);
+            }else{
+                $_details = array('applicant_id' => base64_decode($_request->applicant), 'is_pending' => base64_decode($_request->result), 'remarks'=>$_request->remarks);
+            }
             $_email_model = new ApplicantEmail();
             $_email = 'p.banting@bma.edu.ph';
-            //$_email = $_appointment->account->email;
+            $_email = $_applicant->email;
             if (base64_decode($_request->result) == 1) {
-                Mail::to($_email)->send($_email_model->medical_result_passed($_applicant));
+                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
             }
-           
-            
-            //ApplicantMedicalResult::create($_details);
+            ApplicantMedicalResult::create($_details);
             return back()->with('success', 'applicant_id' . base64_decode($_request->applicant) . 'is_fit' . base64_decode($_request->result));
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
