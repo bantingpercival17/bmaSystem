@@ -58,7 +58,11 @@ class StudentDetails extends Model
     }
     public function enrollment_application()
     {
-        return $this->hasOne(EnrollmentApplication::class, 'student_id');
+        return $this->hasOne(EnrollmentApplication::class, 'student_id')->whereNull('is_approved')->where('is_removed', false);
+    }
+    public function enrollment_application_payment()
+    {
+        return $this->hasOne(EnrollmentApplication::class, 'student_id')->where('is_approved',true)->where('academic_id',Auth::user()->staff->current_academic()->id)->where('is_removed', false);
     }
     public function account()
     {
@@ -106,8 +110,11 @@ class StudentDetails extends Model
     public function enrollment_application_list()
     {
         $_academic = Auth::user()->staff->current_academic();
-        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
-            ->join('enrollment_applications as ea', 'ea.student_id', 'student_details.id')->where('ea.academic_id', $_academic->id)->where('is_approved', null);
+        $_students = StudentDetails::select('student_details.*')
+            ->leftJoin('enrollment_applications as ea', 'ea.student_id', 'student_details.id')
+            ->where('ea.academic_id', $_academic->id)
+            ->whereNull('ea.is_approved')
+            ->where('ea.is_removed', false);
         return $_students->get();
     }
     public function enrollment_application_list_view_course($_data)
@@ -756,9 +763,9 @@ class StudentDetails extends Model
     public function student_shipboard_journals()
     {
         return StudentDetails::select('student_details.*')
-        ->join('shipboard_journals','shipboard_journals.student_id','student_details.id')
+            ->join('shipboard_journals', 'shipboard_journals.student_id', 'student_details.id')
 
-        ->where('shipboard_journals.is_approved', null)->groupBy('shipboard_journals.student_id')->where('shipboard_journals.is_removed', false)->get();
+            ->where('shipboard_journals.is_approved', null)->groupBy('shipboard_journals.student_id')->where('shipboard_journals.is_removed', false)->get();
         //return $this->hasMany(ShipboardJournal::class,'student_id')/* ->where('is_approved', null)->groupBy('student_id')->where('is_removed', false) */;
     }
 }

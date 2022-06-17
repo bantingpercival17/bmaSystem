@@ -138,8 +138,10 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="header-text"><b class="text-primary">PAYMENT ASSESSMENT</b></h5>
+              
                 </div>
                 <div class="card-body">
+                 
                     @if ($_assessment)
                         @if ($_assessment->payment_assessments)
                             @if (request()->input('reassessment') == true)
@@ -311,6 +313,7 @@
                                     class="btn btn-primary btn-sm w-100">RE-ASSESS FEE</a>
                             @endif
                         @else
+                   
                             <form class="form-assessments-view" role="form"
                                 action="{{ route('accounting.payment-assessment') }}" method="post">
                                 @csrf
@@ -335,7 +338,7 @@
                                     <div class="col-md">
                                         <div class="form-group">
                                             <input type="hidden" class="payment-mode"
-                                                value="{{ $_student->enrollment_application ? $_student->enrollment_application->payment_mode : '' }}">
+                                                value="{{ $_student->enrollment_application_payment ? $_student->enrollment_application_payment->payment_mode : '' }}">
                                             <input type="hidden" class="course"
                                                 value="{{ $_assessment->course_id }}">
                                             <span class="text-muted"><b>MODE :</b></span>
@@ -512,7 +515,7 @@
                                 <div>
 
                                     <span
-                                        class="text-danger">{{ $item->account->student->enrollment_application? ($item->account->student->enrollment_application->payment_mode === 0? 'FULL-PAYMENT': ($item->account->student->enrollment_application->payment_mode === 1 ||$item->account->student->enrollment_application->payment_mode === 2? 'INSTALLMENT': '-')): '-' }}</span>
+                                        class="text-danger">{{ $item->account->student->enrollment_application_payment? ($item->account->student->enrollment_application_payment->payment_mode === 0? 'FULL-PAYMENT': ($item->account->student->enrollment_application_payment->payment_mode === 1 ||$item->account->student->enrollment_application_payment->payment_mode === 2? 'INSTALLMENT': '-')): '-' }}</span>
                                 </div>
                             </div>
                         </a>

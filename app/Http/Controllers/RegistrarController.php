@@ -67,76 +67,85 @@ class RegistrarController extends Controller
         $_student_detials = new StudentDetails();
         $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application_list();
         $_students = $_request->_course ? $_student_detials->enrollment_application_list_view_course($_request->_course) : $_students;
+        //return $_students;
         return view('pages.registrar.enrollment.view', compact('_courses', '_students'));
     }
     public function enrollment_assessment(Request $_request)
     {
-        $_student = StudentDetails::find(base64_decode($_request->_student));
-        $_current_assessment = $_student->enrollment_assessment;
-        $_year_level = Auth::user()->staff->current_academic()->semestral == 'First Semester' ? intval($_current_assessment->year_level) + 1 : intval($_current_assessment->year_level);
-        if (count($_student->enrollment_history) > 0) {
-            // Old Student 
-            // If the Student is Incoming 4th class and have a previous Enrollment Assessment 
-            //first check the Year level if the year level is Equal to 13 the Student will equvalet into 4th class
-            if ($_year_level == 13) {
-                // This Will be incoming 4th Class
-                // Create a new Student number and Student Account
-            }
-            // Validate the Enrollment Assessment of the Student
-            $_assessment = EnrollmentAssessment::where('student_id', $_student->id)->where('academic_id', Auth::user()->staff->current_academic()->id)->first();
-            if (!$_assessment) {
-                // Store Enrollment Assessment
-                $_assessment_details = [
-                    "student_id" => $_student->id,
-                    "academic_id" => Auth::user()->staff->current_academic()->id,
-                    "course_id" => $_student->enrollment_assessment->course_id,
-                    "curriculum_id" => $_student->enrollment_assessment->curriculum_id,
-                    "year_level" => strval($_year_level),
-                    "bridging_program" => "without",
-                    "staff_id" => Auth::user()->id,
-                    "is_removed" => 0
-                ];
-                EnrollmentAssessment::create($_assessment_details); // Saved Enrollment Assessment
-                // Update Enrollment Application
-                if ($_student->enrollment_application) { // If Online Enrollee Update Data
-                    $_student->enrollment_application->staff_id = Auth::user()->staff->id;
-                    $_student->enrollment_application->is_approved = 1;
-                    $_student->enrollment_application->save();
-                } else { // If Onsite Enrollee Store Data
-                    $_details = [
-                        'student_id' => $_student->id,
-                        'academic_id' => Auth::user()->staff->current_academic()->id,
-                        'enrollment_place' => 'onsite',
-                        'staff_id' => Auth::user()->staff->id,
-                        'is_approved' => 1,
-                        'is_removed' => false,
+        try {
+            //code...
+
+            $_student = StudentDetails::find(base64_decode($_request->_student));
+            $_current_assessment = $_student->enrollment_assessment;
+            $_application = $_student->enrollment_application;
+            $_value = $_application->course_id == 3 ? 1 : -1;
+            $_year_level = Auth::user()->staff->current_academic()->semester == 'First Semester' ? intval($_current_assessment->year_level) +  $_value : intval($_current_assessment->year_level);
+            if (count($_student->enrollment_history) > 0) {
+                // Old Student 
+                // If the Student is Incoming 4th class and have a previous Enrollment Assessment 
+                //first check the Year level if the year level is Equal to 13 the Student will equvalet into 4th class
+                if ($_year_level == 13) {
+                    // This Will be incoming 4th Class
+                    // Create a new Student number and Student Account
+                }
+                // Validate the Enrollment Assessment of the Student
+                $_assessment = EnrollmentAssessment::where('student_id', $_student->id)->where('academic_id', Auth::user()->staff->current_academic()->id)->first();
+                if (!$_assessment) {
+                    // Store Enrollment Assessment
+                    $_assessment_details = [
+                        "student_id" => $_student->id,
+                        "academic_id" => Auth::user()->staff->current_academic()->id,
+                        "course_id" => $_student->enrollment_assessment->course_id,
+                        "curriculum_id" => $_student->enrollment_assessment->curriculum_id,
+                        "year_level" => strval($_year_level),
+                        "bridging_program" => "without",
+                        "staff_id" => Auth::user()->id,
+                        "is_removed" => 0
                     ];
-                    EnrollmentApplication::create($_details);
+                    EnrollmentAssessment::create($_assessment_details); // Saved Enrollment Assessment
+                    // Update Enrollment Application
+                    if ($_student->enrollment_application) { // If Online Enrollee Update Data
+                        $_student->enrollment_application->staff_id = Auth::user()->staff->id;
+                        $_student->enrollment_application->is_approved = 1;
+                        $_student->enrollment_application->save();
+                    } else { // If Onsite Enrollee Store Data
+                        $_details = [
+                            'student_id' => $_student->id,
+                            'academic_id' => Auth::user()->staff->current_academic()->id,
+                            'enrollment_place' => 'onsite',
+                            'staff_id' => Auth::user()->staff->id,
+                            'is_approved' => 1,
+                            'is_removed' => false,
+                        ];
+                        EnrollmentApplication::create($_details);
+                    }
+
+                    return back()->with('success', 'Transaction Successfully.');
+                } else {
+                    if ($_student->enrollment_application) { // If Online Enrollee Update Data
+                        $_student->enrollment_application->staff_id = Auth::user()->staff->id;
+                        $_student->enrollment_application->is_approved = 1;
+                        $_student->enrollment_application->save();
+                    } else { // If Onsite Enrollee Store Data
+                        $_details = [
+                            'student_id' => $_student->id,
+                            'academic_id' => Auth::user()->staff->current_academic()->id,
+                            'enrollment_place' => 'onsite',
+                            'staff_id' => Auth::user()->staff->id,
+                            'is_approved' => 1,
+                            'is_removed' => false,
+                        ];
+                        EnrollmentApplication::create($_details);
+                    }
+                    return back()->with('error', 'This is already Saved');
                 }
 
-                return back()->with('success', 'Transaction Successfully.');
+                $_student->enrollment_assessment;
             } else {
-                if ($_student->enrollment_application) { // If Online Enrollee Update Data
-                    $_student->enrollment_application->staff_id = Auth::user()->staff->id;
-                    $_student->enrollment_application->is_approved = 1;
-                    $_student->enrollment_application->save();
-                } else { // If Onsite Enrollee Store Data
-                    $_details = [
-                        'student_id' => $_student->id,
-                        'academic_id' => Auth::user()->staff->current_academic()->id,
-                        'enrollment_place' => 'onsite',
-                        'staff_id' => Auth::user()->staff->id,
-                        'is_approved' => 1,
-                        'is_removed' => false,
-                    ];
-                    EnrollmentApplication::create($_details);
-                }
-                return back()->with('error', 'This is already Saved');
+                // New Student
             }
-
-            $_student->enrollment_assessment;
-        } else {
-            // New Student
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
         }
     }
 
