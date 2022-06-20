@@ -101,13 +101,6 @@ class ApplicantEmail extends Mailable
         return $this->from(Auth::user()->email, "BMA SICKBAY'S OFFICE")
             ->subject("MEDICAL RESULT : " . $_applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.medical-result-passed')
-            ->with(['data' => $_applicant,]);
-    }
-    public function medical_result($_applicant)
-    {
-        return $this->from(Auth::user()->email, "BMA SICKBAY'S OFFICE")
-            ->subject("MEDICAL RESULT : " . $_applicant->applicant_number)
-            ->markdown('widgets.mail.applicant-mail.medical-result')
-            ->with(['data' => $_applicant,]);
+            ->with(['data' => $_applicant]);
     }
 }

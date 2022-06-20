@@ -102,4 +102,8 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
             ->where('applicant_accounts.is_removed', false)->first();
         return $_applicant;
     }
+    public function medical_result()
+    {
+        return $this->hasOne(ApplicantMedicalResult::class, 'applicant_id')->where('is_removed', false);
+    }
 }
