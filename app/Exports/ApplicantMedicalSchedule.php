@@ -18,7 +18,7 @@ class ApplicantMedicalSchedule implements FromCollection, WithHeadings, WithTitl
     {
         return ApplicantAccount::select('applicant_accounts.*')->join('applicant_detials', 'applicant_accounts.id', 'applicant_detials.applicant_id')
             ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_accounts.is_removed', false)->where('ama.is_removed', false)->where('ama.is_approved', false)
+            ->where('applicant_accounts.is_removed', false)->where('ama.is_removed', false)/* ->where('ama.is_approved', false) */
             ->orderBy('ama.appointment_date','desc')->groupBy('applicant_accounts.id')->get();
        
     }
