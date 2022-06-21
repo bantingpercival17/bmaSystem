@@ -64,23 +64,23 @@ class RegistrarController extends Controller
     public function enrollment_view(Request $_request)
     {
         $_courses = CourseOffer::where('is_removed', false)->get();
+        $_curriculums = Curriculum::where('is_removed', false)->get();
         $_student_detials = new StudentDetails();
         $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application_list();
         $_students = $_request->_course ? $_student_detials->enrollment_application_list_view_course($_request->_course) : $_students;
         //return $_students;
-        return view('pages.registrar.enrollment.view', compact('_courses', '_students'));
+        return view('pages.registrar.enrollment.view', compact('_courses', '_students', '_curriculums'));
     }
     public function enrollment_assessment(Request $_request)
     {
         try {
-            //code...
-
             $_student = StudentDetails::find(base64_decode($_request->_student));
             $_current_assessment = $_student->enrollment_assessment;
             $_application = $_student->enrollment_application;
             $_value = $_application->course_id == 3 ? 1 : -1;
-            $_year_level = Auth::user()->staff->current_academic()->semester == 'First Semester' ? intval($_current_assessment->year_level) +  $_value : intval($_current_assessment->year_level);
             if (count($_student->enrollment_history) > 0) {
+                // Set the Year Level of Old Student
+                $_year_level = Auth::user()->staff->current_academic()->semester == 'First Semester' ? intval($_current_assessment->year_level) +  $_value : intval($_current_assessment->year_level);
                 // Old Student 
                 // If the Student is Incoming 4th class and have a previous Enrollment Assessment 
                 //first check the Year level if the year level is Equal to 13 the Student will equvalet into 4th class
@@ -95,14 +95,15 @@ class RegistrarController extends Controller
                     $_assessment_details = [
                         "student_id" => $_student->id,
                         "academic_id" => Auth::user()->staff->current_academic()->id,
-                        "course_id" => $_student->enrollment_assessment->course_id,
-                        "curriculum_id" => $_student->enrollment_assessment->curriculum_id,
+                        "course_id" => $_request->_course ?: $_student->enrollment_assessment->course_id,
+                        "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
                         "year_level" => strval($_year_level),
-                        "bridging_program" => "without",
+                        "bridging_program" => $_request->_bridging_program ?: "without",
                         "staff_id" => Auth::user()->id,
                         "is_removed" => 0
                     ];
-                    EnrollmentAssessment::create($_assessment_details); // Saved Enrollment Assessment
+                    // Saved Enrollment Assessment
+                    EnrollmentAssessment::create($_assessment_details);
                     // Update Enrollment Application
                     if ($_student->enrollment_application) { // If Online Enrollee Update Data
                         $_student->enrollment_application->staff_id = Auth::user()->staff->id;
@@ -122,7 +123,7 @@ class RegistrarController extends Controller
 
                     return back()->with('success', 'Transaction Successfully.');
                 } else {
-                    if ($_student->enrollment_application) { // If Online Enrollee Update Data
+                    /* if ($_student->enrollment_application) { // If Online Enrollee Update Data
                         $_student->enrollment_application->staff_id = Auth::user()->staff->id;
                         $_student->enrollment_application->is_approved = 1;
                         $_student->enrollment_application->save();
@@ -136,13 +137,42 @@ class RegistrarController extends Controller
                             'is_removed' => false,
                         ];
                         EnrollmentApplication::create($_details);
-                    }
+                    } */
                     return back()->with('error', 'This is already Saved');
                 }
-
-                $_student->enrollment_assessment;
+                //$_student->enrollment_assessment;
             } else {
                 // New Student
+                // Store Enrollment Assessment
+                $_assessment_details = [
+                    "student_id" => $_student->id,
+                    "academic_id" => Auth::user()->staff->current_academic()->id,
+                    "course_id" => $_request->_course ?: $_student->enrollment_assessment->course_id,
+                    "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
+                    "year_level" => 4,
+                    "bridging_program" => $_request->_bridging_program ?: "without",
+                    "staff_id" => Auth::user()->id,
+                    "is_removed" => 0
+                ];
+                // Saved Enrollment Assessment
+                EnrollmentAssessment::create($_assessment_details);
+                // Update Enrollment Application
+                if ($_student->enrollment_application) { // If Online Enrollee Update Data
+                    $_student->enrollment_application->staff_id = Auth::user()->staff->id;
+                    $_student->enrollment_application->is_approved = 1;
+                    $_student->enrollment_application->save();
+                } else { // If Onsite Enrollee Store Data
+                    $_details = [
+                        'student_id' => $_student->id,
+                        'academic_id' => Auth::user()->staff->current_academic()->id,
+                        'enrollment_place' => 'onsite',
+                        'staff_id' => Auth::user()->staff->id,
+                        'is_approved' => 1,
+                        'is_removed' => false,
+                    ];
+                    EnrollmentApplication::create($_details);
+                }
+                return back()->with('success', 'Transaction Successfully.');
             }
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());

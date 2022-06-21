@@ -5,8 +5,7 @@ $_title = 'Enrollment';
 @section('page-title', $_title)
 @section('beardcrumb-content')
     <li class="breadcrumb-item active" aria-current="page">
-        <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none"
-            xmlns="http://www.w3.org/2000/svg">
+        <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M8.15722 19.7714V16.7047C8.1572 15.9246 8.79312 15.2908 9.58101 15.2856H12.4671C13.2587 15.2856 13.9005 15.9209 13.9005 16.7047V16.7047V19.7809C13.9003 20.4432 14.4343 20.9845 15.103 21H17.0271C18.9451 21 20.5 19.4607 20.5 17.5618V17.5618V8.83784C20.4898 8.09083 20.1355 7.38935 19.538 6.93303L12.9577 1.6853C11.8049 0.771566 10.1662 0.771566 9.01342 1.6853L2.46203 6.94256C1.86226 7.39702 1.50739 8.09967 1.5 8.84736V17.5618C1.5 19.4607 3.05488 21 4.97291 21H6.89696C7.58235 21 8.13797 20.4499 8.13797 19.7714V19.7714"
                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -29,85 +28,16 @@ $_title = 'Enrollment';
                 <h4 class="title-bt fw-bolder">
                     {{ request()->input('_student') ? 'Search Result: ' . request()->input('_student') : 'Recent Enrollee' }}
                 </h4>
-                <span href="./product.html" class="text-black pt-2">
+                <span class="text-muted pt-2">
                     No. Result: <b>{{ count($_students) }}</b>
                 </span>
 
             </div>
+
             <div class="search-container">
+                @include('pages.registrar.enrollment.widgets.enrollment-card')
                 @if (count($_students) > 0)
-                    @foreach ($_students as $_student)
-                        <div class="card">
-                            <div class="row no-gutters">
-                                <div class="col-md-6 col-lg-4">
-                                    <img src="{{ $_student? $_student->profile_pic($_student->account): 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                                        class="card-img" alt="student-profile">
-                                </div>
-                                <div class="col-md-6 col-lg-8">
-                                    <div class="card-body">
-                                        <h4 class="card-title text-primary">
-                                            <b>{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name) : 'MIDSHIPMAN NAME' }}</b>
-                                        </h4>
-                                        <p class="card-text">
-                                            <span>{{ $_student ? ($_student->account ? $_student->account->student_number : '-') : '-' }}</span>
-                                            <br>
-                                            <span>
-                                                {{ $_student? ($_student->enrollment_assessment->course? $_student->enrollment_assessment->course->course_name: '-'): '-' }}
-                                            </span>
-                                            <br>
-                                            <span>
-                                                {{ $_student ? $_student->enrollment_assessment->year_and_section($_student->enrollment_assessment) : '- | -' }}
-                                            </span>
-                                        </p>
-
-                                        @if ($_student->enrollment_assessment->academic_id == Auth::user()->staff->current_academic()->id)
-                                            @if ($_student->enrollment_assessment->payment_assessments)
-                                                @if ($_student->enrollment_assessment->payment_assessments->payment_assessment_paid)
-                                                    <span class="badge bg-primary">Offical Enrolled</span>
-                                                @else
-                                                    <span class="badge bg-info text-white">Payment </span>
-                                                @endif
-                                            @else
-                                                <span class="badge bg-info text-white">Assessment Fees</span>
-                                            @endif
-                                        @else
-                                            <label for="" class="text-muted fw-bolder"><small>Clearance
-                                                    Status</small></label>
-                                            <div class="d-flex justify-content-between">
-                                                <div>
-                                                    <label for="" class="text-info fw-bolder">Academic</label> <br>
-                                                    <label for=""
-                                                        class="h5 {{ $_student? ($_student->academic_clearance_status() != 'NO SECTION'? ($_student->academic_clearance_status() == 'NOT CLEARED'? 'text-danger': 'text-primary'): 'text-muted'): 'text-muted' }} fw-bolder">{{ $_student ? $_student->academic_clearance_status() : '' }}</label>
-                                                </div>
-                                                <div>
-                                                    <label for="" class="text-info fw-bolder">Non-Academic</label> <br>
-                                                    <label for=""
-                                                        class="h5 {{ $_student? ($_student->non_academic_clearance_status() != 'NO SECTION'? ($_student->non_academic_clearance_status() == 'NOT CLEARED'? 'text-danger': 'text-primary'): 'text-muted'): 'text-muted' }} fw-bolder">{{ $_student ? $_student->non_academic_clearance_status() : '' }}</label>
-                                                </div>
-                                            </div>
-                                            <form action="{{ route('registrar.enrollment-assessment') }}" method="post">
-                                                @csrf
-                                                <input type="hidden" name="_student"
-                                                    value="{{ base64_encode($_student->id) }}">
-                                                <div class="row">
-                                                    <div class="col-md">
-                                                        <a href="{{ route('registrar.student-clearance') }}?_student={{ base64_encode($_student->id) }}"
-                                                            class="btn btn-primary btn-sm w-100">View</a>
-                                                    </div>
-                                                    <div class="col-md">
-                                                        <button class="btn btn-info btn-sm text-white w-100">For
-                                                            Assessment</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        @endif
-
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                    @yield('student-enrollment-card')
                 @else
                     <div class="card">
                         <div class="row no-gutters">
@@ -145,7 +75,8 @@ $_title = 'Enrollment';
                                     {{ $_course->course_name }}
                                 </h5>
                                 <a href="javascript:void(0);">
-                                    <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg width="32" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
                                         <path
                                             d="M17.8877 10.8967C19.2827 10.7007 20.3567 9.50473 20.3597 8.05573C20.3597 6.62773 19.3187 5.44373 17.9537 5.21973"
                                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
