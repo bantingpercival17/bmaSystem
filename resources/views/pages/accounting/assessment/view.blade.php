@@ -2,8 +2,7 @@
 @section('page-title', 'Assessment Fee')
 @section('beardcrumb-content')
     <li class="breadcrumb-item active" aria-current="page">
-        <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none"
-            xmlns="http://www.w3.org/2000/svg">
+        <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M8.15722 19.7714V16.7047C8.1572 15.9246 8.79312 15.2908 9.58101 15.2856H12.4671C13.2587 15.2856 13.9005 15.9209 13.9005 16.7047V16.7047V19.7809C13.9003 20.4432 14.4343 20.9845 15.103 21H17.0271C18.9451 21 20.5 19.4607 20.5 17.5618V17.5618V8.83784C20.4898 8.09083 20.1355 7.38935 19.538 6.93303L12.9577 1.6853C11.8049 0.771566 10.1662 0.771566 9.01342 1.6853L2.46203 6.94256C1.86226 7.39702 1.50739 8.09967 1.5 8.84736V17.5618C1.5 19.4607 3.05488 21 4.97291 21H6.89696C7.58235 21 8.13797 20.4499 8.13797 19.7714V19.7714"
                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -93,7 +92,7 @@
                 <div class="row no-gutters">
                     <div class="col-md-4 col-lg-2">
 
-                        <img src="{{ $_student? $_student->profile_pic($_student->account): 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                        <img src="{{ $_student ? $_student->profile_pic($_student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
                             class="avatar-130 rounded" alt="#">
                     </div>
                     <div class="col-md col-lg">
@@ -103,7 +102,7 @@
                             </h4>
                             <p class="card-text">
                                 <span>STUDENT NUMBER: <b>
-                                        {{ $_student ? $_student->account->student_number : '-' }}</b></span>
+                                        {{ $_student ? $_student->account ? $_student->account->student_number : 'NEW STUDENT' : '-' }}</b></span>
                             </p>
 
                         </div>
@@ -121,13 +120,13 @@
                         <div class="col-md-4">
                             <label for="" class="form-label"><small><b>YEAR LEVEL</b></small>:</label>
                             <label for=""
-                                class="text-primary"><b>{{ $_assessment? ($_assessment->course->id != 3? $_assessment->year_level . ' CLASS': 'GRADE ' . $_assessment->year_level): '-' }}</b></label>
+                                class="text-primary"><b>{{ $_assessment ? ($_assessment->course->id != 3 ? $_assessment->year_level . ' CLASS' : 'GRADE ' . $_assessment->year_level) : '-' }}</b></label>
 
                         </div>
                         <div class="col-md-12">
                             <label for="" class="form-label"><small><b>ACADEMIC YEAR</b></small>: </label>
                             <label class="text-primary">
-                                <b>{{ $_assessment? strtoupper($_assessment->academic->semester . ' | ' . $_assessment->academic->school_year): '-' }}
+                                <b>{{ $_assessment ? strtoupper($_assessment->academic->semester . ' | ' . $_assessment->academic->school_year) : '-' }}
                                 </b>
                             </label>
                         </div>
@@ -138,10 +137,10 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="header-text"><b class="text-primary">PAYMENT ASSESSMENT</b></h5>
-              
+
                 </div>
                 <div class="card-body">
-                 
+
                     @if ($_assessment)
                         @if ($_assessment->payment_assessments)
                             @if (request()->input('reassessment') == true)
@@ -305,7 +304,8 @@
 
 
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-block mt-2">RE-ASSESSMENT</button>
+                                        <button type="submit"
+                                            class="btn btn-primary btn-block mt-2">RE-ASSESSMENT</button>
                                     </div>
                                 </form>
                             @else
@@ -313,7 +313,6 @@
                                     class="btn btn-primary btn-sm w-100">RE-ASSESS FEE</a>
                             @endif
                         @else
-                   
                             <form class="form-assessments-view" role="form"
                                 action="{{ route('accounting.payment-assessment') }}" method="post">
                                 @csrf
@@ -508,15 +507,18 @@
                                             class="text-primary"><b>{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</b></span>
                                     </div>
                                     <div>
+                                        @if ($item->account)
                                         <span
-                                            class="text-primary">{{ $item->account ? $item->account->student_number : '' }}</span>
+                                        class="text-primary">{{  $item->account->student_number  }}</span>
+                                        @else
+                                            <small class="badge bg-primary">NEW STUDENT</small>
+                                        @endif
+                                       
                                     </div>
                                 </div>
                                 <div>
-
                                     <span
-                                        class="text-danger">{{ $item->account->student->enrollment_application_payment? ($item->account->student->enrollment_application_payment->payment_mode === 0? 'FULL-PAYMENT': ($item->account->student->enrollment_application_payment->payment_mode === 1 ||$item->account->student->enrollment_application_payment->payment_mode === 2? 'INSTALLMENT': '-')): '-' }}</span>
-                                </div>
+                                        class="text-danger">{{ $item->enrollment_application_payment? ($item->enrollment_application_payment->payment_mode === 0? 'FULL-PAYMENT': ($item->enrollment_application_payment->payment_mode === 1 ||$item->enrollment_application_payment->payment_mode === 2? 'INSTALLMENT': '-')): '-' }}</span></div>
                             </div>
                         </a>
 

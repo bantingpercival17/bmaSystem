@@ -60,7 +60,8 @@ $_title = 'Ticketing';
         </div>
         <div class="card-body">
             @if (count($_concern_list) > 0)
-                <table id="basic-table" class="table table-striped mb-0" role="grid">
+                <table id="basic-table" class="table table-striped mb-0" data-toggle="data-table"
+                    aria-describedby="datatable_info" role="grid">
                     <thead>
                         <tr>
                             <th>Concern Name</th>
@@ -97,10 +98,12 @@ $_title = 'Ticketing';
         </div>
         <div class="card-body">
             @if (count($_concern_list) > 0)
-                <table id="basic-table" class="table table-striped mb-0" role="grid">
+                <table class="table table-striped mb-0" role="grid"data-toggle="data-table"
+                    aria-describedby="datatable_info">
                     <thead>
                         <tr>
-                            <th>Ticket Number</th>
+                            <th>DATE</th>
+                            <th>NAME & TICKET NUMBER</th>
                             <th>Concern Issue</th>
                             <th>Concern Status</th>
                             <th>Action</th>
@@ -110,17 +113,35 @@ $_title = 'Ticketing';
                         @foreach ($_ticket_list as $data)
                             <tr>
                                 <td>
+                                    {{ $data->created_at->format('F d,Y') }}
+                                </td>
+                                <td>
+                                    {{ $data->name }} <br>
                                     {{ $data->ticket_number }}
                                 </td>
                                 <td>
-                                    {{ $data->ticket ? $data->ticket_concern->ticket_issue->issue_name : null }}
+                                    {{ $data->ticket_concern ? $data->ticket_concern->ticket_issue->issue_name : '-' }}
                                 </td>
                                 <td>
-                                    {{ $data->ticket ? $data->ticket_concern->is_resolved : '' }}
+                                    @if ($data->ticket_concern)
+                                        @if ($data->ticket_concern->is_resolved === 1)
+                                            <span class="badge bg-primary">TICKET CLOSE</span>
+                                        @else
+                                            @if (count($data->ticket_concern->chat_respond) > 0)
+                                                <span class="badge bg-info">On-going Ticket</span>
+                                            @else
+                                                <span class="badge bg-muted">-</span>
+                                            @endif
+                                        @endif
+                                    @else
+                                        -
+                                    @endif
                                 </td>
                                 <td>
-                                    {{-- <a href="{{ route('concern-removed') }}?concern={{ base64_encode($concern->id) }}"
-                                        class="btn-btn-primary">Remove</a> --}}
+                                    <a href="{{ route('ticket.view') }}?_ticket={{ base64_encode($data->ticket_concern? $data->ticket_concern->id:'-') }}"
+                                        class="btn btn-primary btn-sm">View</a>
+                                    <a href="{{ route('concern-removed') }}?concern={{ base64_encode($concern->id) }}"
+                                        class="btn btn-danger btn-sm">Remove</a>
                                 </td>
 
                             </tr>
@@ -132,4 +153,12 @@ $_title = 'Ticketing';
             @endif
         </div>
     </div>
+
+@section('js')
+    <script>
+        $(document).ready(function() {
+            $('#basic-table').datatable();
+        });
+    </script>
+@endsection
 @endsection
