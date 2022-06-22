@@ -31,6 +31,7 @@ use App\Models\StudentNonAcademicClearance;
 use App\Models\Voucher;
 use App\Report\PayrollReport;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -213,49 +214,57 @@ class AccountingController extends Controller
     }
     public function assessment_view(Request $_request)
     {
-        $_student_detials = new StudentDetails();
-        $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
-        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
-            ->join('enrollment_assessments', 'student_details.id', 'enrollment_assessments.student_id')
-            ->leftJoin('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
-            ->whereNull('pa.enrollment_id');
-        $_students = $_request->_course ? $_students->where('enrollment_assessments.course_id', base64_decode($_request->_course))->get() : $_students->get();
-        $_students = $_request->_students ?   $_student_detials->student_search($_request->_students) : $_students;
-        if ($_request->_midshipman) {
-            if ($_ea = $_student->enrollment_assessment) {
-                $_course_semestral_fee =  $_ea->course_semestral_fees($_ea); // Course Semestral Fee Table
-                $_semestral_fees = $_course_semestral_fee ? $_course_semestral_fee->semestral_fees() : [];
-                //return compact('_semestral_fees');
+        try {
+            $_student_detials = new StudentDetails();
+            $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
+            $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+                ->join('enrollment_assessments', 'student_details.id', 'enrollment_assessments.student_id')
+                ->leftJoin('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+                ->where('enrollment_assessments.academic_id', auth()->user()->staff->current_academic()->id)
+                ->whereNull('pa.enrollment_id');
+            $_students = $_request->_course ? $_students->where('enrollment_assessments.course_id', base64_decode($_request->_course))->get() : $_students->get();
+            $_students = $_request->_students ?   $_student_detials->student_search($_request->_students) : $_students;
+            if ($_request->_midshipman) {
+                if ($_ea = $_student->enrollment_assessment) {
+                    $_course_semestral_fee =  $_ea->course_semestral_fees($_ea); // Course Semestral Fee Table
+                    $_semestral_fees = $_course_semestral_fee ? $_course_semestral_fee->semestral_fees() : [];
+                    //return compact('_semestral_fees');
+                } else {
+                    $_semestral_fees = [];
+                }
             } else {
                 $_semestral_fees = [];
+                $_course_semestral_fee = [];
             }
-        } else {
-            $_semestral_fees = [];
-            $_course_semestral_fee = [];
+            return view('pages.accounting.assessment.view', compact('_student', '_students', '_semestral_fees', '_course_semestral_fee'));
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
         }
-        return view('pages.accounting.assessment.view', compact('_student', '_students', '_semestral_fees', '_course_semestral_fee'));
     }
     public function assessment_store(Request $_request)
     {
-        $_details = array(
-            'enrollment_id' => $_request->enrollment,
-            'course_semestral_fee_id' => $_request->semestral_fees,
-            'payment_mode' => $_request->mode,
-            'staff_id' => auth()->user()->staff->id,
-            'is_removed' => 0,
-            'total_payment' => 0,
-            'voucher_amount' => 0
-        );
-        $_payment_assessment = PaymentAssessment::where('enrollment_id', $_request->enrollment)->first();
-        if (!$_payment_assessment) {
-            PaymentAssessment::create($_details);
-            return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Complete.');
-        } else {
-            $_payment_assessment->course_semestral_fee_id =  $_request->semestral_fees;
-            $_payment_assessment->payment_mode =  $_request->mode;
-            $_payment_assessment->save();
-            return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Updated');
+        try {
+            $_details = array(
+                'enrollment_id' => $_request->enrollment,
+                'course_semestral_fee_id' => $_request->semestral_fees,
+                'payment_mode' => $_request->mode,
+                'staff_id' => auth()->user()->staff->id,
+                'is_removed' => 0,
+                'total_payment' => 0,
+                'voucher_amount' => 0
+            );
+            $_payment_assessment = PaymentAssessment::where('enrollment_id', $_request->enrollment)->first();
+            if (!$_payment_assessment) {
+                PaymentAssessment::create($_details);
+                return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Complete.');
+            } else {
+                $_payment_assessment->course_semestral_fee_id =  $_request->semestral_fees;
+                $_payment_assessment->payment_mode =  $_request->mode;
+                $_payment_assessment->save();
+                return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Updated');
+            }
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
         }
     }
 
@@ -321,71 +330,78 @@ class AccountingController extends Controller
 
     public function payment_view(Request $_request)
     {
-        $_student_detials = new StudentDetails();
-        $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
-        $_vouchers = Voucher::where('is_removed', false)->get();
-        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
-            ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
-            ->join('payment_assessments as pa', 'pa.enrollment_id', 'ea.id')
-            ->join('payment_trasanction_onlines as pto', 'pto.assessment_id', 'pa.id')
-            ->where('pto.is_removed', false)
-            ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
-            ->whereNull('pto.is_approved')
-            ->get();
-        $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : $_students;
-        $_online_payment = $_request->payment_approved ? PaymentTrasanctionOnline::find(base64_decode($_request->payment_approved)) : null;
-        return view('pages.accounting.payment.view', compact('_students', '_student', '_vouchers', '_online_payment'));
+        try {
+            $_student_detials = new StudentDetails();
+            $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
+            $_vouchers = Voucher::where('is_removed', false)->get();
+            $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+                ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
+                ->join('payment_assessments as pa', 'pa.enrollment_id', 'ea.id')
+                ->join('payment_trasanction_onlines as pto', 'pto.assessment_id', 'pa.id')
+                ->where('pto.is_removed', false)
+                ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
+                ->whereNull('pto.is_approved')
+                ->get();
+            $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : $_students;
+            $_online_payment = $_request->payment_approved ? PaymentTrasanctionOnline::find(base64_decode($_request->payment_approved)) : null;
+            return view('pages.accounting.payment.view', compact('_students', '_student', '_vouchers', '_online_payment'));
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
     }
     public function payment_store(Request $_request)
     {
-        $_amount = str_replace(",", "", $_request->amount);
-        $_tuition_fee_remarks = ['Tuition Fee', 'Upon Enrollment', '1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
-        $_payment_transaction =  in_array($_request->remarks, $_tuition_fee_remarks) ? 'TUITION FEE' : 'ADDITIONAL FEE';
-        if (!$_request->voucher) {
-            $_request->validate([
-                'or_number' => 'required',
-                'amount' => 'required',
-            ]);
-            $_payment_details = array(
-                'assessment_id' => $_request->_assessment,
-                'or_number' => $_request->or_number,
-                'payment_transaction' => $_payment_transaction,
-                'payment_amount' => $_amount,
-                'payment_method' => $_request->payment_method,
-                'remarks' => $_request->remarks,
-                'transaction_date' => $_request->tran_date ? $_request->tran_date : date('Y-m-d'),
-                'staff_id' => Auth::user()->staff->id,
-                'is_removed' => false
-            );
-        } else {
-            $_vouchers = Voucher::find($_request->voucher);
-            $_payment_assessment = PaymentAssessment::find($_request->_assessment);
-            $_payment_details = PaymentAssessment::find($_request->_assessment);
-            $_voucher_amount = $_vouchers->voucher_code == "TCC" ? $_payment_details->course_semestral_fee->total_payments($_payment_details) : $_vouchers->voucher_amount;
-            $_student_no = str_replace('-', '', $_payment_assessment->enrollment_assessment->student->account->student_number);
-            $_payment_details = array(
-                'assessment_id' => $_request->_assessment,
-                'or_number' => $_vouchers->voucher_code . "." . $_student_no,
-                'payment_transaction' => $_payment_transaction,
-                'payment_amount' => $_voucher_amount,
-                'payment_method' => $_request->payment_method,
-                'remarks' => $_request->remarks,
-                'transaction_date' => $_request->tran_date ? $_request->tran_date : date('Y-m-d'),
-                'staff_id' => Auth::user()->staff->id,
-                'is_removed' => false
-            );
-        }
-        $_payment = PaymentTransaction::create($_payment_details);
-        if ($_request->_online_payment) {
+        try {
+            $_amount = str_replace(",", "", $_request->amount);
+            $_tuition_fee_remarks = ['Tuition Fee', 'Upon Enrollment', '1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
+            $_payment_transaction =  in_array($_request->remarks, $_tuition_fee_remarks) ? 'TUITION FEE' : 'ADDITIONAL FEE';
+            if (!$_request->voucher) {
+                $_request->validate([
+                    'or_number' => 'required',
+                    'amount' => 'required',
+                ]);
+                $_payment_details = array(
+                    'assessment_id' => $_request->_assessment,
+                    'or_number' => $_request->or_number,
+                    'payment_transaction' => $_payment_transaction,
+                    'payment_amount' => $_amount,
+                    'payment_method' => $_request->payment_method,
+                    'remarks' => $_request->remarks,
+                    'transaction_date' => $_request->tran_date ? $_request->tran_date : date('Y-m-d'),
+                    'staff_id' => Auth::user()->staff->id,
+                    'is_removed' => false
+                );
+            } else {
+                $_vouchers = Voucher::find($_request->voucher);
+                $_payment_assessment = PaymentAssessment::find($_request->_assessment);
+                $_payment_details = PaymentAssessment::find($_request->_assessment);
+                $_voucher_amount = $_vouchers->voucher_code == "TCC" ? $_payment_details->course_semestral_fee->total_payments($_payment_details) : $_vouchers->voucher_amount;
+                $_student_no = str_replace('-', '', $_payment_assessment->enrollment_assessment->student->account->student_number);
+                $_payment_details = array(
+                    'assessment_id' => $_request->_assessment,
+                    'or_number' => $_vouchers->voucher_code . "." . $_student_no,
+                    'payment_transaction' => $_payment_transaction,
+                    'payment_amount' => $_voucher_amount,
+                    'payment_method' => $_request->payment_method,
+                    'remarks' => $_request->remarks,
+                    'transaction_date' => $_request->tran_date ? $_request->tran_date : date('Y-m-d'),
+                    'staff_id' => Auth::user()->staff->id,
+                    'is_removed' => false
+                );
+            }
+            $_payment = PaymentTransaction::create($_payment_details);
+            if ($_request->_online_payment) {
 
-            $_online_payment = PaymentTrasanctionOnline::find($_request->_online_payment);
-            $_online_payment->payment_id = $_payment->id;
-            $_online_payment->is_approved = 1;
-            $_online_payment->or_number = $_request->or_number;
-            $_online_payment->save();
+                $_online_payment = PaymentTrasanctionOnline::find($_request->_online_payment);
+                $_online_payment->payment_id = $_payment->id;
+                $_online_payment->is_approved = 1;
+                $_online_payment->or_number = $_request->or_number;
+                $_online_payment->save();
+            }
+            return back()->with('success', 'Payment Transaction Complete!');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
         }
-
-        return back()->with('success', 'Payment Transaction Complete!');
     }
     public function payment_verification(Request $_request)
     {

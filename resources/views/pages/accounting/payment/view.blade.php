@@ -2,8 +2,7 @@
 @section('page-title', 'Payment Transaction')
 @section('beardcrumb-content')
     <li class="breadcrumb-item active" aria-current="page">
-        <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none"
-            xmlns="http://www.w3.org/2000/svg">
+        <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M8.15722 19.7714V16.7047C8.1572 15.9246 8.79312 15.2908 9.58101 15.2856H12.4671C13.2587 15.2856 13.9005 15.9209 13.9005 16.7047V16.7047V19.7809C13.9003 20.4432 14.4343 20.9845 15.103 21H17.0271C18.9451 21 20.5 19.4607 20.5 17.5618V17.5618V8.83784C20.4898 8.09083 20.1355 7.38935 19.538 6.93303L12.9577 1.6853C11.8049 0.771566 10.1662 0.771566 9.01342 1.6853L2.46203 6.94256C1.86226 7.39702 1.50739 8.09967 1.5 8.84736V17.5618C1.5 19.4607 3.05488 21 4.97291 21H6.89696C7.58235 21 8.13797 20.4499 8.13797 19.7714V19.7714"
                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -17,7 +16,7 @@
                 <div class="row no-gutters">
                     <div class="col-md-4 col-lg-2">
 
-                        <img src="{{ $_student? $_student->profile_pic($_student->account): 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                        <img src="{{ $_student ? $_student->profile_pic($_student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
                             class="avatar-130 rounded" alt="#">
                     </div>
                     <div class="col-md col-lg">
@@ -28,11 +27,11 @@
                             <p class="card-text">
                                 <span>
                                     <b>
-                                        {{ $_student ? $_student->account->student_number : 'STUDENT NO.' }}
+                                        {{ $_student ? ($_student->account ? $_student->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
                                         |
-                                        {{ $_student? ($_student->enrollment_assessment? $_student->enrollment_assessment->year_level: 'YEAR LEVEL'): 'YEAR LEVEL' }}
+                                        {{ $_student ? ($_student->enrollment_assessment ? $_student->enrollment_assessment->year_level : 'YEAR LEVEL') : 'YEAR LEVEL' }}
                                         |
-                                        {{ $_student? ($_student->enrollment_assessment? $_student->enrollment_assessment->course->course_name: 'COURSE'): 'COURSE' }}
+                                        {{ $_student ? ($_student->enrollment_assessment ? $_student->enrollment_assessment->course->course_name : 'COURSE') : 'COURSE' }}
                                     </b>
                                 </span>
 
@@ -45,12 +44,12 @@
             @if ($_student)
                 <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
                     <div class="dropdown mt-3 mb-2 w-100">
-                        <a class=" dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false"
-                            aria-expanded="false">
+                        <a class=" dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                            aria-haspopup="false" aria-expanded="false">
                             <span class="text-muted">Academic Year :</span>
-                            <b>{{ request()->input('_academic')? Auth::user()->staff->current_academic()->semester: $_student->enrollment_assessment->academic->semester }}
+                            <b>{{ request()->input('_academic') ? Auth::user()->staff->current_academic()->semester : $_student->enrollment_assessment->academic->semester }}
                                 |
-                                {{ request()->input('_academic')? Auth::user()->staff->current_academic()->school_year: $_student->enrollment_assessment->academic->school_year }}</b>
+                                {{ request()->input('_academic') ? Auth::user()->staff->current_academic()->school_year : $_student->enrollment_assessment->academic->school_year }}</b>
                         </a>
                         {{-- {{ $_student->enrollment_history }} --}}
                         <ul class="dropdown-menu w-100" data-popper-placement="bottom-start">
@@ -101,8 +100,7 @@
                                             {{ $_payment_details
                                                 ? ($_payment_details->course_semestral_fee_id
                                                     ? number_format($_payment_details->course_semestral_fee->total_payments($_payment_details), 2)
-                                                    : number_format($_payment_details->total_payment, 2) 
-                                                    )
+                                                    : number_format($_payment_details->total_payment, 2))
                                                 : '-' }}
                                         </label>
                                     </div>
@@ -121,7 +119,7 @@
                                         <small class="form-label">Balance:</small>
                                         <br>
                                         <label class="h5 text-danger form-label">
-                                            {{ $_payment_details? number_format(($_payment_details->course_semestral_fee_id? $_payment_details->course_semestral_fee->total_payments($_payment_details): $_payment_details->total_payment) - $_payment_details->total_paid_amount->sum('payment_amount'),2): '-' }}
+                                            {{ $_payment_details ? number_format(($_payment_details->course_semestral_fee_id ? $_payment_details->course_semestral_fee->total_payments($_payment_details) : $_payment_details->total_payment) - $_payment_details->total_paid_amount->sum('payment_amount'), 2) : '-' }}
                                         </label>
                                     </div>
                                 </div>
@@ -143,8 +141,9 @@
                                                 <label for=""><small>PAYMENT AMOUNT</small></label>
                                                 <input type="hidden" name="_assessment"
                                                     value="{{ $_payment_details->id }}">
-                                                <input type="text" class="form-control" name="_payment" id="input-payment"
-                                                    value=" {{ $_payment_details? ($_payment_details->course_semestral_fee_id? number_format($_payment_details->course_semestral_fee->payment_amount($_payment_details), 2): number_format($_payment_details->total_paid_amount, 2)): '-' }} ">
+                                                <input type="text" class="form-control" name="_payment"
+                                                    id="input-payment"
+                                                    value=" {{ $_payment_details ? ($_payment_details->course_semestral_fee_id ? number_format($_payment_details->course_semestral_fee->payment_amount($_payment_details), 2) : number_format($_payment_details->total_paid_amount, 2)) : '-' }} ">
                                             </div>
                                         </div>
                                         <div class="col-md">
@@ -188,7 +187,8 @@
                                         </div>
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <label for="" class="form-label"><small>TRANSACTION DATE</small></label>
+                                                <label for="" class="form-label"><small>TRANSACTION
+                                                        DATE</small></label>
                                                 <input type="date" class="form-control" name="tran_date"
                                                     {{ request()->input('payment_approved') ? 'value=' . $_online_payment->created_at . '' : '' }}>
                                             </div>
@@ -265,7 +265,8 @@
 
                                                             <button type="button"
                                                                 class="btn btn-primary btn-sm btn-form-document w-100 mt-2"
-                                                                data-bs-toggle="modal" data-bs-target=".document-view-modal"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target=".document-view-modal"
                                                                 data-document-url="{{ $item->reciept_attach_path }}">
                                                                 VIEW</button>
                                                         </div>
@@ -372,7 +373,6 @@
                                         <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
                                             <div>
                                                 <h5>No Payment Transaction</h5>
-                                                <p></p>
                                             </div>
                                         </div>
                                     @endif
@@ -436,7 +436,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
-                <iframe class="iframe-container form-view iframe-placeholder" src="" width="100%" height="600px">
+                <iframe class="iframe-container form-view iframe-placeholder" src="" width="100%"
+                    height="600px">
                 </iframe>
             </div>
         </div>
