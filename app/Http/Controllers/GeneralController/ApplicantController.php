@@ -8,6 +8,7 @@ use App\Mail\ApplicantBriefingNotification;
 use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantBriefing;
+use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
 use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantExaminationAnswer;
@@ -246,16 +247,61 @@ class ApplicantController extends Controller
             ->orderBy('appointment_date', 'asc')->get();
         $_result = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')->leftJoin('applicant_medical_results as amr', 'amr.applicant_id', 'applicant_medical_appointments.applicant_id')->whereNull('amr.applicant_id')->where('applicant_medical_appointments.is_removed', false)->where('applicant_medical_appointments.is_approved', true)->get();
 
+
+        $_passed  = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')
+            ->join('applicant_medical_results as amr', 'amr.applicant_id', 'applicant_medical_appointments.applicant_id')
+            ->where('applicant_medical_appointments.is_removed', false)
+            ->where('applicant_medical_appointments.is_approved', true)->groupBy('amr.applicant_id')->where('amr.is_fit', true)->get();
+        $_pending = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')
+            ->join('applicant_medical_results as amr', 'amr.applicant_id', 'applicant_medical_appointments.applicant_id')
+            ->where('applicant_medical_appointments.is_removed', false)
+            ->where('applicant_medical_appointments.is_approved', true)->groupBy('amr.applicant_id')->where('is_pending', 0)->get();
+        $_failed = ApplicantMedicalAppointment::select('applicant_medical_appointments.*')
+            ->join('applicant_medical_results as amr', 'amr.applicant_id', 'applicant_medical_appointments.applicant_id')
+            ->where('applicant_medical_appointments.is_removed', false)
+            ->where('applicant_medical_appointments.is_approved', true)->groupBy('amr.applicant_id')->where('amr.is_fit', false)->get();
+
         $_applicants = $_request->view == 'waiting for Scheduled' ? $_for_medical : $_applicants;
         $_applicants = $_request->view == 'scheduled' ? $_scheduled : $_applicants;
         $_applicants = $_request->view == 'waiting for Medical result' ? $_result : $_applicants;
+        $_applicants = $_request->view == 'passed' ? $_passed : $_applicants;
+        $_applicants = $_request->view == 'pending' ? $_pending : $_applicants;
+        $_applicants = $_request->view == 'failed' ? $_failed : $_applicants;
+
 
         $_details = array(
             array('waiting for Scheduled', count($_for_medical), 'waiting_scheduled'),
             array('scheduled', count($_scheduled), 'scheduled'),
             array('waiting for Medical result', count($_result), 'waiting_result'),/*  array('pending'), array('fit to enroll'), array('disqualied') */
         );
-        return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants'));
+        $_results = array(
+            array('passed', count($_passed), 'waiting_scheduled'),
+            array('pending', count($_pending), 'scheduled'),
+            array('failed', count($_failed), 'waiting_result'),/*  array('pending'), array('fit to enroll'), array('disqualied') */
+        );
+        if ($_request->_students) {
+            //$_applicant = ApplicantDetials::where('');
+            $_student = explode(',', $_request->_students);
+            $_count = count($_student);
+            if ($_count > 1) {
+                $_students = ApplicantDetials::where('last_name', 'like', "%" . trim($_student[0]) . "%")
+                    ->where('first_name', 'like', "%" . trim($_student[1]) . "%")
+
+                    ->orderBy('last_name', 'asc');
+            } else {
+                $_students = ApplicantDetials::select('applicant_medical_appointments.*')
+                    ->join('applicant_medical_appointments', 'applicant_detials.applicant_id', 'applicant_medical_appointments.applicant_id')
+                    ->where('applicant_detials.last_name', 'like', "%" . trim($_student[0]) . "%");
+                //->orderBy('applicant_detials.last_name', 'asc');
+            }
+            $_applicants = $_students->leftJoin('applicant_medical_results as amr', 'amr.applicant_id', 'applicant_medical_appointments.applicant_id')
+                /* ->whereNull('amr.applicant_id') */
+                ->where('applicant_medical_appointments.is_removed', false)
+                ->where('applicant_medical_appointments.is_approved', true)->groupBy('applicant_detials.applicant_id')->get();
+            // return $_applicants;
+        }
+        // $_result = array(array('passed'), array('pending'), array('failed'));
+        return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants', '_results'));
     }
     public function medical_schedule_download(Request $_request)
     {
@@ -294,7 +340,15 @@ class ApplicantController extends Controller
             } else {
                 $_details = array('applicant_id' => base64_decode($_request->applicant), 'is_pending' => base64_decode($_request->result), 'remarks' => $_request->remarks);
             }
-            ApplicantMedicalResult::create($_details);
+            $_medical_result = ApplicantMedicalResult::where('applicant_id', $_applicant->id)->where('is_removed', false)->first();
+            if ($_medical_result) {
+                $_medical_result->is_removed = true;
+                $_medical_result->save();
+                ApplicantMedicalResult::create($_details);
+            } else {
+                ApplicantMedicalResult::create($_details);
+            }
+
             $_email_model = new ApplicantEmail();
             $_email = $_applicant->email;
             //$_email = 'p.banting@bma.edu.ph';

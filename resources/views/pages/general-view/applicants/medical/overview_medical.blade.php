@@ -65,12 +65,15 @@ $_title = 'Applicant Medical Overview';
                     @if (request()->input('_sort'))
                         <input type="hidden" name="_sort" value="{{ request()->input('_sort') }}">
                     @endif
+                    @if (request()->input('view'))
+                        <input type="hidden" name="view" value="{{ request()->input('view') }}">
+                    @endif
                     <div class="row">
                         <div class="col-6">
                             <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                             <div class="form-group search-input">
-                                <input type="search" class="form-control"
-                                    placeholder="Search Pattern: Lastname, Firstname" name="_students">
+                                <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
+                                    name="_students">
                             </div>
                         </div>
                         <div class="col-4">
@@ -150,15 +153,36 @@ $_title = 'Applicant Medical Overview';
                                             <a href="{{ route('medical.applicant-appointment') }}?appointment={{ base64_encode($_data->id) }}"
                                                 class="btn btn-sm btn-outline-info mt-2">APPROVED</a>
                                         @endif
-                                        @if (request()->input('view') == 'waiting for Medical result')
-                                            <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->applicant_id) }}"
-                                                class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
-                                            <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                data-applicant="{{ base64_encode($_data->applicant_id) }}"
-                                                data-bs-toggle="modal" data-bs-target=".modal-medical-fail">FAIL</a>
-                                            <a class="btn btn-info btn-sm w-100 text-white mb-2 btn-medical"
-                                                data-applicant="{{ base64_encode($_data->applicant_id) }}"
-                                                data-bs-toggle="modal" data-bs-target=".modal-medical-pending">PENDING</a>
+                                        @if (request()->input('view') == 'waiting for Medical result'|| request()->input('view')=='passed'|| request()->input('view')=='pending'|| request()->input('view')=='failed')
+                                            @if ($_data->account->medical_result)
+                                                @if ($_data->account->medical_result->is_fit !== null)
+                                                    @if ($_data->account->medical_result->is_fit === 1)
+                                                        <span class="badge bg-primary mb-4">FIT TO ENROLL</span>
+                                                    @else
+                                                        <span class="badge bg-danger mb-4">FAILED</span>
+                                                    @endif
+                                                @else
+                                                    <span class="badge bg-info mb-4">PENDING RESULT</span>
+                                                    <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->applicant_id) }}"
+                                                        class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
+                                                    <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
+                                                        data-applicant="{{ base64_encode($_data->applicant_id) }}"
+                                                        data-bs-toggle="modal" data-bs-target=".modal-medical-fail">FAIL</a>
+                                                @endif
+                                                <span
+                                                    class="badge bg-secondary">{{ $_data->account->medical_result->created_at->format('F d,Y') }}</span>
+                                            @else
+                                                <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->applicant_id) }}"
+                                                    class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
+                                                <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
+                                                    data-applicant="{{ base64_encode($_data->applicant_id) }}"
+                                                    data-bs-toggle="modal" data-bs-target=".modal-medical-fail">FAIL</a>
+                                                <a class="btn btn-info btn-sm w-100 text-white mb-2 btn-medical"
+                                                    data-applicant="{{ base64_encode($_data->applicant_id) }}"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target=".modal-medical-pending">PENDING</a>
+                                            @endif
+                                            {{-- {{ $_data->account->medical_result }} --}}
                                         @endif
                                     </div>
                                 </div>
@@ -184,12 +208,42 @@ $_title = 'Applicant Medical Overview';
                 @endif
             </div>
             <div class="col-md-4">
+                @foreach ($_results as $key => $item)
+                    <div class="col-lg col-xl">
+                        <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
+                            data-iq-ease="power.out" data-iq-opacity="0">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{{ route('medical.overview') }}?view={{ $item[0] }}">
+                                        <div class="fw-bolder text-primary h4">
+                                            {{ strtoupper($item[0]) }}
+                                        </div>
+
+                                    </a>
+                                    <div class="text-end">
+                                        <h3 class="counter"> {{ strtoupper($item[1]) }}</h3>
+                                    </div>
+                                </div>
+                                @foreach ($_courses as $course)
+                                    <div class="row">
+                                        <div class="col-md">{{ $course->course_code }}</div>
+                                        <div class="col-md">
+                                          -
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
                 @foreach ($_courses as $_course)
                     <div class="col-md">
                         <a
                             href="{{ route('applicant-virtual-briefing') }}?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
-                            <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
-                                data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
+                            <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50"
+                                data-iq-rotate="0" data-iq-trigger="scroll" data-iq-ease="power.out"
+                                data-iq-opacity="0">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-between mb-2">
                                         <h5 class="text-primary">
@@ -253,7 +307,7 @@ $_title = 'Applicant Medical Overview';
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{route('medical.applicant-medical-result') }}" method="get">
+                    <form action="{{ route('medical.applicant-medical-result') }}" method="get">
                         <div class="form-group">
                             <label for="" class="form-label fw-bolder">REMARKS</label>
                             <input type="text" name="remarks" class="form-control">
@@ -277,7 +331,7 @@ $_title = 'Applicant Medical Overview';
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{route('medical.applicant-medical-result') }}" method="get">
+                    <form action="{{ route('medical.applicant-medical-result') }}" method="get">
                         <div class="form-group">
                             <label for="" class="form-label fw-bolder">REMARKS</label>
                             <input type="text" name="remarks" class="form-control">
