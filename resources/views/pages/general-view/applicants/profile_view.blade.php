@@ -62,7 +62,7 @@ $_title = 'Profile View';
                             </p>
                             @if ($_account->is_alumnia)
                                 <span class="badge bg-primary float-end">
-                                    BMA ALUMNIA
+                                    TAG AS ALUMNIA
                                 </span>
                             @else
                                 <button class="btn btn-outline-primary btn-sm float-end rounded-pill" id="btn-alumnia"
@@ -474,6 +474,7 @@ $_title = 'Profile View';
                                 result,
                                 'success'
                             )
+                            location.reload();
                         }
                         console.log(result);
 
