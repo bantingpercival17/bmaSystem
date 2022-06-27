@@ -110,4 +110,9 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(ApplicantMedicalResult::class, 'applicant_id')->where('is_removed', false);
     }
+    public function senior_high_school()
+    {
+        $_school =  $this->applicant->senior_high_school_name;
+        return strtolower($_school) == strtolower('baliwag maritime academy inc.') ? 1 : 0;
+    }
 }

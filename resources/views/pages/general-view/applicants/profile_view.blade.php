@@ -62,12 +62,14 @@ $_title = 'Profile View';
                             </p>
                             @if ($_account->is_alumnia)
                                 <span class="badge bg-primary float-end">
-                                    TAG AS ALUMNIA
+                                    BMA ALUMINA
                                 </span>
                             @else
-                                <button class="btn btn-outline-primary btn-sm float-end rounded-pill" id="btn-alumnia"
-                                    data-id="{{ base64_encode($_account->id) }}">BMA
-                                    ALUMNIA</button>
+                                @if ($_account->senior_high_school())
+                                    <button class="btn btn-outline-primary btn-sm float-end rounded-pill" id="btn-alumnia"
+                                        data-id="{{ base64_encode($_account->id) }}"> TAG AS ALUMNIA</button>
+                                @endif
+
                             @endif
 
                         </div>
