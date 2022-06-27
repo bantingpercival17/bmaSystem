@@ -59,8 +59,16 @@ $_title = 'Profile View';
                                         {{ $_account->applicant ? $_account->course->course_name : 'COURSE' }}
                                     </b>
                                 </span>
-
                             </p>
+                            @if ($_account->is_alumnia)
+                                <span class="badge bg-primary float-end">
+                                    BMA ALUMNIA
+                                </span>
+                            @else
+                                <button class="btn btn-outline-primary btn-sm float-end rounded-pill" id="btn-alumnia"
+                                    data-id="{{ base64_encode($_account->id) }}">BMA
+                                    ALUMNIA</button>
+                            @endif
 
                         </div>
                     </div>
@@ -73,7 +81,8 @@ $_title = 'Profile View';
                             <h5 class="mb-1"><b>APPLICANT DETAILS</b></h5>
                         </div>
                         <div>
-                            <a href="{{ route('applicant-form') }}?applicant={{ base64_encode($_account->id) }}" class="btn btn-sm btn-info mb-3 text-white">FORM RG-01</a>
+                            <a href="{{ route('applicant-form') }}?applicant={{ base64_encode($_account->id) }}"
+                                class="btn btn-sm btn-info mb-3 text-white">FORM RG-01</a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -87,6 +96,7 @@ $_title = 'Profile View';
                                     class="nav-link {{ request()->input('_fill') != 'document' ? '' : 'active' }}">Document
                                     Cheking</a>
                             </li>
+
                             @if ($_account->applicant_examination)
                                 @if ($_account->applicant_examination->is_finish == 1)
                                     <li class="nav-item">
@@ -101,7 +111,8 @@ $_title = 'Profile View';
                                     <a class="nav-link" data-bs-toggle="modal" data-bs-target=".document-view-profile"
                                         data-bs-toggle="tooltip" title="" data-bs-original-title="View Image">
 
-                                        <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg width="20" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path fill-rule="evenodd" clip-rule="evenodd"
                                                 d="M15.1614 12.0531C15.1614 13.7991 13.7454 15.2141 11.9994 15.2141C10.2534 15.2141 8.83838 13.7991 8.83838 12.0531C8.83838 10.3061 10.2534 8.89111 11.9994 8.89111C13.7454 8.89111 15.1614 10.3061 15.1614 12.0531Z"
                                                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
@@ -410,8 +421,7 @@ $_title = 'Profile View';
                                                 </div>
                                                 <div class="col-xl-6 col-md-6 mb-xl-0">
                                                     <div class="form-group">
-                                                        <small for="example-text-input"
-                                                            class="fw-bolder">EMAIL</small>
+                                                        <small for="example-text-input" class="fw-bolder">EMAIL</small>
                                                         <span
                                                             class="fw-bolder text-primary">{{ $_similar_account->email }}</span>
                                                     </div>
@@ -442,4 +452,36 @@ $_title = 'Profile View';
             </div>
         </div>
     </div>
+@section('js')
+    <script>
+        $(document).on('click', '#btn-alumnia', function() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This is BMA Alumnia!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = "{{ route('applicant.bma-alumnia') }}" + "?_applicant=" + $(this).data(
+                        'id')
+                    $.get(url, function(result) {
+                        if (result.respond.respond == 202) {
+                            Swal.fire(
+                                'Complete',
+                                result,
+                                'success'
+                            )
+                        }
+                        console.log(result);
+
+                    })
+
+                }
+            })
+        })
+    </script>
+@endsection
 @endsection

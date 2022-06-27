@@ -78,8 +78,8 @@
                                 }
                             @endphp
                                 <div class="image">
-                                    <img src="{{ asset('/assets/img/staff/' . $_image) }}" class="img-circle elevation-2"
-                                        alt="User Image" width="100px">
+                                    <img src="{{ asset('/assets/img/staff/' . $_image) }}"
+                                        class="img-fluid avatar avatar-50 avatar-rounded" alt="User Image" width="100px">
                                 </div>
                                 <span class="text-info h5">
                                     <b> {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}</b><br>

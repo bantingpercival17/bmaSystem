@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\ApplicantBriefingNotification;
 use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
+use App\Models\ApplicantAlumnia;
 use App\Models\ApplicantBriefing;
 use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
@@ -107,7 +108,18 @@ class ApplicantController extends Controller
         $_account->save();
         return back()->with("success", 'Successfully Removed');
     }
-
+    public function applicant_alumnia(Request $_request)
+    {
+        try {
+            $_data = array('applicant_id' => base64_decode($_request->_applicant), 'staff_id' => Auth::user()->staff->id);
+            ApplicantAlumnia::create($_data);
+            $respond = array('respond' => 202, 'message' => 'Successfully Submitted');
+            return compact('respond');
+        } catch (Exception $err) {
+            $respond = array('respond' => 404, 'message' => $err->getMessage());
+            return compact('respond');
+        }
+    }
     public function applicant_list(Request $_request)
     {
         $applicant = ApplicantAccount::where('course_id', $_request->course)->where('is_removed', 0)->get();

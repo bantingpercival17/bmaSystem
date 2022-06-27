@@ -14,6 +14,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/applicants/verified', [ApplicantController::class, 'applicant_verified'])->name('applicant-verified');
     Route::get('/applicant/notification', [ApplicantController::class, 'send_email_notification'])->name('applicant-notification');
     Route::get('/applicant-list', [ApplicantController::class, 'applicant_list']);
+    Route::get('/applicant/bma-alumnia',[ApplicantController::class,'applicant_alumnia'])->name('applicant.bma-alumnia');
     Route::get('/applicants/payment-verification', [ApplicantController::class, 'applicant_payment_verification'])->name('applicant-payment-verification');
     Route::get('/applicants/payment-verified', [ApplicantController::class, 'applicant_payment_verified'])->name('applicant-payment-verified');
     Route::get('/applicants/examination-notification', [ApplicantController::class, 'entrance_examination_notification'])->name('applicant-entrance-examination-notification');

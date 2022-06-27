@@ -391,7 +391,6 @@ class AccountingController extends Controller
             }
             $_payment = PaymentTransaction::create($_payment_details);
             if ($_request->_online_payment) {
-
                 $_online_payment = PaymentTrasanctionOnline::find($_request->_online_payment);
                 $_online_payment->payment_id = $_payment->id;
                 $_online_payment->is_approved = 1;
