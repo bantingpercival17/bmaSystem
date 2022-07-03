@@ -25,43 +25,78 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ApplicantController extends Controller
 {
-    /* Applicant Panel */
+    # Dashboard Category Function
+    public function dashboard_category($_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course)); // Find a Course
+        $_categories = array(
+            array('view' => 'pre-registration', 'function' => 'applicant_pre_registrations'),
+            array('view' => 'for-checking', 'function' => 'applicant_for_checking'), // For Verification of Document
+            array('view' => 'verified', 'function' => 'applicant_verified_documents'), // Verified Documents & Quified to Take Entrance Examination
+            array('view' => 'entrance-examination-payment-verification', 'function' => 'applicant_payment_verification'), // Entrance Examination Payment Verification
+            array('view' => 'entrance-examination-payment-verified', 'function' => 'applicant_payment_verified'), // Entrance Examination Payment Verified
+            array('view' => 'ongoing-examination', 'function' => 'applicant_examination_ongoing'), // Entrance Examination On-going
+            array('view' => 'examination-passed', 'function' => 'applicant_examination_passed'), // Entrance Examination Passed
+            array('view' => 'examination-failed', 'function' => 'applicant_examination_failed'), // Entrance Examination Failed
+            array('view' => 'virtual-orientation', 'function' => 'applicant_virtual_orientation'), // Orientation
+            array('view' => 'medical-appointment', 'function' => 'applicant_medical_appointment'), // Medical Appointment
+            array('view' => 'medical-scheduled', 'function' => 'applicant_medical_scheduled'),
+            array('view' => 'medical-results', 'function' => 'applicant_medical_results'),
+            //array('view', 'function'),
+        );
+        foreach ($_categories as $key => $value) {
+            if ($_request->view == $value['view']) {
+                $_category = $value['function'];
+                $_applicants = $_course[$value['function']];
+            }
+        }
+        return [$_applicants, $_category];
+    }
+    /* Applicant List View with the different views */
     public function applicant_view(Request $_request)
     {
-        $_courses = CourseOffer::all();
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_applicants =  $_course->applicant_not_verified;
-        return view('pages.general-view.applicants.list_view', compact('_applicants', '_course', '_courses'));
-    }
-    public function pre_applicant_view(Request $_request)
-    {
-        $_courses = CourseOffer::all();
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_applicants =  $_course->student_pre_registrations;
-        return view('pages.general-view.applicants.list_view', compact('_applicants', '_course', '_courses'));
+        try {
+            $_courses = CourseOffer::all(); // Get All Course
+            $_course = CourseOffer::find(base64_decode($_request->_course)); // Find a Course
+            $_data = $this->dashboard_category($_request);
+            $_applicants = $_data[0];
+            $_category = $_data[1];
+            return view('pages.general-view.applicants.list_view', compact('_applicants', '_course', '_courses', '_category'));
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
     }
     public function applicant_profile(Request $_request)
     {
-        $_account_check = ApplicantAccount::where('id', base64_decode($_request->_student))->where('is_removed', true)->first();
-        if ($_account_check) {
-            return redirect(route('applicant-lists') . '?_course=' . base64_encode($_account_check->course_id));
-        } else {
-            $_account = ApplicantAccount::find(base64_decode($_request->_student));
-            $_applicants = $_account->course->applicant_not_verified;
-            $_similar_account = $_account->similar_account();
-            return view('pages.general-view.applicants.profile_view', compact('_account', '_applicants', '_similar_account'));
+        try {
+            $_account_check = ApplicantAccount::where('id', base64_decode($_request->_applicant))->where('is_removed', true)->first();
+            if ($_account_check) {
+                return redirect(route('applicant-lists') . '?_course=' . base64_encode($_account_check->course_id));
+            } else {
+                $_account = ApplicantAccount::find(base64_decode($_request->_applicant));
+                $_dashboard_category = $this->dashboard_category($_request);
+                $_applicants = $_dashboard_category[0];
+                $_similar_account = $_account->similar_account();
+                return view('pages.general-view.applicants.profile_view', compact('_account', '_applicants', '_similar_account'));
+            }
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
         }
     }
+    # View Registration Form
     public function applicant_registration_form(Request $_request)
     {
         try {
             $_report = new ApplicantReport;
-            $_applicant = ApplicantAccount::find(base64_decode($_request->applicant));
+            $_applicant = ApplicantAccount::find(base64_decode($_request->_student));
             return $_report->applicant_form($_applicant);
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
         }
     }
+    # Send a Notification for Applicant's
     public function applicant_document_notification(Request $_request)
     {
         $_applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
@@ -70,6 +105,7 @@ class ApplicantController extends Controller
         Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant));
         return back()->with('success', 'Successfully Send the Notification');
     }
+    # Document Review Function
     public function applicant_document_review(Request $_request)
     {
         $_document = ApplicantDocuments::find(base64_decode($_request->_document));
@@ -81,8 +117,6 @@ class ApplicantController extends Controller
             if (count($_document->account->applicant_documents) == count($_document->account->document_status)) {
                 Mail::to($_document->account->email)->send($_email_model->document_verified($_document));
             }
-            //return $_document->account->document_status->count();
-            //Mail::to($_document->account->email)->send($_email_model->document_approved($_document->account, $_document));
             return back()->with('success', 'Successfully Transact.');
         } else {
             $_document->is_approved = 2;
@@ -94,13 +128,7 @@ class ApplicantController extends Controller
             //echo "Disapproved";
         }
     }
-    public function applicant_verified(Request $_request)
-    {
-        $_courses = CourseOffer::all();
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_applicants =  $_course->applicant_verified;
-        return view('pages.general-view.applicants.list_view', compact('_applicants', '_course', '_courses'));
-    }
+    # Removed Applicant Function
     public function applicant_removed(Request $_request)
     {
         $_account = ApplicantAccount::find(base64_decode($_request->_applicant));
@@ -119,11 +147,6 @@ class ApplicantController extends Controller
             $respond = array('respond' => 404, 'message' => $err->getMessage());
             return compact('respond');
         }
-    }
-    public function applicant_list(Request $_request)
-    {
-        $applicant = ApplicantAccount::where('course_id', $_request->course)->where('is_removed', 0)->get();
-        return compact('applicant');
     }
     public function send_email_notification(Request $_request)
     {
@@ -146,27 +169,8 @@ class ApplicantController extends Controller
         }
         return compact('data');
     }
-
-    /* Applicant Payment Verification */
-    public function applicant_payment_verification(Request $_request)
-    {
-        $_courses = CourseOffer::all();
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_applicants =  $_course->applicant_payment_verification;
-        return view('pages.general-view.applicants.payment-verification', compact('_applicants', '_course', '_courses'));
-    }
-    /* Applicant Payment Verified */
-    public function applicant_payment_verified(Request $_request)
-    {
-        $_courses = CourseOffer::all();
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_applicants =  $_course->applicant_payment_verified;
-        return view('pages.general-view.applicants.payment-verified', compact('_applicants', '_course', '_courses'));
-    }
-
     public function entrance_examination_notification(Request $_request)
     {
-        $_courses = CourseOffer::all();
         $_course = CourseOffer::find(base64_decode($_request->_course));
         $_applicants =  $_course->applicant_payment_verified;
         foreach ($_applicants as $key => $applicant) {
@@ -298,7 +302,6 @@ class ApplicantController extends Controller
             if ($_count > 1) {
                 $_students = ApplicantDetials::where('last_name', 'like', "%" . trim($_student[0]) . "%")
                     ->where('first_name', 'like', "%" . trim($_student[1]) . "%")
-
                     ->orderBy('last_name', 'asc');
             } else {
                 $_students = ApplicantDetials::select('applicant_medical_appointments.*')

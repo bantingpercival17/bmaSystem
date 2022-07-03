@@ -143,7 +143,7 @@ class Staff extends Model
         $_course = CourseOffer::all();
         $_total = 0;
         foreach ($_course as $key => $value) {
-            $_total += count($value->applicant_verified);
+            $_total += count($value->verified_applicants);
         }
         return $_total;
     }
@@ -292,7 +292,7 @@ class Staff extends Model
             ->join('tickets', 'tickets.id', 'ticket_concerns.ticket_id')
             ->where('ticket_concerns.is_removed', false)
             ->where('ticket_concerns.is_ongoing', false)
-            ->where('tickets.name','!=','HenryScord')
+            ->where('tickets.name', '!=', 'HenryScord')
             ->where('ticket_issues.department_id', $_department->id)
             /* ->where('ticket_issues.is_removed', false) */->orderBy('ticket_concerns.created_at', 'desc')->get();
     }

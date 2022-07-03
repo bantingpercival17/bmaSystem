@@ -1,11 +1,5 @@
 @php
-$_url_role = ['dashboard', 'administrator/dashboard', 'accounting/dashboard', 'registrar/dashboard'];
-$_course_enrolled = ['applicant-lists', 'applicant-lists', 'accounting.course-enrolled', 'registrar.course-enrolled'];
-
-$_course_url = route($_course_enrolled[0]);
-/* foreach ($_url_role as $key => $_data) {
-    $_course_url = request()->is($_data . '*') ? route($_course_enrolled[$key]) : $_course_url;
-} */
+$_route= route('applicant-lists') . '?' . (request()->input('_academic') ? '&_academic=' . request()->input('_academic') . '&' : '');
 @endphp
 <section>
     <p class="display-6 fw-bolder text-primary">Entrance Examination Overview</p>
@@ -65,14 +59,14 @@ $_course_url = route($_course_enrolled[0]);
             <div class="row">
                 @foreach ($_courses as $_course)
                     <div class="col-md-4">
-                        <a
-                            href="{{ $_course_url }}?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                        <a href="{{ $_route}}?_course={{ base64_encode($_course->id) }}">
                             <div class="card iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50"
                                 data-iq-rotate="0" data-iq-ease="power.out" data-iq-opacity="0">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <h3 class="counter">
-                                            {{ count($_course->applicant_verified) }}
+                                            {{ count($_course->verified_applicants) }}
+                                            {{-- {{count($_course->student_applicants)}} --}}
                                         </h3>
                                         <svg width="32" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -138,7 +132,7 @@ $_course_url = route($_course_enrolled[0]);
                             <th rowspan="2">PRE-REGISTRATION</th>
                             <th colspan="2">INFORMATION VERIFICATION</th>
                             <th colspan="2">ENTRANCE EXAMINATION PAYMENT</th>
-                            <td colspan="4">ENTRANCE EXAMINATION</td>
+                            <td colspan="3">ENTRANCE EXAMINATION</td>
                             <th rowspan="2">BRIEFING</th>
                             <th colspan="3">MEDICAL EXAMINATION</th>
                             <th rowspan="2">QUALIFIED FOR ENROLLMENT</th>
@@ -148,7 +142,7 @@ $_course_url = route($_course_enrolled[0]);
                             <th>VERIFIED</th>
                             <th>FOR VERIFICATION</th>
                             <th>PAYMENT VERIFED</th>
-                            <th>READY FOR EXAM</th>
+
                             <th>ONGOING</th>
                             <th>PASSED</th>
                             <th>FAILED</th>
@@ -165,59 +159,87 @@ $_course_url = route($_course_enrolled[0]);
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ route('applicant.pre-register') . '?_course=' . base64_encode($_course->id) }}">
-                                        {{ count($_course->student_pre_registrations) }}
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=pre-registration">
+                                        {{ count($_course->applicant_pre_registrations) }}
                                     </a>
 
                                 </td>
                                 <td>
-                                    <a href="{{ $_course_url . '?_course=' . base64_encode($_course->id) }}">
-                                        {{ count($_course->applicant_not_verified) }}
+
+                                    <a
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=for-checking">
+                                        {{ count($_course->applicant_for_checking) }}
                                     </a>
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ route('applicant-verified') . '?_course=' . base64_encode($_course->id) }}">
-                                        {{ count($_course->applicant_verified) }}
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=verified">
+                                        {{ count($_course->applicant_verified_documents) }}
                                     </a>
                                 </td>
-                                <td><a
-                                        href="{{ route('applicant-payment-verification') . '?_course=' . base64_encode($_course->id) }}">
-                                        {{ count($_course->applicant_payment_verification) }}</a></td>
-                                <td><a
-                                        href="{{ route('applicant-payment-verified') . '?_course=' . base64_encode($_course->id) }}">
-                                        {{ count($_course->applicant_payment_verified) }}</a></td>
                                 <td>
+                                    {{ count($_course->applicant_payment_verification_v2) }}
                                     <a
-                                        href="{{ route('applicant-examination-status') . '?_course=' . base64_encode($_course->id) . '&_status=' . base64_encode('ready-for-examination') }}">{{ count($_course->applicant_examination_ready) }}</a>
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=entrance-examination-payment-verification">
+                                        {{ count($_course->applicant_payment_verification) }}
+                                    </a>
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ route('applicant-examination-status') . '?_course=' . base64_encode($_course->id) . '&_status=' . base64_encode('on-going') }}">{{ count($_course->applicant_examination_ongoing) }}</a>
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=entrance-examination-payment-verified">
+                                        {{ count($_course->applicant_payment_verified) }}
+                                    </a>
                                 </td>
-                                <td> <a
-                                        href="{{ route('applicant-examination-status') . '?_course=' . base64_encode($_course->id) . '&_status=' . base64_encode('passed') }}">{{ count($_course->applicant_examination_result('passed')) }}</a>
+                                {{-- <td>
+                                    <a
+                                        href="{{ route('applicant-examination-status') . '?_course=' . base64_encode($_course->id) . '&_status=' . base64_encode('ready-for-examination') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">{{ count($_course->applicant_examination_ready) }}</a>
+                                </td> --}}
+                                <td>
+                                    <a
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=ongoing-examination">
+                                        {{ count($_course->applicant_examination_ongoing) }}
+                                    </a>
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ route('applicant-examination-status') . '?_course=' . base64_encode($_course->id) . '&_status=' . base64_encode('failed') }}">{{ count($_course->applicant_examination_result('failed')) }}</a>
-                                </td>
-                                <td> <a
-                                        href="{{ route('applicant-virtual-briefing') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_briefing) }}</a>
-                                </td>
-                                <td><a
-                                    href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_for_scheduling) }}</a></td>
-                                <td>
-                                    <a
-                                    href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_scheduled) }}</a>
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=examination-passed">
+                                        {{ count($_course->applicant_examination_passed) }}
+                                    </a>
                                 </td>
                                 <td>
                                     <a
-                                    href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_medical_result) }}</a>
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=examination-failed">
+                                        {{ count($_course->applicant_examination_failed) }}
+                                    </a>
                                 </td>
                                 <td>
                                     <a
-                                    href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id)}}">{{ count($_course->applicant_qualified_to_enrolled) }}</a>
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=virtual-orientation">
+                                        {{ count($_course->applicant_virtual_orientation) }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=medical-appointment">
+                                        {{ count($_course->applicant_medical_appointment) }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=medical-scheduled">
+                                        {{ count($_course->applicant_medical_scheduled) }}
+                                    </a>
+                                </td>
+                                <td>
+
+                                    <a
+                                        href="{{ $_route. '_course=' . base64_encode($_course->id) }}&view=medical-results">
+                                        {{ count($_course->applicant_medical_results) }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a
+                                        href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id) }}">{{ count($_course->applicant_qualified_to_enrolled) }}</a>
                                 </td>
                             </tr>
                         @endforeach

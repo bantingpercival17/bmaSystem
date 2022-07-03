@@ -1,14 +1,5 @@
 @extends('layouts.app-main')
 @php
-$_url_role = ['dashboard', 'administrator/applicants', 'accounting/applicants', 'registrar/applicants'];
-$_course_enrolled = ['applicant-lists', 'applicant-lists', 'accounting.course-enrolled', 'registrar.course-enrolled'];
-$_applicant_view = ['applicant-profile', 'applicant-profile', 'applicant-profile', 'applicant-profile'];
-$_course_url = route($_course_enrolled[0]);
-$_profile_link = route($_applicant_view[0]);
-/* foreach ($_url_role as $key => $_data) {
-    $_course_url = request()->is($_data . '*') ? route($_course_enrolled[$key]) : $_course_url;
-    $_profile_link = request()->is($_data . '*') ? route($_applicant_view[$key]) : $_profile_link;
-} */
 $_title = 'Profile View';
 @endphp
 @section('page-title', $_title)
@@ -24,7 +15,7 @@ $_title = 'Profile View';
         </a>
     </li>
     <li class="breadcrumb-item">
-        <a href="{{ $_course_url }}?_course={{ base64_encode($_account->course_id) }}">Applicant List</a>
+        <a href="{{ route('applicant-lists') }}?_course={{ base64_encode($_account->course_id) }}">Applicant List</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
         {{ $_title }}
@@ -83,7 +74,7 @@ $_title = 'Profile View';
                             <h5 class="mb-1"><b>APPLICANT DETAILS</b></h5>
                         </div>
                         <div>
-                            <a href="{{ route('applicant-form') }}?applicant={{ base64_encode($_account->id) }}"
+                            <a href="{{ route('applicant-form') }}?_student={{ base64_encode($_account->id) }}"
                                 class="btn btn-sm btn-info mb-3 text-white">FORM RG-01</a>
                         </div>
                     </div>
@@ -144,7 +135,7 @@ $_title = 'Profile View';
 
                 </div>
                 <div>
-                    <div class="d-flex justify-content-between">
+                    <div class="justify-content-between">
                         No. Result:
                         <span class="text-muted fw-bolder"> {{ count($_applicants) }}</span>
                     </div>
@@ -154,7 +145,7 @@ $_title = 'Profile View';
                 @if (count($_applicants) > 0)
                     @foreach ($_applicants as $item)
                         <div class="card mb-2">
-                            <a href="{{ $_profile_link }}?_student={{ base64_encode($item->id) }}">
+                            <a href="{{ route('applicant-profile') }}?_student={{ base64_encode($item->id) }}">
                                 <div class="row no-gutters">
                                     <div class="col-md col-lg">
                                         <div class="card-body">
@@ -174,7 +165,7 @@ $_title = 'Profile View';
                     @endforeach
                 @else
                     <div class="card mb-2">
-                        <a href="{{ $_profile_link }}?_student={{ base64_encode($item->id) }}">
+                        <a>
                             <div class="row no-gutters">
                                 <div class="col-md col-lg">
                                     <div class="card-body">

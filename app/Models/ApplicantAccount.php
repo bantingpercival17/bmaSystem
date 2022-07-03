@@ -37,9 +37,17 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(AcademicYear::class, 'academic_id');
     }
+
     public function applicant_documents()
     {
         return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false)->orderBy('document_id');
+    }
+    public function applicant_documents_status()
+    {
+        $_level = $this->course_id == 3 ? 11 : 4;
+        $_document_count =  Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->orderBy('id')->count();
+        $_document_approved = $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false)->where('is_approved', true)->limit($_document_count)->get();
+        return $_document_count == count($_document_approved) ? true : false;
     }
     public function is_alumnia()
     {
@@ -72,6 +80,10 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     {
         return $this->select('applicant_accounts.*')->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')->whereNull('is_approved')->where('applicant_payments.is_removed', false)->get();
     }
+    public function payment()
+    {
+        return $this->hasOne(ApplicantPayment::class, 'applicant_id')->where('is_removed', false);
+    }
     public function applicant_examination()
     {
         return $this->hasOne(ApplicantEntranceExamination::class, 'applicant_id')->where('is_removed', false)/* ->where('is_finish', true) */;
@@ -89,6 +101,10 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
         $_level = $this->course_id == 3 ? 11 : 4;
         $_document = Documents::where('department_id', 2)->where('year_level', $_level)->where('document_name', '2x2 Picture')->where('is_removed', false)->first();
         return $this->hasOne(ApplicantDocuments::class, 'applicant_id')->where('document_id', $_document->id)->where('is_removed', false);
+    }
+    public function virtual_orientation()
+    {
+        return $this->hasOne(ApplicantBriefing::class, 'applicant_id')->where('is_removed', false);
     }
     public function medical_appointment()
     {

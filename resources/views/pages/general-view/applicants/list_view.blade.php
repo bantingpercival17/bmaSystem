@@ -1,15 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_url_role = ['dashboard', 'administrator/applicants', 'accounting/applicants', 'registrar/applicants'];
-$_course_enrolled = ['applicant-lists', 'applicant-lists', 'accounting.course-enrolled', 'registrar.course-enrolled'];
-$_applicant_view = ['applicant-profile', 'applicant-profile', 'applicant-profile', 'applicant-profile'];
-$_course_url = route($_course_enrolled[0]);
-$_profile_link = route($_applicant_view[0]);
-/* foreach ($_url_role as $key => $_data) {
-    $_course_url = request()->is($_data . '*') ? route($_course_enrolled[$key]) : $_course_url;
-    $_profile_link = request()->is($_data . '*') ? route($_applicant_view[$key]) : $_profile_link;
-} */
-$_title = 'Applicant List';
+$_title = ucwords(str_replace('-', ' ', request()->input('view')));
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -24,40 +15,31 @@ $_title = 'Applicant List';
         </a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        {{ $_title }}
+        {{ request()->input('view') ? ucwords(str_replace('-', ' ', request()->input('view'))) : $_title }}
     </li>
 @endsection
 @section('page-content')
     <div class="row">
         <div class="col-md-8">
+            <p class="display-6 fw-bolder text-primary">
+                {{ request()->input('view') ? ucwords(str_replace('-', ' ', request()->input('view'))) : $_title }}</p>
             <form action="{{ request()->url() }}" method="get">
-                <input type="hidden" name="_course" value="{{ base64_encode($_course->id) }}">
+                <input type="hidden" name="_course" value="{{ request()->input('_course') }}">
                 @if (request()->input('_academic'))
                     <input type="hidden" name="_academic" value="{{ request()->input('_academic') }}">
                 @endif
-                @if (request()->input('_year_level'))
-                    <input type="hidden" name="_year_level" value="{{ request()->input('_year_level') }}">
-                @endif
-                @if (request()->input('_sort'))
-                    <input type="hidden" name="_sort" value="{{ request()->input('_sort') }}">
+                @if (request()->input('view'))
+                    <input type="hidden" name="view" value="{{ request()->input('view') }}">
                 @endif
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col">
                         <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                         <div class="form-group search-input">
                             <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
-                                name="_students">
+                                name="_student">
                         </div>
                     </div>
-                    <div class="col-4">
-                        <small class="text-primary"><b>SORT BY</b></small>
-                        <div class="form-group search-input">
-                            <select name="_sort" class="form-select">
-                                <option value="applicant-number">Applicant Number</option>
-                                <option value="lastname">Lastname</option>
-                            </select>
-                        </div>
-                    </div>
+
                     <div class="col-2">
                         <div class="form-group mt-4">
                             <button type="submit" class="btn btn-primary">FIND</button>
@@ -69,76 +51,43 @@ $_title = 'Applicant List';
             </form>
             <div class="d-flex justify-content-between mb-3">
                 <div>
+
                     <span class="fw-bolder">
                         {{ $_course->course_name }}
                     </span>
-                    <div class="d-flex justify-content-between">
-                        @if (request()->input('_sort'))
-                            <div>
-                                <small>Sort By: </small> <span
-                                    class="fw-bolder text-info">{{ ucwords(str_replace('-', ' ', request()->input('_sort'))) }}</span>
-                            </div>
-                        @endif
-                        @if (request()->input('_year_level'))
-                            <div class="ms-5">
-                                <small>Year Level Result: </small> <span
-                                    class="fw-bolder text-info">{{ request()->input('_year_level') }}</span>
-                            </div>
-                        @endif
-                    </div>
+                    @if (request()->input('_student'))
+                        <p for="" class="h5">
+                            <small class="text-muted"> Search Result:</small>
+                            <span class="fw-bolder h4 text-primary"> {{ strtoupper(request()->input('_student')) }}</span>
+                        </p>
+                    @endif
                 </div>
                 <span class="text-muted h6">
                     No. Result: <b>{{ count($_applicants) }}</b>
                 </span>
             </div>
+
             @if (count($_applicants) > 0)
-                @foreach ($_applicants as $_data)
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <span><b>{{ $_data->applicant ? $_data->applicant_number : '-' }}</b></span>
-                                    <a href="{{ $_profile_link }}?_student={{ base64_encode($_data->id) }}">
-                                        <div class="mt-2">
-                                            <h2 class="counter" style="visibility: visible;">
-                                                {{ strtoupper($_data->applicant->last_name . ', ' . $_data->applicant->first_name) }}
-                                            </h2>
-                                        </div>
-
-                                    </a>
-                                    <span class="badge bg-primary">{{ $_data->course->course_name }}</span> -
-                                    <span>{{ $_data->applicant ? $_data->email : '-' }}</span> <br>
-                                    <span class="badge bg-black">
-                                        @php
-                                            echo $_data->applicant->check_duplicate();
-                                        @endphp
-                                    </span>
-                                </div>
-                                <div class="col-md">
-                                    <div class="badge bg-primary w-100">
-                                        <span>{{ $_data->created_at->format('F d, Y') }}</span>
-                                    </div>
-
-                                    <a href="{{ route('applicant-removed') }}?_applicant={{ base64_encode($_data->id) }}"
-                                        class="badge bg-danger text-white w-100">REMOVE
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
+                @include('pages.general-view.applicants.card-layout')
+                @yield('applicant-card')
             @else
                 <div class="card">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="mt-2">
-                                    <h2 class="counter" style="visibility: visible;">
-                                        NO DATA
-                                    </h2>
-                                </div>
-
-
+                        <div class="row">
+                            <div class="col-md-9">
+                                @if (request()->input('_student'))
+                                    <p class="fw-bolder text-muted mb-0">
+                                        <span class="badge bg-primary">COURSE</span> |
+                                        APPLICANT NUMNER
+                                    </p>
+                                    <a class="fw-bolder h2">
+                                        {{ strtoupper('NOT FOUND') }}
+                                    </a>
+                                @else
+                                    <a class="fw-bolder h2">
+                                        {{ strtoupper('EMPTY') }}
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -149,7 +98,7 @@ $_title = 'Applicant List';
             @foreach ($_courses as $_course)
                 <div class="col-md">
                     <a
-                        href="{{ $_course_url }}?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                        href="{{ route('applicant-lists') }}?_course={{ base64_encode($_course->id) }}&view={{ request()->input('view') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                         <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
                             data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
                             <div class="card-body">
@@ -158,7 +107,8 @@ $_title = 'Applicant List';
                                         {{ $_course->course_name }}
                                     </h5>
                                     <a href="javascript:void(0);">
-                                        <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg width="32" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <path
                                                 d="M17.8877 10.8967C19.2827 10.7007 20.3567 9.50473 20.3597 8.05573C20.3597 6.62773 19.3187 5.44373 17.9537 5.21973"
                                                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
@@ -193,8 +143,7 @@ $_title = 'Applicant List';
                                     </a>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <h3 class="conter">{{ count($_course->applicant_not_verified) }}</h3>
-                                    {{-- <p class="mb-0 ms-2">+3 last/d</p> --}}
+                                    <h3 class="conter">{{ count($_course[$_category]) }}</h3>
                                 </div>
                             </div>
                         </div>

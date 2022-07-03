@@ -24,7 +24,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
     <div class="conatiner-fluid content-inner mt-6 py-0">
         <div class="row">
             <div class="col-8">
-                @if (Auth::user()->email == 'k.j.cruz@bma.edu.ph')
+                @if (Auth::user()->email == 'it@bma.edu.ph')
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
