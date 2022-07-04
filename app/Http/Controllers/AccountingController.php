@@ -413,11 +413,17 @@ class AccountingController extends Controller
 
     public function applicant_transaction_view(Request $_request)
     {
-        $_applicants = new ApplicantAccount;
-        $_payment_transaction = $_request->_applicants ? $_applicants->search_applicants($_request->_applicants) :  $_applicants->applicant_payments();
-        $_student = $_request->_applicant ? ApplicantAccount::find(base64_decode($_request->_applicant)) : [];
-        $_applicant_payment = $_request->payment_approved ?  ApplicantPayment::find(base64_decode($_request->payment_approved)) : [];
-        return view('pages.accounting.applicant.view', compact('_payment_transaction', '_student', '_applicant_payment'));
+        try {
+            $_applicants = new ApplicantAccount;
+
+            $_payment_transaction = $_request->_applicants ? $_applicants->search_applicants :  $_applicants->applicant_payments();
+            $_student = $_request->_applicant ? ApplicantAccount::find(base64_decode($_request->_applicant)) : [];
+            $_applicant_payment = $_request->payment_approved ?  ApplicantPayment::find(base64_decode($_request->payment_approved)) : [];
+            return view('pages.accounting.applicant.view', compact('_payment_transaction', '_student', '_applicant_payment'));
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
     }
     public function applicant_transaction_verification(Request $_request)
     {

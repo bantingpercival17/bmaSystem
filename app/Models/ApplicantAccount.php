@@ -71,10 +71,11 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(ApplicantPayment::class, 'applicant_id')->where('is_removed', false);
     }
-    public function search_applicants($_data)
+    public function search_applicants()
     {
+
         //return ApplicantAccount::where('name', 'like', '%' . $_data . '%')->with('applicant_details')->get();
-        return $this->where('name', 'like', '%' . $_data . '%')->orWhere('applicant_number', 'like', '%' . $_data . '%')->get();
+        return $this->where('name', 'like', '%' . request()->input('_applicants') . '%')->orWhere('applicant_number', 'like', '%' . request()->input('_applicants') . '%')->get();
     }
     public function applicant_payments()
     {
