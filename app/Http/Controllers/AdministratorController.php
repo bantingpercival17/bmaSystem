@@ -46,6 +46,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade as PDF;
+use Exception;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Mail;
 
@@ -110,20 +111,25 @@ class AdministratorController extends Controller
     }
     public function student_imports(Request $_request)
     {
-        if ($_request->_file_type == 'json') {
-            $_files = json_decode(file_get_contents($_request->file('_file')));
-            $_student_model = new StudentDetails();
-            foreach ($_files as $key => $_file) {
-                $_student_model->upload_student_details($_file);
+        try {
+            if ($_request->_file_type == 'json') {
+                $_files = json_decode(file_get_contents($_request->file('_file')));
+                $_student_model = new StudentDetails();
+                foreach ($_files as $key => $_file) {
+                    $_student_model->upload_student_details($_file);
+                }
             }
+            if ($_request->_file_type == 'excel') {
+                Excel::import(new StudentInformationImport, $_request->file('_file'));
+            }
+            if ($_request->_file_type == 'shipboard') {
+                Excel::import(new ShipboardInformationImport, $_request->file('_file'));
+            }
+            echo "<a href=" . route('admin.students') . ">BACK</a>";
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
         }
-        if ($_request->_file_type == 'excel') {
-            Excel::import(new StudentInformationImport, $_request->file('_file'));
-        }
-        if ($_request->_file_type == 'shipboard') {
-            Excel::import(new ShipboardInformationImport, $_request->file('_file'));
-        }
-        echo "<a href=" . route('admin.students') . ">BACK</a>";
+
         //return back()->with('message', 'Successfully Upload Student Details');
     }
     public function student_reset_password(Request $_request)
