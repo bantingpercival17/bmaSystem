@@ -74,18 +74,18 @@ $_title = 'Profile View';
                             <h5 class="mb-1"><b>APPLICANT DETAILS</b></h5>
                         </div>
                         <div>
-                            <a href="{{ route('applicant-form') }}?_student={{ base64_encode($_account->id) }}"
+                            <a href="{{ route('applicant-form') }}?_applicant={{ base64_encode($_account->id) }}"
                                 class="btn btn-sm btn-info mb-3 text-white">FORM RG-01</a>
                         </div>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-pills nav-pill mb-3" id="pills-tab" role="tablist">
                             <li class="nav-item">
-                                <a href="{{ request()->url() . '?_student=' . request()->input('_student') }}"
+                                <a href="{{ request()->url() . '?_applicant=' . request()->input('_applicant') }}"
                                     class="nav-link {{ request()->input('_fill') ?: 'active' }}">Applicant Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ request()->url() . '?_student=' . request()->input('_student') }}&_fill=document"
+                                <a href="{{ request()->url() . '?_applicant=' . request()->input('_applicant') }}&_fill=document"
                                     class="nav-link {{ request()->input('_fill') != 'document' ? '' : 'active' }}">Document
                                     Cheking</a>
                             </li>
@@ -93,7 +93,7 @@ $_title = 'Profile View';
                             @if ($_account->applicant_examination)
                                 @if ($_account->applicant_examination->is_finish == 1)
                                     <li class="nav-item">
-                                        <a href="{{ request()->url() . '?_student=' . request()->input('_student') }}&_fill=entrance-examination"
+                                        <a href="{{ request()->url() . '?_applicant=' . request()->input('_applicant') }}&_fill=entrance-examination"
                                             class="nav-link {{ request()->input('_fill') != 'entrance-examination' ? '' : 'active' }}">Entrance
                                             Examination</a>
                                     </li>
