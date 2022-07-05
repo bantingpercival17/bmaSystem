@@ -36,11 +36,14 @@
                                         {{ $_student ? $_student->contact_number : 'CONTANCT NUMBER' }}
                                     </b>
                                 </span>
-                                @if ($_student->applicant_documents_status())
-                                <span class="badge bg-primary">DOCUMENT VERIFIED</span>
-                                @else
-                                <span class="badge bg-danger">NOT VERIFIED</span>
+                                @if ($_student)
+                                    @if ($_student->applicant_documents_status())
+                                        <span class="badge bg-primary">DOCUMENT VERIFIED</span>
+                                    @else
+                                        <span class="badge bg-danger">NOT VERIFIED</span>
+                                    @endif
                                 @endif
+
                             </p>
 
                         </div>
