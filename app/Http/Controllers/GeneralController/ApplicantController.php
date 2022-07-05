@@ -90,7 +90,7 @@ class ApplicantController extends Controller
     {
         try {
             $_report = new ApplicantReport;
-            $_applicant = ApplicantAccount::find(base64_decode($_request->_student));
+            $_applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
             return $_report->applicant_form($_applicant);
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
@@ -99,11 +99,15 @@ class ApplicantController extends Controller
     # Send a Notification for Applicant's
     public function applicant_document_notification(Request $_request)
     {
-        $_applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
-        $_email_model = new ApplicantEmail();
-        //return $_applicant->email;
-        Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant));
-        return back()->with('success', 'Successfully Send the Notification');
+        try {
+            $_applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
+            $_email_model = new ApplicantEmail();
+            //return $_applicant->email;
+            Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant));
+            return back()->with('success', 'Successfully Send the Notification');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
     }
     # Document Review Function
     public function applicant_document_review(Request $_request)
