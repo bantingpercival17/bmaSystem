@@ -130,6 +130,6 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     public function senior_high_school()
     {
         $_school =  $this->applicant->senior_high_school_name;
-        return strtolower($_school) == strtolower('baliwag maritime academy inc.') ? 1 : 0;
+        return strtolower($_school) == strtolower('baliwag maritime academy inc.') || strtolower($_school) == strtolower('baliwag maritime academy') || strtolower($_school) == strtolower('baliwag maritime academy inc') ? 1 : 0;
     }
 }
