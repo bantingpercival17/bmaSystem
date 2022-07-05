@@ -1,6 +1,8 @@
 @extends('layouts.app-main')
 @php
 $_title = 'Profile View';
+$_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ? '_academic=' . request()->input('_academic') . '&' : '') . '_course=' . request()->input('_course') . '&view=' . request()->input('view');
+
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -81,11 +83,11 @@ $_title = 'Profile View';
                     <div class="card-body">
                         <ul class="nav nav-pills nav-pill mb-3" id="pills-tab" role="tablist">
                             <li class="nav-item">
-                                <a href="{{ request()->url() . '?_applicant=' . request()->input('_applicant') }}"
+                                <a href="{{ $_url_card . '&_applicant=' . request()->input('_applicant') }}"
                                     class="nav-link {{ request()->input('_fill') ?: 'active' }}">Applicant Profile</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ request()->url() . '?_applicant=' . request()->input('_applicant') }}&_fill=document"
+                                <a href="{{ $_url_card . '&_applicant=' . request()->input('_applicant') }}&_fill=document"
                                     class="nav-link {{ request()->input('_fill') != 'document' ? '' : 'active' }}">Document
                                     Cheking</a>
                             </li>
@@ -93,7 +95,7 @@ $_title = 'Profile View';
                             @if ($_account->applicant_examination)
                                 @if ($_account->applicant_examination->is_finish == 1)
                                     <li class="nav-item">
-                                        <a href="{{ request()->url() . '?_applicant=' . request()->input('_applicant') }}&_fill=entrance-examination"
+                                        <a href="{{ $_url_card . '&_applicant=' . request()->input('_applicant') }}&_fill=entrance-examination"
                                             class="nav-link {{ request()->input('_fill') != 'entrance-examination' ? '' : 'active' }}">Entrance
                                             Examination</a>
                                     </li>
