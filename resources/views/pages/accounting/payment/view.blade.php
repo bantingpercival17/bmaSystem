@@ -79,8 +79,9 @@
                                         {{ $_student->enrollment_assessment->academic->school_year }}</small>
                                 </b>
                             </label>
+                           
                             @php
-                                $_payment_details = $_student->enrollment_status->payment_assessments;
+                                $_payment_details = $_student->enrollment_assessment->payment_assessments;
                             @endphp
                             <div class=" row mt-2">
                                 <div class="col-md-4">
