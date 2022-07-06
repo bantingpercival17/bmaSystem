@@ -15,6 +15,7 @@ use App\Models\StudentDetails;
 use App\Models\StudentSection;
 use App\Models\SubjectClass;
 use App\Report\GradingSheetReport;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -30,24 +31,34 @@ class TeacherController extends Controller
     }
     public function subject_list(Request $_request)
     {
-        $_staff = Auth::user()->staff;
-        $_academic = $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : Auth::user()->staff->current_academic();
-        $_subject = SubjectClass::where('staff_id', $_staff->id)
-            ->where('academic_id', $_academic->id)
-            ->where('is_removed', false)
-            ->get();
-        return view('teacher.dashboard.dasboard-main', compact('_subject'));
+        try {
+            $_staff = Auth::user()->staff;
+            $_academic = $_request->_academic ? AcademicYear::find(base64_decode($_request->_academic)) : Auth::user()->staff->current_academic();
+            $_subject = SubjectClass::where('staff_id', $_staff->id)
+                ->where('academic_id', $_academic->id)
+                ->where('is_removed', false)
+                ->get();
+            return view('pages.teacher.dashboard.dasboard-main', compact('_subject'));
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
     }
     public function subject_class_view(Request $_request)
     {
-        $_subject = SubjectClass::find(base64_decode($_request->_subject));
-        $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
-        if ($_subject_code == 'BRDGE') {
-            $_students = $_subject->section->student_with_bdg_sections;
-        } else {
-            $_students = $_subject->section->student_sections;
+        try {
+            $_subject = SubjectClass::find(base64_decode($_request->_subject));
+            $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
+            if ($_subject_code == 'BRDGE') {
+                $_students = $_subject->section->student_with_bdg_sections;
+            } else {
+                $_students = $_subject->section->student_sections;
+            }
+            return view('pages.teacher.subject-class.view', compact('_subject', '_students'));
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
         }
-        return view('teacher.subject-class.view', compact('_subject', '_students'));
     }
     public function subject_clearance(Request $_request)
     {
@@ -251,5 +262,26 @@ class TeacherController extends Controller
             '_topic.*' => "required"
         ]);
         return $_request;
+    }
+    # Create Subject Syllabus
+    public function subject_create_syllabus(Request $_request)
+    {
+        try {
+            $_subject = SubjectClass::find(base64_decode($_request->_subject));
+            return view('pages.teacher.subject-class.course-syllabus.create-syllabus', compact('_subject'));
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    # Create Subject Syllabus
+    public function subject_select_syllabus()
+    {
+        try {
+            return view('pages.teacher.subject-class.syllabus.select-syllabus');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
     }
 }

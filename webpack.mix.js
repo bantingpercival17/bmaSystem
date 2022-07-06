@@ -22,7 +22,8 @@ mix.styles([
     'resources/assets/css/gigz.min.css',
     'resources/assets/css/custom.min.css',
     'resources/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css',
-    'resources/assets/plugin/select/css/select2.min.css'
+    'resources/assets/plugin/select/css/select2.min.css',
+    'resources/assets/plugin/editor/editor.css',
 ], 'public/css/app-1.css').js([
     /* "resources/assets/js/core/libs.min.js", */
     /* <!-- Library Bundle Script --> */

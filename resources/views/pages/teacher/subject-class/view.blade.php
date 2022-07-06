@@ -22,25 +22,52 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
 @endsection
 @section('page-content')
 
-
     <div class="conatiner-fluid content-inner mt-6 py-0">
-        
-        <div class="card">
+
+        <div class="row">
+            <div class="col-md">
+                <a href="{{ route('teacher.create-syllabus') }}?_subject={{ request()->input('_subject') }}">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-md">
+                                    <span class="h3 text-primary fw-bolder">
+                                        CREATE SYSLLABUS
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+            <div class="col-md">
+                <a href="{{ route('teacher.select-syllabus') }}">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-md">
+                                    <span class="h3 text-primary fw-bolder">
+                                        SELECT SYSLLABUS
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {{-- <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">Student List</h4>
+                    <h4 class="card-title">STUDENT LIST</h4>
                 </div>
-                {{-- <div class="card-tool">
-                        <div class="form-check d-block">
-                            <input class="form-check-input input-select" data-check="subject-clearance" type="checkbox"
-                                id="flexCheckChecked-4">
-                            <label class="form-check-label" for="flexCheckChecked-4">
-                                Select All
-                            </label>
-                        </div>
-                        <input type="hidden" name="_subject_class" value="{{ base64_encode($_subject->id) }}">
-                        <button type="submit" class="btn btn-primary">SUBMIT</button>
-                    </div> --}}
+
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -70,7 +97,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                     </table>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
     </div>
 
