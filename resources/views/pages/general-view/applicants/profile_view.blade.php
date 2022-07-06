@@ -55,12 +55,12 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                             </p>
                             @if ($_account->is_alumnia)
                                 <span class="badge bg-primary float-end">
-                                    BMA ALUMINA
+                                    BMA SENIOR HIGH ALUMNUS
                                 </span>
                             @else
                                 @if ($_account->senior_high_school())
                                     <button class="btn btn-outline-primary btn-sm float-end rounded-pill" id="btn-alumnia"
-                                        data-id="{{ base64_encode($_account->id) }}"> TAG AS ALUMNIA</button>
+                                        data-id="{{ base64_encode($_account->id) }}"> BMA SENIOR HIGH ALUMNUS</button>
                                 @endif
 
                             @endif
@@ -89,7 +89,7 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                             <li class="nav-item">
                                 <a href="{{ $_url_card . '&_applicant=' . request()->input('_applicant') }}&_fill=document"
                                     class="nav-link {{ request()->input('_fill') != 'document' ? '' : 'active' }}">Document
-                                    Cheking</a>
+                                    Checking</a>
                             </li>
 
                             @if ($_account->applicant_examination)
