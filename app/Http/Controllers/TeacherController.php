@@ -93,7 +93,7 @@ class TeacherController extends Controller
             }
 
 
-            return view('teacher.grading_sheet_main', compact('_subject', '_students', '_columns'));
+            return view('pages.teacher.grading_sheet_main', compact('_subject', '_students', '_columns'));
         }
     }
     public function subject_view()
@@ -152,7 +152,7 @@ class TeacherController extends Controller
     {
         $_subject = SubjectClass::find(Crypt::decrypt($_request->_subject));
         $_staff = Staff::find($_subject->staff_id);
-        return view('teacher.teacher_view', compact('_subject', '_staff'));
+        return view('pages.teacher.teacher_view', compact('_subject', '_staff'));
     }
 
     public function subject_report_view(Request $_request)
@@ -230,7 +230,7 @@ class TeacherController extends Controller
         $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'DESC')->get();
         $_sections = $_request->_academic ? Section::where('academic_id', base64_decode($_request->_academic))->where('course_id', 2)->orderBy('section_name', 'ASC')->get() :
             Section::where('academic_id', $_current_academic->id)->where('course_id', 2)->orderBy('section_name', 'ASC')->get();
-        return view('teacher.department-head.clearance.view', compact('_academics', '_current_academic', '_sections'));
+        return view('pages.teacher.department-head.clearance.view', compact('_academics', '_current_academic', '_sections'));
     }
     public function section_view_e_clearance(Request $_request)
     {
@@ -241,7 +241,7 @@ class TeacherController extends Controller
             ->orderBy('student_details.last_name', 'ASC')
             ->where('ss.is_removed', false)
             ->get();
-        return view('teacher.department-head.clearance.view_list', compact('_section', '_students'));
+        return view('pages.teacher.department-head.clearance.view_list', compact('_section', '_students'));
     }
 
     public function schedule_view(Request $_request)
