@@ -180,6 +180,14 @@ class CourseOffer extends Model
             ->whereNull('pa.enrollment_id')
             ->where('enrollment_assessments.year_level', $_year_level);
     }
+    # BRIDGING PROGRAM
+    public function student_bridging_program()
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.bridging_program', 'with')
+            ->where('enrollment_assessments.is_removed', false);
+    }
     public function payment_assessment()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
@@ -739,6 +747,7 @@ class CourseOffer extends Model
             ->join('applicant_medical_results as amr', 'amr.applicant_id', 'applicant_accounts.id')
             ->where('amr.is_removed', false)->where('amr.is_fit', true);
     }
+
     // COURSE COLLECTION
     public function student_payment_mode($_data)
     {

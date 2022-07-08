@@ -18,6 +18,7 @@ use App\Models\Curriculum;
 use App\Models\EnrollmentAssessment;
 use App\Models\ParticularFees;
 use App\Models\Particulars;
+use App\Models\PaymentAdditionalTransaction;
 use App\Models\PaymentAssessment;
 use App\Models\PaymentTransaction;
 use App\Models\PaymentTrasanctionOnline;
@@ -36,6 +37,7 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AccountingController extends Controller
@@ -334,16 +336,27 @@ class AccountingController extends Controller
             $_student_detials = new StudentDetails();
             $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
             $_vouchers = Voucher::where('is_removed', false)->get();
-            $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+            $_students = StudentDetails::select('student_details.*')
                 ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
                 ->join('payment_assessments as pa', 'pa.enrollment_id', 'ea.id')
                 ->join('payment_trasanction_onlines as pto', 'pto.assessment_id', 'pa.id')
                 ->where('pto.is_removed', false)
-                ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
                 ->whereNull('pto.is_approved')
-                ->get();
+                ->groupBy('student_details.id')
+                ->paginate(10);
+            $_additional_fees = StudentDetails::select('student_details.*')
+                ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
+                ->join('payment_additional_transactions', 'payment_additional_transactions.enrollment_id', 'enrollment_assessments.id')
+                ->where('payment_additional_transactions.is_removed', false)
+                ->whereNull('payment_additional_transactions.is_approved')
+                ->groupBy('enrollment_assessments.student_id')->paginate(0);
             $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : $_students;
+            $_students = $_request->_payment_category == 'additional-payment' ? $_additional_fees : $_students;
             $_online_payment = $_request->payment_approved ? PaymentTrasanctionOnline::find(base64_decode($_request->payment_approved)) : null;
+            // $_ftp = $_student->enrollment_assessment->additional_payment[0]->reciept_attach_path;
+            //Storage::path($_ftp);
+            //return Storage::disk('ftp')->get($_ftp);
+            //Storage::disk('ftp')->get($_ftp);
             return view('pages.accounting.payment.view', compact('_students', '_student', '_vouchers', '_online_payment'));
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
@@ -567,6 +580,36 @@ class AccountingController extends Controller
             // /return Excel::download($_class, $_file_name); // Download the File
         } catch (Expression $er) {
             return back()->with('error', $er);
+        }
+    }
+
+
+    // Bridging Program Payments
+
+    public function payment_disapproved(Request $_request)
+    {
+        try {
+            $_online_payment = PaymentAdditionalTransaction::find($_request->_online_payment);
+            $_online_payment->is_approved = 0;
+            $_online_payment->comment_remarks =  $_request->remarks;
+            $_online_payment->save();
+            return back()->with('success', 'Transaction Complete');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function payment_approved(Request $_request)
+    {
+        try {
+            $_online_payment = PaymentAdditionalTransaction::find($_request->_online_payment);
+            $_online_payment->is_approved = 1;
+            $_online_payment->or_number =  $_request->or_number;
+            $_online_payment->save();
+            return back()->with('success', 'Transaction Complete');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
         }
     }
 }

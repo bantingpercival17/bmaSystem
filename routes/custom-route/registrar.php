@@ -28,6 +28,8 @@ Route::prefix('registrar')->group(function () {
     Route::get('/enrollment/enrolled-list', [RegistrarController::class, 'enrolled_list_view'])->name('registrar.course-enrolled');
     Route::get('/enrollment/student-clearance', [RegistrarController::class, 'student_clearance'])->name('registrar.student-clearance');
     Route::post('/enrollment/assessment', [RegistrarController::class, 'enrollment_assessment'])->name('registrar.enrollment-assessment');
+    Route::get('/enrollment/bridging-program',[RegistrarController::class,'enrollment_briding_program'])->name('registrar.bridging-program');
+
     // Student Profile
     Route::get('/student-profile', [RegistrarController::class, 'student_list_view'])->name('registrar.students'); // Student List View
     Route::get('/student-profile/view', [RegistrarController::class, 'student_profile_view'])->name('registrar.student-profile');
@@ -39,7 +41,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/sections/view', [RegistrarController::class, 'section_add_student_view'])->name('registrar.section-add-student-view');
     Route::get('/sections/view/add', [RegistrarController::class, 'section_add_student'])->name('registrar.section-add-student');
     Route::get('/section/view/store', [RegistrarController::class, 'section_store_student'])->name('registrar.section-store-student');
-    Route::get('/section/export-file',[RegistrarController::class,'section_export_file'])->name('registrar.section-export');
+    Route::get('/section/export-file', [RegistrarController::class, 'section_export_file'])->name('registrar.section-export');
     // E-clearance
     Route::get('/semestral-clearance', [RegistrarController::class, 'clearance_view'])->name('registrar.semestral-clearance');
     Route::get('/semestral-clearance/view', [RegistrarController::class, 'semestral_student_list_view'])->name('registrar.semestral-student-list'); // Section view

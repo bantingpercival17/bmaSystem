@@ -23,9 +23,12 @@ class CreatePaymentAdditionalTransactionsTable extends Migration
             $table->string('reference_number');
             $table->string('transaction_type');
             $table->text('reciept_attach_path');
+            $table->date('transaction_date');
             $table->boolean('is_approved')->nullable();
             $table->text('comment_remarks')->nullable();
             $table->string('or_number')->nullable();
+            $table->unsignedBigInteger('staff_id')->nullable();
+            $table->foreign('staff_id')->references('id')->on('staff');
             $table->boolean('is_removed')->default(0);
             $table->timestamps();
         });

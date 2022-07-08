@@ -79,7 +79,7 @@
                                         {{ $_student->enrollment_assessment->academic->school_year }}</small>
                                 </b>
                             </label>
-                           
+
                             @php
                                 $_payment_details = $_student->enrollment_assessment->payment_assessments;
                             @endphp
@@ -226,11 +226,19 @@
 
                             </div>
                         @else
-                            <a href="{{ route('accounting.payment-transactions') }}?_midshipman={{ request()->input('_midshipman') }}&add-transaction=true"
-                                class="btn btn-primary w-100">
-                                Add Transaction</a>
-                            <a href="{{ route('accounting.assessments') }}?_midshipman={{ request()->input('_midshipman') }}&reassessment=true"
-                                class="btn btn-primary w-100 mt-3">Re-assess Fee</a>
+                            <div class="row">
+                                <div class="col-md">
+                                    <a href="{{ route('accounting.assessments') }}?_midshipman={{ request()->input('_midshipman') }}&reassessment=true"
+                                        class="btn btn-outline-primary w-100">RE-ASSESS TUITION FEE</a>
+                                </div>
+                                <div class="col-md">
+                                    <a href="{{ route('accounting.payment-transactions') }}?_midshipman={{ request()->input('_midshipman') }}&add-transaction=true"
+                                        class="btn btn-outline-primary w-100">
+                                        ADD TRANSACTION</a>
+                                </div>
+                            </div>
+
+
                         @endif
                         <hr>
                         <div class="payment-history">
@@ -339,6 +347,128 @@
                                 @endif
 
                             </ul>
+                            <h5>ONLINE ADDITIONAL PAYMENT</h5>
+
+
+                            @if ($_student->enrollment_assessment)
+                                @if (count($_student->enrollment_assessment->additional_payment) > 0)
+                                    @foreach ($_student->enrollment_assessment->additional_payment as $item)
+                                        <div class="payment-details">
+                                            <p class="mb-0">
+                                                <small>{{ $item->created_at->format('d, F Y') }}</small>
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+
+                                                <div>
+                                                    <small>REFERENCE NO: </small> <br>
+                                                    <span class="text-primary h5">{{ $item->reference_number }}</span>
+                                                </div>
+                                                <div>
+                                                    <small>AMOUNT: </small> <br>
+                                                    <span
+                                                        class="text-primary h5">{{ number_format($item->amount_paid, 2) }}</span>
+                                                </div>
+                                                <div>
+                                                    <small>TRANSACTION DATE: </small> <br>
+                                                    <span
+                                                        class="text-primary h5">{{ $item->transaction_date }}</span>
+
+                                                </div>
+                                                <div>
+                                                    <small>TRANSACTION TYPE</small> <br>
+                                                    <span
+                                                        class="text-primary h5">{{ ucwords(str_replace('_', ' ', $item->transaction_type)) }}</span>
+
+                                                </div>
+                                            </div>
+                                            @if ($item->is_approved === 0)
+                                                <div class="payment-verification">
+                                                    <span class="text-secondary fw-bolder">PAYMENT VERIFICATION</span>
+                                                    <div>
+                                                        <small class="text-danger fw-bolder">DISAPPROVED </small>
+                                                        <br>
+                                                        <h5><span class="text-muted">{{ $item->comment_remarks }}</span>
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                @if ($item->is_approved === 1)
+                                                    <div class="payment-verification">
+                                                        <span class="text-primary fw-bolder">VERIFIED PAYMENT</span>
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                                                            <div>
+                                                                <small>OR NUMBER: </small> <br>
+                                                                <span
+                                                                    class="text-primary h5">{{ $item->or_number }}</span>
+                                                            </div>
+                                                            <div>
+                                                                <small>VERIFIED DATE </small> <br>
+                                                                {{ $item->staff_id }}
+                                                                <span
+                                                                    class="text-primary h5">{{ $item->updated_at->format('F d, Y') }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="payment-verification">
+                                                        <span class="text-secondary fw-bolder">PAYMENT VERIFICATION</span>
+                                                        <div class="row">
+                                                            <div class="col-md">
+                                                                <form
+                                                                    action="{{ route('accounting.online-additional-payment-approved') }}"
+                                                                    method="post" class="">
+                                                                    @csrf
+                                                                    <input type="hidden" name="_online_payment"
+                                                                        value="{{ $item->id }}">
+
+                                                                    <div class="mt-2">
+                                                                        <input type="text" class="form-control"
+                                                                            placeholder="Or Number" name="or_number"
+                                                                            required>
+                                                                    </div>
+                                                                    <div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-outline-primary btn-sm w-100">APPROVED</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            <div class="col-md">
+                                                                <form
+                                                                    action="{{ route('accounting.online-additional-payment-disapproved') }}"
+                                                                    method="post" class="">
+                                                                    @csrf
+                                                                    <input type="hidden" name="_online_payment"
+                                                                        value="{{ $item->id }}">
+
+                                                                    <div class="mt-2">
+                                                                        <input type="text" class="form-control"
+                                                                            placeholder="remarks" name="remarks" required>
+                                                                    </div>
+                                                                    <div>
+                                                                        <button type="submit"
+                                                                            class="btn btn-outline-danger btn-sm w-100">DISAPPROVED</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endif
+
+
+                                        </div>
+
+                                        <hr>
+                                    @endforeach
+                                @else
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                                        <div>
+                                            <h5>No Additional Payment Transaction</h5>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
 
                         </div>
                         <hr>
@@ -386,13 +516,18 @@
             @endif
 
         </div>
-        <div class="col-md-4">
+        <div class="col-md">
             <form action="" method="get">
-                @if (request()->input('search_name'))
-                    <input type="hidden" name="search_name" value="{{ request()->input('search_name') }}">
-                @endif
+
                 <div class="form-group search-input">
                     <input type="search" class="form-control" placeholder="Search..." name="_students">
+                </div>
+                <div class="row form-group">
+
+                    <div class="col-md">
+                        <a href="?_payment_category=additional-payment" class="btn btn-outline-primary btn-sm">Additional
+                            Payment</a>
+                    </div>
                 </div>
             </form>
 
@@ -454,8 +589,17 @@
             // $('.image-fr').empty()
             if (fileExtension.includes(file)) {
                 $(".form-view").contents().find("body").html('');
+                var type = $(this).data('type'),
+                    image = '';
+                console.log(type)
+                if (type == '_bridging_program') {
+                    url = $(this).data('document-url')
+                    console.log(url)
+                } else {
+                    image = $(this).data('document-url');
+                }
                 $('.form-view').contents().find('body').append($("<img/>").attr('class', 'image-frame').attr("src",
-                    $(this).data('document-url')).attr("title",
+                    image).attr("title",
                     "sometitle").attr('width', '100%'))
                 console.log(file)
             } else {

@@ -11,9 +11,8 @@
 
     <link rel="stylesheet" href="{{ asset('css/app-1.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="{{ asset('resources\plugin/toastify/toastify.css') }}">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{{ asset('resources/plugin/editor/editor.css') }}">
+    <link rel="stylesheet" href="{{ asset('resources/plugin/toastify/toastify.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('resources/plugin/editor/editor.css') }}"> --}}
     <style>
         .iframe-placeholder {
             background: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100% 100%"><text fill="%23FF0000" x="50%" y="50%" font-family="\'Lucida Grande\', sans-serif" font-size="24" text-anchor="middle">LOADING.....</text></svg>') 0px 0px no-repeat;
@@ -55,7 +54,7 @@
                         @endif
                     @endforeach --}}
 
-                    <div class="conatiner-fluid content-inner mt-5 py-0">
+                    <div class="conatiner-fluid content-inner  py-0">
                         @yield('page-content')
                     </div>
                 </div>
@@ -88,10 +87,24 @@
     <script src="{{ asset('resources/js/plugins/custom-document-viewer.js') }}"></script>
     <script src="{{ asset('resources/js/plugins/viewer.1.0.0.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('resources\plugin\select\js\select2.min.js') }}"></script>
-    <script src="{{ asset('resources\plugin/toastify/toastify.js') }}"></script>
+    <script src="{{ asset('resources/plugin/select/js/elect2.min.js') }}"></script>
+    <script src="{{ asset('resources/plugin/toastify/toastify.js') }}"></script>
     <script src="{{ asset('resources/plugin/editor/editor.js') }}"></script>
+
     <script>
+        @if (Auth::user())
+            @if (count(Auth::user()->staff->message_ticket_concern()) > 0)
+                Toastify({
+                    text: "You have  {{ count(Auth::user()->staff->message_ticket_concern()) }} unread concern, <a href='{{ route('ticket.view') }}' class='text-warning'> see here </a> ",
+                    //duration: 3000,
+                    //close: true,
+                    //gravity: "top",
+
+                    backgroundColor: "#4fbe87",
+                }).showToast();
+            @endif
+        @endif
+
         $('.select').select2()
         @if (Session::has('success'))
             Swal.fire({

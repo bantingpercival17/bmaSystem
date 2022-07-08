@@ -570,4 +570,16 @@ class RegistrarController extends Controller
         $_report = new GradingSheetReport($_students, $_subject);
         return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
     }
+
+
+    public function enrollment_briding_program(Request $_request)
+    {
+        try {
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            $_students = $_course->student_bridging_program;
+            return view('pages.registrar.enrollment.bridging-program',compact('_students','_course'));
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
 }

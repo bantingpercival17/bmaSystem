@@ -20,6 +20,10 @@ Route::prefix('accounting')->group(function () {
     Route::post('/payment-transaction', [AccountingController::class, 'payment_store'])->name('accounting.payment-transaction');
     Route::post('/payments', [AccountingController::class], 'payment_store')->name('accounting.payment-store');
     Route::post('/payment-transaction/online-payment', [AccountingController::class, 'payment_verification'])->name('accounting.online-payment-disapproved');
+    // Bridging Program
+    Route::post('/payment-transaction/additional-payment', [AccountingController::class, 'payment_disapproved'])->name('accounting.online-additional-payment-disapproved');
+    Route::post('/payment-transaction/additional-payment-approved', [AccountingController::class, 'payment_approved'])->name('accounting.online-additional-payment-approved');
+
     // Student Search
     Route::get('/student-search', [AccountingController::class, 'search_students']); // Search Student
 
