@@ -129,7 +129,7 @@ class ApplicantAccount extends  Authenticatable implements MustVerifyEmail
     }
     public function senior_high_school()
     {
-        $_school =  $this->applicant->senior_high_school_name;
-        return strtolower($_school) == strtolower('baliwag maritime academy inc.') || strtolower($_school) == strtolower('baliwag maritime academy') || strtolower($_school) == strtolower('baliwag maritime academy inc') ? 1 : 0;
+        $_school =  trim($this->applicant->senior_high_school_name);
+        return strtolower($_school) == strtolower('baliuag maritime academy') ||strtolower($_school) == strtolower('baliwag maritime academy inc.') || strtolower($_school) == strtolower('baliwag maritime academy') || strtolower($_school) == strtolower('baliwag maritime academy inc') || strtolower($_school) == strtolower('baliwag martime academy') ? 1 : 0;
     }
 }

@@ -127,6 +127,9 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                                         echo $_data->applicant->check_duplicate();
                                     @endphp
                                 </span>
+                                @if ($_data->senior_high_school())
+                                    <span class="badge bg-primary">BMA SENIOR HIGH ALUMNUS</span>
+                                @endif
                             </div>
 
 
