@@ -2,6 +2,7 @@
 @php
 $_form_number = 'AD-02a';
 $_average = 0;
+$_total_percentage = 0;
 @endphp
 @section('title-report', $_form_number . ' - STUDENT REGISTRATION : ' . strtoupper($_student->last_name . ', ' .
     $_student->first_name . ' ' . $_student->middle_name))
@@ -59,55 +60,69 @@ $_average = 0;
                     <thead>
                         <tr>
                             <th rowspan="2" width="15%">COURSE CODE</th>
-                            <th rowspan="2" width="45%">COURSE TITLE</th>
+                            <th rowspan="2" width="45%">DESCRIPTIVE TITLE</th>
                             <th colspan="2">FINAL GRADE</th>
                             <th rowspan="2">REMARKS</th>
                         </tr>
                         <tr class="text-center">
-                            <td>PERCENT</td>
-                            <td>POINTS</td>
+                            {{-- <td>PERCENT</td> --}}
+                            <td>GRADE</td>
+                            <td>UNITS</td>
                         </tr>
                     </thead>
                     <tbody>
                         @php
                             $_subject_count = 0;
+                            $_total_units = 0;
                         @endphp
                         @foreach ($_section->subject_class as $item)
                             @php
+                                $_percentage = 0;
                                 $_status = $_student->enrollment_status->bridging_program == 'with' || $item->curriculum_subject->subject->subject_code != 'BRDGE';
-                                $_final_grade = number_format($_student->final_grade($item->id, 'finals'), 2);
-                                $_final_grade = $_student->percentage_grade($_final_grade);
+                                $_final_grade = number_format($_student->final_grade_v2($item->id, 'finals'), 2); // Grade
+                                $_point = $_student->percentage_grade($_final_grade); // Points
                                 $_average = $_status ? $_average + $_final_grade : $_average;
-                                $_subject_count = $_status ? $_subject_count + 1 : $_subject_count;
+                                $_subject_count = $_status ? $_subject_count + 1 : $_subject_count; // Count the Subjects
+                                
+                                if (!in_array($item->curriculum_subject->subject->subject_code, ['BRDGE', 'P.E. 1', 'P.E. 2', 'P.E. 3', 'P.E. 4'])) {
+                                    $_total_units += $item->curriculum_subject->subject->units; // Units
+                                    $_percentage = $item->curriculum_subject->subject->units * $_point; // Get the Percentage of Unit and Points
+                                    $_total_percentage += $_percentage; // Sum the Total Percentage
+                                }
+                                
                             @endphp
                             @if ($_status)
                                 <tr class="text-center">
                                     <td><b>{{ $item->curriculum_subject->subject->subject_code }}</b></td>
                                     <td><b>{{ $item->curriculum_subject->subject->subject_name }}</b></td>
-                                    <td> {{ number_format($_student->final_grade($item->id, 'finals'), 2) }}</td>
                                     <td>
-                                        {{ number_format($_student->percentage_grade(number_format($_student->final_grade($item->id, 'finals'), 2)), 2) }}
+                                        {{ number_format($_point, 2) }}
+
                                     </td>
+                                    <td>{{ $item->curriculum_subject->subject->units }}</td>
+                                    {{-- <td> {{ number_format($_student->final_grade($item->id, 'finals'), 2) }}</td> --}}
+
 
                                     <td>
-                                        {{ $_student->percentage_grade(number_format($_student->final_grade($item->id, 'finals'), 2)) >= 5? 'FAILED': 'PASSED' }}
+                                        {{ $_point >= 5 ? 'FAILED' : 'PASSED' }}
                                     </td>
                                 </tr>
                             @endif
                         @endforeach
-                        <tr class="text-center">
+                        {{-- <tr class="text-center">
                             <td><b>NROTC 1</b></td>
                             <td><b>NAVAL RESERVE 1</b></td>
                             <td>95.21</td>
                             <td>1.50</td>
                             <td>PASSED</td>
-                        </tr>
+                        </tr> --}}
                     </tbody>
                     <tfoot>
                         <tr class="text-center">
                             <td colspan="2"><b>GENERAL WEIGHTED AVERAGE</b></td>
                             <td colspan="2">
-                                <h3><b>{{ number_format(($_average+1.50) / $_subject_count, 2) }}</b></h3>
+                                <h3><b>{{ number_format($_total_percentage / $_total_units, 2) }}</b></h3>
+                                {{-- <h3><b>{{ number_format(($_average + 1.5) / $_subject_count, 2) }}</b></h3> --}}
                             </td>
                             <td></td>
                         </tr>
@@ -126,14 +141,14 @@ $_average = 0;
                         <tr class="text-center">
                             <td>
                                 <img class="image-signature"
-                                    src="{{ public_path() .'/assets/img/signature/' .Auth::user()->staff->academic_head_signature($_section->course_id) .'.png' }}"
+                                    src="{{ public_path() . '/assets/img/signature/' . Auth::user()->staff->academic_head_signature($_section->course_id) . '.png' }}"
                                     alt="department-head">
                                 <br>
                                 <b>{{ strtoupper(Auth::user()->staff->academic_head($_section->course_id)) }}</b>
                             </td>
                             <td>
                                 <img class="image-signature"
-                                    src="{{ public_path() .'/assets/img/signature/' .Auth::user()->staff->department_head_signature('REGISTRAR') .'.png' }}"
+                                    src="{{ public_path() . '/assets/img/signature/' . Auth::user()->staff->department_head_signature('REGISTRAR') . '.png' }}"
                                     alt="department-head">
                                 <br>
                                 <b>{{ strtoupper(Auth::user()->staff->registrar()) }}</b>
