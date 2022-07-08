@@ -210,7 +210,7 @@ foreach ($_url_role as $key => $_data) {
         </div>
     </div>
 </div>
-{{-- @section('js')
+@section('js')
     <script>
         @if (Auth::user()->staff)
             @if (count(Auth::user()->staff->message_ticket_concern()) > 0)
@@ -225,4 +225,4 @@ foreach ($_url_role as $key => $_data) {
             @endif
         @endif
     </script>
-@endsection --}}
+@endsection

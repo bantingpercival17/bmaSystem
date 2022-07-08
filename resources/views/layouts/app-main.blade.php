@@ -92,18 +92,7 @@
     <script src="{{ asset('resources/plugin/editor/editor.js') }}"></script>
 
     <script>
-        @if (Auth::user())
-            @if (count(Auth::user()->staff->message_ticket_concern()) > 0)
-                Toastify({
-                    text: "You have  {{ count(Auth::user()->staff->message_ticket_concern()) }} unread concern, <a href='{{ route('ticket.view') }}' class='text-warning'> see here </a> ",
-                    //duration: 3000,
-                    //close: true,
-                    //gravity: "top",
-
-                    backgroundColor: "#4fbe87",
-                }).showToast();
-            @endif
-        @endif
+       
 
         $('.select').select2()
         @if (Session::has('success'))
