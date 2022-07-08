@@ -69,7 +69,7 @@ class TeacherController extends Controller
         } else {
             $_students = $_subject->section->student_sections;
         }
-        return view('teacher.subject-class.semestral_clearance', compact('_subject', '_students'));
+        return view('pages.teacher.subject-class.semestral_clearance', compact('_subject', '_students'));
     }
     public function subject_grading_view(Request $_request)
     {
@@ -99,7 +99,7 @@ class TeacherController extends Controller
     public function subject_view()
     {
         $_academics = AcademicYear::where('is_removed', false)->orderBy('id', 'desc')->get();
-        return view('teacher.subject_view', compact('_academics'));
+        return view('pages.teacher.subject_view', compact('_academics'));
     }
     public function grade_store(Request $_request)
     {
@@ -253,7 +253,7 @@ class TeacherController extends Controller
             ->orderBy('student_details.last_name', 'ASC')
             ->where('ss.is_removed', false)
             ->get(); */
-        return view('teacher.subject-class.schedule_view', compact('_subject'));
+        return view('pages.teacher.subject-class.schedule_view', compact('_subject'));
     }
     public function subject_schedule_week_log_store(Request $_request)
     {
