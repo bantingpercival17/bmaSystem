@@ -62,7 +62,7 @@ class StudentDetails extends Model
     }
     public function enrollment_application_payment()
     {
-        return $this->hasOne(EnrollmentApplication::class, 'student_id')->where('is_approved',true)->where('academic_id',Auth::user()->staff->current_academic()->id)->where('is_removed', false);
+        return $this->hasOne(EnrollmentApplication::class, 'student_id')->where('is_approved', true)->where('academic_id', Auth::user()->staff->current_academic()->id)->where('is_removed', false);
     }
     public function account()
     {
@@ -764,8 +764,18 @@ class StudentDetails extends Model
     {
         return StudentDetails::select('student_details.*')
             ->join('shipboard_journals', 'shipboard_journals.student_id', 'student_details.id')
-
-            ->where('shipboard_journals.is_approved', null)->groupBy('shipboard_journals.student_id')->where('shipboard_journals.is_removed', false)->get();
-        //return $this->hasMany(ShipboardJournal::class,'student_id')/* ->where('is_approved', null)->groupBy('student_id')->where('is_removed', false) */;
+            ->where('shipboard_journals.is_approved', null)->groupBy('shipboard_journals.student_id')->where('shipboard_journals.is_removed', false);
+    }
+    public function shipboard_narative_status()
+    {
+        return $this->hasMany(ShipboardJournal::class, 'student_id')->groupBy('month')->whereNull('is_approved')->where('is_removed', false);
+    }
+    public function single_narative_report($_data, $details)
+    {
+        return $this->hasOne(ShipboardJournal::class, 'student_id')->where('month', 'like', '%' . $_data . '%')->where('journal_type', $details)->where('is_removed', false)->first();
+    }
+    public function narrative_documents($_data)
+    {
+        return $this->hasMany(ShipboardJournal::class, 'student_id')->where('month', 'like', '%' . $_data . '%')->where('is_removed', false)->orderBy('journal_type','desc');
     }
 }

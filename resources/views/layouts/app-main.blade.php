@@ -92,9 +92,6 @@
     <script src="{{ asset('resources/plugin/editor/editor.js') }}"></script>
 
     <script>
-       
-
-        $('.select').select2()
         @if (Session::has('success'))
             Swal.fire({
                 title: 'Complete!',
@@ -171,6 +168,7 @@
                 }
             }
         })
+        $('.select').select2()
     </script>
     @yield('js')
 </body>

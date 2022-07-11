@@ -120,9 +120,12 @@ $_title = 'Shipboard Monitoring';
                     <div class="card-body">
                         <div class="header-title d-flex justify-content-between">
                             <span class="h5 text-primary fw-bolder">NARATIVE REPORT</span>
+                            <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
+                                class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
                         </div>
                         <div class="table-responsive mt-4">
-                            <table id="basic-table" class="table table-striped mb-0" role="grid">
+                            <table id="basic-table" class="table table-striped mb-0" role="grid"
+                                data-toggle="data-table">
                                 <thead>
                                     <tr>
                                         <th>Narative Report</th>
@@ -152,7 +155,12 @@ $_title = 'Shipboard Monitoring';
                                                             aria-valuemin="0" aria-valuemax="100"></div>
                                                     </div>
                                                 </td>
-                                                <td></td>
+                                                <td>
+                                                    @if ($_journal->is_approved == 5)
+                                                        <a href="{{ route('onboard.narative-report-monthly-summary') . '?_midshipman=' . base64_encode($_midshipman->id) . '&_month=' . $_journal->month }}"
+                                                            class="btn btn-primary btn-sm" target="_blank">VIEW</a>
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @endforeach
                                     @else
@@ -172,12 +180,14 @@ $_title = 'Shipboard Monitoring';
                         <div class="header-title d-flex justify-content-between">
                             <span class="h5 text-primary fw-bolder">ASSESSMENT</span>
                         </div>
-                        <div class="table-responsive mt-4">
+                        <div class="table-responsive mt-4 mb-4">
                             <table id="basic-table" class="table table-striped mb-0" role="grid">
                                 <tbody>
                                     <tr>
                                         <th>ONLINE EXAMINATION</th>
-                                        <th></th>
+                                        <th>
+                                            <a href="" class="btn btn-primary btn-sm">APPROVE FOR EXAMINATION</a>
+                                        </th>
 
                                     </tr>
                                     <tr>
@@ -191,7 +201,7 @@ $_title = 'Shipboard Monitoring';
                                 </tbody>
                             </table>
                         </div>
-
+                        <a href="" class="btn btn-outline-primary rounded-pill float-end">Genetare Report</a>
                     </div>
                 </div>
             @endif
@@ -203,17 +213,27 @@ $_title = 'Shipboard Monitoring';
                 </div>
             </form>
             @if ($_shipboard_monitoring)
+                {{-- @if (!request()->input('_cadet'))
+                    {{ $_shipboard_monitoring->links() }}
+                @endif --}}
                 @foreach ($_shipboard_monitoring as $item)
-                    <div class="card border-bottom border-4 border-0 border-primary">
+                    <div class="card mb-2">
                         <a href="?_midshipman={{ base64_encode($item->id) }}">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span
-                                            class="text-primary"><b>{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</b></span>
-                                    </div>
-                                    <div>
-                                        <span>{{ $item->account ? $item->account->student_number : '-' }}</span>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-4">
+                                    <img src="{{ $item ? $item->profile_pic($item->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                                        class="card-img avatar-120" alt="#">
+                                </div>
+                                <div class="col-md col-lg">
+                                    <div class="card-body m-1 p-1"> <small class="card-title fw-bolder ">
+                                            {{ strtoupper($item->last_name . ', ' . $item->first_name) }}</small>
+                                        <br>
+                                        <small class="fw-bolder text-secodary ">
+                                            {{ $item ? $item->enrollment_assessment->course->course_code : '-' }} |
+                                            {{ $item->account ? $item->account->student_number : '-' }}
+                                        </small> <br>
+                                        <small class="text-muted">Number for Checking:
+                                            {{ count($item->shipboard_narative_status) }}</small>
                                     </div>
                                 </div>
                             </div>

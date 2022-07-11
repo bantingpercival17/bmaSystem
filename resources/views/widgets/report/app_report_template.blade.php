@@ -24,16 +24,16 @@
         }
 
         footer {
-            bottom: -30px;
+            /*  bottom: -30px;
             left: 20px;
-            right: 0px;
+            right: 0px; */
             justify-content: center;
         }
 
         .content {
             /* position: relative; */
             top: 1.3in;
-            max-height: 50%;
+            max-height: 100%;
             overflow: auto;
             margin-right: 25px;
             margin-left: 25px;
@@ -97,6 +97,12 @@
         .page-break {
             page-break-after: always;
         }
+
+        .text-fill-in {
+            /* text-decoration: underline; */
+            border-bottom: 1px solid rgb(0, 0, 0);
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -110,7 +116,7 @@
 
     </header>
     @yield('content')
-    <footer>
+    <footer class="mt-5">
         <table class="table-content text-center">
             <tbody>
                 <tr>

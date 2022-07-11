@@ -18,7 +18,9 @@ Route::prefix('onboard')->group(function () {
     /* Shipboard */
 
     Route::get('/shipboard-monitoring', [OnboardTrainingController::class, 'onboard_training_view'])->name('onboard.shipboard'); // Midship Man Profile
-    Route::get('/shiboard-monitoring/journal', [OnboardTrainingController::class, 'onboard_journal_view'])->name('onboard.journal'); // Journal View
-    Route::get('/shiboard-monitoring/narative/approved', [OnboardTrainingController::class, 'onboard_narative_approved'])->name('onboard.narative-report-approved'); // Approved Narative report
-    Route::post('/shiboard-monitoring/narative/disapproved', [OnboardTrainingController::class, 'onboard_narative_disapproved'])->name('onboard.narative-report-disapproved');
+    Route::get('/shipboard-monitoring/journal', [OnboardTrainingController::class, 'onboard_journal_view'])->name('onboard.journal'); // Journal View
+    Route::get('/shipboard-monitoring/narative/approved', [OnboardTrainingController::class, 'onboard_narative_approved'])->name('onboard.narative-report-approved'); // Approved Narative report
+    Route::post('/shipboard-monitoring/narative/disapproved', [OnboardTrainingController::class, 'onboard_narative_disapproved'])->name('onboard.narative-report-disapproved'); // Disapproved Narative Report;
+    Route::get('/shipboard-monitoring/narative/generate-summay-report', [OnboardTrainingController::class, 'onboard_narative_summary_report'])->name('onboard.narative-summary-report');
+    Route::get('/shipboard-monitoring/narative/monthly-summay-report', [OnboardTrainingController::class, 'onboard_monthly_summary_report'])->name('onboard.narative-report-monthly-summary');
 });
