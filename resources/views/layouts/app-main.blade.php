@@ -87,7 +87,7 @@
     <script src="{{ asset('resources/js/plugins/custom-document-viewer.js') }}"></script>
     <script src="{{ asset('resources/js/plugins/viewer.1.0.0.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('resources/plugin/select/js/elect2.min.js') }}"></script>
+    <script src="{{ asset('resources/plugin/select/js/select2.min.js') }}"></script>
     <script src="{{ asset('resources/plugin/toastify/toastify.js') }}"></script>
     <script src="{{ asset('resources/plugin/editor/editor.js') }}"></script>
 

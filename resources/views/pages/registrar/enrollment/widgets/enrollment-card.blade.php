@@ -71,15 +71,17 @@
                     <div class="card-body">
                         <div class="enrollment-assessment mt-0 me-3">
                             <span class="h5 fw-bolder text-primary">ENROLLMENT ASSESSMENT</span>
-                            <form action="{{ route('registrar.enrollment-assessment') }}" method="post">
+                            <form action="{{ route('registrar.enrollment-assessment') }}"
+                                class="form-assessment {{ base64_encode($_student->id) }}" method="post"
+                                data-form="{{ base64_encode($_student->id) }}">
                                 @csrf
                                 <input type="hidden" name="_student" value="{{ base64_encode($_student->id) }}">
                                 <div class="row">
                                     <div class="col-md">
                                         <div class="form-group">
                                             <small class="fw-bolder">COURSE : </small>
-                                            <select name="_course" id=""
-                                                class="form-select form-select-sm mb-3 shadow-none">
+                                            <select name="_course"
+                                                class="form-select form-select-sm mb-3 shadow-none input-course">
                                                 @foreach ($_courses as $course)
                                                     <option value="{{ $course->id }}"
                                                         {{ $_student->enrollment_application->course_id == $course->id ? 'selected' : '' }}>
@@ -91,7 +93,8 @@
                                     <div class="col-md">
                                         <div class="form-group">
                                             <small class="fw-bolder">CURRICULUM : </small>
-                                            <select name="_curriculum" class="form-select form-select-sm mb-3 shadow-none">
+                                            <select name="_curriculum"
+                                                class="form-select form-select-sm mb-3 shadow-none input-curriculum">
                                                 @foreach ($_curriculums as $curriculum)
                                                     <option value="{{ $curriculum->id }}">
                                                         {{ $curriculum->curriculum_name }}</option>
@@ -113,7 +116,7 @@
                                     @endif
                                 </div>
                                 <div class="float-end">
-                                    <button type="submit" class="btn btn-info btn-sm text-white">FOR ASSESSMENT</button>
+                                    <button type="button" class="btn btn-info btn-sm text-white">FOR ASSESSMENT</button>
                                 </div>
                             </form>
                         </div>
