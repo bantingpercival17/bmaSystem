@@ -35,6 +35,9 @@ $_title = 'Bridging Program';
                                     <br>
                                     <span
                                         class="badge bg-primary">{{ $_data->student->enrollment_assessment->course->course_name }}</span>
+                                    <span
+                                        class="badge bg-info">{{ $_data->student->enrollment_application_v2->strand }}</span>
+
 
                                 </div>
                                 <div>

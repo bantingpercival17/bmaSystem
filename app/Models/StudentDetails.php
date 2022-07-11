@@ -60,6 +60,10 @@ class StudentDetails extends Model
     {
         return $this->hasOne(EnrollmentApplication::class, 'student_id')->whereNull('is_approved')->where('is_removed', false);
     }
+    public function enrollment_application_v2()
+    {
+        return $this->hasOne(EnrollmentApplication::class, 'student_id')->where('is_removed', false)->where('academic_id', Auth::user()->staff->current_academic()->id);
+    }
     public function enrollment_application_payment()
     {
         return $this->hasOne(EnrollmentApplication::class, 'student_id')->where('is_approved', true)->where('academic_id', Auth::user()->staff->current_academic()->id)->where('is_removed', false);
@@ -776,6 +780,6 @@ class StudentDetails extends Model
     }
     public function narrative_documents($_data)
     {
-        return $this->hasMany(ShipboardJournal::class, 'student_id')->where('month', 'like', '%' . $_data . '%')->where('is_removed', false)->orderBy('journal_type','desc');
+        return $this->hasMany(ShipboardJournal::class, 'student_id')->where('month', 'like', '%' . $_data . '%')->where('is_removed', false)->orderBy('journal_type', 'desc');
     }
 }
