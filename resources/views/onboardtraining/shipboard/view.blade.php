@@ -229,7 +229,8 @@ $_title = 'Shipboard Monitoring';
                                             {{ strtoupper($item->last_name . ', ' . $item->first_name) }}</small>
                                         <br>
                                         <small class="fw-bolder text-secodary ">
-                                            {{ $item ? $item->enrollment_assessment->course->course_code : '-' }} |
+                                            {{ $item ? ($item->enrollment_assessment ? $item->enrollment_assessment->course->course_code : '-') : '-' }}
+                                            |
                                             {{ $item->account ? $item->account->student_number : '-' }}
                                         </small> <br>
                                         <small class="text-muted">Number for Checking:
