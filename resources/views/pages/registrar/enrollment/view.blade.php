@@ -123,7 +123,7 @@ $_title = 'Enrollment';
     </div>
 @section('js')
     <script>
-        $('.form-assessment').click(function(event) {
+        $('.btn-assessment').click(function(event) {
             Swal.fire({
                 title: 'Enrollment Assessment',
                 text: "Your sure do you want to submit?",
@@ -133,9 +133,11 @@ $_title = 'Enrollment';
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes'
             }).then((result) => {
+                var form = $(this).data('form');
                 if (result.isConfirmed) {
-                    console.log($(this).data('form'))
-                    $('.' + $(this).data('form')).submit()
+                    console.log(form)
+                    document.getElementById(form).submit()
+                    //$('#' + form).submit();
                 }
             })
             event.preventDefault();

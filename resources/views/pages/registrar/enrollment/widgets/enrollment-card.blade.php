@@ -71,9 +71,8 @@
                     <div class="card-body">
                         <div class="enrollment-assessment mt-0 me-3">
                             <span class="h5 fw-bolder text-primary">ENROLLMENT ASSESSMENT</span>
-                            <form action="{{ route('registrar.enrollment-assessment') }}"
-                                class="form-assessment {{ base64_encode($_student->id) }}" method="post"
-                                data-form="{{ base64_encode($_student->id) }}">
+                            <form action="{{ route('registrar.enrollment-assessment') }}" method="post"
+                                id="{{ base64_encode($_student->id) }}">
                                 @csrf
                                 <input type="hidden" name="_student" value="{{ base64_encode($_student->id) }}">
                                 <div class="row">
@@ -116,7 +115,9 @@
                                     @endif
                                 </div>
                                 <div class="float-end">
-                                    <button type="button" class="btn btn-info btn-sm text-white">FOR ASSESSMENT</button>
+                                    <button type="button" class="btn btn-info btn-sm text-white btn-assessment"
+                                        data-form="{{ base64_encode($_student->id) }}">FOR
+                                        ASSESSMENT</button>
                                 </div>
                             </form>
                         </div>
