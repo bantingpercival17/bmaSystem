@@ -309,7 +309,7 @@ class RegistrarController extends Controller
             'laboratory_hours' => trim($_request->_lab_hour),
             'units' => trim($_request->_units),
             'created_by' => Auth::user()->name,
-            'is_removed' => 1,
+            'is_removed' => 0,
         ]; // Set all the input need to the Subject Details
         $_verify = Subject::where('subject_code', $_request->course_code)->first(); // Verify if the Subject is Excited
         $_subject = $_verify ?: Subject::create($_subject); // Save Subject or Get Subject
