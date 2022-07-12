@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Examination;
+use App\Models\ExaminationCategory;
+use App\Models\ExaminationQuestion;
 use App\Models\ShipboardExamination;
+use App\Models\ShipboardExaminationAnswer;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardJournal;
 use App\Models\StudentDetails;
@@ -168,16 +172,41 @@ class OnboardTrainingController extends Controller
                 'examination_code' => $_exam_code,
                 'staff_id' => Auth::user()->staff->id
             );
+            //return $this->onboard_examination_setup(base64_decode($_request->_midshipman), $_examination);
             $_check = ShipboardExamination::where('student_id', base64_decode($_request->_midshipman))->where('is_removed', false)->first();
             if ($_check) {
                 $_check->is_removed = true;
                 $_check->save();
             }
-            ShipboardExamination::create($_data);
+            $_examination = ShipboardExamination::create($_data);
+            $this->onboard_examination_setup(base64_decode($_request->_midshipman), $_examination);
             return back()->with('success', 'Examination Approved');
         } catch (Exception $error) {
             return $error->getMessage();
             return back()->with('error', $error->getMessage());
+        }
+    }
+    # Onboard Examination Assessment
+    public function onboard_examination_setup($_data, $_examination_code)
+    {
+        $_student = StudentDetails::find($_data); // Student 
+        $_shipboard_information = $_student->shipboard_training;
+        $_examination_name = $_student->enrollment_assessment->course_id == 1 ? 'OBTO ASSESSMENT - BSMARE' : 'OBTO ASSESSMENT - BSMT'; // EXAMINATION NAME
+        $_examination = Examination::where('examination_name', $_examination_name)->where('department', 'college')->where('is_removed', false)->first();
+        $_general_question = ExaminationCategory::where('category_name', 'GENERAL QUESTION')->where('examination_id', $_examination->id)->where('is_removed', false)->first(); // GET THE GENERAL QUESTION CATEGORY
+        $_training_record_book = ExaminationCategory::where('category_name', 'GENERAL QUESTION')->where('examination_id', $_examination->id)->where('is_removed', false)->first(); // GET THE TRAINING RECORD BOOK CATEGORY
+        $_custom_category = ExaminationCategory::where('category_name', $_shipboard_information->vessel_type)->where('examination_id', $_examination->id)->where('is_removed', false)->first(); // GET THE CATEGORY
+        $_categories = array(
+            array($_general_question, 10),
+            array($_training_record_book, 10),
+            array($_custom_category, 20)
+        ); // [Category, NumberOfItems]
+        foreach ($_categories as $key => $category) {
+            // GET THE QUESTION PER CATEGORIES
+            $_questions = ExaminationQuestion::where('category_id', $category['0']->id)->where('is_removed', false)->inRandomOrder()->limit($category[1])->get();
+            foreach ($_questions as $key => $_question) {
+                ShipboardExaminationAnswer::create(['examination_id' => $_examination_code->id, 'question_id' => $_question->id]);
+            }
         }
     }
     # Assessment Report

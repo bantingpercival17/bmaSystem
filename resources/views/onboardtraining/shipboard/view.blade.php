@@ -198,7 +198,7 @@ $_title = 'Shipboard Monitoring';
                                                 @endif
                                             @else
                                                 <button
-                                                    class="btn btn-outline-primary btn-sm rounded-pill btn-onboard-examination"
+                                                    class="btn btn-primary btn-sm rounded-pill btn-onboard-examination"
                                                     data-url="{{ route('onboard.examination') . '?_midshipman=' . base64_encode($_midshipman->id) }}">APPROVE
                                                     FOR
                                                     EXAMINATION</button>
@@ -218,7 +218,7 @@ $_title = 'Shipboard Monitoring';
                                 </tbody>
                             </table>
                         </div>
-                        <button class="btn btn-outline-primary btn-sm float-end generate-report-button"
+                        <button class="btn btn-primary btn-sm float-end generate-report-button"
                             data-url="{{ route('onboard.assessment-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}">Generate
                             Report</button>
                         {{-- <a href="" class="btn btn-outline-primary btn-sm rounded-pill float-end">Generate
