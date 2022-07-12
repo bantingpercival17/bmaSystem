@@ -191,7 +191,7 @@ class OnboardTrainingController extends Controller
     {
         $_student = StudentDetails::find($_data); // Student 
         $_shipboard_information = $_student->shipboard_training;
-        $_examination_name = $_student->enrollment_assessment->course_id == 1 ? 'OBTO ASSESSMENT - BSMARE' : 'OBTO ASSESSMENT - BSMT'; // EXAMINATION NAME
+        $_examination_name = $_student->enrollment_assessment->course_id == 1 ? 'ONBOARD EXAMINATION BSMARE' : 'ONBOARD EXAMINATION BSMT'; // EXAMINATION NAME
         $_examination = Examination::where('examination_name', $_examination_name)->where('department', 'college')->where('is_removed', false)->first();
         $_general_question = ExaminationCategory::where('category_name', 'GENERAL QUESTION')->where('examination_id', $_examination->id)->where('is_removed', false)->first(); // GET THE GENERAL QUESTION CATEGORY
         $_training_record_book = ExaminationCategory::where('category_name', 'GENERAL QUESTION')->where('examination_id', $_examination->id)->where('is_removed', false)->first(); // GET THE TRAINING RECORD BOOK CATEGORY

@@ -282,7 +282,7 @@ $_title = 'Shipboard Monitoring';
             console.log(_url)
             Swal.fire({
                 title: 'Shipboard Examination',
-                text: "Your sure do you want to submit?",
+                text: "are you sure do you want to submit?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
