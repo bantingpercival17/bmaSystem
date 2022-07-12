@@ -370,8 +370,7 @@
                                                 </div>
                                                 <div>
                                                     <small>TRANSACTION DATE: </small> <br>
-                                                    <span
-                                                        class="text-primary h5">{{ $item->transaction_date }}</span>
+                                                    <span class="text-primary h5">{{ $item->transaction_date }}</span>
 
                                                 </div>
                                                 <div>
@@ -379,6 +378,15 @@
                                                     <span
                                                         class="text-primary h5">{{ ucwords(str_replace('_', ' ', $item->transaction_type)) }}</span>
 
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+
+                                                <div>
+                                                    <small>PROOF OF PAYMENT: </small> <br>
+
+                                                    <a href="{{ $item->reciept_attach_path }}"
+                                                        class="btn btn-outline-primary btn-sm" target="_blank">view</a>
                                                 </div>
                                             </div>
                                             @if ($item->is_approved === 0)
@@ -417,7 +425,7 @@
                                                             <div class="col-md">
                                                                 <form
                                                                     action="{{ route('accounting.online-additional-payment-approved') }}"
-                                                                    method="post" class="">
+                                                                    method="post" class="form-group">
                                                                     @csrf
                                                                     <input type="hidden" name="_online_payment"
                                                                         value="{{ $item->id }}">
@@ -436,7 +444,7 @@
                                                             <div class="col-md">
                                                                 <form
                                                                     action="{{ route('accounting.online-additional-payment-disapproved') }}"
-                                                                    method="post" class="">
+                                                                    method="post" class="form-group">
                                                                     @csrf
                                                                     <input type="hidden" name="_online_payment"
                                                                         value="{{ $item->id }}">
