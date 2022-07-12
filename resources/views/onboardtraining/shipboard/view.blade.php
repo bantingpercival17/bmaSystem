@@ -44,7 +44,7 @@ $_title = 'Shipboard Monitoring';
                 <div class="mt-6">
                     <div class="card">
                         <div class="card-header">
-                            <p class="card-title text-primary"><b>ONBOAD TRAINING MONITORING</b></p>
+                            <p class="card-title text-primary"><b>ONBOARD TRAINING MONITORING</b></p>
                         </div>
                         <div class="card-body">
                             <form>
@@ -186,12 +186,29 @@ $_title = 'Shipboard Monitoring';
                                     <tr>
                                         <th>ONLINE EXAMINATION</th>
                                         <th>
-                                            <a href="" class="btn btn-primary btn-sm">APPROVE FOR EXAMINATION</a>
+                                            @if ($_midshipman->onboard_examination)
+                                                @if ($_midshipman->onboard_examination->is_finish)
+                                                @else
+                                                    <div class="form-group">
+                                                        <small for="" class="form-label fw-bolder">EXAMINATION
+                                                            CODE</small> <br>
+                                                        <span
+                                                            class="text-primary h6 fw-bolder">{{ $_midshipman->onboard_examination->examination_code }}</span>
+                                                    </div>
+                                                @endif
+                                            @else
+                                                <button
+                                                    class="btn btn-outline-primary btn-sm rounded-pill btn-onboard-examination"
+                                                    data-url="{{ route('onboard.examination') . '?_midshipman=' . base64_encode($_midshipman->id) }}">APPROVE
+                                                    FOR
+                                                    EXAMINATION</button>
+                                            @endif
+
                                         </th>
 
                                     </tr>
                                     <tr>
-                                        <th>PARCTICAL ASSESSMENT</th>
+                                        <th>PRACTICAL ASSESSMENT</th>
                                         <th><input type="text" class="form-control"></th>
                                     </tr>
                                     <tr>
@@ -201,7 +218,11 @@ $_title = 'Shipboard Monitoring';
                                 </tbody>
                             </table>
                         </div>
-                        <a href="" class="btn btn-outline-primary rounded-pill float-end">Genetare Report</a>
+                        <button class="btn btn-outline-primary btn-sm float-end generate-report-button"
+                            data-url="{{ route('onboard.assessment-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}">Generate
+                            Report</button>
+                        {{-- <a href="" class="btn btn-outline-primary btn-sm rounded-pill float-end">Generate
+                            Report</a> --}}
                     </div>
                 </div>
             @endif
@@ -213,9 +234,6 @@ $_title = 'Shipboard Monitoring';
                 </div>
             </form>
             @if ($_shipboard_monitoring)
-                {{-- @if (!request()->input('_cadet'))
-                    {{ $_shipboard_monitoring->links() }}
-                @endif --}}
                 @foreach ($_shipboard_monitoring as $item)
                     <div class="card mb-2">
                         <a href="?_midshipman={{ base64_encode($item->id) }}">
@@ -256,4 +274,44 @@ $_title = 'Shipboard Monitoring';
 
         </div>
     </div>
+@endsection
+@section('js')
+    <script>
+        $('.btn-onboard-examination').click(function(event) {
+            var _url = $(this).data('url');
+            console.log(_url)
+            Swal.fire({
+                title: 'Shipboard Examination',
+                text: "Your sure do you want to submit?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = _url
+                }
+            })
+            event.preventDefault();
+        })
+        $('.generate-report-button').click(function(event) {
+            var _url = $(this).data('url');
+            console.log(_url)
+            Swal.fire({
+                title: 'Generate Report',
+                text: "Do you want to Generate a Report?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = _url
+                }
+            })
+            event.preventDefault();
+        })
+    </script>
 @endsection

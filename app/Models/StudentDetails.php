@@ -782,4 +782,8 @@ class StudentDetails extends Model
     {
         return $this->hasMany(ShipboardJournal::class, 'student_id')->where('month', 'like', '%' . $_data . '%')->where('is_removed', false)->orderBy('journal_type', 'desc');
     }
+    public function onboard_examination()
+    {
+        return $this->hasOne(ShipboardExamination::class, 'student_id')->where('is_removed', false);
+    }
 }

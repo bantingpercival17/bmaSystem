@@ -44,7 +44,7 @@
                             
                         @endphp
                         <tr>
-                            <th><small><b>NARATIVE REPORT</b></small></th>
+                            <th><small><b>NARRATIVE REPORT</b></small></th>
                             @foreach ($_narative_details as $details)
                                 <th class="fw-bolder"><small><b>{{ strtoupper($details) }}</b></small></th>
                             @endforeach

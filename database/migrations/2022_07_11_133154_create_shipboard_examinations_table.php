@@ -18,11 +18,11 @@ class CreateShipboardExaminationsTable extends Migration
             $table->unsignedBigInteger('student_id');
             $table->foreign('student_id')->references('id')->on('student_details');
             $table->string('examination_code');
-            $table->date('examination_start');
-            $table->date('examination_end');
+            $table->date('examination_start')->nullable();
+            $table->date('examination_end')->nullable();
             $table->boolean('is_finish')->nullable();
             $table->integer('is_reset')->nullable();
-            $table->integer('staff_id')->nullable();
+            $table->unsignedBigInteger('staff_id');
             $table->foreign('staff_id')->references('id')->on('staff');
             $table->boolean('is_removed')->default(0);
 

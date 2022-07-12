@@ -17,6 +17,13 @@ class CreateShipboardAssessmentDetailsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('student_id');
             $table->foreign('student_id')->references('id')->on('student_details');
+            $table->unsignedBigInteger('assesor_id');
+            $table->foreign('assesor_id')->references('id')->on('staff');
+            $table->double('practical_score');
+            $table->string('practical_remarks')->nullable();
+            $table->double('oral_score');
+            $table->string('oral_remarks')->nullable();
+            $table->boolean('is_removed')->default(0);
             $table->timestamps();
         });
     }

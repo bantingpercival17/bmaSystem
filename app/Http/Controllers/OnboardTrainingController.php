@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ShipboardExamination;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardJournal;
 use App\Models\StudentDetails;
@@ -151,6 +152,41 @@ class OnboardTrainingController extends Controller
             $_generate_report = new OnboardTrainingReport();
             $_data = StudentDetails::find(base64_decode($_request->_midshipman));
             return $_generate_report->monthly_summary_report($_data);
+        } catch (Exception $error) {
+            return $error->getMessage();
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    # Onboard Examination Assessment
+    public function onboard_examination(Request $_request)
+    {
+        try {
+            $length = 10;
+            $_exam_code = 'BMA-' . substr(str_shuffle(str_repeat($x = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+            $_data = array(
+                'student_id' => base64_decode($_request->_midshipman),
+                'examination_code' => $_exam_code,
+                'staff_id' => Auth::user()->staff->id
+            );
+            $_check = ShipboardExamination::where('student_id', base64_decode($_request->_midshipman))->where('is_removed', false)->first();
+            if ($_check) {
+                $_check->is_removed = true;
+                $_check->save();
+            }
+            ShipboardExamination::create($_data);
+            return back()->with('success', 'Examination Approved');
+        } catch (Exception $error) {
+            return $error->getMessage();
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    # Assessment Report
+    public function onboard_assessment_report(Request $_request)
+    {
+        try {
+            $_generate_report = new OnboardTrainingReport();
+            $_data = StudentDetails::find(base64_decode($_request->_midshipman));
+            return $_generate_report->assessment_report($_data);
         } catch (Exception $error) {
             return $error->getMessage();
             return back()->with('error', $error->getMessage());
