@@ -66,7 +66,7 @@
                                                 -
                                             @endif
                                         </td>
-                                    @endforeac
+                                    @endforeach
 
                                 </tr>
                             @endforeach
