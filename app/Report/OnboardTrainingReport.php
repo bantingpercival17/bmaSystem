@@ -40,7 +40,7 @@ class OnboardTrainingReport
         // Set the Layout for the report
         $_layout = $this->path . '.onboard-assessment-report';
         $_details = $_data->assessment_details;
-        $_item = $_data->enrollment_assessment->course_id == 2 ? [5, 10] : [40, 15];
+        $_item = $_data->enrollment_assessment->course_id == 1 ? [15, 10] : [40, 15];
         $_assessment = array(
             'written_score' => $_data->onboard_examination->result->count(),
             'written_final_score' => (($_data->onboard_examination->result->count() / 40) * 100) * .30,
