@@ -542,7 +542,8 @@
             @if ($_students)
                 @foreach ($_students as $item)
                     <div class="card border-bottom border-4 border-0 border-primary">
-                        <a href="?_midshipman={{ base64_encode($item->id) }}">
+                        <a
+                            href="?_midshipman={{ base64_encode($item->id) }}{{ request()->input('_payment_category') ? '&_payment_category=' . request()->input('_payment_category') : '' }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
