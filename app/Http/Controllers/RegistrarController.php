@@ -311,7 +311,7 @@ class RegistrarController extends Controller
             'created_by' => Auth::user()->name,
             'is_removed' => 0,
         ]; // Set all the input need to the Subject Details
-        $_verify = Subject::where('subject_code', $_request->course_code)->first(); // Verify if the Subject is Excited
+        $_verify = Subject::where('subject_code', strtoupper(trim($_request->course_code)))->where('subject_name', strtoupper(trim($_request->_subject_name)))->first(); // Verify if the Subject is Existing
         $_subject = $_verify ?: Subject::create($_subject); // Save Subject or Get Subject
 
         $_course_subject_details = [
@@ -577,7 +577,7 @@ class RegistrarController extends Controller
         try {
             $_course = CourseOffer::find(base64_decode($_request->_course));
             $_students = $_course->student_bridging_program;
-            return view('pages.registrar.enrollment.bridging-program',compact('_students','_course'));
+            return view('pages.registrar.enrollment.bridging-program', compact('_students', '_course'));
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
         }
