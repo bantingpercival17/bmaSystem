@@ -389,8 +389,8 @@
                                                         data-bs-toggle="modal" data-bs-target=".document-view-modal"
                                                         data-document-url="{{ $item->reciept_attach_path }}">
                                                         VIEW</button>
-                                                   {{--  <a href="{{ $item->reciept_attach_path }}"
-                                                        class="btn btn-outline-primary btn-sm" target="_blank">view</a> --}}
+                                                    <a href="{{ $item->reciept_attach_path }}"
+                                                        class="btn btn-outline-primary btn-sm" target="_blank">view</a>
                                                 </div>
                                             </div>
                                             @if ($item->is_approved === 0)
