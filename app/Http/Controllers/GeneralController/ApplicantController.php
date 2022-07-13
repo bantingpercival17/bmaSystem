@@ -119,7 +119,9 @@ class ApplicantController extends Controller
             $_document->staff_id = Auth::user()->staff->id;
             $_document->save();
             if (count($_document->account->applicant_documents) == count($_document->account->document_status)) {
-                Mail::to($_document->account->email)->send($_email_model->document_verified($_document));
+                if (!$_document->account->is_alumnia) {
+                    Mail::to($_document->account->email)->send($_email_model->document_verified($_document));
+                }
             }
             return back()->with('success', 'Successfully Transact.');
         } else {
