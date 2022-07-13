@@ -233,9 +233,10 @@ class OnboardTrainingController extends Controller
                 'student_id' => $_data->id,
                 'assesor_id' => $_request->_assessor,
                 'practical_score' => $_request->_practical_score,
-                'oral_score' => $_request->_oral_score
+                'oral_score' => $_request->_oral_score,
+                'staff_id' => Auth::user()->staff->id
             );
-            $_assessment = ShipboardAssessmentDetails::where('student_id', $_data->id)->first();
+            $_assessment = ShipboardAssessmentDetails::where('student_id', $_data->id)->where('is_removed', false)->first();
             if ($_assessment) {
                 $_assessment->is_removed = true;
                 $_assessment->save();

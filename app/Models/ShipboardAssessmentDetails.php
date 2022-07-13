@@ -12,7 +12,8 @@ class ShipboardAssessmentDetails extends Model
         'student_id',
         'assesor_id',
         'practical_score',
-        'oral_score'
+        'oral_score',
+        'staff_id'
     ];
 
 

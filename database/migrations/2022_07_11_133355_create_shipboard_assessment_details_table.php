@@ -23,6 +23,8 @@ class CreateShipboardAssessmentDetailsTable extends Migration
             $table->string('practical_remarks')->nullable();
             $table->double('oral_score');
             $table->string('oral_remarks')->nullable();
+            $table->unsignedBigInteger('staff_id');
+            $table->foreign('staff_id')->references('id')->on('staff');
             $table->boolean('is_removed')->default(0);
             $table->timestamps();
         });
