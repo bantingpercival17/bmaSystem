@@ -125,11 +125,11 @@
                 <table class="table-content">
                     <tbody>
                         <tr style="text-align: center">
-                            <td><i><b>2/M Dominador P. Tunzon Jr.</b></i></td>
+                            <td><i><b>2M Raymond A. Carlos</b></i></td>
                             <td> <i><b>{{ $_assessment['assesor'] }}</b></i></td>
                         </tr>
                         <tr style="text-align: center">
-                            <td><i>On board Training Officer</i> </td>
+                            <td><i>OIC - On board Training Officer</i> </td>
                             <td><i>Name & Signature of Asssessor</i></td>
                         </tr>
                         <tr style="text-align: center">
