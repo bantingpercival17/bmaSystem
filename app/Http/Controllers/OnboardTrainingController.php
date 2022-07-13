@@ -235,7 +235,12 @@ class OnboardTrainingController extends Controller
                 'practical_score' => $_request->_practical_score,
                 'oral_score' => $_request->_oral_score
             );
-            //ShipboardAssessmentDetails::create($_index);
+            $_assessment = ShipboardAssessmentDetails::where('student_id', $_data->id)->first();
+            if ($_assessment) {
+                $_assessment->is_removed = true;
+                $_assessment->save();
+            }
+            ShipboardAssessmentDetails::create($_index);
             return $_generate_report->assessment_report($_data);
         } catch (Exception $error) {
             return $error->getMessage();

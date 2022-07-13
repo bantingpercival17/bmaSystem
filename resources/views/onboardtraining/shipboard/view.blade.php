@@ -119,7 +119,7 @@ $_title = 'Shipboard Monitoring';
                 <div class="card">
                     <div class="card-body">
                         <div class="header-title d-flex justify-content-between">
-                            <span class="h5 text-primary fw-bolder">NARATIVE REPORT</span>
+                            <span class="h5 text-primary fw-bolder">NARRATIVE REPORT</span>
                             <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
                                 class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
                         </div>
@@ -128,7 +128,7 @@ $_title = 'Shipboard Monitoring';
                                 data-toggle="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Narative Report</th>
+                                        <th>Narrative Report</th>
                                         <th>Progress</th>
                                         <th>Summary Report</th>
                                     </tr>
