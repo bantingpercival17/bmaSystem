@@ -786,4 +786,8 @@ class StudentDetails extends Model
     {
         return $this->hasOne(ShipboardExamination::class, 'student_id')->where('is_removed', false);
     }
+    public function assessment_details()
+    {
+        return $this->hasOne(ShipboardAssessmentDetails::class, 'student_id')->where('is_removed', false);
+    }
 }

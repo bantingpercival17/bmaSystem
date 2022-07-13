@@ -13,4 +13,12 @@ class ShipboardExamination extends Model
         'examination_code',
         'staff_id'
     ];
+
+
+    public function result()
+    {
+        return $this->hasMany(ShipboardExaminationAnswer::class, 'examination_id')
+            ->join('examination_question_choices', 'examination_question_choices.id', 'shipboard_examination_answers.choices_id')
+            ->where('examination_question_choices.is_answer', true);
+    }
 }

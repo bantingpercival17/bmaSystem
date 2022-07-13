@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Examination;
 use App\Models\ExaminationCategory;
 use App\Models\ExaminationQuestion;
+use App\Models\ShipboardAssessmentDetails;
 use App\Models\ShipboardExamination;
 use App\Models\ShipboardExaminationAnswer;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardJournal;
+use App\Models\Staff;
 use App\Models\StudentDetails;
 use App\Models\StudentTraining;
 use App\Models\TrainingCertificates;
@@ -113,7 +115,13 @@ class OnboardTrainingController extends Controller
         $_student_detials = new StudentDetails();
         $_midshipman = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
         $_shipboard_monitoring = $_request->_cadet ? $_student_detials->student_search($_request->_cadet) : $_student_detials->student_shipboard_journals()->paginate(10);
-        return view('onboardtraining.shipboard.view', compact('_midshipman', '_shipboard_monitoring'));
+        if ($_midshipman) {
+            $_department = $_midshipman->enrollment_assessment->course_id == 1 ? "MARINE ENGINEERING" : "MARINE TRANSPORTATION";
+            $_assessors = Staff::where('department', $_department)->get();
+        } else {
+            $_assessors = [];
+        }
+        return view('onboardtraining.shipboard.view', compact('_midshipman', '_shipboard_monitoring', '_assessors'));
     }
     public function  onboard_journal_view(Request $_request)
     {
@@ -212,9 +220,22 @@ class OnboardTrainingController extends Controller
     # Assessment Report
     public function onboard_assessment_report(Request $_request)
     {
+        $_request->validate([
+            '_midshipman' => 'required',
+            '_assessor' => 'required',
+            '_practical_score' => 'required',
+            '_oral_score' => 'required'
+        ]);
         try {
             $_generate_report = new OnboardTrainingReport();
             $_data = StudentDetails::find(base64_decode($_request->_midshipman));
+            $_index = array(
+                'student_id' => $_data->id,
+                'assesor_id' => $_request->_assessor,
+                'practical_score' => $_request->_practical_score,
+                'oral_score' => $_request->_oral_score
+            );
+            //ShipboardAssessmentDetails::create($_index);
             return $_generate_report->assessment_report($_data);
         } catch (Exception $error) {
             return $error->getMessage();

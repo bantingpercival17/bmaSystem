@@ -36,7 +36,7 @@
                         </td>
                         <td width="120px"><small>SCORE:</small></td>
                         <td class="text-fill-in">
-                            <small><b>-</b></small>
+                            <small><b>{{ number_format($_assessment['written_score'] + $_assessment['practical_score'] + $_assessment['oral_score'], 1, '.', '') }}</b></small>
                         </td>
                     </tr>
                     <tr>
@@ -46,7 +46,7 @@
                         </td>
                         <td width="120px"><small>REMAKS:</small></td>
                         <td class="text-fill-in">
-                            <small><b>-</b></small>
+                            <small><b>{{ $_assessment['total_score'] >= 50 ? 'PASSED' : 'FAILED' }}</b></small>
                         </td>
                     </tr>
 
@@ -60,30 +60,30 @@
                 <tbody>
                     <tr>
                         <td><i><b>A. Written Exam: (30%)</b></i></td>
-                        <td> <u><b>{{-- {{ $_result['written_score'] }} --}}</b></u> / 40</td>
+                        <td> <u><b>{{ $_assessment['written_score'] }}</b></u> / 40</td>
                         <td>x 100</i> </td>
                         <td>x 30%</td>
-                        <td><u><b>{{-- {{ number_format($_result['written_final'], 1, '.', '') }} --}}</b></u></td>
+                        <td><u><b>{{ number_format($_assessment['written_final_score'], 1, '.', '') }}</b></u></td>
                     </tr>
                     <tr>
                         <td><i><b>B. Practical Assessment: (30%)</b></i></td>
-                        <td> <u><b>{{-- {{ number_format($_result['practical_score'], 1, '.', '') }}< --}}</b></u> /
-                            {{-- {{ $_result['practical_item'] }} --}}</td>
+                        <td> <u><b>{{ number_format($_assessment['practical_score'], 1, '.', '') }}</b></u> /
+                            {{ $_assessment['practical_item'] }}</td>
                         <td>x 100</i> </td>
                         <td>x 30%</td>
-                        <td><u><b>{{-- {{ number_format($_result['practical_final'], 1, '.', '') }} --}}</b></u></td>
+                        <td><u><b>{{ number_format($_assessment['practical_final_score'], 1, '.', '') }}</b></u></td>
                     </tr>
                     <tr>
                         <td><i><b>C. Oral Interview: (40%)</b></i></td>
-                        <td> <u><b>{{-- {{ $_result['oral_score'] }}</b></u> / {{ $_result['oral_item'] }} --}}</td>
+                        <td> <u><b>{{ $_assessment['oral_score'] }}</b></u> / {{ $_assessment['oral_item'] }}</td>
                         <td>x 100</i> </td>
                         <td>x 40%</td>
-                        <td><u><b>{{-- {{ number_format($_result['oral_final'], 1, '.', '') }} --}}</b></u></td>
+                        <td><u><b>{{ number_format($_assessment['oral_final_score'], 1, '.', '') }}</b></u></td>
                     </tr>
                     <tr>
                         <td colspan="4" style="text-align: right; padding-right:10px; "><b>FINAL GRADE</b> </td>
-                        <td {{-- style="color:{{ $_result['total_score'] >= 50 ? '#0275d8' : '#d9534f' }};" --}}>
-                            <b><u>{{-- {{ number_format($_result['total_score'], 1, '.', '') }} --}}</u></b>
+                        <td style="color:{{ $_assessment['total_score'] >= 50 ? '#0275d8' : '#d9534f' }};">
+                            <b><u>{{ number_format($_assessment['total_score'], 1, '.', '') }}</u></b>
                         </td>
                     </tr>
                 </tbody>
@@ -126,7 +126,7 @@
                     <tbody>
                         <tr style="text-align: center">
                             <td><i><b>2/M Dominador P. Tunzon Jr.</b></i></td>
-                            <td> <i><b>{{-- {{ $_result['assesor_name'] }} --}}</b></i></td>
+                            <td> <i><b>{{ $_assessment['assesor'] }}</b></i></td>
                         </tr>
                         <tr style="text-align: center">
                             <td><i>On board Training Officer</i> </td>

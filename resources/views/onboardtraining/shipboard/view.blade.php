@@ -180,14 +180,22 @@ $_title = 'Shipboard Monitoring';
                         <div class="header-title d-flex justify-content-between">
                             <span class="h5 text-primary fw-bolder">ASSESSMENT</span>
                         </div>
-                        <div class="table-responsive mt-4 mb-4">
-                            <table id="basic-table" class="table table-striped mb-0" role="grid">
-                                <tbody>
-                                    <tr>
-                                        <th>ONLINE EXAMINATION</th>
-                                        <th>
+                        <div class="mt-4">
+                            <form action="{{ route('onboard.assessment-report') }}"
+                                id="{{ base64_encode($_midshipman->id) }}" method="post">
+                                @csrf
+                                <input type="hidden" name="_midshipman" value="{{ base64_encode($_midshipman->id) }}">
+                                <div class="row">
+                                    <div class="col-md">
+                                        <div class="form-group">
+                                            <small>ONLINE ASSESSMENT</small> <br>
                                             @if ($_midshipman->onboard_examination)
                                                 @if ($_midshipman->onboard_examination->is_finish)
+                                                    <input type="text" class="form-control"
+                                                        value="{{ $_midshipman->onboard_examination->result->count() }}"
+                                                        disabled>
+                                                    <input type="hidden" name="_assessment_score"
+                                                        value="{{ $_midshipman->onboard_examination->result->count() }}">
                                                 @else
                                                     <div class="form-group">
                                                         <small for="" class="form-label fw-bolder">EXAMINATION
@@ -197,30 +205,58 @@ $_title = 'Shipboard Monitoring';
                                                     </div>
                                                 @endif
                                             @else
-                                                <button
-                                                    class="btn btn-primary btn-sm rounded-pill btn-onboard-examination"
+                                                <button class="btn btn-primary btn-sm btn-onboard-examination w-100"
                                                     data-url="{{ route('onboard.examination') . '?_midshipman=' . base64_encode($_midshipman->id) }}">APPROVE
                                                     FOR
                                                     EXAMINATION</button>
                                             @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="form-group">
+                                            <small>ASSESSOR</small>
+                                            <select name="_assessor" class="form-select">
+                                                @foreach ($_assessors as $item)
+                                                    <option value="{{ $item->id }}">
+                                                        {{ strtoupper($item->first_name . ' ' . $item->last_name) }}
+                                                    </option>
+                                                @endforeach
 
-                                        </th>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                    </tr>
-                                    <tr>
-                                        <th>PRACTICAL ASSESSMENT</th>
-                                        <th><input type="text" class="form-control"></th>
-                                    </tr>
-                                    <tr>
-                                        <th>ORAL INTERVIEW</th>
-                                        <th><input type="text" class="form-control"></th>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                <div class="row">
+                                    <div class="col-md">
+                                        <div class="form-group">
+                                            <small>PRACTICAL ASSESSMENT</small>
+                                            <input type="text" class="form-control" name="_practical_score"
+                                                value="{{ old('_practical_score') }}">
+                                            @error('_practical_score')
+                                                <span class="badge bg-danger mt-2">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="form-group">
+                                            <small>ORAL ASSESSMENT</small>
+                                            <input type="text" class="form-control" name="_oral_score"
+                                                value="{{ old('_oral_score') }}">
+                                            @error('_oral_score')
+                                                <span class="badge bg-danger mt-2">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </form>
                         </div>
                         <button class="btn btn-primary btn-sm float-end generate-report-button"
-                            data-url="{{ route('onboard.assessment-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}">Generate
-                            Report</button>
+                            data-url="{{ base64_encode($_midshipman->id) }}">GENERATE
+                            REPORT
+                            OBT-12</button>
                         {{-- <a href="" class="btn btn-outline-primary btn-sm rounded-pill float-end">Generate
                             Report</a> --}}
                     </div>
@@ -296,8 +332,7 @@ $_title = 'Shipboard Monitoring';
             event.preventDefault();
         })
         $('.generate-report-button').click(function(event) {
-            var _url = $(this).data('url');
-            console.log(_url)
+            var form = $(this).data('url');
             Swal.fire({
                 title: 'Generate Report',
                 text: "Do you want to Generate a Report?",
@@ -308,7 +343,7 @@ $_title = 'Shipboard Monitoring';
                 confirmButtonText: 'Yes'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = _url
+                    document.getElementById(form).submit()
                 }
             })
             event.preventDefault();
