@@ -190,7 +190,7 @@ class Staff extends Model
                 'role_id' => 6,
                 'role_name' => 'Teacher',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Subjects', 'teacher.subject-list']],
+                'role_routes' => [['Subjects', 'teacher.subject-list'], ['Course Syllabus', 'teacher.course-syllabus']],
             ],
 
             [

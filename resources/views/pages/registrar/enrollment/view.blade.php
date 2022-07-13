@@ -126,7 +126,7 @@ $_title = 'Enrollment';
         $('.btn-assessment').click(function(event) {
             Swal.fire({
                 title: 'Enrollment Assessment',
-                text: "Your sure do you want to submit?",
+                text: "do you want to submit?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

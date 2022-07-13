@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DepartmentHeadController;
+use App\Http\Controllers\GeneralController\CourseSyllabusController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,4 +36,10 @@ Route::prefix('teacher')->group(function () {
     Route::get('/semestral-clearance', [TeacherController::class, 'e_clearance_view'])->name('department.e-clearance'); // List of Clearance
     Route::get('/semestral-clearance/view', [TeacherController::class, 'section_view_e_clearance'])->name('department.e-clearance-view'); // List of Clearance
 
+
+    # Course Syllabus
+    Route::get('/course-syllabus', [CourseSyllabusController::class, 'course_syllabus_view'])->name('teacher.course-syllabus'); // View the List of Course Syllabus
+    Route::get('/course-syllabus/create', [CourseSyllabusController::class, 'course_syllabus_create'])->name('teacher.course-syllabus-create');
+    Route::post('/course-syllabus/store', [CourseSyllabusController::class, 'course_syllabus_store'])->name('teacher.course-syllabus-store');
+    Route::get('/course-syllabus/editor', [CourseSyllabusController::class, 'course_syllabus_editor'])->name('teacher.course-syllabus-editor');
 });
