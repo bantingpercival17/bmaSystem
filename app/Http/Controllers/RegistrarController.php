@@ -321,7 +321,7 @@ class RegistrarController extends Controller
             'year_level' => $_request->_input_7,
             'semester' => $_request->_input_8,
             'created_by' => Auth::user()->name,
-            'is_removed' => 1,
+            'is_removed' => 0,
         ]; // Subject Course Details
         CurriculumSubject::create($_course_subject_details); // Create a Subject Course
         return $_request->course ?  redirect('/registrar/subjects/curriculum?view=' . $_request->curriculum . '&d=' . base64_encode($_request->course))->with('success', 'Successfully Created Subject') : back()->with('success', 'Successfully Created Subject');
