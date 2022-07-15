@@ -202,12 +202,12 @@ class OnboardTrainingController extends Controller
         $_examination_name = $_student->enrollment_assessment->course_id == 1 ? 'ONBOARD EXAMINATION BSMARE' : 'ONBOARD EXAMINATION BSMT'; // EXAMINATION NAME
         $_examination = Examination::where('examination_name', $_examination_name)->where('department', 'college')->where('is_removed', false)->first();
         $_general_question = ExaminationCategory::where('category_name', 'GENERAL QUESTION')->where('examination_id', $_examination->id)->where('is_removed', false)->first(); // GET THE GENERAL QUESTION CATEGORY
-        $_training_record_book = ExaminationCategory::where('category_name', 'GENERAL QUESTION')->where('examination_id', $_examination->id)->where('is_removed', false)->first(); // GET THE TRAINING RECORD BOOK CATEGORY
+        $_training_record_book = ExaminationCategory::where('category_name', 'TRB')->where('examination_id', $_examination->id)->where('is_removed', false)->first(); // GET THE TRAINING RECORD BOOK CATEGORY
         $_custom_category = ExaminationCategory::where('category_name', $_shipboard_information->vessel_type)->where('examination_id', $_examination->id)->where('is_removed', false)->first(); // GET THE CATEGORY
         $_categories = array(
             array($_general_question, 10),
-            array($_training_record_book, 10),
-            array($_custom_category, 20)
+            array($_training_record_book, 20),
+            array($_custom_category, 10)
         ); // [Category, NumberOfItems]
         foreach ($_categories as $key => $category) {
             // GET THE QUESTION PER CATEGORIES
