@@ -79,7 +79,7 @@ $_title = 'Generate Report';
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="">Academic Year</label>
-                                                    <select name="collection_academic" class="form-control">
+                                                    <select name="_academic" class="form-control">
                                                         <option value="4">2nd Semester | 2021 - 2022</option>
                                                         <option value="3">1st Semester | 2021 - 2022</option>
                                                         <option value="2">2nd Semester | 2020 - 2021</option>
