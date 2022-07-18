@@ -53,10 +53,16 @@
                         @if (count($_student_list) > 0)
                             @foreach ($_student_list as $_data)
                                 <tr>
-                                    <td> {{ $_data->student->account->student_number }} </td>
-                                    <td>{{ ucwords($_data->student->last_name . ', ' . $_data->student->first_name) }}
+                                    <td> {{ $_data->account ? $_data->account->student_number : '' }} </td>
+                                    <td>{{ ucwords($_data->last_name . ', ' . $_data->first_name) }}
                                     </td>
-                                    <td></td>
+                                    <td>
+                                       
+
+                                        <label for="" class="text-primary btn-remove fw-bolder"
+                                            data-url="{{route('registrar.student-section-remove') .'?_student_section=' . base64_encode($_data->student_section_id) }}"
+                                            data-title="Student Section">Remove </label>
+                                    </td>
                                 </tr>
                             @endforeach
                         @else
@@ -70,4 +76,25 @@
             </div>
         </div>
     </div>
+@endsection
+@section('js')
+    <script>
+        $('.btn-remove').click(function(event) {
+            Swal.fire({
+                title: $(this).data('title'),
+                text: "Do you want to remove?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                var _url = $(this).data('url');
+                if (result.isConfirmed) {
+                    window.location.href = _url
+                }
+            })
+            event.preventDefault();
+        })
+    </script>
 @endsection

@@ -20,7 +20,8 @@ class Section extends Model
     public function student_sections()
     {
         return $this->hasMany(StudentSection::class, 'section_id')
-            ->select('student_sections.student_id', 'sa.first_name', 'sa.last_name')
+        ->select('sa.*','student_sections.id as student_section_id')    
+        //->select('student_sections.student_id', 'sa.first_name', 'sa.last_name')
             ->join('student_details as sa', 'sa.id', 'student_sections.student_id')
             ->where('student_sections.is_removed', false)
             ->orderBy('sa.last_name', 'asc')->orderBy('sa.first_name', 'asc');

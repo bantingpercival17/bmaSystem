@@ -394,7 +394,7 @@ class RegistrarController extends Controller
     public function section_add_student_view(Request $_request)
     {
         $_section = Section::find(base64_decode($_request->_section));
-        $_student_list = $_section->student_section;
+        $_student_list = $_section->student_sections;
         return view('pages.registrar.sections.section_view', compact('_section', '_student_list'));
     }
     public function section_add_student(Request $_request)
@@ -422,6 +422,17 @@ class RegistrarController extends Controller
         ]);
         $_section = Section::find(base64_decode($_request->_section));
         return back()->with('success', 'Successfully Added to ' . $_section->section_name);
+    }
+    public function section_remove_student(Request $_request)
+    {
+        try {
+            $_student_section = StudentSection::find(base64_decode($_request->_student_section));
+            $_student_section->is_removed = 1;
+            $_student_section->save();
+            return back()->with('success','Successfuly Removed the Student in Section');
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
     public function section_export_file(Request $_request)
     {
