@@ -22,4 +22,16 @@ class CourseSyllabus extends Model
     {
         return $this->belongsTo(Subject::class, 'subject_id')->where('is_removed', false);
     }
+    public function stcw_reference()
+    {
+        return $this->hasMany(SyllabusStcwReference::class, 'course_syllabus_id')->where('is_removed', false);
+    }
+    public function course_outcome()
+    {
+        return $this->hasMany(SyllabusCourseOutcome::class, 'course_syllabus_id')->where('is_removed', false);
+    }
+    public function details()
+    {
+        return $this->hasOne(SyllabusCourseDetails::class, 'course_syllabus_id')->where('is_removed', false);
+    }
 }

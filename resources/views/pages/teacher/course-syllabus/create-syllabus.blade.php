@@ -20,7 +20,7 @@ $_title = 'Create Course Syllabus';
     <div class="content">
         <div class="card">
             <div class="card-header">
-                <label for="" class="fw-bolder text-primary h4">SET-UP COURSE SYLLBUS</label>
+                <label for="" class="fw-bolder text-primary h4">SET-UP COURSE SYLLABUS</label>
             </div>
             <div class="card-body">
                 @if (request()->input('_subject'))
@@ -69,8 +69,7 @@ $_title = 'Create Course Syllabus';
                         <div class="form-group">
                             <small for="" class="form-label">COURSE DESCRIPTION <span
                                     class="text-danger">*</span></small>
-                            <textarea name="course_description" class="form-control" cols="30" rows="5" required>
-                            </textarea>
+                            <textarea name="course_description" class="form-control" cols="30" rows="5" required></textarea>
                             @error('course_description')
                                 <label for="" class="badge bg-danger text-small mt-2">{{ $message }}</label>
                             @enderror

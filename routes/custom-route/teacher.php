@@ -5,11 +5,11 @@ use App\Http\Controllers\GeneralController\CourseSyllabusController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('teacher')->group(function () {
+Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     Route::get('/', [TeacherController::class, 'subject_list'])->name('teacher.subject-list'); // Subject List view
     Route::get('/subjects', [TeacherController::class, 'subject_list'])->name('teacher.subject-list'); // Subject List View
     Route::get('/subjects/view', [TeacherController::class, 'subject_class_view'])->name('teacher.subject-view'); // Subject Content View
-    Route::get('/subjects/student-list')->name('teacher.subject-class-students');
+    Route::get('/subjects/student-list',[TeacherController::class, 'subject_student_list'])->name('teacher.subject-class-students');
     Route::get('/subjects/semestral-clearance', [TeacherController::class, 'subject_clearance'])->name('teacher.semestral-clearance'); // Subject Clearance
     Route::get('/subjects/grading-sheet', [TeacherController::class, 'subject_grading_view'])->name('teacher.grading-sheet'); // Subject Grading Sheet View
     Route::get('/subjects/schedule-view', [TeacherController::class, 'schedule_view'])->name('teacher.schedule-view'); // Schedule View
@@ -39,7 +39,17 @@ Route::prefix('teacher')->group(function () {
 
     # Course Syllabus
     Route::get('/course-syllabus', [CourseSyllabusController::class, 'course_syllabus_view'])->name('teacher.course-syllabus'); // View the List of Course Syllabus
-    Route::get('/course-syllabus/create', [CourseSyllabusController::class, 'course_syllabus_create'])->name('teacher.course-syllabus-create');
-    Route::post('/course-syllabus/store', [CourseSyllabusController::class, 'course_syllabus_store'])->name('teacher.course-syllabus-store');
-    Route::get('/course-syllabus/editor', [CourseSyllabusController::class, 'course_syllabus_editor'])->name('teacher.course-syllabus-editor');
+    Route::get('/course-syllabus/create', [CourseSyllabusController::class, 'course_syllabus_create'])->name('teacher.course-syllabus-create'); // Setup the Course Syllabus
+    Route::post('/course-syllabus/store', [CourseSyllabusController::class, 'course_syllabus_store'])->name('teacher.course-syllabus-store'); // Save the Syllabus
+    Route::get('/course-syllabus/editor', [CourseSyllabusController::class, 'course_syllabus_editor'])->name('teacher.course-syllabus-editor'); // View the Syllabus
+    Route::get('/course-syllabus/remove', [CourseSyllabusController::class, 'course_syllabus_remove'])->name('teacher.course-syllabus-remove'); // Remove Syllabus
+    Route::get('/course-syllabus/report', [CourseSyllabusController::class, 'course_syllabus_report'])->name('teacher.course-syllabus-report'); // Remove Syllabus
+
+    // STCW Reference
+    Route::post('/course-syllabus/editor/store-stcw-reference', [CourseSyllabusController::class, 'store_stcw_reference'])->name('teacher.store-stcw-reference'); // Store STCW Reference
+    Route::get('/course-syllabus/editor/stcw-reference/remove', [CourseSyllabusController::class, 'remove_stcw_reference'])->name('teacher.stcw-reference-remove'); // Remove STCW Table
+    Route::post('/course-syllabus/editor/stcw-reference/add', [CourseSyllabusController::class, 'add_stcw_reference'])->name('teacher.stcw-reference-add'); // Add STCW REFERENCE 
+    // COURSE OUTCOME
+    Route::post('/course-syllabus/editor/store-course-outcome', [CourseSyllabusController::class, 'store_course_outcome'])->name('teacher.course-outcome-store');
+    Route::post('/course-syllabus/editor/store-course-details', [CourseSyllabusController::class, 'store_course_details'])->name('teacher.course-details-store');
 });

@@ -22,196 +22,28 @@ $_title = 'Course Syllabus';
             <div class="card-header">
                 <label for=""
                     class="fw-bolder text-primary h4">{{ $_course_syllabus->subject->subject_code }}</label>
+                <br> <small>{{ $_course_syllabus->subject->subject_name }}</small>
             </div>
             <div class="card-body">
-                @if (request()->input('_subject'))
-                    <form action="{{ route('teacher.course-syllabus-store') }}" method="post" id="form-course-syllabus">
-                        @csrf
-                        <input type="hidden" name="subject" value="{{ $_subject->id }}">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <small for="" class="form-label">COURSE CODE</small>
-                                <label for="" class="form-control fw-bolder">{{ $_subject->subject_code }}</label>
-                            </div>
-                            <div class="col-md">
-                                <small for="" class="form-label">COURSE DESCRIPTIVE TITLE</small>
-                                <label for="" class="form-control fw-bolder">{{ $_subject->subject_name }}</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md">
-                                <small for="" class="form-label">COURSE CREDITS</small>
-                                <label for="" class="form-control fw-bolder">
-                                    {{ $_subject->units . ($_subject->units > 1 ? ' units' : ' unit') }}
-                                </label>
-                            </div>
-                            <div class="col-md">
-                                <small for="" class="form-label">LECTURE HOURS PER WEEK</small>
-                                <label for=""
-                                    class="form-control fw-bolder">{{ $_subject->lecture_hours . ($_subject->lecture_hours > 1 ? ' hours' : ' hour') }}</label>
-                            </div>
-                            <div class="col-md">
-                                <small for="" class="form-label">LABORATORY HOURS PER WEEK</small>
-                                <label for=""
-                                    class="form-control fw-bolder">{{ $_subject->laboratory_hours . ($_subject->laboratory_hours > 1 ? ' hours' : ' hour') }}</label>
-                            </div>
-
-                        </div>
-                        <div class="form-group">
-                            <small for="" class="form-label">COURSE DESCRIPTION <span
-                                    class="text-danger">*</span></small>
-                            <textarea name="course_description" class="form-control" cols="30" rows="5" required>
-                            </textarea>
-                            @error('course_description')
-                                <label for="" class="badge bg-danger text-small mt-2">{{ $message }}</label>
-                            @enderror
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md">
-                                <div class="form-group">
-                                    <small for="" class="form-label">PREREQUISITE <span
-                                            class="text-danger">*</span></small>
-                                    <select name="prerequisite" id="" class="form-select">
-                                        <option value="none">NONE</option>
-                                        @foreach ($_subjects as $subject)
-                                            <option value="{{ $subject->subject_code }}">{{ $subject->subject_code }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-
-                                    @error('prerequisite')
-                                        <label for=""
-                                            class="badge bg-danger text-small mt-2">{{ $message }}</label>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md">
-                                <div class="form-group">
-                                    <small for="" class="form-label">CO-REQUISITE <span
-                                            class="text-danger">*</span></small>
-                                    <select name="co_requisite" id="" class="form-select">
-                                        <option value="none">NONE</option>
-                                        @foreach ($_subjects as $subject)
-                                            <option value="{{ $subject->subject_code }}">
-                                                {{ $subject->subject_code }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('co_requisite')
-                                        <label for=""
-                                            class="badge bg-danger text-small mt-2">{{ $message }}</label>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md">
-                                <div class="form-group">
-                                    <small for="" class="form-label">SEMESTER OFFERED <span
-                                            class="text-danger">*</span></small>
-                                    <select name="semester" class="form-select">
-                                        <option value="1st semester">1st Semester</option>
-                                        <option value="2nd semester">2nd Semester</option>
-                                    </select>
-                                    @error('semester')
-                                        <label for=""
-                                            class="badge bg-danger text-small mt-2">{{ $message }}</label>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary form-submit-button float-end"
-                            data-form="form-course-syllabus">CREATE
-                            NOW</button>
-                        {{-- <div class="form-group">
-                            <small for="" class="form-label">PROGRAM OUTCOMES
-                                <span class="text-danger">*</span></small>
-                            <input type="text" class="form-control">
-                            @error('program_educational_objective')
-                                <label for="" class="badge bg-danger text-small mt-2">{{ $message }}</label>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <small for="" class="form-label">COMPETENCE/S
-                                <span class="text-danger">*</span></small>
-                            <textarea id="txtEditor-1" class="form-control txtEditor"></textarea>
-                            @error('program_educational_objective')
-                                <label for="" class="badge bg-danger text-small mt-2">{{ $message }}</label>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <small for="" class="form-label">KUP
-                                <span class="text-danger">*</span></small>
-                            <textarea id="txtEditor-2" class="form-control txtEditor"></textarea>
-                            @error('program_educational_objective')
-                                <label for="" class="badge bg-danger text-small mt-2">{{ $message }}</label>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <small for="" class="form-label">COURSE OUTCOME
-                                <span class="text-danger">*</span></small>
-                            <textarea id="txtEditor-2" class="form-control txtEditor"></textarea>
-                            @error('program_educational_objective')
-                                <label for="" class="badge bg-danger text-small mt-2">{{ $message }}</label>
-                            @enderror
-                        </div> --}}
-                    </form>
-                @else
-                    <label for="" class="fw-bolder h4 text-primary">SELECT SUBJECT</label>
-                    <table table id="datatable" class="table table-striped" data-toggle="data-table">
-                        <thead>
-                            <tr>
-                                <th>COURSE CODE</th>
-                                <th>COURSE DESCRIPIVE TITLE</th>
-                                <th>ACTION</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (count($_subjects) > 0)
-                                @foreach ($_subjects as $subject)
-                                    <tr>
-                                        <td>{{ $subject->subject_code }}</td>
-                                        <td>{{ $subject->subject_name }}</td>
-                                        <td>
-                                            <a href="{{ route('teacher.course-syllabus-create') . '?_subject=' . base64_encode($subject->id) }}"
-                                                class="btn btn-primary btn-sm">CREATE</a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="3">NO DATA</td>
-                                </tr>
-                            @endif
-
-                        </tbody>
-
-                    </table>
-                @endif
+                <div class="">
+                    <a
+                        href="{{ route('teacher.course-syllabus-editor') . '?course_syllabus=' . request()->input('course_syllabus') . '&part=part1' }}">PART
+                        A: COURSE SPECIFICATION</a>
+                </div>
+            
+                <div class="">
+                    <a
+                        href="{{ route('teacher.course-syllabus-editor') . '?course_syllabus=' . request()->input('course_syllabus') . '&part=part2' }}">
+                        PART B: COURSE OUTLINE AND TIMETABLE
+                        <br>
+                        PAER C: COURSE TOPICS
+                    </a>
+                </div>
 
             </div>
         </div>
     </div>
 @endsection
 @section('js')
-    <script>
-        $('.form-submit-button').click(function(event) {
-            Swal.fire({
-                title: 'Course Syllabus',
-                text: "do you want to submit?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes'
-            }).then((result) => {
-                var form = $(this).data('form');
-                if (result.isConfirmed) {
-                    console.log(form)
-                    document.getElementById(form).submit()
-                    //$('#' + form).submit();
-                }
-            })
-            event.preventDefault();
-        })
-    </script>
+    <script></script>
 @endsection

@@ -60,6 +60,17 @@ class TeacherController extends Controller
             // TODO:: Audit Error
         }
     }
+    public function subject_student_list(Request $_request)
+    {
+        $_subject = SubjectClass::find(base64_decode($_request->_subject));
+        $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
+        if ($_subject_code == 'BRDGE') {
+            $_students = $_subject->section->student_with_bdg_sections;
+        } else {
+            $_students = $_subject->section->student_sections;
+        }
+        return view('pages.teacher.subject-class.student_view', compact('_subject', '_students'));
+    }
     public function subject_clearance(Request $_request)
     {
         $_subject = SubjectClass::find(base64_decode($_request->_subject));

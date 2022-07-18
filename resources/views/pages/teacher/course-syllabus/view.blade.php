@@ -30,13 +30,31 @@ $_title = 'Course Syllabus';
                         <tr>
                             <th>COURSE CODE</th>
                             <th>COURSE DESCRIPIVE TITLE</th>
+                            <th>DATE CREATED</th>
                             <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="3">NO DATA</td>
-                        </tr>
+                        @if (count($_syllabus) > 0)
+
+                            @foreach ($_syllabus as $item)
+                                <tr>
+                                    <td><a href="{{route('teacher.course-syllabus-editor') . '?course_syllabus=' . base64_encode($item->id)}}">{{ $item->subject->subject_code }}</a></td>
+                                    <td>{{ $item->subject->subject_name }}</td>
+                                    <td>{{ $item->created_at->format('F d, Y') }}</td>
+                                    <td>
+                                        <a data-url="{{ route('teacher.course-syllabus-remove') . '?course_syllabus=' . base64_encode($item->id) }}"
+                                            class="text-primary fw-bolder btn-remove">DELETE</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="3">NO DATA</td>
+                            </tr>
+                        @endif
+
+
                     </tbody>
 
                 </table>
@@ -46,9 +64,22 @@ $_title = 'Course Syllabus';
 @endsection
 @section('js')
     <script>
-        $(document).ready(function() {
-            $("#txtEditor-1").Editor();
-            $("#txtEditor-2").Editor();
-        });
+        $('.btn-remove').click(function(event) {
+            Swal.fire({
+                title: 'Course Syllabus',
+                text: "Do you want to remove?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                var _url = $(this).data('url');
+                if (result.isConfirmed) {
+                    window.location.href = _url
+                }
+            })
+            event.preventDefault();
+        })
     </script>
 @endsection
