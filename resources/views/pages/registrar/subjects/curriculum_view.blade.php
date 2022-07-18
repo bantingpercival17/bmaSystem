@@ -62,12 +62,11 @@ $_title = 'Subjects';
                                                     <th>LEC. HOURS</th>
                                                     <th>LAB. HOURS</th>
                                                     <th>UNITS</th>
-
+                                                    <th>ACTION</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @if ($_subject = $_curriculum->subject([$_course->id, $item, $_sem])->count() > 0)
-
                                                     @foreach ($_curriculum->subject([$_course->id, $item, $_sem])->get() as $_subject)
                                                         @php
                                                             $_tLechr += $_subject->lecture_hours;
@@ -75,12 +74,15 @@ $_title = 'Subjects';
                                                             $_tUnits += $_subject->units;
                                                         @endphp
                                                         <tr>
-                                                            <td>{{ $_subject->subject_code }}</td>
-                                                            <td>{{ $_subject->subject_name }}</td>
-                                                            <td>{{ $_subject->lecture_hours }}</td>
-                                                            <td>{{ $_subject->laboratory_hours }}</td>
-                                                            <td>{{ $_subject->units }}</td>
-
+                                                            <td>{{ $_subject->subject->subject_code }}</td>
+                                                            <td>{{ $_subject->subject->subject_name }}</td>
+                                                            <td>{{ $_subject->subject->lecture_hours }}</td>
+                                                            <td>{{ $_subject->subject->laboratory_hours }}</td>
+                                                            <td>{{ $_subject->subject->units }}</td>
+                                                            <td>
+                                                                <button class="btn btn-danger btn-remove"
+                                                                    data-url="{{ route('registrar.remove-curriculum-subject') . '?_subject=' . base64_encode($_subject->id) }}">remove</button>
+                                                            </td>
                                                         </tr>
                                                     @endforeach
                                                 @else
@@ -218,4 +220,26 @@ $_title = 'Subjects';
             </div>
         </div>
     </div>
+@endsection
+@section('js')
+    <script>
+        // Remove
+        $('.btn-remove').click(function(event) {
+            Swal.fire({
+                title: 'Subject Course',
+                text: "Do you want to remove?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                var _url = $(this).data('url');
+                if (result.isConfirmed) {
+                    window.location.href = _url
+                }
+            })
+            event.preventDefault();
+        })
+    </script>
 @endsection
