@@ -73,4 +73,8 @@ class SubjectClass extends Model
     {
         return $this->hasMany(SubjectClassSchedule::class, 'subject_class_id')->where('is_removed', false);
     }
+    public function course_syllabus()
+    {
+        return $this->hasOne(SubjectClassCourseSyllabus::class, 'subject_id')->where('is_removed', false);
+    }
 }

@@ -22,13 +22,14 @@ Route::prefix('registrar')->group(function () {
     Route::get('/subjects/classes/removed', [RegistrarController::class, 'classes_removed'])->name('registrar.subject-class-removed'); // Remove Subjects Clases Handled
     Route::get('/subjects/curriculum', [RegistrarController::class, 'curriculum_view'])->name('registrar.curriculum-view'); // Curriculum Subject View
     Route::post('/subjects/curriculum', [RegistrarController::class, 'curriculum_subject_store'])->name('registrar.curriculum-store'); // Store Curriculum Subject
+    Route::get('/subjects/curriculum/subject',[RegistrarController::class,'curriculum_subject_remove'])->name('registrar.remove-curriculum-subject'); // Remove Curriculum Subject
 
     // Enrollment
     Route::get('/enrollment', [RegistrarController::class, 'enrollment_view'])->name('registrar.enrollment');
     Route::get('/enrollment/enrolled-list', [RegistrarController::class, 'enrolled_list_view'])->name('registrar.course-enrolled');
     Route::get('/enrollment/student-clearance', [RegistrarController::class, 'student_clearance'])->name('registrar.student-clearance');
     Route::post('/enrollment/assessment', [RegistrarController::class, 'enrollment_assessment'])->name('registrar.enrollment-assessment');
-    Route::get('/enrollment/bridging-program',[RegistrarController::class,'enrollment_briding_program'])->name('registrar.bridging-program');
+    Route::get('/enrollment/bridging-program', [RegistrarController::class, 'enrollment_briding_program'])->name('registrar.bridging-program');
 
     // Student Profile
     Route::get('/student-profile', [RegistrarController::class, 'student_list_view'])->name('registrar.students'); // Student List View

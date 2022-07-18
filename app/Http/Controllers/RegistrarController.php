@@ -285,12 +285,11 @@ class RegistrarController extends Controller
     }
     public function curriculum_view(Request $_request)
     {
-        $_curriculum = base64_decode($_request->view);
         $_course = $_request->d ? base64_decode($_request->d) : '';
-        $_curriculum = Curriculum::find($_curriculum);
+        $_curriculum = Curriculum::find(base64_decode($_request->view)); // Get the Curriculum
         $_course_view = CourseOffer::where('is_removed', false)->get();
         $_course = $_request->d ? CourseOffer::find($_course) : $_course_view;
-        $_couuse_subject = $_request->d ? CurriculumSubject::where('course_id', $_course->id)->get() : '';
+        //$_course_subject = $_request->d ? CurriculumSubject::where('course_id', $_course->id)->where('is_removed', false)->get() : '';
         return view('pages.registrar.subjects.curriculum_view', compact('_curriculum', '_course_view', '_course'));
     }
     public function curriculum_subject_store(Request $_request)
@@ -325,6 +324,19 @@ class RegistrarController extends Controller
         ]; // Subject Course Details
         CurriculumSubject::create($_course_subject_details); // Create a Subject Course
         return $_request->course ?  redirect('/registrar/subjects/curriculum?view=' . $_request->curriculum . '&d=' . base64_encode($_request->course))->with('success', 'Successfully Created Subject') : back()->with('success', 'Successfully Created Subject');
+    }
+    public function curriculum_subject_remove(Request $_request)
+    {
+        try {
+            $_subject = CurriculumSubject::find(base64_decode($_request->_subject));
+            //return $_subject;
+            $_subject->is_removed = 1;
+            $_subject->save();
+            return back()->with('success', 'Successfuly Removed');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
     }
 
     // Student

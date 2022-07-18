@@ -14,6 +14,7 @@ class Curriculum extends Model
     public function subject($_data)
     {
         return $this->hasMany(CurriculumSubject::class, 'curriculum_id')
+            ->select('curriculum_subjects.*')
             ->join('subjects', 'subjects.id', 'curriculum_subjects.subject_id')
             ->where('curriculum_subjects.course_id', $_data[0])
             ->where('curriculum_subjects.year_level', $_data[1])
@@ -23,7 +24,6 @@ class Curriculum extends Model
     public function subject_lists($_data)
     {
         return $this->hasMany(CurriculumSubject::class, 'curriculum_id')
-        
             ->select('curriculum_subjects.*')
             ->join('subjects', 'subjects.id', 'curriculum_subjects.subject_id')
             ->where('curriculum_subjects.course_id', $_data[0])

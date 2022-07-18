@@ -337,7 +337,7 @@ $_title = 'Course Syllabus';
                     <label for="" class="text-primary fw-bolder">CREATE LEARNING OUTCOME</label>
                 </div>
                 <div class="card-body">
-                    <form action="" method="post">
+                    <form action="{{route('teacher.syllabus-learning-outcome')}}" method="post" id="form-learning-outcome">
                         @csrf
                         <input type="hidden" name="_syllabus" value="{{ base64_encode($_course_syllabus->id) }}">
                         <div class="row">
