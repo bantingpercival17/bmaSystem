@@ -25,23 +25,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
     <div class="conatiner-fluid content-inner mt-6 py-0">
 
         <div class="row">
-            <div class="col-md">
-                <a href="{{ route('teacher.create-syllabus') }}?_subject={{ request()->input('_subject') }}">
-                    <div class="card">
-                        <div class="card-body">
 
-                            <div class="row">
-                                <div class="col-md">
-                                    <span class="h3 text-primary fw-bolder">
-                                        CREATE SYSLLABUS
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-            </div>
             <div class="col-md">
                 <a href="{{ route('teacher.select-syllabus') }}">
                     <div class="card">
@@ -50,7 +34,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                             <div class="row">
                                 <div class="col-md">
                                     <span class="h3 text-primary fw-bolder">
-                                        SELECT SYSLLABUS
+                                        SELECT SYLLABUS
                                     </span>
                                 </div>
 

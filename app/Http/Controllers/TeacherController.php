@@ -289,7 +289,7 @@ class TeacherController extends Controller
     public function subject_select_syllabus()
     {
         try {
-            return view('pages.teacher.subject-class.syllabus.select-syllabus');
+            return view('pages.teacher.subject-class.course-syllabus.select-syllabus');
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
