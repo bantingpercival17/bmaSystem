@@ -9,7 +9,7 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     Route::get('/', [TeacherController::class, 'subject_list'])->name('teacher.subject-list'); // Subject List view
     Route::get('/subjects', [TeacherController::class, 'subject_list'])->name('teacher.subject-list'); // Subject List View
     Route::get('/subjects/view', [TeacherController::class, 'subject_class_view'])->name('teacher.subject-view'); // Subject Content View
-    Route::get('/subjects/student-list',[TeacherController::class, 'subject_student_list'])->name('teacher.subject-class-students');
+    Route::get('/subjects/student-list', [TeacherController::class, 'subject_student_list'])->name('teacher.subject-class-students');
     Route::get('/subjects/semestral-clearance', [TeacherController::class, 'subject_clearance'])->name('teacher.semestral-clearance'); // Subject Clearance
     Route::get('/subjects/grading-sheet', [TeacherController::class, 'subject_grading_view'])->name('teacher.grading-sheet'); // Subject Grading Sheet View
     Route::get('/subjects/schedule-view', [TeacherController::class, 'schedule_view'])->name('teacher.schedule-view'); // Schedule View
@@ -52,4 +52,6 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     // COURSE OUTCOME
     Route::post('/course-syllabus/editor/store-course-outcome', [CourseSyllabusController::class, 'store_course_outcome'])->name('teacher.course-outcome-store');
     Route::post('/course-syllabus/editor/store-course-details', [CourseSyllabusController::class, 'store_course_details'])->name('teacher.course-details-store');
+    // LEARNING OUTCOME
+    Route::post('/course-syllabus/editor/store-course-learning-outcome',[CourseSyllabusController::class,'store_course_learning_outline'])->name('teacher.syllabus-learning-outcome');
 });

@@ -153,6 +153,7 @@ return array(
     'App\\Models\\SubjectClassCourseSyllabus' => $baseDir . '/app/Models/SubjectClassCourseSyllabus.php',
     'App\\Models\\SubjectClassSchedule' => $baseDir . '/app/Models/SubjectClassSchedule.php',
     'App\\Models\\SyllabusCourseDetails' => $baseDir . '/app/Models/SyllabusCourseDetails.php',
+    'App\\Models\\SyllabusCourseLearningOutcome' => $baseDir . '/app/Models/SyllabusCourseLearningOutcome.php',
     'App\\Models\\SyllabusCourseOutcome' => $baseDir . '/app/Models/SyllabusCourseOutcome.php',
     'App\\Models\\SyllabusStcwCompetence' => $baseDir . '/app/Models/SyllabusStcwCompetence.php',
     'App\\Models\\SyllabusStcwFunction' => $baseDir . '/app/Models/SyllabusStcwFunction.php',

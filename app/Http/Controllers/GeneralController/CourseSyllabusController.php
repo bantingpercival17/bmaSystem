@@ -235,7 +235,26 @@ class CourseSyllabusController extends Controller
                 SyllabusCourseDetails::create($_content);
                 return back()->with('success', 'Successfully Add the Additional Details');
             }
-         
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function store_course_learning_outline(Request $_request)
+    {
+        try {
+            $_content = array(
+                'course_syllabus_id' => base64_decode($_request->_syllabus),
+                'course_outcome_id' => base64_decode($_request->_course_outcome),
+                'learning_outcomes' => $_request->_learning_outcome,
+                'theoretical' => $_request->_theoretical,
+                'demonstration' => $_request->_demostration,
+                'weeks' => $_request->_weeks,
+                'references' => $_request->references,
+                'teaching_aids' => $_request->_teaching_aids,
+                'term' => $_request->_term
+            );
+            return dd($_content);
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error

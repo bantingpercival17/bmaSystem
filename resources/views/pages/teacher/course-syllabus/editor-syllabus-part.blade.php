@@ -337,7 +337,8 @@ $_title = 'Course Syllabus';
                     <label for="" class="text-primary fw-bolder">CREATE LEARNING OUTCOME</label>
                 </div>
                 <div class="card-body">
-                    <form action="{{route('teacher.syllabus-learning-outcome')}}" method="post" id="form-learning-outcome">
+                    <form action="{{ route('teacher.syllabus-learning-outcome') }}" method="post"
+                        id="form-learning-outcome">
                         @csrf
                         <input type="hidden" name="_syllabus" value="{{ base64_encode($_course_syllabus->id) }}">
                         <div class="row">
@@ -393,31 +394,48 @@ $_title = 'Course Syllabus';
                             <div class="col-md form-group">
                                 <small class="fw-bolder">REFERENCE/ BIBLIOGRAHIES</small>
                                 <div class="">
-                                    @foreach (json_decode($_course_syllabus->details->references) as $key => $item)
-                                        <div class="form-check d-block col-md-4">
-                                            <input class="form-check-input" type="checkbox" value="{{ $item }}"
-                                                id="flexCheckDefault{{ $key }}">
-                                            <label class="form-check-label" for="flexCheckDefault{{ $key }}">
-                                                {{ substr($item, 0, 2) }}
-                                            </label>
-                                        </div>
-                                    @endforeach
+                                  
+                                    @if ($_course_syllabus->details)
+                                        @foreach (json_decode($_course_syllabus->details->references) as $key => $item)
+                                            <div class="form-check d-block col-md-4">
+                                                <input class="form-check-input" type="checkbox"
+                                                    value="{{ $item }}"
+                                                    id="flexCheckDefault{{ $key }}">
+                                                <label class="form-check-label"
+                                                    for="flexCheckDefault{{ $key }}">
+                                                    {{ substr($item, 0, 2) }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p>No Course Details</p>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md form-group">
                                 <small class="fw-bolder">TEACHING AIDS</small>
                                 <div class="">
-                                    @foreach (json_decode($_course_syllabus->details->teaching_aids) as $key => $item)
-                                        <div class="form-check d-block col-md-4">
-                                            <input class="form-check-input" type="checkbox" value="{{ $item }}"
-                                                id="flexCheckDefault{{ $key }}">
-                                            <label class="form-check-label" for="flexCheckDefault{{ $key }}">
-                                                {{ substr($item, 0, 2) }}
-                                            </label>
-                                        </div>
-                                    @endforeach
+                                    @if ($_course_syllabus->details)
+                                        @foreach (json_decode($_course_syllabus->details->teaching_aids) as $key => $item)
+                                            <div class="form-check d-block col-md-4">
+                                                <input class="form-check-input" type="checkbox"
+                                                    value="{{ $item }}"
+                                                    id="flexCheckDefault{{ $key }}">
+                                                <label class="form-check-label"
+                                                    for="flexCheckDefault{{ $key }}">
+                                                    {{ substr($item, 0, 2) }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p>No Course Details</p>
+                                    @endif
+
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-primary btn-add" data-form="form-learning-outcome">Add Learning Outcome</button>
                         </div>
                     </form>
                 </div>

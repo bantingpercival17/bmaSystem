@@ -759,6 +759,7 @@ class ComposerStaticInitad9a3fefd2e4c6a7edf47485ac1509a3
         'App\\Models\\SubjectClassCourseSyllabus' => __DIR__ . '/../..' . '/app/Models/SubjectClassCourseSyllabus.php',
         'App\\Models\\SubjectClassSchedule' => __DIR__ . '/../..' . '/app/Models/SubjectClassSchedule.php',
         'App\\Models\\SyllabusCourseDetails' => __DIR__ . '/../..' . '/app/Models/SyllabusCourseDetails.php',
+        'App\\Models\\SyllabusCourseLearningOutcome' => __DIR__ . '/../..' . '/app/Models/SyllabusCourseLearningOutcome.php',
         'App\\Models\\SyllabusCourseOutcome' => __DIR__ . '/../..' . '/app/Models/SyllabusCourseOutcome.php',
         'App\\Models\\SyllabusStcwCompetence' => __DIR__ . '/../..' . '/app/Models/SyllabusStcwCompetence.php',
         'App\\Models\\SyllabusStcwFunction' => __DIR__ . '/../..' . '/app/Models/SyllabusStcwFunction.php',

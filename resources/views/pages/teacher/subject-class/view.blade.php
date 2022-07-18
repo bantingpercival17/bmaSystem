@@ -23,65 +23,34 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
 @section('page-content')
 
     <div class="conatiner-fluid content-inner mt-6 py-0">
+        {{ $_subject->id }}
+        {{ $_subject->course_syllabus }}
+        @if ($_subject->course_syllabus)
+        @else
+            <div class="row">
 
-        <div class="row">
+                <div class="col-md">
+                    <a href="{{ route('teacher.select-syllabus') . '?_subject=' . request()->input('_subject') }}">
+                        <div class="card">
+                            <div class="card-body">
 
-            <div class="col-md">
-                <a href="{{ route('teacher.select-syllabus') }}">
-                    <div class="card">
-                        <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md">
+                                        <span class="h3 text-primary fw-bolder">
+                                            SELECT SYLLABUS
+                                        </span>
+                                    </div>
 
-                            <div class="row">
-                                <div class="col-md">
-                                    <span class="h3 text-primary fw-bolder">
-                                        SELECT SYLLABUS
-                                    </span>
                                 </div>
 
+
                             </div>
-
-
                         </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        {{-- <div class="card">
-            <div class="card-header d-flex justify-content-between">
-                <div class="header-title">
-                    <h4 class="card-title">STUDENT LIST</h4>
-                </div>
-
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Student Number</th>
-                                <th>Midshipman Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (count($_students))
-                                @foreach ($_students as $_key => $_student)
-                                    <tr>
-                                        <td>{{ $_student->student->account->student_number }}</td>
-                                        <td>{{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
-                                        </td>
-
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <th colspan="2">No Data</th>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
+                    </a>
                 </div>
             </div>
-        </div> --}}
+        @endif
+
 
     </div>
 
