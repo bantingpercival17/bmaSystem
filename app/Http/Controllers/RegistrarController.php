@@ -407,6 +407,8 @@ class RegistrarController extends Controller
             ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
             ->where('ea.year_level', trim($_year_level))->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('ea.is_removed', false)
+            ->orderBy('student_details.last_name')
+            ->orderBy('student_details.first_name')
             //->toSql();
             ->get();
         //return compact('_students');
