@@ -11,10 +11,11 @@ class SyllabusCourseLearningOutcome extends Model
     protected $fillable = [
         'course_syllabus_id',
         'course_outcome_id',
+        'learning_outcomes',
         'theoretical',
         'demonstration',
         'weeks',
-        'references',
+        'reference',
         'teaching_aids',
         'term'
     ];

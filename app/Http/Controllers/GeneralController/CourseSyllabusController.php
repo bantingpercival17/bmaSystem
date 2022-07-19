@@ -255,8 +255,21 @@ class CourseSyllabusController extends Controller
                 'teaching_aids' => json_encode($_request->teaching_aids),
                 'term' => $_request->_term
             );
+            //return dd ($_content);
             SyllabusCourseLearningOutcome::create($_content);
-            return back()->with('success','Successfuly Create a Learning Outcomes');
+            return back()->with('success', 'Successfuly Create a Learning Outcomes');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function remove_course_learning_outline(Request $_request)
+    {
+        try {
+            $_learning_outcome = SyllabusCourseLearningOutcome::find(base64_decode($_request->learning_outcome));
+            $_learning_outcome->is_removed = 1;
+            $_learning_outcome->save();
+            return back()->with('success', 'Successfuly Removed');
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error

@@ -334,6 +334,88 @@ $_title = 'Course Syllabus';
         @if (request()->input('part') == 'part2')
             <div class="card learning-outcome">
                 <div class="card-header">
+                    <label for="" class="text-primary fw-bolder">VIEW LEARNING OUTCOME</label>
+                </div>
+                <div class="card-body">
+                    @if (count($_course_syllabus->learning_outcomes) > 0)
+                        <div class="learning-outline-content">
+                            @foreach ($_course_syllabus->learning_outcomes as $key => $learning_outcome)
+                                <div class="lo-{{ $learning_outcome->id }}">
+                                    <div class="row ">
+
+                                        <div class="col-md-6">
+                                            <small class="fw-bolder">LEARNING OUTLINE</small><br>
+                                            <label for=""
+                                                class="text-primary h5">{{ strtoupper($learning_outcome->learning_outcomes) }}</label>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <small class="fw-bolder">COURSE OUTLINE</small><br>
+                                            <label for="" class="text-primary h5">
+                                                {{ substr($learning_outcome->course_outcome->course_outcome, 0, 3) }}
+                                            </label>
+
+                                        </div>
+                                        <div class="col-md">
+                                            <small class="fw-bolder">TERM</small><br>
+                                            <label for=""
+                                                class="text-primary h5">{{ strtoupper($learning_outcome->term) }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md">
+                                            <small class="fw-bolder">THEORETICAL</small><br>
+                                            <label for=""
+                                                class="text-primary h5">{{ strtoupper($learning_outcome->theoretical) }}</label>
+                                        </div>
+                                        <div class="col-md">
+                                            <small class="fw-bolder">DEMONSTRATION</small><br>
+                                            <label for=""
+                                                class="text-primary h5">{{ strtoupper($learning_outcome->demonstration) }}</label>
+                                        </div>
+                                        <div class="col-md">
+                                            <small class="fw-bolder">REFERENCE</small><br>
+                                            <label for="" class="text-primary h5">
+
+                                                @if ($learning_outcome->reference)
+                                                    @foreach (json_decode($learning_outcome->reference) as $item)
+                                                        {{ substr($item, 0, 3) }}
+                                                    @endforeach
+                                                @endif
+
+                                            </label>
+                                        </div>
+                                        <div class="col-md">
+                                            <small class="fw-bolder">TEACHING AIDS</small><br>
+                                            <label for="" class="text-primary h5">
+
+                                                @if ($learning_outcome->teaching_aids)
+                                                    @foreach (json_decode($learning_outcome->teaching_aids) as $item)
+                                                        {{ substr($item, 0, 3) }},
+                                                    @endforeach
+                                                @endif
+
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    {{-- <small for="" class="btn btn-outline-primary btn-sm">EDIT</small> --}}
+                                    <small for="" class="text-primary btn-remove fw-bolder"
+                                        data-url="{{ route('teacher.syllabus-learning-outcome-remove') . '?learning_outcome=' . base64_encode($learning_outcome->id) }}">REMOVE</small>
+                                </div>
+                                <div class="learning-outcome-topics">
+                                    <label for="" class="fw-bolder text-info">SUB-TOPICS</label>
+                                </div>
+                                <hr>
+                            @endforeach
+                        </div>
+                    @else
+                        <p>ADD LEARNING OUTCOME</p>
+                    @endif
+                </div>
+            </div>
+            <div class="card learning-outcome">
+                <div class="card-header">
                     <label for="" class="text-primary fw-bolder">CREATE LEARNING OUTCOME</label>
                 </div>
                 <div class="card-body">
@@ -445,39 +527,7 @@ $_title = 'Course Syllabus';
             </div>
 
 
-            <div class="card learning-outcome">
-                <div class="card-header">
-                    <label for="" class="text-primary fw-bolder">VIEW LEARNING OUTCOME</label>
-                </div>
-                <div class="card-body">
-                    @if (count($_course_syllabus->learning_outcomes) > 0)
-                        <div class="learning-outline-content">
-                            @foreach ($_course_syllabus->learning_outcomes as $key => $learning_outcome)
-                                <div class="row lo-{{ $learning_outcome->id }}">
-                                    <div class="col-md-2">
-                                        <small class="fw-bolder">COURSE OUTLINE</small><br>
-                                        <label for="" class="text-primary h5">
-                                            {{ substr($learning_outcome->course_outcome->course_outcome, 0, 3) }}
-                                        </label>
 
-                                    </div>
-                                    <div class="col-md-6">
-                                        <small class="fw-bolder">LEARNING OUTLINE</small><br>
-                                        <label for="" class="text-primary h5"></label>
-                                    </div>
-                                    <div class="col-md">
-                                        <small class="fw-bolder">TERM</small><br>
-                                        <label for=""
-                                            class="text-primary h5">{{ strtoupper($learning_outcome->term )}}</label>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <p>ADD LEARNING OUTCOME</p>
-                    @endif
-                </div>
-            </div>
         @endif
     </div>
 
