@@ -46,7 +46,7 @@ class OnboardTrainingReport
             'written_final_score' => (($_data->onboard_examination->result->count() / 40) * 100) * .30,
             'practical_score' => $_details->practical_score,
             'practical_item' => $_item[0],
-            'practical_final_score' => (($_details->oral_score / $_item[1]) * 100) * .30,
+            'practical_final_score' => (($_details->oral_score / $_item[0]) * 100) * .30,
             'oral_score' => $_details->oral_score,
             'oral_item' => $_item[1],
             'oral_final_score' => (($_details->oral_score / $_item[1]) * 100) * .40,
