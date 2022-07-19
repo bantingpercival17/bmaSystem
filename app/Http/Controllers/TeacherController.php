@@ -6,6 +6,7 @@ use App\Imports\GradeImport;
 use App\Mail\GradeSubmissionMail;
 use App\Mail\GradeVerificationMail;
 use App\Models\AcademicYear;
+use App\Models\CourseSyllabus;
 use App\Models\GradeEncode;
 use App\Models\GradeSubmission;
 use App\Models\Section;
@@ -14,6 +15,7 @@ use App\Models\StudentClearance;
 use App\Models\StudentDetails;
 use App\Models\StudentSection;
 use App\Models\SubjectClass;
+use App\Models\SubjectClassCourseSyllabus;
 use App\Report\GradingSheetReport;
 use Exception;
 use Illuminate\Http\Request;
@@ -286,10 +288,27 @@ class TeacherController extends Controller
         }
     }
     # Create Subject Syllabus
-    public function subject_select_syllabus()
+    public function subject_select_syllabus(Request $_request)
     {
         try {
-            return view('pages.teacher.course-syllabus.select-syllabus');
+            $_subject = SubjectClass::find(base64_decode($_request->_subject));
+            $_course_syllabus = CourseSyllabus::where('subject_id', $_subject->curriculum_subject->subject->id)->get();
+            return view('pages.teacher.course-syllabus.select-syllabus', compact('_course_syllabus', '_subject'));
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function subject_course_syllabus(Request $_request)
+    {
+        try {
+            $_subject = SubjectClass::find(base64_decode($_request->_subject));
+            $_content = array(
+                'subject_id' => $_subject->id,
+                'course_syllabus_id' => base64_decode($_request->course_syllabus)
+            );
+            SubjectClassCourseSyllabus::create($_content);
+            return redirect(route('teacher.subject-view') . '?_subject=' . $_request->_subject);
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error

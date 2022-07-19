@@ -16,7 +16,7 @@ class CreateSubjectClassCourseSyllabiTable extends Migration
         Schema::create('subject_class_course_syllabi', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('subject_id');
-            $table->foreign('subject_id')->references('id')->on('subjects');
+            $table->foreign('subject_id')->references('id')->on('subject_classes');
             $table->unsignedBigInteger('course_syllabus_id');
             $table->foreign('course_syllabus_id')->references('id')->on('course_syllabi');
             $table->boolean('is_removed')->default(0);

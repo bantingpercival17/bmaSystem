@@ -38,4 +38,8 @@ class CourseSyllabus extends Model
     {
         return $this->hasMany(SyllabusCourseLearningOutcome::class, 'course_syllabus_id')->where('is_removed', false);
     }
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'creator_id');
+    }
 }

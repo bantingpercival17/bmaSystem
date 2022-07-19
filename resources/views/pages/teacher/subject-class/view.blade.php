@@ -23,9 +23,85 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
 @section('page-content')
 
     <div class="conatiner-fluid content-inner mt-6 py-0">
-        {{ $_subject->id }}
-        {{ $_subject->course_syllabus }}
-        @if ($_subject->course_syllabus)
+
+        @if ($_course_syllabus = $_subject->course_syllabus)
+            <div class="card">
+                <div class="card-header">
+                    <label for="" class="text-primary fw-bolder">COURSE SYLLABUS</label>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <small>COURSE CODE</small> <br>
+                            <label for=""
+                                class="fw-bolder">{{ $_course_syllabus->syllabus->subject->subject_code }}</label>
+                        </div>
+                        <div class="col-md">
+                            <small>COURSE DESCRIPTIVE TITLE</small> <br>
+                            <label for=""
+                                class="fw-bolder">{{ $_course_syllabus->syllabus->subject->subject_name }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <small>COURSE DESCRIPTION</small> <br>
+                            <label for=""
+                                class="fw-bolder">{{ $_course_syllabus->syllabus->course_description }}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <small>COURSE CREDITS</small> <br>
+                            <label for="" class="fw-bolder">{{ $_course_syllabus->syllabus->subject->units }}
+                                UNIT/S</label>
+                        </div>
+                        <div class="col-md">
+                            <small>LECTURE HOURS</small> <br>
+                            <label for=""
+                                class="fw-bolder">{{ $_course_syllabus->syllabus->subject->lecture_hours }} HOUR/S</label>
+                        </div>
+                        <div class="col-md">
+                            <small>LABORATORY HOURS</small> <br>
+                            <label for=""
+                                class="fw-bolder">{{ $_course_syllabus->syllabus->subject->laboratory_hours }}
+                                HOUR/S</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <label for="" class="text-primary fw-bolder">COURSE TOPICS</label>
+                </div>
+                <div class="card-body">
+                    @if ($_course_syllabus->syllabus->learning_outcomes)
+                        @foreach ($_course_syllabus->syllabus->learning_outcomes as $key => $topic)
+                            <div class="form-group">
+                                <small class="fw-bolder text-primary">TOPIC {{ $key + 1 }}</small>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label for="" class="fw-bolder">
+                                            @if ($topic->weeks)
+                                                @foreach (json_decode($topic->weeks) as $item)
+                                                    {{ strtoupper(str_replace('-',' ',$item)) }}
+                                                @endforeach
+                                            @endif
+                                        </label>
+                                    </div>
+                                    <div class="col-md">
+                                        <small>COURSE DESCRIPTIVE TITLE</small> <br>
+                                        <label for=""
+                                            class="fw-bolder">{{ $topic->learning_outcomes }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <p>NO TOPICS</p>
+                    @endif
+
+                </div>
+            </div>
         @else
             <div class="row">
 

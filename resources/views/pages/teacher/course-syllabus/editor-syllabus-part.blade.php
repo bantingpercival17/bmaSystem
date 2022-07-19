@@ -416,7 +416,7 @@ $_title = 'Course Syllabus';
             </div>
             <div class="card learning-outcome">
                 <div class="card-header">
-                    <label for="" class="text-primary fw-bolder">CREATE LEARNING OUTCOME</label>
+                    <label for="" class="text-primary fw-bolder">CREATE TOPICS</label>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('teacher.syllabus-learning-outcome') }}" method="post"

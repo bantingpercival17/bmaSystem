@@ -18,7 +18,7 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     # Subject Syllabus
     Route::get('/subjects/create-syllabus', [TeacherController::class, 'subject_create_syllabus'])->name('teacher.create-syllabus');
     Route::get('/subjects/select-syllabus', [TeacherController::class, 'subject_select_syllabus'])->name('teacher.select-syllabus');
-
+    Route::get('/subjects/course-syllabus', [TeacherController::class, 'subject_course_syllabus'])->name('teacher.course-syllabus-add');
 
     Route::post('/subjects/grade-submission', [TeacherController::class, 'subject_grade_submission']); // Subject Submission
     Route::get('/previous-subjects', [TeacherController::class, 'subject_view'])->name('teacher.previous-subjects'); // Previous Subjects Per Academic Year
@@ -53,7 +53,6 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     Route::post('/course-syllabus/editor/store-course-outcome', [CourseSyllabusController::class, 'store_course_outcome'])->name('teacher.course-outcome-store');
     Route::post('/course-syllabus/editor/store-course-details', [CourseSyllabusController::class, 'store_course_details'])->name('teacher.course-details-store');
     // LEARNING OUTCOME
-    Route::post('/course-syllabus/editor/store-course-learning-outcome',[CourseSyllabusController::class,'store_course_learning_outline'])->name('teacher.syllabus-learning-outcome');
-    Route::get('/course-syllabus/editor/remove-course-learning-outcome',[CourseSyllabusController::class,'remove_course_learning_outline'])->name('teacher.syllabus-learning-outcome-remove');
-
+    Route::post('/course-syllabus/editor/store-course-learning-outcome', [CourseSyllabusController::class, 'store_course_learning_outline'])->name('teacher.syllabus-learning-outcome');
+    Route::get('/course-syllabus/editor/remove-course-learning-outcome', [CourseSyllabusController::class, 'remove_course_learning_outline'])->name('teacher.syllabus-learning-outcome-remove');
 });
