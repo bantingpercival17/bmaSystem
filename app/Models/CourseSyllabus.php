@@ -34,4 +34,8 @@ class CourseSyllabus extends Model
     {
         return $this->hasOne(SyllabusCourseDetails::class, 'course_syllabus_id')->where('is_removed', false);
     }
+    public function learning_outcomes()
+    {
+        return $this->hasMany(SyllabusCourseLearningOutcome::class, 'course_syllabus_id')->where('is_removed', false);
+    }
 }

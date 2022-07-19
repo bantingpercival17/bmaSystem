@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CourseSyllabus;
 use App\Models\Subject;
 use App\Models\SyllabusCourseDetails;
+use App\Models\SyllabusCourseLearningOutcome;
 use App\Models\SyllabusCourseOutcome;
 use App\Models\SyllabusStcwCompetence;
 use App\Models\SyllabusStcwFunction;
@@ -245,16 +246,17 @@ class CourseSyllabusController extends Controller
         try {
             $_content = array(
                 'course_syllabus_id' => base64_decode($_request->_syllabus),
-                'course_outcome_id' => base64_decode($_request->_course_outcome),
-                'learning_outcomes' => $_request->_learning_outcome,
+                'course_outcome_id' => $_request->_course_outcome,
+                'learning_outcomes' => $_request->_learning_outcomes,
                 'theoretical' => $_request->_theoretical,
-                'demonstration' => $_request->_demostration,
-                'weeks' => $_request->_weeks,
-                'references' => $_request->references,
-                'teaching_aids' => $_request->_teaching_aids,
+                'demonstration' => $_request->_demonstration,
+                'weeks' => json_encode($_request->weeks),
+                'reference' => json_encode($_request->references),
+                'teaching_aids' => json_encode($_request->teaching_aids),
                 'term' => $_request->_term
             );
-            return dd($_content);
+            SyllabusCourseLearningOutcome::create($_content);
+            return back()->with('success','Successfuly Create a Learning Outcomes');
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error

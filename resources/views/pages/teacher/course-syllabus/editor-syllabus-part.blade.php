@@ -30,7 +30,7 @@ $_title = 'Course Syllabus';
             <div class="card-body row">
                 <div class="col-md">
                     <a
-                        href="{{ route('teacher.course-syllabus-editor') . '?course_syllabus=' . request()->input('course_syllabus') . '&part=part1' }}">PART
+                        href="{{ route('teacher.course-syllabus-editor') . '?course_syllabus=' . request()->input('course_syllabus') . '&part=part1' }}">
                         COURSE DETAILS</a>
                 </div>
 
@@ -375,13 +375,13 @@ $_title = 'Course Syllabus';
 
                         </div>
                         <div class="row">
-                            <div class="col-md form-group">
+                            <div class="col-md-2 form-group">
                                 <small class="fw-bolder">WEEK/S</small>
                                 <div class="">
                                     @for ($i = 1; $i <= 18; $i++)
-                                        <div class="form-check d-block col-md-4">
+                                        <div class="form-check d-block col-md">
                                             <input class="form-check-input" type="checkbox"
-                                                value="week-{{ $i }}"
+                                                value="week-{{ $i }}" name="weeks[]"
                                                 id="flexCheckDefault{{ $i }}">
                                             <label class="form-check-label" for="flexCheckDefault{{ $i }}">
                                                 Week {{ $i }}
@@ -394,16 +394,16 @@ $_title = 'Course Syllabus';
                             <div class="col-md form-group">
                                 <small class="fw-bolder">REFERENCE/ BIBLIOGRAHIES</small>
                                 <div class="">
-                                  
+
                                     @if ($_course_syllabus->details)
                                         @foreach (json_decode($_course_syllabus->details->references) as $key => $item)
-                                            <div class="form-check d-block col-md-4">
+                                            <div class="form-check d-block col-md">
                                                 <input class="form-check-input" type="checkbox"
-                                                    value="{{ $item }}"
-                                                    id="flexCheckDefault{{ $key }}">
-                                                <label class="form-check-label"
-                                                    for="flexCheckDefault{{ $key }}">
-                                                    {{ substr($item, 0, 2) }}
+                                                    value="{{ $item }}" name="references[]"
+                                                    id="reference{{ $key }}">
+                                                <label class="form-check-label" for="reference{{ $key }}">
+                                                    {{-- {{ substr($item, 0, 20) }} --}}
+                                                    {{ $item }}
                                                 </label>
                                             </div>
                                         @endforeach
@@ -417,13 +417,13 @@ $_title = 'Course Syllabus';
                                 <div class="">
                                     @if ($_course_syllabus->details)
                                         @foreach (json_decode($_course_syllabus->details->teaching_aids) as $key => $item)
-                                            <div class="form-check d-block col-md-4">
+                                            <div class="form-check d-block ">
                                                 <input class="form-check-input" type="checkbox"
-                                                    value="{{ $item }}"
-                                                    id="flexCheckDefault{{ $key }}">
-                                                <label class="form-check-label"
-                                                    for="flexCheckDefault{{ $key }}">
-                                                    {{ substr($item, 0, 2) }}
+                                                    value="{{ $item }}" name="teaching_aids[]"
+                                                    id="teaching-aids-{{ $key }}">
+                                                <label class="form-check-label" for="teaching-aids-{{ $key }}">
+                                                    {{-- {{ substr($item, 0, 2) }} --}}
+                                                    {{ $item }}
                                                 </label>
                                             </div>
                                         @endforeach
@@ -435,9 +435,47 @@ $_title = 'Course Syllabus';
                             </div>
                         </div>
                         <div class="row">
-                            <button class="btn btn-primary btn-add" data-form="form-learning-outcome">Add Learning Outcome</button>
+                            <div class="col-md">
+                                <button class="btn btn-primary btn-add" data-form="form-learning-outcome">Add Learning
+                                    Outcome</button>
+                            </div>
                         </div>
                     </form>
+                </div>
+            </div>
+
+
+            <div class="card learning-outcome">
+                <div class="card-header">
+                    <label for="" class="text-primary fw-bolder">VIEW LEARNING OUTCOME</label>
+                </div>
+                <div class="card-body">
+                    @if (count($_course_syllabus->learning_outcomes) > 0)
+                        <div class="learning-outline-content">
+                            @foreach ($_course_syllabus->learning_outcomes as $key => $learning_outcome)
+                                <div class="row lo-{{ $learning_outcome->id }}">
+                                    <div class="col-md-2">
+                                        <small class="fw-bolder">COURSE OUTLINE</small><br>
+                                        <label for="" class="text-primary h5">
+                                            {{ substr($learning_outcome->course_outcome->course_outcome, 0, 3) }}
+                                        </label>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="fw-bolder">LEARNING OUTLINE</small><br>
+                                        <label for="" class="text-primary h5"></label>
+                                    </div>
+                                    <div class="col-md">
+                                        <small class="fw-bolder">TERM</small><br>
+                                        <label for=""
+                                            class="text-primary h5">{{ strtoupper($learning_outcome->term )}}</label>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p>ADD LEARNING OUTCOME</p>
+                    @endif
                 </div>
             </div>
         @endif
@@ -517,6 +555,25 @@ $_title = 'Course Syllabus';
                 if (result.isConfirmed) {
 
                     console.log(form)
+                    document.getElementById(form).submit()
+                }
+            })
+            event.preventDefault();
+        })
+        $('.btn-add').click(function(event) {
+            Swal.fire({
+                title: 'Course Syllabus',
+                text: "Do you want to add?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                var form = $(this).data('form');
+                if (result.isConfirmed) {
+
+                    //console.log(form)
                     document.getElementById(form).submit()
                 }
             })

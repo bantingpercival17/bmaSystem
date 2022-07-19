@@ -18,4 +18,8 @@ class SyllabusCourseLearningOutcome extends Model
         'teaching_aids',
         'term'
     ];
+    public function course_outcome()
+    {
+        return $this->belongsTo(SyllabusCourseOutcome::class, 'course_outcome_id');
+    }
 }
