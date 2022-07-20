@@ -154,58 +154,69 @@ class AccountingController extends Controller
         $_department = base64_decode($_request->_course) == 3 ? 'senior_high' : 'college';
         $_particulars = Particulars::where('department', $_department)->where('is_removed', false)/* ->where('particular_type', 'tuition_type') */->get();
         $_curriculum = Curriculum::all();
+        $_course = CourseOffer::find(base64_decode($_request->_course));
         //$_courses = CourseOffer::where('is_removed', false)->get();
-        return view('pages.accounting.fee.create_semestral_fee', compact('_particulars', '_curriculum'));
+        return view('pages.accounting.fee.create_semestral_fee', compact('_particulars', '_curriculum', '_course'));
     }
     public function course_fee_store(Request $_request)
     {
+
         $_request->validate([
             '_year_level' => 'required',
             '_curriculum' => 'required'
         ]);
-        $_details = array(
-            'course_id' => base64_decode($_request->_course),
-            'curriculum_id' => $_request->_curriculum,
-            'year_level' => $_request->_year_level,
-            'academic_id' => $_request->_academic,
-            'is_removed' => false,
-        );
-        $_course_semestral = CourseSemestralFees::where($_details)->first();
-        $_course_semestral = $_course_semestral ?: CourseSemestralFees::create($_details);
-        //echo var_dump($_details) . "<br>";
-        foreach ($_request->data as $key => $value) {
-            if ($value['fee'] != null) {
-                $_data = ParticularFees::where([
-                    'particular_id' => $value['particular'],
-                    'particular_amount' => $value['fee'],
-                    'academic_id' => $_request->_academic,
-                ])->first();
-                if ($_data) {
-                    $_particulars = $_data->id;
-                } else {
-                    $_particular = ParticularFees::create([
+        try {
+            $_details = array(
+                'course_id' => base64_decode($_request->_course),
+                'curriculum_id' => $_request->_curriculum,
+                'year_level' => $_request->_year_level,
+                'academic_id' => $_request->_academic,
+                'is_removed' => false,
+            ); // Set up the data content for storing Course Semestrarl Fees
+            $_course_semestral = CourseSemestralFees::where($_details)->first(); // Verify if the Content is already Store/Save
+            // if the content get the detials or the id, if not the content store into database
+            $_course_semestral = $_course_semestral ?: CourseSemestralFees::create($_details);
+
+            foreach ($_request->data as $key => $value) {
+                // Check if the Fees is have a valueƒ
+                if ($value['fee'] != null) {
+                    // Verify the Particular Fee is already Save
+                    $_particular_fees = ParticularFees::where('particular_id', $value['particular'])->where('particular_amount', $value['fee'])->where('academic_id', $_request->_academic)->first();
+                    // If the Particular Fees get the Details, if not the Content will Save to database
+                    // Get the Particular Details 
+                    $_particulars = $_particular_fees ?: ParticularFees::create([
                         'particular_id' => $value['particular'],
                         'particular_amount' => $value['fee'],
                         'academic_id' => $_request->_academic,
-                        'is_removed' => 0
+                        'is_removed' => false
                     ]);
-                    $_particulars = $_particular->id;
+                    // Semestral Fees Setup
+                    $_content = array(
+                        'particular_fee_id' => $_particulars->id,
+                        'course_semestral_fee_id' => $_course_semestral->id,
+                        'is_removed' => false
+                    );
+                    // Save the Semestrarl Fees
+                    SemestralFee::where($_content)->first() ?:
+                        SemestralFee::create($_content);
+                } else {
+                    if ($value['id'] != null) {
+                        $_content = array(
+                            'particular_fee_id' => $value['id'],
+                            'course_semestral_fee_id' => $_course_semestral->id,
+                            'is_removed' => false
+                        );
+                        SemestralFee::where($_content)->first() ?:
+                            SemestralFee::create($_content);
+                    }
                 }
-            } else {
-                $_particulars = $value['id'];
             }
-            $_data = array(
-                'particular_fee_id' => $_particulars,
-                'course_semestral_fee_id' => $_course_semestral->id,
-                'is_removed' => false
-            );
-            SemestralFee::where([
-                'particular_fee_id' => $_particulars,
-                'course_semestral_fee_id' => $_course_semestral->id,
-            ])->first() ?:
-                SemestralFee::create($_data);
+            // Redirect to the Semestral Fee View
+            return redirect(route('accounting.course-fee-view-list') . '?_course_fee=' . base64_encode($_course_semestral->id))->with('success', 'Successfully Create a Semestral Tuition Fee');
+        } catch (Exception $err) {
+            return $err->getMessage();
+            return back()->with('error', $err->getMessage());
         }
-        return back()->with('success', 'Successfully Create a Semestral Tuition Fee');
     }
     public function course_fee_remove(Request $_request)
     {

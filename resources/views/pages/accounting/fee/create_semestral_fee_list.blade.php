@@ -22,14 +22,23 @@ $_title = 'Tuition Fee Amount';
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 <div class="header-title">
-                    <h4 class="card-title">{{ $_course_fee->year_level }} / C</h4>
+                    <h4 class="card-title">
+                        @if ($_course_fee->course_id == 3)
+                            GRADE {{ $_course_fee->year_level }} <br>
+                            <small class="fw-bolder">{{ $_course_fee->course->course_name }}</small>
+                        @else
+                            {{ $_course_fee->year_level }}/C <br>
+                            <small class="fw-bolder">{{ $_course_fee->course->course_name }}</small>
+                        @endif
+
+                    </h4>
                     <small class="fw-bolder">Create Semestral Fees</small>
                 </div>
                 <div class="card-tool">
                     <small class="text-info fw-bolder">TOTAL TUITION FEES</small>
                     <br>
                     <label for=""
-                        class="h4 fw-bolder text-primary">{{ $_course_fee->total_tuition_fee($_course_fee) ? number_format($_course_fee->total_tuition_fee($_course_fee),2) : '0.00'}}</label>
+                        class="h4 fw-bolder text-primary">{{ $_course_fee->total_tuition_fee($_course_fee) ? number_format($_course_fee->total_tuition_fee($_course_fee), 2) : '0.00' }}</label>
                 </div>
             </div>
             <div class="card-body">
@@ -51,7 +60,7 @@ $_title = 'Tuition Fee Amount';
                                             @if ($_course_fee->course_id != 3)
                                                 @if ($item->particular_fee->particular->particular_name == 'Tuition Fee')
                                                     * {{ $_course_fee->course->units($_course_fee)->units }} units =
-                                                    {{ number_format($item->particular_fee->particular_amount * $_course_fee->course->units($_course_fee)->units,2) }}
+                                                    {{ number_format($item->particular_fee->particular_amount * $_course_fee->course->units($_course_fee)->units, 2) }}
                                                 @endif
                                             @endif
                                         </td>
@@ -69,14 +78,14 @@ $_title = 'Tuition Fee Amount';
                                                                         {{ $_fee->particular_amount }}
                                                                     </option>
                                                                 @endforeach
-
                                                             @else
                                                                 <option value="">No Fees</option>
                                                             @endif
                                                         </select>
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <button type="submit" class="btn btn-primary btn-sm">Change</button>
+                                                        <button type="submit"
+                                                            class="btn btn-primary btn-sm">Change</button>
                                                     </div>
                                                 </div>
                                             </form>
