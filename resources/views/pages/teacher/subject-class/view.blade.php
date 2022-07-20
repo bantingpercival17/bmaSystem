@@ -77,24 +77,25 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                     @if ($_course_syllabus->syllabus->learning_outcomes)
                         @foreach ($_course_syllabus->syllabus->learning_outcomes as $key => $topic)
                             <div class="form-group">
-                                <small class="fw-bolder text-primary">TOPIC {{ $key + 1 }}</small>
+
                                 <div class="row">
                                     <div class="col-md-2">
                                         <label for="" class="fw-bolder">
+                                            <small class="fw-bolder text-primary">TOPIC {{ $key + 1 }}</small> <br>
                                             @if ($topic->weeks)
                                                 @foreach (json_decode($topic->weeks) as $item)
-                                                    {{ strtoupper(str_replace('-',' ',$item)) }}
+                                                    {{ strtoupper(str_replace('-', ' ', $item)) }}
                                                 @endforeach
                                             @endif
                                         </label>
                                     </div>
                                     <div class="col-md">
-                                        <small>COURSE DESCRIPTIVE TITLE</small> <br>
-                                        <label for=""
-                                            class="fw-bolder">{{ $topic->learning_outcomes }}</label>
+                                        <small>TOPIC</small> <br>
+                                        <label for="" class="fw-bolder">{{ $topic->learning_outcomes }}</label>
                                     </div>
                                 </div>
                             </div>
+                            <hr>
                         @endforeach
                     @else
                         <p>NO TOPICS</p>
