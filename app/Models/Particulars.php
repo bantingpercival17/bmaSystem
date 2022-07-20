@@ -14,6 +14,6 @@ class Particulars extends Model
 
     public function particular_fee()
     {
-        return $this->hasMany(ParticularFees::class, 'particular_id')->where('academic_id', Auth::user()->staff->current_academic()->id);
+        return $this->hasMany(ParticularFees::class, 'particular_id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('is_removed',false);
     }
 }
