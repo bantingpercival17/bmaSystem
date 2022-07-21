@@ -227,7 +227,7 @@ class Staff extends Model
                 'role_id' => 12,
                 'role_name' => 'Medical',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Overview', 'medical.overview']],
+                'role_routes' => [['Overview', 'medical.overview'], ['Student', 'medical.student-medical-appointment']],
             ],
         ];
     }

@@ -790,4 +790,8 @@ class StudentDetails extends Model
     {
         return $this->hasOne(ShipboardAssessmentDetails::class, 'student_id')->where('is_removed', false);
     }
+    public function student_medical_appointment()
+    {
+        return $this->hasOne(StudentMedicalAppointment::class, 'student_id')->where('is_removed', false);
+    }
 }
