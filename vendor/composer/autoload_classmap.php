@@ -144,6 +144,7 @@ return array(
     'App\\Models\\StudentAttendance' => $baseDir . '/app/Models/StudentAttendance.php',
     'App\\Models\\StudentClearance' => $baseDir . '/app/Models/StudentClearance.php',
     'App\\Models\\StudentDetails' => $baseDir . '/app/Models/StudentDetails.php',
+    'App\\Models\\StudentMedicalAppointment' => $baseDir . '/app/Models/StudentMedicalAppointment.php',
     'App\\Models\\StudentNonAcademicClearance' => $baseDir . '/app/Models/StudentNonAcademicClearance.php',
     'App\\Models\\StudentPasswordReset' => $baseDir . '/app/Models/StudentPasswordReset.php',
     'App\\Models\\StudentSection' => $baseDir . '/app/Models/StudentSection.php',
