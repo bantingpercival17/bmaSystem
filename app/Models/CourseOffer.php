@@ -418,6 +418,7 @@ class CourseOffer extends Model
     {
         $_level = $this->id == 3 ? 11 : 4;
         $_item =  $this->id == 3 ? 100 : 200;
+        $_point = $this->id == 3 ? 5 : 50;
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
         $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*') # Applicant Account
@@ -444,7 +445,7 @@ class CourseOffer extends Model
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)"),
                 '>=',
-                '50'
+                $_point
             )->orderBy('applicant_entrance_examinations.updated_at', 'desc');
         //Searching Tool
         if (request()->input('_student')) {
@@ -461,6 +462,7 @@ class CourseOffer extends Model
     {
         $_level = $this->id == 3 ? 11 : 4;
         $_item =  $this->id == 3 ? 100 : 200;
+        $_point = $this->id == 3 ? 5 : 50;
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
         $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*') # Applicant Account
@@ -487,7 +489,7 @@ class CourseOffer extends Model
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)"),
                 '<',
-                '50'
+                $_point
             )->orderBy('applicant_entrance_examinations.updated_at', 'desc');
         //Searching Tool
         if (request()->input('_student')) {
@@ -552,6 +554,7 @@ class CourseOffer extends Model
     {
         $_level = $this->id == 3 ? 11 : 4;
         $_item =  $this->id == 3 ? 100 : 200;
+        $_point = $this->id == 3 ? 5 : 50;
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
         $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*') # Applicant Account
@@ -578,7 +581,7 @@ class CourseOffer extends Model
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)"),
                 '>=',
-                '50'
+                $_point
             ) # Get the Score;
             ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id')
             ->orderBy('applicant_briefings.updated_at', 'desc');
@@ -597,6 +600,7 @@ class CourseOffer extends Model
     {
         $_level = $this->id == 3 ? 11 : 4;
         $_item =  $this->id == 3 ? 100 : 200;
+        $_point = $this->id == 3 ? 5 : 50;
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
         $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*') # Applicant Account
@@ -623,7 +627,7 @@ class CourseOffer extends Model
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)"),
                 '>=',
-                '50'
+                $_point
             ) # Get the Score;
             ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
             ->leftJoin('applicant_medical_appointments', 'applicant_medical_appointments.applicant_id', 'applicant_accounts.id')
