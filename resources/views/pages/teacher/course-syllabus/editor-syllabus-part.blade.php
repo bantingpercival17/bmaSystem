@@ -378,15 +378,12 @@ $_title = 'Course Syllabus';
                                             <small class="fw-bolder">REFERENCE</small><br>
                                             <label for="" class="text-primary h5">
 
-                                                @if ($learning_outcome->reference)
-                                                    {{ $learning_outcome->reference }}
-                                                    {{-- @if (count(json_decode($learning_outcome->reference)) > 0)
-                                                        @foreach (json_decode($learning_outcome->reference) as $item)
-                                                            {{ substr($item, 0, 3) }}
-                                                        @endforeach
-                                                    @endif --}}
-                                                @endif
 
+                                                @if ($learning_outcome->reference != null)
+                                                    @foreach (json_decode($learning_outcome->reference) as $item)
+                                                        {{ substr($item, 0, 3) }}
+                                                    @endforeach
+                                                @endif
 
                                             </label>
                                         </div>
@@ -394,11 +391,10 @@ $_title = 'Course Syllabus';
                                             <small class="fw-bolder">TEACHING AIDS</small><br>
                                             <label for="" class="text-primary h5">
 
-                                                @if ($learning_outcome->teaching_aids)
-                                                    {{ $learning_outcome->teaching_aids }}
-                                                    {{-- @foreach (json_decode($learning_outcome->teaching_aids) as $item)
+                                                @if ($learning_outcome->teaching_aids != null)
+                                                    @foreach (json_decode($learning_outcome->teaching_aids) as $item)
                                                         {{ substr($item, 0, 3) }},
-                                                    @endforeach --}}
+                                                    @endforeach
                                                 @endif
 
                                             </label>
