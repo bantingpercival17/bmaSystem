@@ -379,11 +379,12 @@ $_title = 'Course Syllabus';
                                             <label for="" class="text-primary h5">
 
                                                 @if ($learning_outcome->reference)
-                                                    @if (count(json_decode($learning_outcome->reference)) > 0)
+                                                    {{ $learning_outcome->reference }}
+                                                    {{-- @if (count(json_decode($learning_outcome->reference)) > 0)
                                                         @foreach (json_decode($learning_outcome->reference) as $item)
                                                             {{ substr($item, 0, 3) }}
                                                         @endforeach
-                                                    @endif
+                                                    @endif --}}
                                                 @endif
 
 
