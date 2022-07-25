@@ -228,7 +228,7 @@
                                     <tr>
                                         <th class="text-primary fw-bolder">
                                             {{ $_student->student->account->student_number }} -
-                                            {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
+                                            {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
                                         </th>
                                         @foreach ($_columns as $col)
                                             @for ($i = 1; $i <= $col[2]; $i++)
@@ -238,7 +238,7 @@
                                                     @endphp
                                                     <input type="text" class="score-cell"
                                                         style="width: 38px; font-size:12px" value="{{ $_score }}"
-                                                        data-student="{{ $_student->student->id }}"
+                                                        data-student="{{ $_student->id }}"
                                                         data-category="{{ $col[1] . $i }}"
                                                         data-section="{{ $_subject->id }}" {{ $_grade_status }}>
                                                 </td>

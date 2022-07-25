@@ -29,6 +29,7 @@ use App\Models\StaffPayroll;
 use App\Models\StaffPayrollDetails;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
+use App\Models\StudentSection;
 use App\Models\Voucher;
 use App\Report\PayrollReport;
 use Carbon\Carbon;
@@ -36,6 +37,7 @@ use Exception;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -413,13 +415,48 @@ class AccountingController extends Controller
                     'is_removed' => false
                 );
             }
-            $_payment = PaymentTransaction::create($_payment_details);
-            if ($_request->_online_payment) {
+            // $_payment = PaymentTransaction::create($_payment_details);
+
+            // If the Student have Online Payment Transaction
+            /*    if ($_request->_online_payment) {
                 $_online_payment = PaymentTrasanctionOnline::find($_request->_online_payment);
                 $_online_payment->payment_id = $_payment->id;
                 $_online_payment->is_approved = 1;
                 $_online_payment->or_number = $_request->or_number;
                 $_online_payment->save();
+            } */
+            // Sectioning & Student number for new student 
+            if ($_request->remarks == 'Upon Enrollment') {
+                // Get the Assessment Detials
+                $_payment_assessment = PaymentAssessment::find($_request->_assessment);
+                // 
+                // Year Level
+                $_year_level = $_payment_assessment->enrollment_assessment->course_id == 3 ? 'GRADE ' . $_payment_assessment->enrollment_assessment->year_level :
+                    $_payment_assessment->enrollment_assessment->year_level . '/C';
+                // Find Section
+                $_section =   Section::where('academic_id', Auth::user()->staff->current_academic()->id)
+                    ->where('course_id', $_payment_assessment->enrollment_assessment->course_id)
+                    ->where('year_level', $_year_level)
+                    ->where('is_removed', false)
+                    ->where(function ($_sub_query) {
+                        $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
+                            ->whereColumn('student_sections.section_id', 'sections.id')
+                            ->where('student_sections.is_removed', false);
+                    }, '<', 40)
+                    ->first();
+                if ($_section) {
+                    $_content = array(
+                        'student_id' => $_payment_assessment->enrollment_assessment->student_id,
+                        'section_id' => $_section->id,
+                        'created_by' => 'Auto Section',
+                        'is_removed' => 0,
+                    );
+                    StudentSection::create($_content); // Store Student Section
+                }
+
+                if (!$_payment_assessment->enrollment_assessment->student->account ) {
+                    # code...
+                }
             }
             return back()->with('success', 'Payment Transaction Complete!');
         } catch (Exception $error) {
