@@ -378,7 +378,7 @@ $_title = 'Course Syllabus';
                                             <small class="fw-bolder">REFERENCE</small><br>
                                             <label for="" class="text-primary h5">
 
-                                                @if ($learning_outcome->reference)
+                                                @if (count($learning_outcome->reference) > 0)
                                                     @foreach (json_decode($learning_outcome->reference) as $item)
                                                         {{ substr($item, 0, 3) }}
                                                     @endforeach
@@ -407,13 +407,16 @@ $_title = 'Course Syllabus';
                                             <div class="row">
                                                 <div class="col-md">
                                                     <small class="fw-bolder">PRESENTATION</small> <br>
+
                                                     <a href="{{ $learning_outcome->materials->presentation_link }}"
-                                                        target="_blank">{{ $learning_outcome->materials->presentation_link }}</a>
+                                                        target="_blank">POWERPOINT LINK</a>
 
                                                 </div>
                                                 <div class="col-md">
                                                     <small class="fw-bolder">YOUTUBE LINK</small>
-                                                    <input type="text" class="form-control" name="youtube_link">
+                                                    <p>
+                                                        {{ $learning_outcome->materials->youtube_link }}
+                                                    </p>
                                                 </div>
                                             </div>
                                         @else
