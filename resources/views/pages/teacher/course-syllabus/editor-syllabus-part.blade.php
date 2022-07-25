@@ -310,8 +310,7 @@ $_title = 'Course Syllabus';
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{{ route('teacher.stcw-reference-add') }}" method="post"
-                                id="modal-form-add">
+                            <form action="{{ route('teacher.stcw-reference-add') }}" method="post" id="modal-form-add">
                                 @csrf
                                 <input type="hidden" name="stcw" class="stcw" value="">
                                 <input type="hidden" name="stcw_reference" class="stcw_reference" value="">
@@ -341,12 +340,15 @@ $_title = 'Course Syllabus';
                         <div class="learning-outline-content">
                             @foreach ($_course_syllabus->learning_outcomes as $key => $learning_outcome)
                                 <div class="lo-{{ $learning_outcome->id }}">
-                                    <div class="row ">
+                                    <a href="" class="badge bg-primary fw-bolder"><small>PREVIEW</small></a>
+                                    <small for="" class="text-danger btn-remove fw-bolder"
+                                        data-url="{{ route('teacher.syllabus-learning-outcome-remove') . '?learning_outcome=' . base64_encode($learning_outcome->id) }}">REMOVE</small>
 
+                                    <div class="row">
                                         <div class="col-md-6">
-                                            <small class="fw-bolder">LEARNING OUTLINE</small><br>
+                                            <small class="fw-bolder">COURSE TOPIC {{ $key + 1 }}</small><br>
                                             <label for=""
-                                                class="text-primary h5">{{ strtoupper($learning_outcome->learning_outcomes) }}</label>
+                                                class="text-primary fw-bolder h5">{{ strtoupper($learning_outcome->learning_outcomes) }}</label>
                                         </div>
                                         <div class="col-md-2">
                                             <small class="fw-bolder">COURSE OUTLINE</small><br>
@@ -397,15 +399,72 @@ $_title = 'Course Syllabus';
                                             </label>
                                         </div>
                                     </div>
+
+
+                                    <div class="topic-materials mt-3">
+                                        <label for="" class="fw-bolder text-muted">TEACHING MATERIAL</label>
+                                        @if ($learning_outcome->materials)
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <small class="fw-bolder">PRESENTATION</small> <br>
+                                                    <a href="{{ $learning_outcome->materials->presentation_link }}"
+                                                        target="_blank">{{ $learning_outcome->materials->presentation_link }}</a>
+
+                                                </div>
+                                                <div class="col-md">
+                                                    <small class="fw-bolder">YOUTUBE LINK</small>
+                                                    <input type="text" class="form-control" name="youtube_link">
+                                                </div>
+                                            </div>
+                                        @else
+                                            <form action="{{ route('teacher.topic-materials') }}" class="form-group"
+                                                method="post"
+                                                id="form-topic-{{ base64_encode($learning_outcome->id) }}">
+                                                @csrf
+                                                <input type="hidden" name="learning_topic"
+                                                    value="{{ base64_encode($learning_outcome->id) }}">
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        <small class="fw-bolder">PRESENTATION</small>
+                                                        <input type="text" class="form-control"
+                                                            name="presentation_link">
+                                                        <small class="text-warning">Note: You can Paste the link of
+                                                            powerpoint</small>
+                                                    </div>
+                                                    <div class="col-md">
+                                                        <small class="fw-bolder">YOUTUBE LINK</small>
+                                                        <input type="text" class="form-control" name="youtube_link">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button class="btn btn-primary btn-form-add"
+                                                        data-form="form-topic-{{ base64_encode($learning_outcome->id) }}">SUBMIT</button>
+                                                </div>
+
+                                            </form>
+                                        @endif
+
+
+                                    </div>
+
                                 </div>
-                                <div class="mt-3">
-                                    {{-- <small for="" class="btn btn-outline-primary btn-sm">EDIT</small> --}}
-                                    <small for="" class="text-primary btn-remove fw-bolder"
-                                        data-url="{{ route('teacher.syllabus-learning-outcome-remove') . '?learning_outcome=' . base64_encode($learning_outcome->id) }}">REMOVE</small>
-                                </div>
-                                <div class="learning-outcome-topics">
-                                    <label for="" class="fw-bolder text-info">SUB-TOPICS</label>
-                                </div>
+
+                                {{-- <div class="learning-outcome-topics mt-3">
+                                    <label for="" class="fw-bolder text-muted">SUB TOPIC WITH LEARNING
+                                        OUTCOMES</label>
+
+                                    <form action="" class="form-group" method="post">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <small class="fw-bolder">SUB TOPIC</small>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small class="fw-bolder">LEARNING OUTCOMES</small>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div> --}}
                                 <hr>
                             @endforeach
                         </div>
@@ -613,6 +672,26 @@ $_title = 'Course Syllabus';
         $('.btn-add').click(function(event) {
             Swal.fire({
                 title: 'Course Syllabus',
+                text: "Do you want to add?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                var form = $(this).data('form');
+                if (result.isConfirmed) {
+
+                    //console.log(form)
+                    document.getElementById(form).submit()
+                }
+            })
+            event.preventDefault();
+        })
+
+        $('.btn-form-add').click(function(event) {
+            Swal.fire({
+                title: 'Topic Materials',
                 text: "Do you want to add?",
                 icon: 'info',
                 showCancelButton: true,

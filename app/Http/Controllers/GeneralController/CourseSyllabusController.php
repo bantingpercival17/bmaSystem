@@ -7,6 +7,7 @@ use App\Models\CourseSyllabus;
 use App\Models\Subject;
 use App\Models\SyllabusCourseDetails;
 use App\Models\SyllabusCourseLearningOutcome;
+use App\Models\SyllabusCourseLearningTopicMaterials;
 use App\Models\SyllabusCourseOutcome;
 use App\Models\SyllabusStcwCompetence;
 use App\Models\SyllabusStcwFunction;
@@ -270,6 +271,25 @@ class CourseSyllabusController extends Controller
             $_learning_outcome->is_removed = 1;
             $_learning_outcome->save();
             return back()->with('success', 'Successfuly Removed');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+
+    public function learning_topic_materials(Request $_request)
+    {
+        $_request->validate([
+            'presentation_link' => 'required'
+        ]);
+        try {
+            $_content = array(
+                'topic_id' => base64_decode($_request->learning_topic),
+                'presentation_link' => $_request->presentation_link ?: 'n/a',
+                'youtube_link' => $_request->youtube_link ?: 'n/a'
+            );
+            SyllabusCourseLearningTopicMaterials::create($_content);
+            return back()->with('success','Successfully added a Materials');
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error

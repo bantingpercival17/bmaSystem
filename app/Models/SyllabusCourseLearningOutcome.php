@@ -23,4 +23,8 @@ class SyllabusCourseLearningOutcome extends Model
     {
         return $this->belongsTo(SyllabusCourseOutcome::class, 'course_outcome_id');
     }
+    public function materials()
+    {
+        return $this->hasOne(SyllabusCourseLearningTopicMaterials::class, 'topic_id')->where('is_removed', false);
+    }
 }

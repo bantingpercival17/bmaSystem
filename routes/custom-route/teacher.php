@@ -55,4 +55,6 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     // LEARNING OUTCOME
     Route::post('/course-syllabus/editor/store-course-learning-outcome', [CourseSyllabusController::class, 'store_course_learning_outline'])->name('teacher.syllabus-learning-outcome');
     Route::get('/course-syllabus/editor/remove-course-learning-outcome', [CourseSyllabusController::class, 'remove_course_learning_outline'])->name('teacher.syllabus-learning-outcome-remove');
+    // LEARNING TOPIC MATERIALS
+    Route::post('/course-syllabus/editor/store-course-topic-materials', [CourseSyllabusController::class, 'learning_topic_materials'])->name('teacher.topic-materials');
 });
