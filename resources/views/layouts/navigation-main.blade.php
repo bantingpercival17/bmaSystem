@@ -3,14 +3,7 @@
         <div class="container-fluid navbar-inner">
             <a href="/" class="navbar-brand ms-2">
                 <small class="ms-1 font-weight-bold">
-                    @if (request()->input('_academic'))
-                        <span class="text-muted">Academic Year :</span>
-                    @else
-                        <span class="text-muted">Current School Year :</span>
-                    @endif
-
-                    <b>{{ Auth::user()->staff->current_academic()->semester }} |
-                        {{ Auth::user()->staff->current_academic()->school_year }}</b>
+                    @yield('page-title')
                 </small>
             </a>
 
@@ -24,29 +17,7 @@
                 </i>
             </div>
             <div class=""style="margin-left:18%">
-                <div class="dropdown mt-3 mb-2 w-100">
-                    <a class=" dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
-                        aria-haspopup="false" aria-expanded="false">
-                        @if (request()->input('_academic'))
-                            <span class="text-muted">Academic Year :</span>
-                        @else
-                            <span class="text-muted">Current School Year :</span>
-                        @endif
-                        <span class="text-primary h4 fw-bolder">{{ Auth::user()->staff->current_academic()->semester }} |
-                            {{ Auth::user()->staff->current_academic()->school_year }}</span>
-                    </a>
-                    <ul class="dropdown-menu w-100" data-popper-placement="bottom-start">
-                        @if (Auth::user()->staff->academics()->count() > 0)
-                            @foreach (Auth::user()->staff->academics() as $_academic)
-                                <li>
-                                    <a class="dropdown-item "
-                                        href="{{ Auth::user()->staff->navigation_dropdown_url() }}?_academic={{ base64_encode($_academic->id) }} {{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
-                                        {{ $_academic->semester }} | {{ $_academic->school_year }}</a>
-                                </li>
-                            @endforeach
-                        @endif
-                    </ul>
-                </div>
+
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +30,31 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto top-menu navbar-nav align-items-center navbar-list mb-3 mb-lg-0">
                     <li class="nav-item me-5">
-
+                        <div class="dropdown mt-3 mb-2 w-100">
+                            <a class=" dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                                aria-haspopup="false" aria-expanded="false">
+                                @if (request()->input('_academic'))
+                                    <span class="text-muted">Academic Year :</span>
+                                @else
+                                    <span class="text-muted">Current School Year :</span>
+                                @endif
+                                <span
+                                    class="text-primary h4 fw-bolder">{{ Auth::user()->staff->current_academic()->semester }}
+                                    |
+                                    {{ Auth::user()->staff->current_academic()->school_year }}</span>
+                            </a>
+                            <ul class="dropdown-menu w-100" data-popper-placement="bottom-start">
+                                @if (Auth::user()->staff->academics()->count() > 0)
+                                    @foreach (Auth::user()->staff->academics() as $_academic)
+                                        <li>
+                                            <a class="dropdown-item "
+                                                href="{{ Auth::user()->staff->navigation_dropdown_url() }}?_academic={{ base64_encode($_academic->id) }} {{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
+                                                {{ $_academic->semester }} | {{ $_academic->school_year }}</a>
+                                        </li>
+                                    @endforeach
+                                @endif
+                            </ul>
+                        </div>
                     </li>
                     <li class="nav-item me-2">
                         <a class="nav-link" href="{{ route('ticket.view') }}">
