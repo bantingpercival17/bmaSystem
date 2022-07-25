@@ -395,9 +395,10 @@ $_title = 'Course Syllabus';
                                             <label for="" class="text-primary h5">
 
                                                 @if ($learning_outcome->teaching_aids)
-                                                    @foreach (json_decode($learning_outcome->teaching_aids) as $item)
+                                                    {{ $learning_outcome->teaching_aids }}
+                                                    {{-- @foreach (json_decode($learning_outcome->teaching_aids) as $item)
                                                         {{ substr($item, 0, 3) }},
-                                                    @endforeach
+                                                    @endforeach --}}
                                                 @endif
 
                                             </label>
