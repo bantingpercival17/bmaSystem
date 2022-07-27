@@ -34,7 +34,7 @@ class Section extends Model
             ->join('student_details', 'student_details.id', 'student_sections.student_id')
             /*  ->select('student_sections.student_id', 'sa.first_name', 'sa.last_name')
             ->join('student_details as sa', 'sa.id', 'student_sections.student_id') */
-            ->join('enrollment_assessments as ea', 'ea.student_id', 'sa.id')
+            ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
             ->where('ea.academic_id', $this->academic_id)
             ->where('ea.bridging_program', 'with')
             ->where('student_sections.is_removed', false)
