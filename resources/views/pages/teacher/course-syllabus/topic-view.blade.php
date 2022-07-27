@@ -22,16 +22,47 @@ $_title = 'Topic View';
 @endsection
 @section('page-content')
     <div class="content">
-
         <div class="row">
             <div class="col-md">
                 <p class="display-6 text-primary">
-                    {{ $_topic->learning_outcome }}
+                    {{ $_topic->learning_outcomes }}
                 </p>
                 <div class="card">
                     <div class="card-body">
-                        <iframe src="{{ $_topic->materials->presentation_link }}" frameborder="0" width="100%" height="485"
-                            allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                        @if ($_topic->materials)
+                            <div class="form-group">
+                                <small class="fw-bolder">PRESENTATION</small>
+                                <p>
+                                    <a href="{{ $_topic->materials->presentation_link }}">
+                                        {{ $_topic->learning_outcomes }}</a>
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <small class="fw-bolder">YOUTUBE LINK</small>
+                                <p>
+                                    <a href="{{ $_topic->materials->presentation_link }}">
+                                        View Link</a>
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <small class="fw-bolder">QUIZ</small>
+                                <p>
+                                    UNDER DEVELOPMENT
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <small class="fw-bolder">ACTIVITIES</small>
+                                <p>
+                                    UNDER DEVELOPMENT
+                                </p>
+                            </div>
+                        @else
+                            <p>PLEASE ADD A PRESENTATION FOR THIS COURSE SYLLABUS</p>
+                            <p><span class="text-warning">NOTE: Person can add the PRESENTATION is the creator</span></p>
+                        @endif
+                        {{-- <iframe src="{{ $_topic->materials->presentation_link }}" frameborder="0" width="100%"
+                            height="485" allowfullscreen="true" mozallowfullscreen="true"
+                            webkitallowfullscreen="true"></iframe> --}}
                         {{-- <iframe src="{{ $_subject_lesson['presentation'] }}" frameborder="0"></iframe> --}}
                     </div>
                 </div>
@@ -41,7 +72,7 @@ $_title = 'Topic View';
                     <div class="card-header">
                         <label for="" class="fw-bolder">LESSONS</label>
                     </div>
-                   {{--  <div class="card-body">
+                    {{-- <div class="card-body">
                         @if (count($_subject_content) > 0)
                             @foreach ($_subject_content as $key => $item)
                                 <div class="learning-objective mt-0 p-2">

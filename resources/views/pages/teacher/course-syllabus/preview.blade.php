@@ -71,15 +71,17 @@ $_title = 'Course Syllabus - Preview';
                 @if ($_course_syllabus->learning_outcomes)
                     @foreach ($_course_syllabus->learning_outcomes as $key => $topic)
                         <div class="form-group">
-                            <a href="{{route('teacher.course-syllabus-topic-view').'?topic='.base64_encode($topic->id)}}">
-                                 <label for=""
-                                    class="fw-bolder">TOPIC {{ $key + 1 }} : {{ $topic->learning_outcomes }}</label>
-                            </a> <br> 
                             @if ($topic->weeks)
                                 @foreach (json_decode($topic->weeks) as $item)
                                     {{ strtoupper(str_replace('-', ' ', $item)) }}
                                 @endforeach
                             @endif <br>
+                            <a
+                                href="{{ route('teacher.course-syllabus-topic-view') . '?topic=' . base64_encode($topic->id) }}">
+                                <label for="" class="fw-bolder">TOPIC {{ $key + 1 }} :
+                                    {{ $topic->learning_outcomes }}</label>
+                            </a> <br>
+
                         </div>
                         <hr>
                     @endforeach
