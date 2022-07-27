@@ -44,7 +44,8 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                             @if (count($_students))
                                 @foreach ($_students as $_key => $_student)
                                     <tr>
-                                        <td>{{ $_student->student->account->student_number }}</td>
+                                        <td>{{ $_student->student->account ? $_student->student->account->student_number : '-' }}
+                                        </td>
                                         <td>{{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
                                         </td>
 

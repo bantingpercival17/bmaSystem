@@ -21,7 +21,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
     <li class="breadcrumb-item active" aria-current="page">{{ $_title }}</li>
 @endsection
 @section('page-content')
-   
+
     <div class="conatiner-fluid content-inner mt-6 py-0">
         <form action="{{ route('teacher.e-clearance') }}" method="post">
             @csrf
@@ -57,7 +57,8 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                                 @if (count($_students))
                                     @foreach ($_students as $_key => $_student)
                                         <tr>
-                                            <td>{{ $_student->student->account->student_number }}</td>
+                                            <td>{{ $_student->student->account ? $_student->student->account->student_number : '-' }}
+                                            </td>
                                             <td>{{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
                                             </td>
                                             <td>
@@ -66,7 +67,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                                                         type="checkbox" id="flexCheckChecked-3-{{ $_key }}"
                                                         name="data[{{ $_key }}][e_clearance]"
                                                         value="{{ $_student->student->id }}"
-                                                        {{ $_student->student->clearance($_subject->id)? ($_student->student->clearance($_subject->id)->is_approved == 1? 'checked': ''): '' }}>
+                                                        {{ $_student->student->clearance($_subject->id) ? ($_student->student->clearance($_subject->id)->is_approved == 1 ? 'checked' : '') : '' }}>
                                                     <label class="form-check-label"
                                                         for="flexCheckChecked-3-{{ $_key }}">
                                                         CLEARED

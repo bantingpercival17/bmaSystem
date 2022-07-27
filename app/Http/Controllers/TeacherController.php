@@ -137,13 +137,13 @@ class TeacherController extends Controller
                 }
                 $_return = GradeEncode::where($_score_details)->update(['score' => doubleval($_request->_score)]);
             }
-            $_respond = array('success' => 'Score Saved', 'status' => 'success');
+            $_respond = array('success' => 'Score Updated', 'status' => 'success');
         } else {
             // Save Score
             $_score_details['score'] = doubleval($_request->_score);
             $_score_details['is_removed'] = 0;
             $_return = GradeEncode::create($_score_details);
-            $_respond = array('success' => 'Score Updated', 'status' => 'success');
+            $_respond = array('success' => 'Score Saved', 'status' => 'success');
         }
         if ($_return) {
             return compact('_respond');

@@ -122,8 +122,7 @@
                                         </div>
                                         <div class="col-md">
                                             <small>VERIFIED BY:</small>
-                                            <span
-                                                class="text-success"><b>{{ strtoupper($_subject_data->approved_by) }}</b>
+                                            <span class="text-success"><b>{{ strtoupper($_subject_data->approved_by) }}</b>
                                             </span>
                                             <br>
                                             <small>VERIFIED DATE :</small> <span
@@ -140,7 +139,6 @@
                                 </div>
 
                             </div>
-
                         @else
                             @php
                                 $_grade_status = 'disabled';
@@ -176,15 +174,16 @@
                             </div>
                         </form>
                     @endif
-                    <form action="{{ route('teacher.bulk-upload-grades') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('teacher.bulk-upload-grades') }}" method="post"
+                        enctype="multipart/form-data">
                         @csrf
                         <label for="" class="text-primary"><b>| BULK UPLOAD GRADES</b></label>
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <input type="hidden" name="_section" value="{{ Crypt::encrypt($_subject->id) }}">
-                                    <input class="form-control" type="file" id="customFile" name="_file_grade" required
-                                        {{ $_grade_status }}>
+                                    <input class="form-control" type="file" id="customFile" name="_file_grade"
+                                        required {{ $_grade_status }}>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -227,7 +226,8 @@
                                 @foreach ($_students as $_key => $_student)
                                     <tr>
                                         <th class="text-primary fw-bolder">
-                                            {{ $_student->student->account->student_number }} -
+                                            {{ $_student->student->account ? $_student->student->account->student_number : '-' }}
+                                            -
                                             {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
                                         </th>
                                         @foreach ($_columns as $col)
@@ -238,7 +238,7 @@
                                                     @endphp
                                                     <input type="text" class="score-cell"
                                                         style="width: 38px; font-size:12px" value="{{ $_score }}"
-                                                        data-student="{{ $_student->id }}"
+                                                        data-student="{{ $_student->student->id }}"
                                                         data-category="{{ $col[1] . $i }}"
                                                         data-section="{{ $_subject->id }}" {{ $_grade_status }}>
                                                 </td>
@@ -299,7 +299,7 @@
             $.get('/teacher/grading-sheet/store', _data, function(respond) {
                 if (respond._respond.status == 'success') {
                     //Toastr.success(respond._respond.message);
-                    toastr.success(respond._respond.message)
+                    toastr.success(respond._respond.success)
                 } else {
                     toastr.error("Error")
                 }
