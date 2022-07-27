@@ -334,13 +334,15 @@ $_title = 'Course Syllabus';
             <div class="card learning-outcome">
                 <div class="card-header">
                     <label for="" class="text-primary fw-bolder">VIEW LEARNING OUTCOME</label>
+                    <a href="{{ route('teacher.learning-topic-preview') . '?course_syllabus=' . base64_encode($_course_syllabus->id) }}"
+                        class="btn btn-primary float-end">PREVIEW</a>
                 </div>
                 <div class="card-body">
                     @if (count($_course_syllabus->learning_outcomes) > 0)
                         <div class="learning-outline-content">
                             @foreach ($_course_syllabus->learning_outcomes as $key => $learning_outcome)
                                 <div class="lo-{{ $learning_outcome->id }}">
-                                    <a href="" class="badge bg-primary fw-bolder"><small>PREVIEW</small></a>
+                                    {{-- <a href="" class="badge bg-primary fw-bolder"><small>PREVIEW</small></a> --}}
                                     <small for="" class="text-danger btn-remove fw-bolder"
                                         data-url="{{ route('teacher.syllabus-learning-outcome-remove') . '?learning_outcome=' . base64_encode($learning_outcome->id) }}">REMOVE</small>
 

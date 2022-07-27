@@ -90,8 +90,12 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
                                         </label>
                                     </div>
                                     <div class="col-md">
-                                        <small>TOPIC</small> <br>
-                                        <label for="" class="fw-bolder">{{ $topic->learning_outcomes }}</label>
+                                        <a
+                                            href="{{ route('teacher.course-syllabus-topic-view') . '?topic=' . base64_encode($topic->id) }}">
+                                            <small>TOPIC</small> <br>
+                                            <label for="" class="fw-bolder">{{ $topic->learning_outcomes }}</label>
+                                        </a>
+
                                     </div>
                                 </div>
                             </div>

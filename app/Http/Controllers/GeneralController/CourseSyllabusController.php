@@ -289,10 +289,20 @@ class CourseSyllabusController extends Controller
                 'youtube_link' => $_request->youtube_link ?: 'n/a'
             );
             SyllabusCourseLearningTopicMaterials::create($_content);
-            return back()->with('success','Successfully added a Materials');
+            return back()->with('success', 'Successfully added a Materials');
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
         }
+    }
+    public function learning_topic_preview(Request $_request)
+    {
+        $_course_syllabus = CourseSyllabus::find(base64_decode($_request->course_syllabus));
+        return view('pages.teacher.course-syllabus.preview', compact('_course_syllabus'));
+    }
+    public function topic_view(Request $_request)
+    {
+        $_topic = SyllabusCourseLearningOutcome::find(base64_decode($_request->topic));
+        return view('pages.teacher.course-syllabus.topic-view', compact('_topic'));
     }
 }
