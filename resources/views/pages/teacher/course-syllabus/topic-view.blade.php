@@ -58,7 +58,7 @@ $_title = 'Topic View';
                             </div>
                         @else
                             <p>PLEASE ADD A PRESENTATION FOR THIS COURSE SYLLABUS</p>
-                            <p><span class="text-warning">NOTE: Person can add the PRESENTATION is the creator</span></p>
+                            <p><span class="text-warning">NOTE: <b>INSTRUCTOR</b> can add the PRESENTATION is the creator</span></p>
                         @endif
                         {{-- <iframe src="{{ $_topic->materials->presentation_link }}" frameborder="0" width="100%"
                             height="485" allowfullscreen="true" mozallowfullscreen="true"
