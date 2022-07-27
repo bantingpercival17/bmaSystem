@@ -48,6 +48,7 @@ $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subje
 
                             </div>
                         </div>
+                    </div>
                 @endforeach
 
             </div>
