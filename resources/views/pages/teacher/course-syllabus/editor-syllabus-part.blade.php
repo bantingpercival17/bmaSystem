@@ -82,7 +82,10 @@ $_title = 'Course Syllabus';
                                                     <div class="col-md-4">
                                                         <small>FUNCTION</small> <br>
                                                         <label for="" class="text-primary">
-                                                            {{ $function->function_content }}</label>
+                                                            @php
+                                                                echo $function->function_content;
+                                                            @endphp
+                                                        </label>
                                                         <div class="mt-3 row">
                                                             <div class="col-md">
                                                                 <label class="badge bg-primary btn-add"
@@ -107,7 +110,11 @@ $_title = 'Course Syllabus';
                                                                 <div class="col-md">
                                                                     <small>COMPETENCE</small> <br>
                                                                     <label for="" class="text-primary">
-                                                                        {{ $competence->competence_content }}</label>
+                                                                        @php
+                                                                            echo $competence->competence_content;
+                                                                        @endphp
+
+                                                                    </label>
                                                                     <div class="mt-3 row">
                                                                         <div class="col-md">
                                                                             <label class="badge bg-primary btn-add"
@@ -132,7 +139,10 @@ $_title = 'Course Syllabus';
                                                                             <div class="col-md">
                                                                                 <small>KUP</small> <br>
                                                                                 <label for="" class="text-primary">
-                                                                                    {{ $kup->kup_content }}</label>
+                                                                                    @php
+                                                                                        echo $kup->kup_content;
+                                                                                    @endphp
+                                                                                </label>
                                                                             </div>
                                                                         </div>
                                                                     @endforeach
