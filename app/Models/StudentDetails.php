@@ -794,4 +794,8 @@ class StudentDetails extends Model
     {
         return $this->hasOne(StudentMedicalAppointment::class, 'student_id')->where('is_removed', false);
     }
+    public function student_medical_result()
+    {
+        return $this->hasOne(StudentMedicalResult::class, 'student_id')->where('is_removed', false);
+    }
 }

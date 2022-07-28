@@ -155,36 +155,39 @@ $_title = 'Student Medical Overview';
                                             <a href="{{ route('medical.student-appointment') }}?appointment={{ base64_encode($_data->id) }}"
                                                 class="btn btn-sm btn-outline-info mt-2">APPROVED</a>
                                         @endif
-                                        {{-- @if (request()->input('view') == 'waiting for Medical result' || request()->input('view') == 'passed' || request()->input('view') == 'pending' || request()->input('view') == 'failed')
-                                            @if ($_data->account->medical_result)
-                                                @if ($_data->account->medical_result->is_fit !== null)
-                                                    @if ($_data->account->medical_result->is_fit === 1)
+                                        @if (request()->input('view') == 'approved' ||
+                                            request()->input('view') == 'passed' ||
+                                            request()->input('view') == 'pending' ||
+                                            request()->input('view') == 'failed')
+                                            @if ($_data->student->student_medical_result)
+                                                @if ($_data->student->student_medical_result->is_fit !== null)
+                                                    @if ($_data->student->student_medical_result->is_fit === 1)
                                                         <span class="badge bg-primary mb-4">FIT TO ENROLL</span>
                                                     @else
                                                         <span class="badge bg-danger mb-4">FAILED</span>
                                                     @endif
                                                 @else
                                                     <span class="badge bg-info mb-4">PENDING RESULT</span>
-                                                    <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->applicant_id) }}"
+                                                    <a href="{{ route('medical.student-medical-result') . '?result=' . base64_encode(0) . '&student=' . base64_encode($_data->student_id) }}"
                                                         class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
                                                     <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                        data-applicant="{{ base64_encode($_data->applicant_id) }}"
+                                                        data-applicant="{{ base64_encode($_data->student_id) }}"
                                                         data-bs-toggle="modal" data-bs-target=".modal-medical-fail">FAIL</a>
                                                 @endif
                                                 <span
-                                                    class="badge bg-secondary">{{ $_data->account->medical_result->created_at->format('F d,Y') }}</span>
+                                                    class="badge bg-secondary">{{ $_data->student->student_medical_result->created_at->format('F d,Y') }}</span>
                                             @else
-                                                <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->applicant_id) }}"
+                                                <a href="{{ route('medical.student-medical-result') . '?result=' . base64_encode(1) . '&student=' . base64_encode($_data->student_id) }}"
                                                     class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
                                                 <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                    data-applicant="{{ base64_encode($_data->applicant_id) }}"
+                                                    data-applicant="{{ base64_encode($_data->student_id) }}"
                                                     data-bs-toggle="modal" data-bs-target=".modal-medical-fail">FAIL</a>
                                                 <a class="btn btn-info btn-sm w-100 text-white mb-2 btn-medical"
-                                                    data-applicant="{{ base64_encode($_data->applicant_id) }}"
+                                                    data-applicant="{{ base64_encode($_data->student_id) }}"
                                                     data-bs-toggle="modal"
                                                     data-bs-target=".modal-medical-pending">PENDING</a>
                                             @endif
-                                        @endif --}}
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -308,7 +311,7 @@ $_title = 'Student Medical Overview';
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('medical.applicant-medical-result') }}" method="get">
+                    <form action="{{ route('medical.student-medical-result') }}" method="get">
                         <div class="form-group">
                             <label for="" class="form-label fw-bolder">REMARKS</label>
                             <input type="text" name="remarks" class="form-control">
@@ -332,7 +335,7 @@ $_title = 'Student Medical Overview';
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('medical.applicant-medical-result') }}" method="get">
+                    <form action="{{ route('medical.student-medical-result') }}" method="get">
                         <div class="form-group">
                             <label for="" class="form-label fw-bolder">REMARKS</label>
                             <input type="text" name="remarks" class="form-control">

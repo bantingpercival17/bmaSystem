@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\CourseOffer;
+use App\Models\StudentDetails;
 use App\Models\StudentMedicalAppointment;
+use App\Models\StudentMedicalResult;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MedicalController extends Controller
 {
@@ -110,6 +113,47 @@ class MedicalController extends Controller
             }
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
+        }
+    }
+    public function student_medical_result(Request $_request)
+    {
+        try {
+            $_student = StudentDetails::find(base64_decode($_request->student));
+            if ($_request->result) {
+                $_details = array('student_id' => base64_decode($_request->student), 'is_fit' => base64_decode($_request->result), 'remarks' => $_request->remarks, 'staff_id' => Auth::user()->staff->id);
+            } else {
+                $_details = array('student_id' => base64_decode($_request->student), 'is_pending' => 0, 'remarks' => $_request->remarks, 'staff_id' => Auth::user()->staff->id);
+            }
+            $_medical_result = StudentMedicalResult::where('student_id', $_student->id)->where('is_removed', false)->first();
+            if ($_medical_result) {
+                $_medical_result->is_removed = true;
+                $_medical_result->save();
+                StudentMedicalResult::create($_details);
+            } else {
+                StudentMedicalResult::create($_details);
+            }
+
+            /* $_email_model = new ApplicantEmail();
+            $_email = $_applicant->email;
+            //$_email = 'p.banting@bma.edu.ph';
+
+            if ($_request->result) {
+                if (base64_decode($_request->result) == 1) {
+                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+                    //return "Passed";
+                } else {
+                    //return "Failed";
+                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+                }
+            } else {
+                //return "Pending";
+                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+            } */
+            return back()->with('success', 'Successfully Transact');
+
+            // return back()->with('success', 'applicant_id' . base64_decode($_request->applicant) . 'is_fit' . base64_decode($_request->result));
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
         }
     }
 }
