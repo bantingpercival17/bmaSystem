@@ -506,7 +506,7 @@ class CourseOffer extends Model
     {
         $_level = $this->id == 3 ? 11 : 4;
         $_documents = Documents::where('department_id', 2)->where('year_level', $_level)->where('is_removed', false)->count();
-        return $this->hasMany(ApplicantAccount::class, 'course_id')
+        $_query  = $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
@@ -517,6 +517,15 @@ class CourseOffer extends Model
                     ->where('applicant_documents.is_approved', true);
             }, '>=', $_documents)
             ->groupBy('applicant_accounts.id');
+
+        if (request()->input('_student')) {
+            $_student = explode(',', request()->input('_student'));
+            $_count = count($_student);
+            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', "%" . trim($_student[0]) . "%") :
+                $_query->where('applicant_detials.last_name', 'like', "%" . trim($_student[0]) . "%")
+                ->where('applicant_detials.first_name', 'like', "%" . trim($_student[1]) . "%");
+        }
+        return $_query;
     }
     /* Entrance Examination Payment */
     public function applicant_payment_verification()
