@@ -83,7 +83,18 @@ class CourseSyllabusController extends Controller
         try {
             $_course_syllabus = CourseSyllabus::find(base64_decode($_request->_course_syllabus));
             $_report = new CourseSyllabusReport();
-            return $_report->part_one($_course_syllabus);
+
+            switch (base64_decode($_request->_part)) {
+                case 'part-one':
+                    return $_report->part_one($_course_syllabus);
+                    break;
+                case 'part-two':
+                    return $_report->part_two($_course_syllabus);
+                    break;
+                default:
+                    return back()->with('error', 'Invalid to Generate Report...');
+                    break;
+            }
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error

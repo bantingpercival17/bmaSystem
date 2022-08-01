@@ -6,94 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title-report')</title>
-    <link rel="stylesheet" href="{{ public_path('css/app-1.css') }}">
-    <style>
-        @page {
-            margin: 5px;
-        }
-
-        header {
-            position: fixed;
-            width: 100%;
-            font-size: 12px !important;
-            text-align: left;
-            justify-content: center;
-            /** Extra personal styles **/
-            /*  background-color: #008B8B; */
-
-        }
-
-        footer {
-            position: fixed;
-            bottom: 0%;
-            left: 0px;
-            right: 0px;
-            height: 50px;
-            font-size: 12px !important;
-            text-align: left;
-            justify-content: center;
-            /** Extra personal styles **/
-            /* background-color: #005252; */
-            line-height: 35px;
-        }
-
-        .page-content {
-
-            position: relative;
-            top: 1.2in;
-            height: 80%;
-            /* background-color: #616161; */
-            overflow: auto;
-            content: 
-            /*  top: 1.3in;
-            max-height: 100%;
-            overflow: auto;
-            margin-right: 25px;
-            margin-left: 25px;
-            background-color: #005252; */
-
-        }
-
-        .page-break {
-            page-break-before: always;
-        }
-
-
-        .table-content {
-            font-family: "Times New Roman", Times, serif;
-            border-collapse: collapse;
-            width: 100%;
-            /*  border: 1px solid #ddd;
-            border: 1px solid #ddd; */
-        }
-
-        .table-content td,
-        .table-content th {
-            padding-top: 5px;
-            padding-bottom: 5px;
-            padding-left: 10px;
-            padding-right: 10px;
-            /*  border: 1px solid rgb(126, 126, 126); */
-            font-size: 14px;
-
-        }
-
-        .table-outline td,
-        .table-outline th {
-            padding-top: 15px;
-            border: 1px solid rgb(0, 0, 0);
-            text-align: left;
-            width: auto;
-        }
-
-
-        .form-code {
-            margin-top: 10px;
-            font-family: "Times New Roman", Times, serif;
-            font-size: 12px;
-
-        }
-    </style>
+    <link rel="stylesheet" href="{{ public_path('css/page-layout.css') }}">
 </head>
 
 <body>
@@ -109,8 +22,11 @@
     <div class="page-content">
         @yield('content')
     </div>
-
-    <footer class="mt-5">
+    <div id="footer">
+        <div class="page-number"></div>
+    </div>
+    {{-- <footer class="mt-5">
+       
         <table class="table-content text-center">
             <tbody>
                 <tr>
@@ -127,7 +43,7 @@
                 </tr>
             </tbody>
         </table>
-    </footer>
+    </footer> --}}
 </body>
 
 </html>

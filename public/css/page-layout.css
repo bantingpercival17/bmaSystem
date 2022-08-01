@@ -1,0 +1,104 @@
+@page {
+    margin: 10px;
+}
+
+header {
+    /* position: fixed; */
+
+    width: 100%;
+    font-size: 12px !important;
+    text-align: left;
+    justify-content: center;
+    /** Extra personal styles **/
+    /*  background-color: #008B8B; */
+}
+
+footer {
+    bottom: 10px;
+    justify-content: center;
+}
+
+.page-content {
+    top: 1.3in;
+    /* max-height: 50%; */
+    overflow: auto;
+    margin-right: 25px;
+    margin-left: 25px;
+    margin-bottom: 25px;
+
+
+}
+
+.table-content {
+    font-family: "Times New Roman", Times, serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-content td,
+.table-content th {
+    /* 
+    padding: 5px, 5px, 10px, 10px; */
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    font-size: 14px;
+
+}
+
+.table-outline td,
+.table-outline th {
+    padding: 5px;
+    border: 1px solid rgb(0, 0, 0);
+    text-align: left;
+    width: auto;
+
+}
+
+.table-center td,
+.table-center th, .table-center tr {
+    text-align: center;
+}
+
+.form-code {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12px;
+    padding-left: 10px;
+    margin-top: -10px
+}
+
+.text-center {
+    text-align: center;
+}
+
+.page-break {
+    margin-top: 25px;
+    page-break-after: always;
+    content: counter(page);
+}
+
+
+.text-fill-in {
+    /* text-decoration: underline; */
+    border-bottom: 1px solid rgb(0, 0, 0);
+    text-align: center;
+}
+
+#footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+#footer {
+    text-align: center;
+    bottom: 0;
+    border-top: 0.1pt solid #aaa;
+}
+
+.page-number:before {
+
+    content: "Page " counter(page);
+}

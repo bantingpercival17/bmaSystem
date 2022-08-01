@@ -282,9 +282,15 @@ $_title = 'Course Syllabus';
                                     <small for="" class="form-label">TEACHING AIDS</small><br>
                                     <textarea name="teaching_aids" id="teaching_aids" cols="10" rows="5" class="form-control">
 @if ($_course_syllabus->details)
+@if ($_course_syllabus->details->teaching_aids && $_course_syllabus->details->teaching_aids != 'N/A')
 @foreach (json_decode($_course_syllabus->details->teaching_aids) as $item)
+<p>
 {{ trim($item) }}
+</p>
 @endforeach
+@else
+{{ $_course_syllabus->details->references }}
+@endif
 @endif
 </textarea>
                                 </div>
@@ -292,9 +298,15 @@ $_title = 'Course Syllabus';
                                     <small for="" class="form-label">REFERENCE/S</small><br>
                                     <textarea name="references" id="references" cols="30" rows="5" class="form-control">
 @if ($_course_syllabus->details)
+@if ($_course_syllabus->details->references && $_course_syllabus->details->references != 'N/A')
 @foreach (json_decode($_course_syllabus->details->references) as $item)
+<p>
 {{ trim($item) }}
+</p>
 @endforeach
+@else
+{{ $_course_syllabus->details->references }}
+@endif
 @endif
 </textarea>
                                 </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Course Syllabus';
+$_title = 'Subject: ' . $_course_syllabus->subject->subject_code;
 @endphp
 @section('page-title', $_title)
 @section('page-mode', 'dark-mode')
@@ -20,17 +20,46 @@ $_title = 'Course Syllabus';
     <div class="content">
         <div class="card">
             <div class="card-header">
-                <label for=""
-                    class="fw-bolder text-primary h4">{{ $_course_syllabus->subject->subject_code }}</label>
-                <br> <small>{{ $_course_syllabus->subject->subject_name }}</small>
+                <div class="row">
+                    <div class="col-md-2">
+                        <small>COURSE CODE</small> <br>
+                        <label for="" class="fw-bolder">{{ $_course_syllabus->subject->subject_code }}</label>
+                    </div>
+                    <div class="col-md">
+                        <small>COURSE DESCRIPTIVE TITLE</small> <br>
+                        <label for="" class="fw-bolder">{{ $_course_syllabus->subject->subject_name }}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md">
+                        <small>COURSE CREDITS</small> <br>
+                        <label for="" class="fw-bolder">{{ $_course_syllabus->subject->units }}
+                            UNIT/S</label>
+                    </div>
+                    <div class="col-md">
+                        <small>LECTURE HOURS</small> <br>
+                        <label for="" class="fw-bolder">{{ $_course_syllabus->subject->lecture_hours }}
+                            HOUR/S</label>
+                    </div>
+                    <div class="col-md">
+                        <small>LABORATORY HOURS</small> <br>
+                        <label for="" class="fw-bolder">{{ $_course_syllabus->subject->laboratory_hours }}
+                            HOUR/S</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md">
+                        <small>COURSE DESCRIPTION</small> <br>
+                        <label for="" class="fw-bolder">{{ $_course_syllabus->course_description }}</label>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
+            {{-- <div class="card-body">
                 <div class="">
                     <a
                         href="{{ route('teacher.course-syllabus-editor') . '?course_syllabus=' . request()->input('course_syllabus') . '&part=part1' }}">PART
                         A: COURSE SPECIFICATION</a>
                 </div>
-            
                 <div class="">
                     <a
                         href="{{ route('teacher.course-syllabus-editor') . '?course_syllabus=' . request()->input('course_syllabus') . '&part=part2' }}">
@@ -39,7 +68,40 @@ $_title = 'Course Syllabus';
                         PAER C: COURSE TOPICS
                     </a>
                 </div>
+            </div> --}}
+            <div class="card-body">
+                @php
+                    $_array_tab = [['A', 'part-one', 'COURSE SPECIFICATION'], ['B', 'part-two', 'COURSE OUTLINE AND TIMETABLE']];
+                @endphp
+                @include('pages.teacher.course-syllabus.part-tab-layouts.part-one')
+                @include('pages.teacher.course-syllabus.part-tab-layouts.part-two')
+                <ul class="nav nav-tabs nav-fill" id="myTab-three" role="tablist">
+                    @foreach ($_array_tab as $key => $tab)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $key == 0 ? 'active' : '' }}" id="{{ $tab[1] }}"
+                                data-bs-toggle="tab" href="#{{ $tab[1] }}-content" role="tab"
+                                aria-controls="home" aria-selected="{{ $key == 0 ? true : false }}">PART
+                                {{ $tab[0] }}</a>
+                        </li>
+                    @endforeach
 
+                </ul>
+                <div class="tab-content" id="myTabContent-4">
+                    @foreach ($_array_tab as $key => $item)
+                        <div class="tab-pane fade show {{ $key == 0 ? 'active' : '' }}" id="{{ $item[1] }}-content"
+                            role="tabpanel" aria-labelledby="{{ $item[1] }}">
+                            <label for="" class="h5 fw-bolder text-primary">{{ $item[2] }}</label>
+                            <div class="content-tool float-end">
+                                <a href="{{ route('teacher.course-syllabus-report') . '?_course_syllabus=' . base64_encode($_course_syllabus->id) }}&_part={{ base64_encode($item[1]) }}"
+                                    class="btn btn-primary btn-sm">GENERATE PART {{ $item[0] }}</a>
+                            </div>
+                            <div class="content">
+                                @yield($item[1])
+                            </div>
+                        </div>
+                    @endforeach
+
+                </div>
             </div>
         </div>
     </div>
