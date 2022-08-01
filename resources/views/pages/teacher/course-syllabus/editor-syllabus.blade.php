@@ -71,10 +71,11 @@ $_title = 'Subject: ' . $_course_syllabus->subject->subject_code;
             </div> --}}
             <div class="card-body">
                 @php
-                    $_array_tab = [['A', 'part-one', 'COURSE SPECIFICATION'], ['B', 'part-two', 'COURSE OUTLINE AND TIMETABLE']];
+                    $_array_tab = [['A', 'part-one', 'COURSE SPECIFICATION'], ['B', 'part-two', 'COURSE OUTLINE AND TIMETABLE'],['C', 'part-three', 'COURSE SYLLABUS']];
                 @endphp
                 @include('pages.teacher.course-syllabus.part-tab-layouts.part-one')
                 @include('pages.teacher.course-syllabus.part-tab-layouts.part-two')
+                @include('pages.teacher.course-syllabus.part-tab-layouts.part-three')
                 <ul class="nav nav-tabs nav-fill" id="myTab-three" role="tablist">
                     @foreach ($_array_tab as $key => $tab)
                         <li class="nav-item">
