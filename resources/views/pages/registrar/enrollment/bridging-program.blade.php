@@ -60,7 +60,7 @@ $_title = 'Bridging Program';
                             @if ($_data->student->enrollment_assessment)
                                 <span class="badge bg-primary">Enrollment Assessment Complete</span>
                                 @if ($_data->student->enrollment_assessment->additional_payment)
-                                    @if ($_data->student->enrollment_assessment->additional_payment->is_approved)
+                                    @if ($_data->student->enrollment_assessment->additional_payment->is_approved === 1)
                                         <span class="badge bg-info">For Payment Verified</span>
                                     @else
                                         <span class="badge bg-info">For Payment Verification</span>
