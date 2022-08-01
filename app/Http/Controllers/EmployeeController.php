@@ -114,7 +114,7 @@ class EmployeeController extends Controller
         );
         return view('employee.generate_qr_code', compact('_staff_details'));
     }
-    public function scanner_v2($_data)
+    public function scanner_v2_1($_data)
     {
         $_data = base64_decode($_data); // Data
         $_data = json_decode($_data);
@@ -177,7 +177,67 @@ class EmployeeController extends Controller
 
         return compact('_data');
     }
+    public function scanner_v2($_data)
+    {
+        $_data_content = json_decode(base64_decode($_data)); // Decode the Qr-Code Data
+        $_date_now = date('Y-m-d'); // Get the Current Date
+        $_email = $_data_content[0]; // Get the Email of the Staff in Qr-code Data
+        $_time_in = date_format(date_create($_data_content[2]), 'Y-m-d'); // Get the Time in of the Staff and Format into Y-m-d
+        $_account = User::where('email', $_email)->first(); // Get the Staff Account using the Email Address
+        if ($_date_now == $_time_in || $_email == 'p.banting@bma.edu.ph') {
+            if ($_account) {
+                $_time_in_content_respond = array(
+                    'name' => strtoupper(trim($_account->name)),
+                    'department' => $_account->staff->department,
+                    'time_status' => 'TIME IN',
+                    'time' =>  date('H:i:s'),
+                    'image' =>  strtolower(str_replace(' ', '_', $_account->name)) . '.jpg',
+                    'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_account->staff->first_name))))) . '-good-morning.mp3'
+                ); // Set up the Return Value
+                $_time_out_content_respond = array(
+                    'name' => strtoupper(trim($_account->name)),
+                    'department' => $_account->staff->department,
+                    'time_status' => 'TIME OUT',
+                    'time' =>  date('H:i:s'),
+                    'image' =>  strtolower(str_replace(' ', '_', $_account->name)) . '.jpg',
+                    'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_account->staff->first_name))))) . '-good-bye.mp3'
+                );
+                $_description = json_decode($_data_content[1]);
+                $_staff_content = array(
+                    'staff_id' => $_account->staff->id,
+                    'description' => json_encode(array(
+                        'body_temprature' => $_description[0],
+                        'have_any' => $_description[1],
+                        'experience' => $_description[2],
+                        'positive' => $_description[3],
+                        'gatekeeper_in' => Auth::user()->name
 
+                    )),
+                    'time_in' => date('Y-m-d H:i:s'),
+                );
+                $_attendance = EmployeeAttendance::where('staff_id', $_account->staff->id)
+                    ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first(); // Get the Attendance Data
+                $_respond = $_attendance ? $_time_out_content_respond : $_time_in_content_respond; // Get the Respond Content
+                $_attendance ? $_attendance->update(['time_out' => now()]) : EmployeeAttendance::create($_staff_content); // Save Time in and Update the time Out
+
+                $_data = $_attendance ? array('respond' => '200', 'message' => 'Good bye and Keep Safe ' . $_account->staff->first_name . "!", 'data' => $_respond) :
+                    array('respond' => '200', 'message' => 'Welcome' . $_account->staff->first_name . "!", 'data' => $_respond);
+            } else {
+                $_data = array('respond' => '404', 'message' => 'Invalid Email');
+            }
+        } else {
+            $_respond = array(
+                'name' => strtoupper(trim($_account->name)),
+                'department' => $_account->staff->department,
+                'time_status' => 'invalid qr code',
+                'time' =>  date('H:i:s'),
+                'image' =>  '',
+                'link' => '/assets/audio/expired_qr_code.mp3'
+            );
+            $_data = array('respond' => '404', 'message' => 'Qr Code is Expired', 'data' => $_respond);
+        }
+        return compact('_data');
+    }
     public function attendance_view()
     {
         $_staff = Auth::user()->staff;
@@ -256,7 +316,7 @@ class EmployeeController extends Controller
         $_request->validate([
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-        $_user = Auth::user();
+        $_user = User::find(Auth::id());
         $_user->password = Hash::make($_request->password);
         $_user->save();
         UserPasswordReset::create([
