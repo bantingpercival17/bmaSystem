@@ -56,6 +56,21 @@ $_title = 'Bridging Program';
                                 </div>
                             </div>
                         </div>
+                        <div class="card-footer">
+                            @if ($_data->student->enrollment_assessment)
+                                <span class="badge bg-primary">Enrollment Assessment Complete</span>
+                                @if ($_data->student->enrollment_assessment->additional_payment)
+                                    @if ($_data->student->enrollment_assessment->additional_payment->is_approved)
+                                        <span class="badge bg-info">For Payment Verified</span>
+                                    @else
+                                        <span class="badge bg-info">For Payment Verification</span>
+                                    @endif
+                                @else
+                                    <span class="badge bg-danger">For Payment Attachment</span>
+                                @endif
+                            @else
+                            @endif
+                        </div>
                     </div>
                 @endforeach
             @else

@@ -79,6 +79,6 @@ class EnrollmentAssessment extends Model
     }
     public function additional_payment()
     {
-        return $this->hasMany(PaymentAdditionalTransaction::class, 'enrollment_id')->where('is_removed', false);
+        return $this->hasOne(PaymentAdditionalTransaction::class, 'enrollment_id')->where('is_removed', false);
     }
 }
