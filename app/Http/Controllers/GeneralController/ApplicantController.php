@@ -20,6 +20,7 @@ use App\Report\ApplicantReport;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -28,8 +29,10 @@ class ApplicantController extends Controller
     # Dashboard Category Function
     public function dashboard_category($_request)
     {
+       
         $_course = CourseOffer::find(base64_decode($_request->_course)); // Find a Course
         $_categories = array(
+            array('view' => 'verified-applicant', 'function' => 'verified_applicants'),
             array('view' => 'pre-registration', 'function' => 'applicant_pre_registrations'),
             array('view' => 'for-checking', 'function' => 'applicant_for_checking'), // For Verification of Document
             array('view' => 'verified', 'function' => 'applicant_verified_documents'), // Verified Documents & Quified to Take Entrance Examination
@@ -55,7 +58,7 @@ class ApplicantController extends Controller
     /* Applicant List View with the different views */
     public function applicant_view(Request $_request)
     {
-        try {
+       try {
             $_courses = CourseOffer::all(); // Get All Course
             $_course = CourseOffer::find(base64_decode($_request->_course)); // Find a Course
             $_data = $this->dashboard_category($_request);
