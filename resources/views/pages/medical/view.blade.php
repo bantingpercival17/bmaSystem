@@ -339,7 +339,7 @@ $_title = 'Student Medical Overview';
                         <div class="form-group">
                             <label for="" class="form-label fw-bolder">REMARKS</label>
                             <input type="text" name="remarks" class="form-control">
-                            <input type="hidden" name="applicant" class="applicant">
+                            <input type="hidden" name="student" class="applicant">
                         </div>
                         <button type="submit" class="btn btn-outline-primary">SUBMIT</button>
                     </form>
