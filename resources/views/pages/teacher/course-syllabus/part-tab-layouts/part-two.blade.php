@@ -293,7 +293,7 @@
         </div>
         <div class="row">
             <div class="col-md">
-                <button class="btn btn-primary btn-add" data-form="form-learning-outcome">Add Learning
+                <button class="btn btn-primary add-stcw" data-form="form-learning-outcome">Add Learning
                     Outcome</button>
             </div>
         </div>
