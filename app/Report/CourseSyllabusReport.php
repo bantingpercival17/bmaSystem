@@ -33,4 +33,15 @@ class CourseSyllabusReport
         $file_name = 'PART B: COURSE OUTLINE AND TIMETABLE-' . $_data->subject->subject_code . '-' . date('Ymd') . '.pdf';
         return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
     }
+    public function part_three($_data)
+    {
+        // Set the Layout for the report
+        $_layout = $this->path . '.course_syllabus';
+        // Import PDF Class
+        $pdf = PDF::loadView($_layout, compact('_data'));
+        // Set the Filename of report
+        // Name format PART - SUBJECT CODE - DATE GENERATED
+        $file_name = 'PART C: COURSE SYLLABUS-' . $_data->subject->subject_code . '-' . date('Ymd') . '.pdf';
+        return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
+    }
 }

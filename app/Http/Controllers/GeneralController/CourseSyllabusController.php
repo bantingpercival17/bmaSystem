@@ -90,6 +90,8 @@ class CourseSyllabusController extends Controller
                     break;
                 case 'part-two':
                     return $_report->part_two($_course_syllabus);
+                case 'part-three':
+                    return $_report->part_three($_course_syllabus);
                     break;
                 default:
                     return back()->with('error', 'Invalid to Generate Report...');

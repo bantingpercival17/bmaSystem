@@ -1,7 +1,7 @@
 @section('part-three')
     <div class="course-topic mt-5">
         <label for="" class="text-muted fw-bolder">COURSE TOPIC</label>
-        <a href="{{ route('teacher.course-syllabus-editor') . '?course_syllabus=' . request()->input('course_syllabus') . '&part=part2' }}"
+        <a href="{{ route('teacher.course-syllabus-editor') . '?course_syllabus=' . request()->input('course_syllabus') . '&part=part3' }}"
             class="float-end"><small class="badge bg-info">ADD COURSE TOPIC</small></a>
         @if ($_course_syllabus->learning_outcomes)
             <div class="table-responsive">
