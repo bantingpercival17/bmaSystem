@@ -415,16 +415,16 @@ class AccountingController extends Controller
                     'is_removed' => false
                 );
             }
-            // $_payment = PaymentTransaction::create($_payment_details);
+            $_payment = PaymentTransaction::create($_payment_details);
 
             // If the Student have Online Payment Transaction
-            /*    if ($_request->_online_payment) {
+               if ($_request->_online_payment) {
                 $_online_payment = PaymentTrasanctionOnline::find($_request->_online_payment);
                 $_online_payment->payment_id = $_payment->id;
                 $_online_payment->is_approved = 1;
                 $_online_payment->or_number = $_request->or_number;
                 $_online_payment->save();
-            } */
+            }
             // Sectioning & Student number for new student 
             if ($_request->remarks == 'Upon Enrollment') {
                 // Get the Assessment Detials
@@ -437,6 +437,7 @@ class AccountingController extends Controller
                 $_section =   Section::where('academic_id', Auth::user()->staff->current_academic()->id)
                     ->where('course_id', $_payment_assessment->enrollment_assessment->course_id)
                     ->where('year_level', $_year_level)
+                    ->whereNot('section_name','like',"%BRIDGING%")
                     ->where('is_removed', false)
                     ->where(function ($_sub_query) {
                         $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
@@ -454,7 +455,7 @@ class AccountingController extends Controller
                     StudentSection::create($_content); // Store Student Section
                 }
 
-                if (!$_payment_assessment->enrollment_assessment->student->account ) {
+                if (!$_payment_assessment->enrollment_assessment->student->account) {
                     # code...
                 }
             }
