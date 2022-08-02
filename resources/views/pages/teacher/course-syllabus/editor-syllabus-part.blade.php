@@ -15,7 +15,8 @@ $_title = 'Course Syllabus';
             </svg>Course Syllabus</a>
     </li>
     <li class="breadcrumb-item">
-        <a href="">
+        <a
+            href="{{ route('teacher.course-syllabus-editor') . '?course_syllabus=' . base64_encode($_course_syllabus->id) }}">
             {{ 'Subject: ' . $_course_syllabus->subject->subject_code }}
         </a>
     </li>
@@ -78,7 +79,7 @@ $_title = 'Course Syllabus';
     <script>
         initSample();
         let editor = ['course_limitations', 'faculty_requirements',
-            'teaching_facilities' /* , 'teaching_aids', 'references' */
+            'teaching_facilities'/* , 'teaching_aids', 'references' */
         ]
         editor.forEach(element => {
             CKEDITOR.replace(element)

@@ -400,3 +400,69 @@
         </div>
     </form>
 @endif
+@if (request()->input('section') && request()->input('section') == 'course-details')
+    <label for="" class="fw-bolder text-primary h6">ADD COURSE SYLLABUS DETAILS</label>
+
+    <form action="{{ route('teacher.course-details-store') }}" id="course-details-form" method="post">
+        @csrf
+        <input type="hidden" name="_syllabus" value="{{ base64_encode($_course_syllabus->id) }}">
+        @if ($_course_syllabus->details)
+            <input type="hidden" name="_details" value="{{ $_course_syllabus->details->id }}">
+        @else
+        @endif
+        <div class="row">
+            <div class="col-md-12">
+                <small for="" class="form-label">COURSE INTAKE LIMITATIONS</small><br>
+                <textarea name="course_limitations" id="course_limitations" cols="30" rows="5" class="form-control">{{ $_course_syllabus->details ? $_course_syllabus->details->course_intake_limitations : '' }}</textarea>
+            </div>
+            <div class="col-md-12 mt-5">
+                <small for="" class="form-label">FACULTY REQUIREMENTS</small><br>
+                <textarea name="faculty_requirements" id="faculty_requirements" cols="30" rows="5" class="form-control">{{ $_course_syllabus->details ? $_course_syllabus->details->faculty_requirements : '' }}</textarea>
+            </div>
+            <div class="col-md-12 mt-5">
+                <small for="" class="form-label">TEACHING FACILITIES & EQUIPMENT</small><br>
+                <textarea name="teaching_facilities" id="teaching_facilities" cols="30" rows="5" class="form-control">{{ $_course_syllabus->details ? $_course_syllabus->details->teaching_facilities_and_equipment : '' }}</textarea>
+            </div>
+            <div class="col-md-12 mt-5">
+                <small for="" class="form-label">TEACHING AIDS</small><br>
+                <textarea name="teaching_aids" id="teaching_aids" cols="10" rows="5" class="form-control">
+@if ($_course_syllabus->details)
+@if ($_course_syllabus->details->teaching_aids && $_course_syllabus->details->teaching_aids != 'N/A')
+@foreach (json_decode($_course_syllabus->details->teaching_aids) as $item)
+<p>
+{{ trim($item) }}
+</p>
+@endforeach
+@else
+{{ $_course_syllabus->details->references }}
+@endif
+@endif
+</textarea>
+            </div>
+            <div class="col-md-12 mt-5">
+                <small for="" class="form-label">REFERENCE/S</small><br>
+                <textarea name="references" id="references" cols="30" rows="5" class="form-control">
+@if ($_course_syllabus->details)
+@if ($_course_syllabus->details->references && $_course_syllabus->details->references != 'N/A')
+@foreach (json_decode($_course_syllabus->details->references) as $item)
+<p>
+{{ trim($item) }}
+</p>
+@endforeach
+@else
+{{ $_course_syllabus->details->references }}
+@endif
+@endif
+</textarea>
+            </div>
+        </div>
+
+
+        <div class="">
+            <button class="btn btn-primary btn-sm mt-3 float-end add-stcw" data-form="course-details-form">ADD
+                SYLLABUS DETAILS</button>
+        </div>
+    </form>
+    </div>
+    </div>
+@endif
