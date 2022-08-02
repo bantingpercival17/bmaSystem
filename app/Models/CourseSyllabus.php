@@ -36,7 +36,7 @@ class CourseSyllabus extends Model
     }
     public function learning_outcomes()
     {
-        return $this->hasMany(SyllabusCourseLearningOutcome::class, 'course_syllabus_id')->where('is_removed', false);
+        return $this->hasMany(SyllabusCourseLearningOutcome::class, 'course_syllabus_id')->orderBy('weeks')->where('is_removed', false);
     }
     public function staff()
     {
