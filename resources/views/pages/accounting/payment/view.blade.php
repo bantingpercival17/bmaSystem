@@ -241,8 +241,9 @@
 
                         @endif
                         <hr>
+                        {{-- <hr>
                         <div class="payment-history">
-                            <h5>ONLINE PAYMENT</h5>
+                            <h5>ONLINE TRANSACTION PAYMENT</h5>
                             <ul class="media-story mt-2 p-0">
                                 @if ($_payment_details)
                                     @if (count($_payment_details->online_payment_transaction) > 0)
@@ -347,9 +348,138 @@
                                 @endif
 
                             </ul>
-                            <h5>ONLINE ADDITIONAL PAYMENT</h5>
+
+                        </div>
+                        <hr> --}}
+                        <div class="payment-history">
+                            <h5>ONLINE TRANSACTION PAYMENT</h5>
+                            <ul class="media-story mt-2 p-0">
+                                @if ($_payment_details)
+                                    @if (count($_payment_details->online_payment_transaction) > 0)
+                                        @foreach ($_payment_details->online_payment_transaction as $item)
+                                            <li class="d-flex  align-items-center">
+                                                <div class="stories-data ">
+                                                    <p class="mb-0">{{ $item->created_at->format('d, F Y') }}
+                                                    </p>
+                                                    <div class="row">
+                                                        <div class="col-md">
+                                                            <small>REFERENCE NO: </small> <br>
+                                                            <h5><span
+                                                                    class="text-primary">{{ $item->reference_number }}</span>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <small>AMOUNT: </small> <br>
+                                                            <h5><span
+                                                                    class="text-primary">{{ number_format($item->amount_paid, 2) }}</span>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <small>REFERENCE NO: </small> <br>
+                                                            <h5><span
+                                                                    class="text-primary">{{ ucwords(str_replace('_', ' ', $item->transaction_type)) }}</span>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="col-md-12">
+
+                                                            <button type="button"
+                                                                class="btn btn-primary btn-sm btn-form-document w-100 mt-2"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target=".document-view-modal"
+                                                                data-document-url="{{ $item->reciept_attach_path }}">
+                                                                VIEW</button>
+                                                        </div>
+                                                    </div>
+                                                    @if ($item->is_approved === 0)
+                                                        <div class="d-flex justify-content-between mt-2">
+                                                            <div>
+                                                                <small class="text-danger fw-bolder">DISAPPROVED </small>
+                                                                <br>
+                                                                <h5><span
+                                                                        class="text-muted">{{ $item->comment_remarks }}</span>
+                                                                </h5>
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        @if ($item->is_approved == 1)
+                                                            <div class="d-flex justify-content-between mt-2">
+                                                                <div>
+                                                                    <small class="text-primary fw-bolder">VERIFIED PAYMENT
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        @else
+                                                            <div class="d-flex justify-content-between mt-2">
+                                                                <div>
+
+                                                                    <a href="{{ route('accounting.payment-transactions') }}?_midshipman={{ request()->input('_midshipman') }}&add-transaction=true&payment_approved={{ base64_encode($item->id) }}"
+                                                                        class="btn btn-primary btn-sm">
+                                                                        APPROVED PAYMENT</a>
+                                                                </div>
+                                                                <div class="d-flex justify-content-between ms-2">
+                                                                    <form
+                                                                        action="{{ route('accounting.online-payment-disapproved') }}"
+                                                                        method="post" class="">
+                                                                        @csrf
+                                                                        <input type="hidden" name="_online_payment"
+                                                                            value="{{ $item->id }}">
+                                                                        <div>
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger btn-sm w-100">DISSAPPROVED</button>
+                                                                        </div>
+                                                                        <div class="mt-2">
+                                                                            <input type="text" class="form-control"
+                                                                                placeholder="remarks" name="remarks"
+                                                                                required>
+                                                                        </div>
+
+                                                                    </form>
+                                                                </div>
+
+                                                            </div>
+                                                        @endif
+                                                    @endif
 
 
+                                                </div>
+
+                                            </li>
+                                            <hr>
+                                        @endforeach
+                                    @else
+                                        <li class="d-flex mb-4 align-items-center">
+
+                                            <div class="stories-data ms-3">
+                                                <h5 class="text-muted">No Online Transaction</h5>
+                                            </div>
+                                        </li>
+                                    @endif
+                                @endif
+
+                            </ul>
+
+                        </div>
+                        <hr>
+                        <div class="online-payment-transaction">
+                            <h5 class="text-primary fw-bolder">ONLINE TRANSACTION PAYMENT</h5>
+                            @if ($_payment_details)
+                                @if (count($_payment_details->online_payment_transaction) > 0)
+                                    @foreach ($_payment_details->online_payment_transaction as $item)
+                                    @endforeach
+                                @else
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                                        <div>
+                                            <h6 class="text-muted">No Online Payment Transaction</h6>
+                                        </div>
+                                    </div>
+                                @endif
+                            @else
+                                <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                                    <div>
+                                        <h6 class="text-muted">No Payment Details</h6>
+                                    </div>
+                                </div>
+                            @endif
                             @if ($_student->enrollment_assessment)
                                 @if ($_student->enrollment_assessment->additional_payment)
                                     @if (count($_student->enrollment_assessment->additional_payment) > 0)
@@ -483,7 +613,151 @@
                                     @else
                                         <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
                                             <div>
-                                                <h5>No Additional Payment Transaction</h5>
+                                                <h6 class="text-muted">No Online Payment Transaction</h6>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endif
+
+                            @endif
+                        </div>
+                        <hr>
+                        <div class="additional-payment">
+                            <h5 class="text-primary fw-bolder">ONLINE ADDITIONAL PAYMENT</h5>
+                            @if ($_student->enrollment_assessment)
+                                @if ($_student->enrollment_assessment->additional_payment)
+                                    @if (count($_student->enrollment_assessment->additional_payment) > 0)
+                                        @foreach ($_student->enrollment_assessment->additional_payment as $item)
+                                            <div class="payment-details">
+                                                <p class="mb-0">
+                                                    <small>{{ $item->created_at->format('d, F Y') }}</small>
+                                                </p>
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+
+                                                    <div>
+                                                        <small>REFERENCE NO: </small> <br>
+                                                        <span class="text-primary h5">{{ $item->reference_number }}</span>
+                                                    </div>
+                                                    <div>
+                                                        <small>AMOUNT: </small> <br>
+                                                        <span
+                                                            class="text-primary h5">{{ number_format($item->amount_paid, 2) }}</span>
+                                                    </div>
+                                                    <div>
+                                                        <small>TRANSACTION DATE: </small> <br>
+                                                        <span class="text-primary h5">{{ $item->transaction_date }}</span>
+
+                                                    </div>
+                                                    <div>
+                                                        <small>TRANSACTION TYPE</small> <br>
+                                                        <span
+                                                            class="text-primary h5">{{ ucwords(str_replace('_', ' ', $item->transaction_type)) }}</span>
+
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+
+                                                    <div>
+                                                        <small>PROOF OF PAYMENT: </small> <br>
+                                                        <button type="button"
+                                                            class="btn btn-primary btn-sm btn-form-document w-100 mt-2"
+                                                            data-bs-toggle="modal" data-bs-target=".document-view-modal"
+                                                            data-document-url="{{ $item->reciept_attach_path }}">
+                                                            VIEW</button>
+                                                        <a href="{{ $item->reciept_attach_path }}"
+                                                            class="btn btn-outline-primary btn-sm"
+                                                            target="_blank">view</a>
+                                                    </div>
+                                                </div>
+                                                @if ($item->is_approved === 0)
+                                                    <div class="payment-verification">
+                                                        <span class="text-secondary fw-bolder">PAYMENT VERIFICATION</span>
+                                                        <div>
+                                                            <small class="text-danger fw-bolder">DISAPPROVED </small>
+                                                            <br>
+                                                            <h5><span
+                                                                    class="text-muted">{{ $item->comment_remarks }}</span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    @if ($item->is_approved === 1)
+                                                        <div class="payment-verification">
+                                                            <span class="text-primary fw-bolder">VERIFIED PAYMENT</span>
+                                                            <div
+                                                                class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                                                                <div>
+                                                                    <small>OR NUMBER: </small> <br>
+                                                                    <span
+                                                                        class="text-primary h5">{{ $item->or_number }}</span>
+                                                                </div>
+                                                                <div>
+                                                                    <small>VERIFIED DATE </small> <br>
+                                                                    {{ $item->staff_id }}
+                                                                    <span
+                                                                        class="text-primary h5">{{ $item->updated_at->format('F d, Y') }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <div class="payment-verification">
+                                                            <span class="text-secondary fw-bolder">PAYMENT
+                                                                VERIFICATION</span>
+                                                            <div class="row">
+                                                                <div class="col-md">
+                                                                    <form
+                                                                        action="{{ route('accounting.online-additional-payment-approved') }}"
+                                                                        method="post" class="form-group">
+                                                                        @csrf
+                                                                        <input type="hidden" name="_online_payment"
+                                                                            value="{{ $item->id }}">
+
+                                                                        <div class="mt-2">
+                                                                            <input type="text" class="form-control"
+                                                                                placeholder="Or Number" name="or_number"
+                                                                                required>
+                                                                        </div>
+                                                                        <div>
+                                                                            <button type="submit"
+                                                                                class="btn btn-outline-primary btn-sm w-100">APPROVED</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                                <div class="col-md">
+                                                                    <form
+                                                                        action="{{ route('accounting.online-additional-payment-disapproved') }}"
+                                                                        method="post" class="form-group">
+                                                                        @csrf
+                                                                        <input type="hidden" name="_online_payment"
+                                                                            value="{{ $item->id }}">
+
+                                                                        <div class="mt-2">
+                                                                            <input type="text" class="form-control"
+                                                                                placeholder="remarks" name="remarks"
+                                                                                required>
+                                                                        </div>
+                                                                        <div>
+                                                                            <button type="submit"
+                                                                                class="btn btn-outline-danger btn-sm w-100">DISAPPROVED</button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                @endif
+
+
+                                            </div>
+
+                                            <hr>
+                                        @endforeach
+                                    @else
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                                            <div>
+                                                <h6 class="text-muted">No Additional Online Payment Transaction</h6>
                                             </div>
                                         </div>
                                     @endif
@@ -494,7 +768,7 @@
                         </div>
                         <hr>
                         <div class="payment-history">
-                            <h5>PAYMENT HISTORY</h5>
+                            <h5 class="text-primary fw-bolder">PAYMENT HISTORY</h5>
                             <div class="mt-2">
                                 @if ($_payment_details)
                                     @if (count($_payment_details->payment_transaction) > 0)
@@ -518,6 +792,7 @@
                                                 </div>
                                             </div>
                                             <p class="mb-0">
+                                                <small>{{ $_payment->staff->user->name }}</small> |
                                                 <small>{{ $_payment->transaction_date }}</small>
                                             </p>
                                         @endforeach

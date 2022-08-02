@@ -27,4 +27,8 @@ class PaymentTransaction extends Model
     {
         return $this->belongsTo(PaymentAssessment::class, 'assessment_id');
     }
+    public function staff()
+    {
+       return $this->belongsTo(Staff::class,'staff_id');
+    }
 }
