@@ -159,6 +159,8 @@ return array(
     'App\\Models\\SyllabusCourseLearningOutcome' => $baseDir . '/app/Models/SyllabusCourseLearningOutcome.php',
     'App\\Models\\SyllabusCourseLearningTopicMaterials' => $baseDir . '/app/Models/SyllabusCourseLearningTopicMaterials.php',
     'App\\Models\\SyllabusCourseOutcome' => $baseDir . '/app/Models/SyllabusCourseOutcome.php',
+    'App\\Models\\SyllabusCourseSubTopic' => $baseDir . '/app/Models/SyllabusCourseSubTopic.php',
+    'App\\Models\\SyllabusCourseSubTopicWithLearningOutcomes' => $baseDir . '/app/Models/SyllabusCourseSubTopicWithLearningOutcomes.php',
     'App\\Models\\SyllabusStcwCompetence' => $baseDir . '/app/Models/SyllabusStcwCompetence.php',
     'App\\Models\\SyllabusStcwFunction' => $baseDir . '/app/Models/SyllabusStcwFunction.php',
     'App\\Models\\SyllabusStcwKup' => $baseDir . '/app/Models/SyllabusStcwKup.php',

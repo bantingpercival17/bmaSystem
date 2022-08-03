@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class CourseSyllabus extends Model
 {
@@ -36,7 +37,7 @@ class CourseSyllabus extends Model
     }
     public function learning_outcomes()
     {
-        return $this->hasMany(SyllabusCourseLearningOutcome::class, 'course_syllabus_id')->orderBy('weeks')->where('is_removed', false);
+        return $this->hasMany(SyllabusCourseLearningOutcome::class, 'course_syllabus_id')->orderBy('weeks', 'asc')->where('is_removed', false);
     }
     public function staff()
     {
