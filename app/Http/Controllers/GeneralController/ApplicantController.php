@@ -29,7 +29,7 @@ class ApplicantController extends Controller
     # Dashboard Category Function
     public function dashboard_category($_request)
     {
-       
+
         $_course = CourseOffer::find(base64_decode($_request->_course)); // Find a Course
         $_categories = array(
             array('view' => 'verified-applicant', 'function' => 'verified_applicants'),
@@ -58,7 +58,7 @@ class ApplicantController extends Controller
     /* Applicant List View with the different views */
     public function applicant_view(Request $_request)
     {
-       try {
+        try {
             $_courses = CourseOffer::all(); // Get All Course
             $_course = CourseOffer::find(base64_decode($_request->_course)); // Find a Course
             $_data = $this->dashboard_category($_request);
@@ -232,6 +232,16 @@ class ApplicantController extends Controller
         $_examination->is_removed = true;
         $_examination->save();
         return back();
+    }
+    public function applicant_examination_log(Request $_request)
+    {
+        try {
+            $applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
+            $_report = new ApplicantReport();
+            return $_report->applicant_examination_logs($applicant);
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
     }
     public function briefing_notification(Request $_request)
     {

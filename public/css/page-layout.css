@@ -20,8 +20,8 @@ footer {
 
 .page-content {
     top: 1.3in;
-    /* max-height: 50%; */
     overflow: auto;
+    text-align: left;
     margin-right: 25px;
     margin-left: 25px;
     margin-bottom: 25px;
@@ -33,16 +33,16 @@ footer {
     font-family: "Times New Roman", Times, serif;
     border-collapse: collapse;
     width: 100%;
+    text-align: left;
 }
 
 .table-content td,
 .table-content th {
-    /* 
-    padding: 5px, 5px, 10px, 10px; */
     padding-top: 5px;
     padding-bottom: 5px;
     padding-left: 10px;
     font-size: 14px;
+    text-align: left;
 
 }
 
@@ -55,8 +55,7 @@ footer {
 
 }
 
-.table-center td,
-.table-center th, .table-center tr {
+.table-center {
     text-align: center;
 }
 

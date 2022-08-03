@@ -72,6 +72,12 @@ class ApplicantEntranceExamination extends Model
         foreach ($_percent as $key => $value) {
             $_percentage = $_grade >= $value[0]  && $_grade <= $value[1] ? $value[2] : $_percentage;
         }
-        return [$_grade,$_percentage];
+        return [$_grade, $_percentage];
+    }
+
+
+    public function examination_questioner()
+    {
+        return $this->hasMany(ApplicantExaminationAnswer::class, 'examination_id')->orderBy('question_id')->limit(200);
     }
 }

@@ -150,7 +150,8 @@
                                 <div class="col-md">
                                     <a class="btn btn-outline-warning btn-sm rounded-pill btn-form-document mt-2"
                                         href="{{ route('document-notification') }}?_applicant={{ base64_encode($_account->id) }}"
-                                        data-bs-toggle="tooltip" title="" data-bs-original-title="Send a Notification">
+                                        data-bs-toggle="tooltip" title=""
+                                        data-bs-original-title="Send a Notification">
                                         <svg width="20" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
@@ -171,6 +172,8 @@
 @elseif(request()->input('_fill') == 'entrance-examination')
     <div class="tab-content" id="pills-tabContent-2">
         <div class="tab-pane fade active show">
+            <a href="{{ route('applicant-examination-log') }}?_applicant={{ base64_encode($_account->id) }}"
+                class="btn btn-secondary btn-sm">Examination Log</a>
             <div class="row">
                 <div class="col-md">
                     <div class="form-view">
@@ -192,6 +195,7 @@
                         </div>
                     </div>
                 </div>
+             
                 <div class="col-md">
                     <p>
                         <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_account->id) }}"
@@ -233,6 +237,8 @@
                     @endforeach
                 @endif
             @endforeach
+
+            
         </div>
     </div>
 @else
@@ -369,8 +375,7 @@
                             <small for="example-text-input" class="form-control-label">SCHOOL
                                 NAME</small>
 
-                            <span
-                                class="form-control">{{ $_account->applicant->elementary_school_name ?: '' }}</span>
+                            <span class="form-control">{{ $_account->applicant->elementary_school_name ?: '' }}</span>
                         </div>
                     </div>
                     <div class="col-xl-4 col-md mb-xl-0">
@@ -378,16 +383,14 @@
                             <small for="example-text-input" class="form-control-label">YEAR
                                 GRADUATED</small>
 
-                            <span
-                                class="form-control">{{ $_account->applicant->elementary_school_year ?: '' }}</span>
+                            <span class="form-control">{{ $_account->applicant->elementary_school_year ?: '' }}</span>
                         </div>
                     </div>
                     <div class="col-xl-12 col-md mb-xl-0">
                         <div class="form-group">
                             <small for="example-text-input" class="form-control-label">SCHOOL
                                 ADDRESS</small>
-                            <span
-                                class="form-control">{{ $_account->applicant->elementary_school_address }}</span>
+                            <span class="form-control">{{ $_account->applicant->elementary_school_address }}</span>
                         </div>
                     </div>
                 </div>
@@ -415,8 +418,7 @@
                         <div class="form-group">
                             <small for="example-text-input" class="form-control-label">SCHOOL
                                 ADDRESS</small>
-                            <span
-                                class="form-control">{{ $_account->applicant->junior_high_school_address }}</span>
+                            <span class="form-control">{{ $_account->applicant->junior_high_school_address }}</span>
                         </div>
                     </div>
                 </div>
@@ -446,8 +448,7 @@
                         <div class="form-group">
                             <small for="example-text-input" class="form-control-label">SCHOOL
                                 ADDRESS</small>
-                            <span
-                                class="form-control">{{ $_account->applicant->senior_high_school_address }}</span>
+                            <span class="form-control">{{ $_account->applicant->senior_high_school_address }}</span>
                         </div>
                     </div>
                 </div>
