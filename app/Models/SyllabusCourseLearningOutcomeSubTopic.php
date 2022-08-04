@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SyllabusCourseSubTopic extends Model
+class SyllabusCourseLearningOutcomeSubTopic extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'topic_id',
-        'sub_topic',
+        'sub_topic_id',
+        'learning_outcome_content',
     ];
 }

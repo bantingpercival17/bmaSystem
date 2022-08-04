@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use CreateSyllabusCourseLearningOutcomesTable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,5 +27,9 @@ class SyllabusCourseLearningOutcome extends Model
     public function materials()
     {
         return $this->hasOne(SyllabusCourseLearningTopicMaterials::class, 'topic_id')->where('is_removed', false);
+    }
+    public function sub_topics()
+    {
+        return $this->hasMany(SyllabusCourseSubTopicLearningOutcome::class, 'topic_id')->where('is_removed', false);
     }
 }

@@ -63,109 +63,98 @@
 
 @if (request()->input('section') && request()->input('section') == 'course-topic')
     <label for="" class="fw-bolder text-primary h6">COURSE TOPIC</label>
+    <label class="badge bg-primary btn-add float-end" data-bs-toggle="modal" data-bs-target=".model-add-topic"
+        data-title="CREATE COURSE TOPIC">
+        ADD COURSE TOPIC
+    </label>
     <div class="learning-outcome">
+        {{-- <form action="{{ route('teacher.syllabus-learning-outcome') }}" method="post" id="form-learning-outcome">
+            @csrf
+            <input type="hidden" name="_syllabus" value="{{ base64_encode($_course_syllabus->id) }}">
+            <div class="row">
+                <div class="col-md form-group">
+                    <small class="fw-bolder">COURSE OUTCOME</small>
+                    <select name="_course_outcome" id="" class="form-select">
+                        @foreach ($_course_syllabus->course_outcome as $co)
+                            <option value="{{ $co->id }}">{{ $co->course_outcome }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3 form-group">
+                    <small class="fw-bolder">TERM</small>
+                    <select name="_term" id="" class="form-select">
+                        <option value="midterm">MIDTERM</option>
+                        <option value="finals">FINALS</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md form-group">
+                    <small class="fw-bolder">COURSE TOPIC</small>
+                    <input type="text" class="form-control" name="_learning_outcomes">
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <small class="fw-bolder">WEEK/S</small>
+                    <select name="weeks[]" id="" class="form-select form-multiple-select"
+                        placeholder="Select Teaching Aids" multiple="multiple">
+                        @for ($i = 1; $i <= 18; $i++)
+                            <option value="week-{{ $i }}">Week {{ $i }}</option>
+                        @endfor
+                    </select>
+
+                </div>
+                <div class="col-md form-group">
+                    <small class="fw-bolder">THEORETICAL</small>
+                    <input type="number" class="form-control" name="_theoretical">
+                </div>
+                <div class="col-md-4 form-group">
+                    <small class="fw-bolder">DEMONSTRATION / PRACTICAL WORK</small>
+                    <input type="number" class="form-control" name="_demonstration">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md form-group">
+                    <small class="fw-bolder">REFERENCE/ BIBLIOGRAHIES</small>
+                    <select name="references[]" id="" class="form-select form-multiple-select"
+                        placeholder="Select Teaching Aids" multiple="multiple">
+                        @if ($_course_syllabus->details)
+
+                            @foreach (json_decode($_course_syllabus->details->references) as $key => $item)
+                                <option value="{{ $item }}">{{ $item }}</option>
+                            @endforeach
+                        @else
+                            <option value="" disabled>NO CONTENT</option>
+                        @endif
+                    </select>
+                </div>
+                <div class="col-md form-group">
+                    <small class="fw-bolder">TEACHING AIDS</small>
+                    <select name="teaching_aids[]" id="" class="form-select form-multiple-select"
+                        placeholder="Select Teaching Aids" multiple="multiple">
+                        @if ($_course_syllabus->details)
+
+                            @foreach (json_decode($_course_syllabus->details->teaching_aids) as $key => $item)
+                                <option value="{{ $item }}">{{ $item }}</option>
+                            @endforeach
+                        @else
+                            <option value="" disabled>NO CONTENT</option>
+                        @endif
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md">
+                    <button class="btn btn-primary add-stcw" data-form="form-learning-outcome">Add Learning
+                        Outcome</button>
+                </div>
+            </div>
+        </form> --}}
         @if (count($_course_syllabus->learning_outcomes) > 0)
             <label for="" class="fw-bolder text-primary h6">CREATE COURSE TOPIC</label>
-            <form action="{{ route('teacher.syllabus-learning-outcome') }}" method="post" id="form-learning-outcome">
-                @csrf
-                <input type="hidden" name="_syllabus" value="{{ base64_encode($_course_syllabus->id) }}">
-                <div class="row">
-                    <div class="col-md form-group">
-                        <small class="fw-bolder">COURSE OUTCOME</small>
-                        <select name="_course_outcome" id="" class="form-select">
-                            @foreach ($_course_syllabus->course_outcome as $co)
-                                <option value="{{ $co->id }}">{{ $co->course_outcome }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md form-group">
-                        <small class="fw-bolder">TERM</small>
-                        <select name="_term" id="" class="form-select">
-                            <option value="midterm">MIDTERM</option>
-                            <option value="finals">FINALS</option>
-                        </select>
-                    </div>
 
-                    <div class="col-md form-group">
-                        <small class="fw-bolder">THEORETICAL</small>
-                        <input type="number" class="form-control" name="_theoretical">
-                    </div>
-                    <div class="col-md-4 form-group">
-                        <small class="fw-bolder">DEMONSTRATION / PRACTICAL WORK</small>
-                        <input type="number" class="form-control" name="_demonstration">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md form-group">
-                        <small class="fw-bolder">COURSE TOPIC</small>
-                        <input type="text" class="form-control" name="_learning_outcomes">
-                    </div>
-
-                </div>
-                <div class="row">
-                    <div class="col-md-2 form-group">
-                        <small class="fw-bolder">WEEK/S</small>
-                        <div class="">
-                            @for ($i = 1; $i <= 18; $i++)
-                                <div class="form-check d-block col-md">
-                                    <input class="form-check-input" type="checkbox" value="week-{{ $i }}"
-                                        name="weeks[]" id="flexCheckDefault{{ $i }}">
-                                    <label class="form-check-label" for="flexCheckDefault{{ $i }}">
-                                        Week {{ $i }}
-                                    </label>
-                                </div>
-                            @endfor
-                        </div>
-
-                    </div>
-                    <div class="col-md form-group">
-                        <small class="fw-bolder">REFERENCE/ BIBLIOGRAHIES</small>
-                        <div class="">
-
-                            @if ($_course_syllabus->details)
-                                @foreach (json_decode($_course_syllabus->details->references) as $key => $item)
-                                    <div class="form-check d-block col-md">
-                                        <input class="form-check-input" type="checkbox" value="{{ $item }}"
-                                            name="references[]" id="reference{{ $key }}">
-                                        <label class="form-check-label" for="reference{{ $key }}">
-                                            {{-- {{ substr($item, 0, 20) }} --}}
-                                            {{ $item }}
-                                        </label>
-                                    </div>
-                                @endforeach
-                            @else
-                                <p>No Course Details</p>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="col-md form-group">
-                        <small class="fw-bolder">TEACHING AIDS</small>
-                        <div class="">
-                            @if ($_course_syllabus->details)
-                                @foreach (json_decode($_course_syllabus->details->teaching_aids) as $key => $item)
-                                    <div class="form-check d-block ">
-                                        <input class="form-check-input" type="checkbox" value="{{ $item }}"
-                                            name="teaching_aids[]" id="teaching-aids-{{ $key }}">
-                                        <label class="form-check-label" for="teaching-aids-{{ $key }}">
-                                            {{-- {{ substr($item, 0, 2) }} --}}
-                                            {{ $item }}
-                                        </label>
-                                    </div>
-                                @endforeach
-                            @else
-                                <p>No Course Details</p>
-                            @endif
-
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md">
-                        <button class="btn btn-primary add-stcw" data-form="form-learning-outcome">Add Learning
-                            Outcome</button>
-                    </div>
-                </div>
-            </form>
             <div class="learning-outline-content mt-5">
                 @foreach ($_course_syllabus->learning_outcomes as $key => $learning_outcome)
                     <div class="lo-{{ $learning_outcome->id }} mt-4">
@@ -211,7 +200,7 @@
                                 <label for="" class="text-primary h5">
                                     @if ($learning_outcome->reference && $learning_outcome->reference != 'null')
                                         @foreach (json_decode($learning_outcome->reference) as $item)
-                                            {{ substr($item, 0, 3) }}
+                                            {{ substr($item, 0, 2) }}
                                         @endforeach
                                     @endif
 
@@ -223,7 +212,7 @@
 
                                     @if ($learning_outcome->teaching_aids && $learning_outcome->teaching_aids != 'null')
                                         @foreach (json_decode($learning_outcome->teaching_aids) as $item)
-                                            {{ substr($item, 0, 3) }},
+                                            {{ substr($item, 0, 2) }},
                                         @endforeach
                                     @endif
 
@@ -304,5 +293,110 @@
             <p>ADD LEARNING OUTCOME</p>
         @endif
     </div>
+    {{-- Add Modal & Update --}}
+    <div class="modal fade model-add-topic" tabindex="-1" role="dialog" aria-labelledby="model-add-topicTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title modal-title" id="model-add-topicTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('teacher.syllabus-learning-outcome') }}" method="post"
+                        id="form-learning-outcome">
+                        @csrf
+                        <input type="hidden" name="_syllabus" value="{{ base64_encode($_course_syllabus->id) }}">
+                        <div class="row">
+                            <div class="col-md form-group">
+                                <small class="fw-bolder">COURSE OUTCOME</small>
+                                <select name="_course_outcome" id="" class="form-select">
+                                    @foreach ($_course_syllabus->course_outcome as $co)
+                                        <option value="{{ $co->id }}">{{ $co->course_outcome }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <small class="fw-bolder">TERM</small>
+                                <select name="_term" id="" class="form-select">
+                                    <option value="midterm">MIDTERM</option>
+                                    <option value="finals">FINALS</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md form-group">
+                                <small class="fw-bolder">COURSE TOPIC</small>
+                                <input type="text" class="form-control" name="_learning_outcomes">
+                            </div>
 
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <small class="fw-bolder">WEEK/S</small>
+                                <select name="weeks[]" class="form-select form-multiple-select" style="width: 100%"
+                                    multiple="multiple">
+                                    @for ($i = 1; $i <= 18; $i++)
+                                        <option value="week-{{ $i }}">Week {{ $i }}</option>
+                                    @endfor
+                                </select>
+
+                            </div>
+                            <div class="col-md form-group">
+                                <small class="fw-bolder">THEORETICAL</small>
+                                <input type="number" class="form-control" name="_theoretical">
+                            </div>
+                            <div class="col-md-5 form-group">
+                                <small class="fw-bolder">DEMONSTRATION / PRACTICAL WORK</small>
+                                <input type="number" class="form-control" name="_demonstration">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md form-group">
+                                <small class="fw-bolder">REFERENCE/ BIBLIOGRAHIES</small>
+                                <select name="references[]" id="" class="form-select form-multiple-select"
+                                    style="width: 100%" multiple="multiple">
+                                    @if ($_course_syllabus->details)
+
+                                        @foreach (json_decode($_course_syllabus->details->references) as $key => $item)
+                                            <option value="{{ $item }}">{{ $item }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="" disabled>NO CONTENT</option>
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-md form-group">
+                                <small class="fw-bolder">TEACHING AIDS</small>
+                                <select name="teaching_aids[]" id=""
+                                    class="form-select form-multiple-select" style="width: 100%" multiple="multiple">
+                                    @if ($_course_syllabus->details)
+
+                                        @foreach (json_decode($_course_syllabus->details->teaching_aids) as $key => $item)
+                                            <option value="{{ $item }}">{{ $item }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="" disabled>NO CONTENT</option>
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                        {{-- <div class="row">
+                            <div class="col-md">
+                                <button class="btn btn-primary add-stcw" data-form="form-learning-outcome">Add
+                                    Learning
+                                    Outcome</button>
+                            </div>
+                        </div> --}}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm btn-modal-form"
+                        data-form="form-learning-outcome">SAVE
+                        CONTENT</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endif

@@ -27,6 +27,24 @@
                                 <td>
                                     <b> {{ $count + 1 . '. ' . $learning_outcome->learning_outcomes }}
                                     </b>
+                                    @if (count($learning_outcome->sub_topics) > 0)
+                                        @php
+                                            $_learning_outcome_count = 0;
+                                        @endphp
+                                        @foreach ($learning_outcome->sub_topics as $subTopic => $item)
+                                            <div class="sub-topic-details" style=" text-indent: 20px;">
+                                                <label for=""><b>{{ strtoupper($item->sub_topic) }}</b></label>
+                                                @if (count($item->learning_outcome_list) > 0)
+                                                    @foreach ($item->learning_outcome_list as $item2)
+                                                        <p style="margin: 0px; padding:0px;">
+                                                                {{ $count + 1 . '.' . ($_learning_outcome_count += 1) . '.' . $item2->learning_outcome_content }}
+                                                            </p>
+                                                    @endforeach
+                                                @endif
+                                                <br>
+                                            </div>
+                                        @endforeach
+                                    @endif
                                 </td>
                                 <td>
                                     @if ($learning_outcome->reference && $learning_outcome->reference != 'null')

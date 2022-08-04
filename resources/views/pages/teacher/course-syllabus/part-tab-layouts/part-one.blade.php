@@ -275,14 +275,14 @@
                                                         <label class="badge bg-primary btn-add" data-bs-toggle="modal"
                                                             data-bs-target=".model-add-reference" data-title="ADD KUP"
                                                             data-id="{{ base64_encode($competence->id) }}"
-                                                            data-stcw="competence"
-                                                            data-url="{{ route('teacher.stcw-reference-add') . '?stcw_reference=stcw-table&stcw=' . base64_encode($competence->id) }}">
+                                                            data-stcw="kup"
+                                                            data-url="{{ route('teacher.stcw-reference-add') . '?stcw_reference=kup&stcw=' . base64_encode($competence->id) }}">
                                                             ADD KUP
                                                         </label>
                                                     </div>
                                                     <div class="col-md">
                                                         <small class="text-primary btn-remove"
-                                                            data-url="{{ route('teacher.stcw-reference-remove') . '?stcw_reference=competence&stcw=' . base64_encode($competence->id) }}">REMOVE</small>
+                                                            data-url="{{ route('teacher.stcw-reference-remove') . '?stcw_reference=kup&stcw=' . base64_encode($competence->id) }}">REMOVE</small>
                                                     </div>
                                                 </div>
                                             </div>

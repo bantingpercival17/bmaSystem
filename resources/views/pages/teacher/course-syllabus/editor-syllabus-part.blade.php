@@ -79,12 +79,17 @@ $_title = 'Course Syllabus';
     <script>
         initSample();
         let editor = ['course_limitations', 'faculty_requirements',
-            'teaching_facilities'/* , 'teaching_aids', 'references' */
+            'teaching_facilities' /* , 'teaching_aids', 'references' */
         ]
         editor.forEach(element => {
             CKEDITOR.replace(element)
         });
         CKEDITOR.replace('modal-editor')
+        $(document).ready(function() {
+            $('.form-multiple-select').select2({
+                dropdownParent: $('.model-add-topic')
+            });
+        });
         // STCW REFERENCE
         $('.add-stcw').click(function(event) {
             Swal.fire({

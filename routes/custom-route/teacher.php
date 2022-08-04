@@ -55,6 +55,8 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     // LEARNING OUTCOME
     Route::post('/course-syllabus/editor/store-course-learning-outcome', [CourseSyllabusController::class, 'store_course_learning_outline'])->name('teacher.syllabus-learning-outcome');
     Route::get('/course-syllabus/editor/remove-course-learning-outcome', [CourseSyllabusController::class, 'remove_course_learning_outline'])->name('teacher.syllabus-learning-outcome-remove');
+    Route::post('/course-syllabus/editor/sub-topic/store', [CourseSyllabusController::class, 'store_sub_topic'])->name('teacher.sub-topic-store');
+    Route::post('/course-syllabus/editor/sub-topic-learning-outcome/store', [CourseSyllabusController::class, 'store_sub_topic_learning_outcome'])->name('teacher.sub-topic-learning-outcome-store');
     // LEARNING TOPIC MATERIALS
     Route::post('/course-syllabus/editor/store-course-topic-materials', [CourseSyllabusController::class, 'learning_topic_materials'])->name('teacher.topic-materials'); // Add Topic Materials
     Route::get('/course-syllabus/preview', [CourseSyllabusController::class, 'learning_topic_preview'])->name('teacher.learning-topic-preview');

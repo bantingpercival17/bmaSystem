@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSyllabusCourseSubTopicsTable extends Migration
+class CreateSyllabusCourseLearningOutcomeSubTopicsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateSyllabusCourseSubTopicsTable extends Migration
      */
     public function up()
     {
-        Schema::create('syllabus_course_sub_topics', function (Blueprint $table) {
+        Schema::create('syllabus_course_learning_outcome_sub_topics', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('topic_id');
-            $table->foreign('topic_id')->references('id')->on('syllabus_course_learning_outcomes');
-            $table->string('sub_topic');
+            $table->unsignedBigInteger('sub_topic_id');
+            $table->foreign('sub_topic_id')->references('id')->on('syllabus_course_sub_topic_learning_outcomes');
+            $table->string('learning_outcome_content');
             $table->boolean('is_removed')->default(0);
             $table->timestamps();
         });
@@ -30,6 +30,6 @@ class CreateSyllabusCourseSubTopicsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('syllabus_course_sub_topics');
+        Schema::dropIfExists('syllabus_course_learning_outcome_sub_topics');
     }
 }

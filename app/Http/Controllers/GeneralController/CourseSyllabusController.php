@@ -7,8 +7,10 @@ use App\Models\CourseSyllabus;
 use App\Models\Subject;
 use App\Models\SyllabusCourseDetails;
 use App\Models\SyllabusCourseLearningOutcome;
+use App\Models\SyllabusCourseLearningOutcomeSubTopic;
 use App\Models\SyllabusCourseLearningTopicMaterials;
 use App\Models\SyllabusCourseOutcome;
+use App\Models\SyllabusCourseSubTopicLearningOutcome;
 use App\Models\SyllabusStcwCompetence;
 use App\Models\SyllabusStcwFunction;
 use App\Models\SyllabusStcwKup;
@@ -255,6 +257,7 @@ class CourseSyllabusController extends Controller
             // TODO:: Audit Error
         }
     }
+    # CREATE LEARNING OUTCOME
     public function store_course_learning_outline(Request $_request)
     {
         try {
@@ -268,8 +271,7 @@ class CourseSyllabusController extends Controller
                 'reference' => json_encode($_request->references),
                 'teaching_aids' => json_encode($_request->teaching_aids),
                 'term' => $_request->_term
-            );
-            //return dd ($_content);
+            ); // SET THE CONTENT OF DATA TO STORE IN DATA BASE
             SyllabusCourseLearningOutcome::create($_content);
             return back()->with('success', 'Successfuly Create a Learning Outcomes');
         } catch (Exception $err) {
@@ -277,6 +279,7 @@ class CourseSyllabusController extends Controller
             // TODO:: Audit Error
         }
     }
+    # REMOVE LEARNNIG OUTCOMES
     public function remove_course_learning_outline(Request $_request)
     {
         try {
@@ -303,6 +306,38 @@ class CourseSyllabusController extends Controller
             );
             SyllabusCourseLearningTopicMaterials::create($_content);
             return back()->with('success', 'Successfully added a Materials');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    # ADD SUB TOPIC IN LEARNING OUTCOME TOPIC
+    public function store_sub_topic(Request $_request)
+    {
+        try {
+            $_content = array(
+                'topic_id' => base64_decode($_request->learning_topic),
+                'sub_topic' => $_request->content,
+            );
+            // /return $_content;
+            SyllabusCourseSubTopicLearningOutcome::create($_content);
+            return back()->with('success', 'Successfully added Sub-Topic');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    # ADD LEARNING OUTCOME FOR SUB-TOPICS
+    public function store_sub_topic_learning_outcome(Request $_request)
+    {
+        try {
+            $_content = array(
+                'sub_topic_id' => base64_decode($_request->sub_topic),
+                'learning_outcome_content' => $_request->learning_outcome,
+            );
+            // /return $_content;
+            SyllabusCourseLearningOutcomeSubTopic::create($_content);
+            return back()->with('success', 'Successfully added Learning Outcome');
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
