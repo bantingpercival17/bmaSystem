@@ -40,7 +40,7 @@ class PaymentAssessment extends Model
     }
     public function online_payment_transaction()
     {
-        return $this->hasMany(PaymentTrasanctionOnline::class, 'assessment_id')->where('is_removed', false);
+        return $this->hasMany(PaymentTrasanctionOnline::class, 'assessment_id')->orderBy('is_approved')->where('is_removed', false);
     }
     public function payment_assessment_paid()
     {

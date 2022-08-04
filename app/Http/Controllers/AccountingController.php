@@ -418,7 +418,7 @@ class AccountingController extends Controller
             $_payment = PaymentTransaction::create($_payment_details);
 
             // If the Student have Online Payment Transaction
-               if ($_request->_online_payment) {
+            if ($_request->_online_payment) {
                 $_online_payment = PaymentTrasanctionOnline::find($_request->_online_payment);
                 $_online_payment->payment_id = $_payment->id;
                 $_online_payment->is_approved = 1;
@@ -437,7 +437,7 @@ class AccountingController extends Controller
                 $_section =   Section::where('academic_id', Auth::user()->staff->current_academic()->id)
                     ->where('course_id', $_payment_assessment->enrollment_assessment->course_id)
                     ->where('year_level', $_year_level)
-                    ->whereNot('section_name','like',"%BRIDGING%")
+                    ->whereNot('section_name', 'like', "%BRIDGING%")
                     ->where('is_removed', false)
                     ->where(function ($_sub_query) {
                         $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
@@ -472,7 +472,17 @@ class AccountingController extends Controller
         $_online_payment->save();
         return back()->with('success', 'Transaction Complete');
     }
-
+    public function online_payment_transaction_removed(Request $_request)
+    {
+        try {
+            $_transaction = PaymentTrasanctionOnline::find(base64_decode($_request->transaction));
+            $_transaction->is_removed = 1;
+            $_transaction->save();
+            return back()->with('success', 'Successfully Removed');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
     public function applicant_transaction_view(Request $_request)
     {
         try {
