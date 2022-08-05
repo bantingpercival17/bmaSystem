@@ -233,28 +233,40 @@ class Staff extends Model
     }
     public function navigation_dropdown_url()
     {
-        $_url = route('registrar.enrollment');
-        $_url = request()->is('registrar/dashboard*') ? route('registrar.dashboard') : $_url;
-        $_url = request()->is('registrar/semestral-clearance*') ? route('registrar.semestral-clearance') : $_url;
-        $_url = request()->is('registrar/sections*') ? route('registrar.section-view') : $_url;
-        $_url = request()->is('registrar/subjects*') ? route('registrar.subject-view') : $_url;
-        $_url = request()->is('teacher/subjects*') ? route('teacher.subject-list') : $_url;
-        $_url = request()->is('department-head/grade-submission*') ? route('department-head.grade-submission') : $_url;
-        $_url = request()->is('department-head/semestral-clearance*') ? route('department-head.e-clearance') : $_url;
-        $_url = request()->is('dean/e-clearance*') ? route('dean.e-clearance') : $_url;
-        $_url = request()->is('dean/grading-verification*') ? route('dean.grade-submission') : $_url;
-        $_url = request()->is('accounting/particular/fee*') ? route('accounting.particular-fee-view') : $_url;
-        $_url = request()->is('accounting/fees*') ? route('accounting.fees') : $_url;
-        $_url = request()->is('accounting/semestral-clearance*') ? route('accounting.semestral-clearance') : $_url;
-        $_url = request()->is('executive/semestral-clearance*') ? route('exo.semestral-clearance') : $_url;
-        $_url = request()->is('librarian/semestral-clearance*') ? route('librarian.semestral-clearance') : $_url;
-        $_url = request()->is('administrator/semestral-clearance*') ? route('admin.semestral-clearance') : $_url;
-        $_url = request()->is('registrar/semestral-grade*') ? route('registrar.semestral-grades') : $_url;
-        $_url = request()->is('administrator/dashboard*') ? route('admin.dashboard') : $_url;
-        $_url = request()->is('dashboard*') ? route('admin.dashboard') : $_url;
-        $_url = request()->is('administrator/enrollment*') ? route('admin.dashboard') : $_url;
-        $_url = request()->is('medical/overview*') ? route('medical.overview') : $_url;
-        return $_url;
+        $_route = route('registrar.enrollment');
+        $_links = array(
+            array('registrar/dashboard*', 'registrar.dashboard'),
+            array('registrar/enrollment*', 'registrar.enrollment'),
+            array('registrar/enrollment*', 'registrar.enrollment'),
+            array('registrar/enrollment*', 'registrar.enrollment'),
+            array('registrar/semestral-clearance*', 'registrar.semestral-clearance'),
+            array('registrar/sections*', 'registrar.section-view'),
+            array('registrar/subjects*', 'registrar.subject-view'),
+            array('registrar/semestral-grade*', 'registrar.semestral-grades'),
+            array('teacher/subjects*', 'teacher.subject-list'),
+            array('department-head/grade-submission*', 'department-head.grade-submission'),
+            array('department-head/semestral-clearance*', 'department-head.e-clearance'),
+            array('dean/e-clearance*', 'dean.e-clearance'),
+            array('dean/grading-verification*', 'dean.grade-submission'),
+            array('accounting/payment-transaction*', 'accounting.payment-transaction'),
+            array('accounting/assessment-fee*', 'accounting.payment-assessment'),
+            array('accounting/particular/fee*', 'accounting.particular-fee-view'),
+            array('accounting/fees*', 'accounting.fees'),
+            array('accounting/semestral-clearance*', 'accounting.semestral-clearance'),
+            array('executive/semestral-clearance*', 'exo.semestral-clearance'),
+            array('librarian/semestral-clearance*', 'librarian.semestral-clearance'),
+            array('administrator/semestral-clearance*', 'admin.semestral-clearance'),
+
+            array('administrator/dashboard*', 'admin.dashboard'),
+            array('dashboard*', 'admin.dashboard'),
+            array('administrator/enrollment*', 'admin.dashboard'),
+            array('medical/overview*', 'medical.overview'),
+        );
+        foreach ($_links as $key => $link) {
+            $_route = request()->is($link[0]) ? route($link[1]) : $_route;
+        }
+
+        return $_route;
     }
     public function routes_navigation()
     {

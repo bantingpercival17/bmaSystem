@@ -350,13 +350,16 @@ class AccountingController extends Controller
             $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
             $_vouchers = Voucher::where('is_removed', false)->get();
             $_students = StudentDetails::select('student_details.*')
-                ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
-                ->join('payment_assessments as pa', 'pa.enrollment_id', 'ea.id')
-                ->join('payment_trasanction_onlines as pto', 'pto.assessment_id', 'pa.id')
-                ->where('pto.is_removed', false)
-                ->whereNull('pto.is_approved')
-                ->groupBy('student_details.id')
-                ->paginate(10);
+                ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
+                ->where('enrollment_assessments.is_removed', false)
+                //->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                ->where('payment_assessments.is_removed', false)
+                ->join('payment_trasanction_onlines', 'payment_trasanction_onlines.assessment_id', 'payment_assessments.id')
+                ->whereNull('payment_trasanction_onlines.is_approved')
+                ->where('payment_trasanction_onlines.is_removed', false)
+                ->groupBy('student_details.id')->get();
+            //return $_students->count();
             $_additional_fees = StudentDetails::select('student_details.*')
                 ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
                 ->join('payment_additional_transactions', 'payment_additional_transactions.enrollment_id', 'enrollment_assessments.id')
@@ -366,10 +369,8 @@ class AccountingController extends Controller
             $_students = $_request->_students ? $_student_detials->student_search($_request->_students) : $_students;
             $_students = $_request->_payment_category == 'additional-payment' ? $_additional_fees : $_students;
             $_online_payment = $_request->payment_approved ? PaymentTrasanctionOnline::find(base64_decode($_request->payment_approved)) : null;
-            // $_ftp = $_student->enrollment_assessment->additional_payment[0]->reciept_attach_path;
-            //Storage::path($_ftp);
-            //return Storage::disk('ftp')->get($_ftp);
-            //Storage::disk('ftp')->get($_ftp);
+
+            //return $_student->enrollment_status();
             return view('pages.accounting.payment.view', compact('_students', '_student', '_vouchers', '_online_payment'));
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
@@ -437,7 +438,7 @@ class AccountingController extends Controller
                 $_section =   Section::where('academic_id', Auth::user()->staff->current_academic()->id)
                     ->where('course_id', $_payment_assessment->enrollment_assessment->course_id)
                     ->where('year_level', $_year_level)
-                    ->whereNot('section_name', 'like', "%BRIDGING%")
+                    ->where('section_name', 'not like', '%BRIDING%')
                     ->where('is_removed', false)
                     ->where(function ($_sub_query) {
                         $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
