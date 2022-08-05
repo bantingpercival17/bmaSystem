@@ -334,8 +334,15 @@ class ApplicantController extends Controller
                 ->where('applicant_medical_appointments.is_approved', true)->groupBy('applicant_detials.applicant_id')->get();
             // return $_applicants;
         }
-        // $_result = array(array('passed'), array('pending'), array('failed'));
-        return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants', '_results'));
+        $_table_content = array(
+            array('waiting for Scheduled', 'waiting_scheduled'),
+            array('scheduled', 'scheduled'),
+            array('waiting for Medical result', 'waiting_result'),
+            array('passed', 'medical_result_passed'),
+            array('pending', 'medical_result_pending'),
+            array('failed', 'medical_result_failed')
+        );
+        return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants', '_results', '_table_content'));
     }
     public function medical_schedule_download(Request $_request)
     {

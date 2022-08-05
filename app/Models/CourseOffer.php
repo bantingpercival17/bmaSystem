@@ -804,6 +804,7 @@ class CourseOffer extends Model
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
             ->where('ab.is_removed', false)
@@ -814,10 +815,51 @@ class CourseOffer extends Model
     {
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
             ->where('ab.is_removed', false)
             ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
             ->where('ama.is_removed', false)->where('is_approved', true);
+    }
+    public function medical_result_passed()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('applicant_accounts.is_removed', false)
+            ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->where('ab.is_removed', false)
+            ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->where('ama.is_removed', false)->where('is_approved', true)
+            ->join('applicant_medical_results', 'applicant_medical_results.applicant_id', 'ab.applicant_id')
+            ->where('applicant_medical_results.is_fit', true)->where('applicant_medical_results.is_removed', false);
+    }
+    public function medical_result_pending()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('applicant_accounts.is_removed', false)
+            ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->where('ab.is_removed', false)
+            ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->where('ama.is_removed', false)->where('is_approved', true)
+            ->join('applicant_medical_results', 'applicant_medical_results.applicant_id', 'ab.applicant_id')
+            ->where('applicant_medical_results.is_pending', false)
+            ->where('applicant_medical_results.is_removed', false);
+    }
+    public function medical_result_failed()
+    {
+        return $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('applicant_accounts.is_removed', false)
+            ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->where('ab.is_removed', false)
+            ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->where('ama.is_removed', false)->where('is_approved', true)
+            ->join('applicant_medical_results', 'applicant_medical_results.applicant_id', 'ab.applicant_id')
+            ->where('applicant_medical_results.is_fit', 2)->where('applicant_medical_results.is_removed', false);
     }
 }

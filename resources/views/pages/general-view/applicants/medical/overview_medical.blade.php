@@ -21,7 +21,55 @@ $_title = 'Applicant Medical Overview';
 @section('page-content')
     <section>
         <p class="display-6 fw-bolder text-primary">Applicant Medical Overview</p>
-        <div class="row">
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                    <h4 class="card-title">Summary Overview</h4>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive mt-4">
+                    <table id="basic-table" class="table table-striped mb-0" role="grid">
+                        <thead>
+                            <tr class="text-center">
+                                <th>COURSE</th>
+                                @foreach ($_table_content as $key => $item)
+                                    <th>
+                                        {{ strtoupper($item[0]) }}
+                                    </th>
+                                @endforeach
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($_courses as $_course)
+                                <tr>
+                                    <td>{{ $_course->course_name }}</td>
+                                    @foreach ($_table_content as $key => $item)
+                                        @php
+                                        $_route_link =
+                                        route('medical.overview')."?".(request()->input('_academic') ?
+                                        '_academic=' . request()->input('_academic') . '&' :
+                                        '')."view=".$item[0];
+                                        @endphp
+
+                                        <td> <a href="{{ $_route_link }}">{{ count($_course[$item[1]]) }}</a>
+                                        </td>
+                                    @endforeach
+                                    {{-- <td>{{ count($_course->scheduled) }}</td>
+                                    <td>{{ count($_course->waiting_result) }}</td>
+                                    <td>{{ count($_course->medical_result_passed) }}</td>
+                                    <td>{{ count($_course->medical_result_pending) }}</td>
+                                    <td>{{ count($_course->medical_result_failed) }}</td> --}}
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {{-- <div class="row">
             @foreach ($_details as $key => $item)
                 <div class="col-lg col-xl">
                     <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
@@ -51,7 +99,7 @@ $_title = 'Applicant Medical Overview';
                     </div>
                 </div>
             @endforeach
-        </div>
+        </div> --}}
         <div class="row">
             <div class="col-md-8">
                 <form action="{{ request()->url() }}" method="get">
@@ -153,7 +201,10 @@ $_title = 'Applicant Medical Overview';
                                             <a href="{{ route('medical.applicant-appointment') }}?appointment={{ base64_encode($_data->id) }}"
                                                 class="btn btn-sm btn-outline-info mt-2">APPROVED</a>
                                         @endif
-                                        @if (request()->input('view') == 'waiting for Medical result'|| request()->input('view')=='passed'|| request()->input('view')=='pending'|| request()->input('view')=='failed')
+                                        @if (request()->input('view') == 'waiting for Medical result' ||
+                                            request()->input('view') == 'passed' ||
+                                            request()->input('view') == 'pending' ||
+                                            request()->input('view') == 'failed')
                                             @if ($_data->account->medical_result)
                                                 @if ($_data->account->medical_result->is_fit !== null)
                                                     @if ($_data->account->medical_result->is_fit === 1)
@@ -228,7 +279,7 @@ $_title = 'Applicant Medical Overview';
                                     <div class="row">
                                         <div class="col-md">{{ $course->course_code }}</div>
                                         <div class="col-md">
-                                          -
+                                            -
                                         </div>
                                     </div>
                                 @endforeach
