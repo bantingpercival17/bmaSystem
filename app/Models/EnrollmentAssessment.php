@@ -26,6 +26,10 @@ class EnrollmentAssessment extends Model
     {
         return $this->belongsTo(StudentDetails::class, 'student_id');
     }
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
+    }
     public function curriculum()
     {
         return $this->belongsTo(Curriculum::class, 'curriculum_id');

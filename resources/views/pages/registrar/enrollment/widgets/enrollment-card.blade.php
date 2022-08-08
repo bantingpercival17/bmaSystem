@@ -80,9 +80,16 @@
                 <div class="card mt-2">
                     @if ($_student->enrollment_assessment_v2)
                         <div class="card-body">
-                            <span class="badge bg-primary">
-                                Enrollment Assessment Done
-                            </span>
+
+                            <p>
+                                <span class="badge bg-primary">
+                                    Enrollment Assessment Done
+                                </span> <br>
+
+                                <small
+                                    class="fw-bolder text-muted">{{ $_student->enrollment_assessment_v2->staff->user->name . ' - ' . $_student->enrollment_assessment_v2->created_at->format('M d,Y') }}
+                                </small>
+                            </p>
                             @if (!$_student->enrollment_assessment_v2->payment_assessment)
                                 <div class="card-body">
                                     <div class="enrollment-assessment mt-0 me-3">
