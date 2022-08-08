@@ -8,8 +8,9 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ApplicantMedicalList implements FromCollection,  WithMapping, WithHeadings, WithEvents, WithTitle
+class ApplicantMedicalList implements FromCollection,  WithMapping, WithHeadings, WithEvents, WithTitle, ShouldAutoSize
 {
     /**
      * @return \Illuminate\Support\Collection
