@@ -123,22 +123,14 @@ class RegistrarController extends Controller
 
                     return back()->with('success', 'Transaction Successfully.');
                 } else {
-                    /* if ($_student->enrollment_application) { // If Online Enrollee Update Data
-                        $_student->enrollment_application->staff_id = Auth::user()->staff->id;
-                        $_student->enrollment_application->is_approved = 1;
-                        $_student->enrollment_application->save();
-                    } else { // If Onsite Enrollee Store Data
-                        $_details = [
-                            'student_id' => $_student->id,
-                            'academic_id' => Auth::user()->staff->current_academic()->id,
-                            'enrollment_place' => 'onsite',
-                            'staff_id' => Auth::user()->staff->id,
-                            'is_approved' => 1,
-                            'is_removed' => false,
-                        ];
-                        EnrollmentApplication::create($_details);
-                    } */
-                    return back()->with('error', 'This is already Saved');
+                    $_assessment_details = [
+                        "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
+                        "bridging_program" => $_request->_bridging_program ?: "without",
+
+                    ];
+                    $_assessment->update($_assessment_details);
+                    return back()->with('success', 'Successfuly Re-assess');
+                    // return back()->with('error', 'This is already Saved');
                 }
                 //$_student->enrollment_assessment;
             } else {
