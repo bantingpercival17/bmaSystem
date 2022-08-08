@@ -2,9 +2,19 @@
     @foreach ($_students as $_student)
         @if (Auth::user()->staff->current_academic()->semester == 'First Semester')
             @php
-                $_course_color = $_student->enrollment_application->course_id == 1 ? 'bg-info' : '';
-                $_course_color = $_student->enrollment_application->course_id == 2 ? 'bg-primary' : $_course_color;
-                $_course_color = $_student->enrollment_application->course_id == 3 ? 'bg-warning text-white' : $_course_color;
+                if ($_student->enrollment_application) {
+                    $_course_color = $_student->enrollment_application->course_id == 1 ? 'bg-info' : '';
+                    $_course_color = $_student->enrollment_application->course_id == 2 ? 'bg-primary' : $_course_color;
+                    $_course_color = $_student->enrollment_application->course_id == 3 ? 'bg-warning text-white' : $_course_color;
+                } else {
+                    $_course_color = 'text-muted';
+                    if ($_student->enrollment_assessment) {
+                        $_course_color = $_student->enrollment_assessment->course_id == 1 ? 'bg-info' : '';
+                        $_course_color = $_student->enrollment_assessment->course_id == 2 ? 'bg-primary' : $_course_color;
+                        $_course_color = $_student->enrollment_assessment->course_id == 3 ? 'bg-warning text-white' : $_course_color;
+                    }
+                }
+                
             @endphp
             <div class="mb-5">
                 <div class="row no-gutters">
@@ -23,7 +33,7 @@
                                         <div class="col-md">
                                             <small class="fw-bolder">COURSE : </small><br>
                                             <span class="badge {{ $_course_color }}">
-                                                {{ $_student->enrollment_application->course->course_name }}
+                                                {{ ($_student->enrollment_applicantion ? $_student->enrollment_application->course->course_name : $_student->enrollment_assessment) ? $_student->enrollment_assessment->course->course_name : '' }}
                                             </span>
                                         </div>
                                         <div class="col-md">
@@ -42,7 +52,7 @@
                                                 <small class="fw-bolder">SENIOR HIGH SCHOOL STRAND</small><br>
 
                                                 <span class="badge bg-primary">
-                                                    {{ strtoupper($_student->enrollment_application->strand) }}</span>
+                                                    {{ $_student->enrollment_application ? strtoupper($_student->enrollment_application->strand) : '' }}</span>
                                             </div>
                                         </div>
                                     @endif
@@ -83,7 +93,11 @@
                                                 class="form-select form-select-sm mb-3 shadow-none input-course">
                                                 @foreach ($_courses as $course)
                                                     <option value="{{ $course->id }}"
-                                                        {{ $_student->enrollment_application->course_id == $course->id ? 'selected' : '' }}>
+                                                        {{ $_student->enrollment_application
+                                                            ? ($_student->enrollment_application->course_id == $course->id
+                                                                ? 'selected'
+                                                                : '')
+                                                            : '' }}>
                                                         {{ $course->course_name }}</option>
                                                 @endforeach
                                             </select>
