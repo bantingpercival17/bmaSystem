@@ -820,7 +820,9 @@ class CourseOffer extends Model
             ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
             ->where('ab.is_removed', false)
             ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
-            ->where('ama.is_removed', false)->where('is_approved', true);
+            ->where('ama.is_removed', false)->where('is_approved', true)
+            ->leftJoin('applicant_medical_results', 'applicant_medical_results.applicant_id', 'ama.applicant_id')
+            ->whereNull('applicant_medical_results.applicant_id');
     }
     public function medical_result_passed()
     {
@@ -865,6 +867,7 @@ class CourseOffer extends Model
     public function student_medical_scheduled()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
             ->join('student_medical_appointments', 'student_medical_appointments.student_id', 'enrollment_assessments.student_id')
             ->whereNull('student_medical_appointments.is_approved')
             ->where('student_medical_appointments.is_removed', false)
@@ -874,18 +877,20 @@ class CourseOffer extends Model
     public function student_medical_waiting_for_result()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
             ->join('student_medical_appointments', 'student_medical_appointments.student_id', 'enrollment_assessments.student_id')
             ->where('student_medical_appointments.is_approved', true)
             ->where('student_medical_appointments.is_removed', false)
             ->orderBy('student_medical_appointments.appointment_date', 'asc')
             ->groupBy('student_medical_appointments.student_id')
             ->leftJoin('student_medical_results', 'student_medical_results.student_id', 'enrollment_assessments.student_id')
-            ->whereNull('is_fit');
+            ->whereNull('student_medical_results.student_id');
     }
 
     public function student_medical_passed()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
             ->join('student_medical_appointments', 'student_medical_appointments.student_id', 'enrollment_assessments.student_id')
             ->where('student_medical_appointments.is_approved', true)
             ->orderBy('student_medical_appointments.appointment_date', 'asc')
@@ -897,6 +902,7 @@ class CourseOffer extends Model
     public function student_medical_pending()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
             ->join('student_medical_appointments', 'student_medical_appointments.student_id', 'enrollment_assessments.student_id')
             ->where('student_medical_appointments.is_approved', true)
             ->orderBy('student_medical_appointments.appointment_date', 'asc')
@@ -908,6 +914,7 @@ class CourseOffer extends Model
     public function student_medical_failed()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
             ->join('student_medical_appointments', 'student_medical_appointments.student_id', 'enrollment_assessments.student_id')
             ->where('student_medical_appointments.is_approved', true)
             ->orderBy('student_medical_appointments.appointment_date', 'asc')
@@ -915,5 +922,31 @@ class CourseOffer extends Model
             ->join('student_medical_results', 'student_medical_results.student_id', 'enrollment_assessments.student_id')
             ->where('student_medical_results.is_removed', false)
             ->where('is_fit', false);
+    }
+    # Student Medical List with Year
+    public function student_medical_scheduled_year($data)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('student_medical_appointments', 'student_medical_appointments.student_id', 'enrollment_assessments.student_id')
+            ->where('enrollment_assessments.year_level', $data)
+           // ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->whereNull('student_medical_appointments.is_approved')
+            ->where('student_medical_appointments.is_removed', false)
+            ->orderBy('student_medical_appointments.appointment_date', 'asc')
+            ->groupBy('student_medical_appointments.student_id');
+    }
+    public function student_medical_waiting_for_result_year($data)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
+            ->where('enrollment_assessments.year_level', $data)
+            //->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->join('student_medical_appointments', 'student_medical_appointments.student_id', 'enrollment_assessments.student_id')
+            ->where('student_medical_appointments.is_approved', true)
+            ->where('student_medical_appointments.is_removed', false)
+            ->orderBy('student_medical_appointments.appointment_date', 'asc')
+            ->groupBy('student_medical_appointments.student_id')
+            ->leftJoin('student_medical_results', 'student_medical_results.student_id', 'enrollment_assessments.student_id')
+            ->whereNull('student_medical_results.student_id');
     }
 }

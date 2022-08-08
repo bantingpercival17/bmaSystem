@@ -26,10 +26,7 @@ class CourseApplicantMedicalList implements WithMultipleSheets
             $sheet_name = $value->course_name;
             $sheets[$key] = new ApplicantMedicalList($_data, $sheet_name);
         }
-        //$_data_sheet = $this->course->section([Auth::user()->staff->current_academic()->id, $this->level])->get();
-        /*  foreach ($_data_sheet as $key => $_data) {
-            $sheets[$key] = new SectionStudentList($_data);
-        } */
+       
         return $sheets;
     }
 }

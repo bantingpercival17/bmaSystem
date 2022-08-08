@@ -56,7 +56,7 @@ $_title = 'Applicant Medical Overview';
                                         '')."view=".$item[0];
                                         @endphp
 
-                                        <td> <a href="{{ $_route_link }}">{{ count($_course[$item[1]]) }}</a>
+                                        <td> <a href="{{ $_route_link }}&_course={{base64_encode($_course->id)}}">{{ count($_course[$item[1]]) }}</a>
                                         </td>
                                     @endforeach
                                     {{-- <td>{{ count($_course->scheduled) }}</td>
@@ -71,38 +71,6 @@ $_title = 'Applicant Medical Overview';
                 </div>
             </div>
         </div>
-
-        {{-- <div class="row">
-            @foreach ($_details as $key => $item)
-                <div class="col-lg col-xl">
-                    <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
-                        data-iq-ease="power.out" data-iq-opacity="0">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <a href="{{ route('medical.overview') }}?view={{ $item[0] }}">
-                                    <div class="fw-bolder text-primary h4">
-                                        {{ strtoupper($item[0]) }}
-                                    </div>
-
-                                </a>
-                                <div class="text-end">
-                                    <h3 class="counter"> {{ strtoupper($item[1]) }}</h3>
-                                </div>
-                            </div>
-                            @foreach ($_courses as $course)
-                                <div class="row">
-                                    <div class="col-md">{{ $course->course_code }}</div>
-                                    <div class="col-md">
-                                        {{ count($course[$item[2]]) }}
-                                    </div>
-                                </div>
-                            @endforeach
-
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div> --}}
         <div class="row">
             <div class="col-md-8">
                 <form action="{{ request()->url() }}" method="get">
@@ -181,17 +149,17 @@ $_title = 'Applicant Medical Overview';
                                 <div class="row">
                                     <div class="col-md-9">
                                         <span
-                                            class="badge {{ $_data->account->course_id == 3 ? 'bg-info' : 'bg-primary' }}">{{ $_data->account->course->course_code }}</span>
-                                        <span><b>{{ $_data->account ? $_data->account->applicant_number : '-' }}</b></span>
+                                            class="badge {{ $_data->course_id == 3 ? 'bg-info' : 'bg-primary' }}">{{ $_data->course->course_code }}</span>
+                                        <span><b>{{ $_data ? $_data->applicant_number : '-' }}</b></span>
                                         <a
                                             href="{{ route('applicant-profile') }}?_student={{ base64_encode($_data->applicant_id) }}">
                                             <div class="mt-2 h4 fw-bolder text-primary">
-                                                {{ strtoupper($_data->account->applicant->last_name . ', ' . $_data->account->applicant->first_name) }}
+                                                {{ strtoupper($_data->applicant->last_name . ', ' . $_data->applicant->first_name) }}
                                             </div>
 
                                         </a>
                                         <span> <small>CONTACT NUMBER:</small>
-                                            <b>{{ $_data->account->applicant ? $_data->account->contact_number : '-' }}</b>
+                                            <b>{{ $_data->applicant ? $_data->contact_number : '-' }}</b>
                                         </span>
 
                                     </div>
@@ -199,7 +167,7 @@ $_title = 'Applicant Medical Overview';
                                         @if (request()->input('view') == 'scheduled')
                                             <small class="text-muted fw-bolder">APPOINTMENT SCHEDULE</small>
                                             <div class="badge bg-primary w-100">
-                                                <span>{{ $_data->account->medical_appointment->appointment_date }}</span>
+                                                <span>{{ $_data->medical_appointment->appointment_date }}</span>
                                             </div>
                                             <a href="{{ route('medical.applicant-appointment') }}?appointment={{ base64_encode($_data->id) }}"
                                                 class="btn btn-sm btn-outline-info mt-2">APPROVED</a>
@@ -208,9 +176,9 @@ $_title = 'Applicant Medical Overview';
                                             request()->input('view') == 'passed' ||
                                             request()->input('view') == 'pending' ||
                                             request()->input('view') == 'failed')
-                                            @if ($_data->account->medical_result)
-                                                @if ($_data->account->medical_result->is_fit !== null)
-                                                    @if ($_data->account->medical_result->is_fit === 1)
+                                            @if ($_data->medical_result)
+                                                @if ($_data->medical_result->is_fit !== null)
+                                                    @if ($_data->medical_result->is_fit === 1)
                                                         <span class="badge bg-primary mb-4">FIT TO ENROLL</span>
                                                     @else
                                                         <span class="badge bg-danger mb-4">FAILED</span>
@@ -224,7 +192,7 @@ $_title = 'Applicant Medical Overview';
                                                         data-bs-toggle="modal" data-bs-target=".modal-medical-fail">FAIL</a>
                                                 @endif
                                                 <span
-                                                    class="badge bg-secondary">{{ $_data->account->medical_result->created_at->format('F d,Y') }}</span>
+                                                    class="badge bg-secondary">{{ $_data->medical_result->created_at->format('F d,Y') }}</span>
                                             @else
                                                 <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->applicant_id) }}"
                                                     class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
@@ -236,7 +204,7 @@ $_title = 'Applicant Medical Overview';
                                                     data-bs-toggle="modal"
                                                     data-bs-target=".modal-medical-pending">PENDING</a>
                                             @endif
-                                            {{-- {{ $_data->account->medical_result }} --}}
+                                            {{-- {{ $_data->medical_result }} --}}
                                         @endif
                                     </div>
                                 </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CourseApplicantMedicalList;
+use App\Exports\CourseStudentMedicalList;
 use App\Models\CourseOffer;
 use App\Models\StudentDetails;
 use App\Models\StudentMedicalAppointment;
@@ -32,19 +33,7 @@ class MedicalController extends Controller
                 foreach ($_table_content as $key => $content) {
                     $_applicants = $_request->view == $content[0] ? $_course[$content[1]] : $_applicants;
                 }
-                /*   $_applicants = $_request->view == 'scheduled' ? $_scheduled : $_applicants;
-                $_applicants = $_request->view == 'approved' ? $_approved : $_applicants; */
             }
-            /*  $_applicants = $_request->view == 'scheduled' ? $_scheduled : $_applicants;
-            $_applicants = $_request->view == 'approved' ? $_approved : $_applicants; */
-
-            $_table_content = array(
-                array('scheduled', 'student_medical_scheduled'),
-                array('waiting for result', 'student_medical_waiting_for_result'),
-                array('passed', 'student_medical_passed'),
-                array('pending', 'student_medical_pending'),
-                array('failed', 'student_medical_failed')
-            );
             return view('pages.medical.view', compact('_courses', '_applicants', '_table_content'));
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
@@ -120,6 +109,15 @@ class MedicalController extends Controller
         $_file_name = strtoupper(str_replace('_', '-', $_request->category)) . '-' . date('mdy') . '.xlsx'; // Set Filename
         $_report = new CourseApplicantMedicalList($_request->category);
         // $_report->setAutoSize(true);
+        $_file = Excel::download($_report, $_file_name); // Download the File
+        ob_end_clean();
+        return $_file;
+    }
+    public function student_medical_list_report(Request $_request)
+    {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_file_name =  strtoupper(str_replace('_', '-', $_request->category)) .'-'. $_course->course_code . '-' . date('mdy') . '.xlsx'; // Set Filename
+        $_report = new CourseStudentMedicalList($_request->category, $_course);
         $_file = Excel::download($_report, $_file_name); // Download the File
         ob_end_clean();
         return $_file;

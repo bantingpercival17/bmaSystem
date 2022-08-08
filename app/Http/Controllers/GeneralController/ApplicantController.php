@@ -342,6 +342,12 @@ class ApplicantController extends Controller
             array('pending', 'medical_result_pending'),
             array('failed', 'medical_result_failed')
         );
+        if ($_request->_course) {
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            foreach ($_table_content as $key => $content) {
+                $_applicants = $_request->view == $content[0] ? $_course[$content[1]] : $_applicants;
+            }
+        }
         return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_details', '_applicants', '_results', '_table_content'));
     }
     public function medical_schedule_download(Request $_request)
