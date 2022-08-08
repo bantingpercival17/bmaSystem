@@ -21,10 +21,28 @@ $_title = 'Subjects';
 @endsection
 @section('page-content')
     <div class="row">
-        <div class="col-7">
+        <div class="col-12">
             <div class="row">
+                @if ($_course_view->count() > 0)
+                    @foreach ($_course_view as $data)
+                        <div class="col-md">
+                            <a
+                                href="{{ url()->current() }}?view={{ request()->input('view') }}&d={{ base64_encode($data->id) }}">
+                                <div class="card card-primary ">
+                                    <div class="card-body box-profile">
+                                        <div class="">
+                                            <label class="h5 text-primary fw-bolder">
+                                                {{ $data->course_name }}</label>
+                                        </div>
+                                        <small class="text-muted fw-bolder ">{{ $data->school_level }}</small>
+
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                @endif
                 @if (request()->input('d'))
-                    <label for="" class="h2 text-success">| {{ $_course->course_name }}</label>
                     @php
                         $_year_level = $_course->id == 3 ? [11, 12] : [4, 3, 2, 1];
                         $_semester = ['First Semester', 'Second Semester'];
@@ -34,114 +52,199 @@ $_title = 'Subjects';
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">
-                                        <b>{{ $_course->id == 3 ? 'GRADE ' . $item : $item . ' CLASS' }} </b>
-                                    </h3>
+                                    <div class="card-tools float-end">
+                                        <button class="btn btn-primary btn-modal-subject" data-bs-toggle="modal"
+                                            data-year="{{ Auth::user()->staff->convert_year_level($item) }}"
+                                            data-tab="nav-link-{{ $item }}"
+                                            data-bs-target=".model-add-subject">ADD</button>
+                                        {{-- <button class="btn btn-info btn-sm" disabled></button> --}}
+                                    </div>
+                                    <small
+                                        class="fw-bolder text-muted">{{ strtoupper($_course->course_name . ' - ' . $_curriculum->curriculum_name) }}</small>
 
-                                    <div class="card-tools">
-                                        <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#modal-lg"
-                                            disabled><i class="fa fa-print"></i> </button>
+                                    <h3 class="card-title text-primary">
+                                        <b>{{ strtoupper(Auth::user()->staff->convert_year_level($item)) }}
+                                        </b>
+                                    </h3>
+                                </div>
+
+                                <div class="card-body">
+                                    <ul class="nav nav-tabs nav-fill" id="myTab-three" role="tablist">
+                                        @foreach ($_semester as $key => $tab)
+                                            <li class="nav-item">
+                                                <a class="nav-link nav-link-{{ $item }} {{ $key == 0 ? 'active' : '' }}"
+                                                    id="{{ str_replace(' ', '-', strtolower($tab)) . '-' . $item }}"
+                                                    data-bs-toggle="tab" data-semester="{{ $tab }}"
+                                                    href="#{{ str_replace(' ', '-', strtolower($tab)) . '-' . $item }}-content"
+                                                    role="tab" aria-controls="home"
+                                                    aria-selected="{{ $key == 0 ? true : false }}">
+                                                    {{ strtoupper($tab) }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent-4">
+                                        @foreach ($_semester as $key => $sem)
+                                            <div class="tab-pane fade show {{ $key == 0 ? 'active' : '' }}"
+                                                id="{{ str_replace(' ', '-', strtolower($sem)) . '-' . $item }}-content"
+                                                role="tabpanel"
+                                                aria-labelledby="{{ str_replace(' ', '-', strtolower($sem)) . '-' . $item }}">
+
+                                                <div class="content">
+                                                    @php
+                                                        $_tUnits = 0;
+                                                        $_tLechr = 0;
+                                                        $_tLabhr = 0;
+                                                    @endphp
+                                                    <div class="table-responsive">
+                                                        <table class="table table-strip">
+                                                            <thead class="text-center">
+                                                                <tr class="text-center">
+                                                                    <th>SUBJECT CODE</th>
+                                                                    <th>SUBJECT DESCRIPTION</th>
+                                                                    <th style="width: 5px;">LEC. HOURS</th>
+                                                                    <th style="width: 5px;">LAB. HOURS</th>
+                                                                    <th style="width: 5px;">UNITS</th>
+                                                                    <th>ACTION</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @if ($_subject = $_curriculum->subject([$_course->id, $item, $sem])->count() > 0)
+                                                                    @foreach ($_curriculum->subject([$_course->id, $item, $sem])->get() as $_subject)
+                                                                        <tr>
+                                                                            <td>{{ $_subject->subject->subject_code }}</td>
+                                                                            <td width="30px;">
+                                                                                {{ $_subject->subject->subject_name }}</td>
+                                                                            <td style="width: 5px;">
+                                                                                {{ $_subject->subject->lecture_hours }}
+                                                                            </td>
+                                                                            <td style="width: 5px;">
+                                                                                {{ $_subject->subject->laboratory_hours }}
+                                                                            </td>
+                                                                            <td style="width: 5px;">
+                                                                                {{ $_subject->subject->units }}</td>
+                                                                            <td>
+                                                                                <button
+                                                                                    class="btn btn-success  btn-sm btn-modal-subject"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-year="{{ Auth::user()->staff->convert_year_level($item) }}"
+                                                                                    data-tab="nav-link-{{ $item }}"
+                                                                                    data-curriculum="{{ base64_encode($_subject->id) }}"
+                                                                                    data-bs-target=".model-update-subject">EDIT</button>
+                                                                                <button
+                                                                                    class="btn btn-danger btn-sm btn-remove"
+                                                                                    data-url="{{ route('registrar.remove-curriculum-subject') . '?_subject=' . base64_encode($_subject->id) }}">REMOVE</button>
+                                                                            </td>
+                                                                        </tr>
+                                                                        @php
+                                                                            $_tLechr += $_subject->subject->lecture_hours;
+                                                                            $_tLabhr += $_subject->subject->laboratory_hours;
+                                                                            $_tUnits += $_subject->subject->units;
+                                                                        @endphp
+                                                                    @endforeach
+                                                                @else
+                                                                    <tr>
+                                                                        <td colspan="6">NO SUBJECT</td>
+                                                                    </tr>
+                                                                @endif
+                                                            </tbody>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="2">TOTAL</th>
+                                                                    <td>{{ $_tLechr }}</td>
+                                                                    <td>{{ $_tLabhr }}</td>
+                                                                    <td>{{ $_tUnits }}</td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                    {{-- <table class="table table-head-fixed text-nowrap">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="5">{{ strtoupper($sem) }}</th>
+                                                            </tr>
+                                                            <tr class="text-center">
+                                                                <th>SUBJECT CODE</th>
+                                                                <th>SUBJECT DESCRIPTION</th>
+                                                                <th style="width: 5px;">LEC. HOURS</th>
+                                                                <th style="width: 5px;">LAB. HOURS</th>
+                                                                <th style="width: 5px;">UNITS</th>
+                                                                <th>ACTION</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if ($_subject = $_curriculum->subject([$_course->id, $item, $sem])->count() > 0)
+                                                                @foreach ($_curriculum->subject([$_course->id, $item, $sem])->get() as $_subject)
+                                                                    @php
+                                                                        $_tLechr += $_subject->lecture_hours;
+                                                                        $_tLabhr += $_subject->laboratory_hours;
+                                                                        $_tUnits += $_subject->units;
+                                                                    @endphp
+                                                                    <tr>
+                                                                        <td>{{ $_subject->subject->subject_code }}</td>
+                                                                        <td width="30px;">
+                                                                            {{ $_subject->subject->subject_name }}</td>
+                                                                        <td style="width: 5px;">
+                                                                            {{ $_subject->subject->lecture_hours }}</td>
+                                                                        <td style="width: 5px;">
+                                                                            {{ $_subject->subject->laboratory_hours }}</td>
+                                                                        <td style="width: 5px;">
+                                                                            {{ $_subject->subject->units }}</td>
+                                                                        <td>
+                                                                            <button class="btn btn-danger btn-sm btn-remove"
+                                                                                data-url="{{ route('registrar.remove-curriculum-subject') . '?_subject=' . base64_encode($_subject->id) }}">remove</button>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            @else
+                                                                <tr>
+                                                                    <td colspan="5">NO SUBJECT</td>
+                                                                </tr>
+                                                            @endif
+
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <td colspan="2">TOTAL</td>
+                                                                <td>{{ $_tLechr }}</td>
+                                                                <td>{{ $_tLabhr }}</td>
+                                                                <td>{{ $_tUnits }}</td>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table> --}}
+                                                </div>
+                                            </div>
+                                        @endforeach
+
                                     </div>
                                 </div>
 
-                                <div class="card-body table-responsive p-0">
-                                    @foreach ($_semester as $_sem)
-                                        @php
-                                            $_tUnits = 0;
-                                            $_tLechr = 0;
-                                            $_tLabhr = 0;
-                                        @endphp
-                                        <table class="table table-head-fixed text-nowrap">
-                                            <thead>
-                                                <tr>
-                                                    <th colspan="5">{{ strtoupper($_sem) }}</th>
-                                                </tr>
-                                                <tr class="text-center">
-                                                    <th>SUBJECT CODE</th>
-                                                    <th>SUBJECT DESCRIPTION</th>
-                                                    <th>LEC. HOURS</th>
-                                                    <th>LAB. HOURS</th>
-                                                    <th>UNITS</th>
-                                                    <th>ACTION</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @if ($_subject = $_curriculum->subject([$_course->id, $item, $_sem])->count() > 0)
-                                                    @foreach ($_curriculum->subject([$_course->id, $item, $_sem])->get() as $_subject)
-                                                        @php
-                                                            $_tLechr += $_subject->lecture_hours;
-                                                            $_tLabhr += $_subject->laboratory_hours;
-                                                            $_tUnits += $_subject->units;
-                                                        @endphp
-                                                        <tr>
-                                                            <td>{{ $_subject->subject->subject_code }}</td>
-                                                            <td>{{ $_subject->subject->subject_name }}</td>
-                                                            <td>{{ $_subject->subject->lecture_hours }}</td>
-                                                            <td>{{ $_subject->subject->laboratory_hours }}</td>
-                                                            <td>{{ $_subject->subject->units }}</td>
-                                                            <td>
-                                                                <button class="btn btn-danger btn-remove"
-                                                                    data-url="{{ route('registrar.remove-curriculum-subject') . '?_subject=' . base64_encode($_subject->id) }}">remove</button>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                @else
-                                                    <tr>
-                                                        <td colspan="5">NO SUBJECT</td>
-                                                    </tr>
-                                                @endif
-
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="2">TOTAL</td>
-                                                    <td>{{ $_tLechr }}</td>
-                                                    <td>{{ $_tLabhr }}</td>
-                                                    <td>{{ $_tUnits }}</td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    @endforeach
-
-                                </div>
                             </div>
                         </div>
                     @endforeach
                 @else
-                    @if ($_course_view->count() > 0)
-                        @foreach ($_course_view as $data)
-                            <div class="col-md-12">
-                                <a
-                                    href="{{ url()->current() }}?view={{ request()->input('view') }}&d={{ base64_encode($data->id) }}">
-                                    <div class="card card-primary ">
-                                        <div class="card-body box-profile">
-                                            <div class="">
-                                                <h4 class="
-                                                text-info">
-                                                    {{ $data->course_name }}</h4>
-                                            </div>
-                                            <p class="text-muted ">{{ $data->school_level }}</p>
-
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        @endforeach
-                    @endif
                 @endif
 
             </div>
         </div>
-        <div class="col-5">
-            <div class="card">
-                <div class="card-header">
-                    <label for="" class="h5 text-success">CREATE SUBJECT</label>
-                </div>
-                <div class="card-body">
 
-                    <form role="form" action="{{ route('registrar.curriculum-store') }}" method="POST">
+    </div>
+    <div class="modal fade model-add-subject" tabindex="-1" role="dialog" aria-labelledby="model-add-subjectTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title modal-title fw-bolder text-primary" id="model-add-subjectTitle">ADD SUBJECT
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form role="form" action="{{ route('registrar.curriculum-store') }}" method="POST"
+                        id="modal-form-add">
                         @csrf
-                        <label for="" class="h5 text-success">SUBJECT DETAILS</label>
+                        <small for="" class="h5 text-primary fw-bolder">SUBJECT DETAILS</small>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col">
@@ -151,7 +254,8 @@ $_title = 'Subjects';
                                         name="course_code">
                                 </div>
                                 <div class="col-5">
-                                    <input type="text" class="form-control" placeholder="Subject Unit" name="_units">
+                                    <input type="text" class="form-control" placeholder="Subject Unit"
+                                        name="_units">
                                 </div>
                             </div>
                         </div>
@@ -162,7 +266,8 @@ $_title = 'Subjects';
                         <div class="form-group">
                             <div class="row">
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Lecture Hours" name="_hours">
+                                    <input type="text" class="form-control" placeholder="Lecture Hours"
+                                        name="_hours">
                                 </div>
                                 <div class="col">
                                     <input type="text" class="form-control" placeholder="Laboratory Hours"
@@ -171,51 +276,133 @@ $_title = 'Subjects';
 
                             </div>
                         </div>
-                        <label for="" class="text-success h5">COURSE DETAILS</label>
-                        <div class="form-group">
-                            <label for="" class="text-muted">COURSE</label>
-                            @if (!request()->input('d'))
-                                <select name="course" id="" class="form-control">
-                                    @foreach ($_course as $item)
-                                        <option value="{{ $item->id }}">{{ $item->course_name }}
-                                        </option>
-                                    @endforeach
-                                    <option value="both">Both BSMT & BSME</option>
-                                </select>
-                            @else
-                                <label for="" class="form-control">{{ $_course->course_name }}</label>
-                                <input type="hidden" value="{{ $_course->id }}" name="course">
-                            @endif
-
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="" class="text-muted">YEAR LEVEL</label>
-                                    <select name="_input_7" id="" class="form-control">
-                                        <option value="11">Grade 11</option>
-                                        <option value="12">Grade 12</option>
-                                        <option value="4"> 4th Class</option>
-                                        <option value="3">3rd Class</option>
-                                        <option value="2">2nd Class</option>
-                                        <option value="1">1st Class</option>
-                                    </select>
+                        <small for="" class="text-primary h5 fw-bolder">COURSE DETAILS</small>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <small class="fw-bolder text-muted">
+                                        COURSE
+                                    </small>
+                                    @if (request()->input('d'))
+                                        <label for="" class="form-control">{{ $_course->course_name }}</label>
+                                        <input type="hidden" value="{{ $_course->id }}" name="course">
+                                    @endif
                                 </div>
-                                <div class="col">
-                                    <label for="" class="text-muted">SEMESTER</label>
-                                    <select name="_input_8" id="" class="form-control">
-                                        <option value="First Semester">First Semester</option>
-                                        <option value="Second Semester">Second Semester</option>
-                                    </select>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-group">
+                                    <small class="fw-bolder text-muted">
+                                        YEAR LEVEL
+                                    </small>
+                                    <input type="text" class="form-control year-level" name="_input_7">
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-group">
+                                    <small class="fw-bolder text-muted">
+                                        SEMESTER
+                                    </small>
+                                    <input type="text" class="form-control semester" name="_input_8">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-info btn-block">Create</button>
-                        </div>
 
                     </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm btn-modal-form" data-form="modal-form-add">SAVE
+                        CONTENT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade model-update-subject" tabindex="-1" role="dialog"
+        aria-labelledby="model-update-subjectTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title modal-title fw-bolder text-primary" id="model-update-subjectTitle">UPDATE
+                        SUBJECT
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form role="form" action="{{ route('registrar.update-curriculum-subject') }}" method="POST"
+                        id="modal-form-update">
+                        @csrf
+                        <input type="hidden" name="curriculum_subject" class="curriculum">
+                        <small for="" class="h5 text-primary fw-bolder">SUBJECT DETAILS</small>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="hidden" name="curriculum" value="{{ request()->input('view') }}">
+                                    <input type="hidden" name="department" value="{{ request()->input('d') }}">
+                                    <input type="text" class="form-control course-code" placeholder="Course Code"
+                                        name="course_code">
+                                </div>
+                                <div class="col-5">
+                                    <input type="text" class="form-control units" placeholder="Subject Unit"
+                                        name="_units">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control subject-name" placeholder="Subject Description"
+                                name="_subject_name">
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <input type="text" class="form-control lec-hours" placeholder="Lecture Hours"
+                                        name="_hours">
+                                </div>
+                                <div class="col">
+                                    <input type="text" class="form-control lab-hours" placeholder="Laboratory Hours"
+                                        name="_lab_hour">
+                                </div>
+
+                            </div>
+                        </div>
+                        <small for="" class="text-primary h5 fw-bolder">COURSE DETAILS</small>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <small class="fw-bolder text-muted">
+                                        COURSE
+                                    </small>
+                                    @if (request()->input('d'))
+                                        <label for="" class="form-control">{{ $_course->course_name }}</label>
+                                        <input type="hidden" value="{{ $_course->id }}" name="course">
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-group">
+                                    <small class="fw-bolder text-muted">
+                                        YEAR LEVEL
+                                    </small>
+                                    <input type="text" class="form-control year-level" name="_input_7">
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-group">
+                                    <small class="fw-bolder text-muted">
+                                        SEMESTER
+                                    </small>
+                                    <input type="text" class="form-control semester" name="_input_8">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm btn-modal-form"
+                        data-form="modal-form-update">UPDATE
+                        CONTENT</button>
                 </div>
             </div>
         </div>
@@ -237,6 +424,46 @@ $_title = 'Subjects';
                 var _url = $(this).data('url');
                 if (result.isConfirmed) {
                     window.location.href = _url
+                }
+            })
+            event.preventDefault();
+        })
+        $('.btn-modal-subject').click(function(event) {
+            var tab = $(this).data('tab')
+            var year_level = $(this).data('year');
+            var semester = $("." + tab + '.active').data('semester');
+            if ($(this).data('curriculum')) {
+                console.log($(this).data('curriculum'))
+                $.get("{{ route('registrar.view-curriculum-subject') }}?curriculum=" + $(this).data('curriculum'),
+                    function(respond) {
+                        console.log(respond._curriculum_subject)
+                        $('.course-code').val(respond._subject.subject_code)
+                        $('.units').val(respond._subject.units)
+                        $('.subject-name').val(respond._subject.subject_name)
+                        $('.lab-hours').val(respond._subject.laboratory_hours)
+                        $('.lec-hours').val(respond._subject.lecture_hours)
+                        $('.curriculum').val(respond._curriculum_subject.id)
+                    })
+            }
+            $('.semester').val(semester)
+            $('.year-level').val(year_level)
+            event.preventDefault();
+        })
+        $('.btn-modal-form').click(function(event) {
+            Swal.fire({
+                title: 'Course Subject',
+                text: "Do you want to add?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                var form = $(this).data('form');
+                if (result.isConfirmed) {
+
+                    console.log(form)
+                    document.getElementById(form).submit()
                 }
             })
             event.preventDefault();

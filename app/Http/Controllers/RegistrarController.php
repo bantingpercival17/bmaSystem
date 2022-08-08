@@ -196,14 +196,14 @@ class RegistrarController extends Controller
     }
     public function subject_view()
     {
-        $_curriculum = Curriculum::where('is_removed', false)->get();
+        $_curriculum = Curriculum::where('is_removed', false)->orderBy('curriculum_name', 'desc')->get();
         $_courses = CourseOffer::all();
         return view('pages.registrar.subjects.view', compact('_curriculum', '_courses'));
     }
     // Subject Panel
     public function classes_view(Request $_request)
     {
-        $_curriculums = Curriculum::where('is_removed', false)->get();
+        $_curriculums = Curriculum::where('is_removed', false)->orderBy('curriculum_name', 'desc')->get();
         $_course = CourseOffer::find(base64_decode($_request->_course));
         $_teachers = User::select('users.id', 'users.name')
             ->join('role_user', 'users.id', 'role_user.user_id')
@@ -310,9 +310,19 @@ class RegistrarController extends Controller
             'created_by' => Auth::user()->name,
             'is_removed' => 0,
         ]; // Set all the input need to the Subject Details
-        $_verify = Subject::where('subject_code', strtoupper(trim($_request->course_code)))->where('subject_name', strtoupper(trim($_request->_subject_name)))->first(); // Verify if the Subject is Existing
+        $_content_verification = [
+            'subject_code' => strtoupper(trim($_request->course_code)),
+            'subject_name' => strtoupper(trim($_request->_subject_name)),
+            'lecture_hours' => trim($_request->_hours),
+            'laboratory_hours' => trim($_request->_lab_hour),
+            'units' => trim($_request->_units),
+            'is_removed' => 0,
+        ];
+        // Verify if the Subject is Existing
+        //$_verify = Subject::where('subject_code', strtoupper(trim($_request->course_code)))->where('subject_name', strtoupper(trim($_request->_subject_name)))->first(); 
+        /* Revise this Code for Double Checking of the Existing Subjects*/
+        $_verify = Subject::where($_content_verification)->first();
         $_subject = $_verify ?: Subject::create($_subject); // Save Subject or Get Subject
-
         $_course_subject_details = [
             'curriculum_id' => base64_decode($_request->curriculum),
             'subject_id' => $_subject->id,
@@ -324,6 +334,56 @@ class RegistrarController extends Controller
         ]; // Subject Course Details
         CurriculumSubject::create($_course_subject_details); // Create a Subject Course
         return $_request->course ?  redirect('/registrar/subjects/curriculum?view=' . $_request->curriculum . '&d=' . base64_encode($_request->course))->with('success', 'Successfully Created Subject') : back()->with('success', 'Successfully Created Subject');
+    }
+    public function curriculum_subject_view(Request $_request)
+    {
+        try {
+            // Get the Curriculum
+            $_curriculum_subject = CurriculumSubject::find(base64_decode($_request->curriculum));
+            $_subject = $_curriculum_subject->subject;
+            return compact('_curriculum_subject', '_subject');
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    public function curriculum_subject_update(Request $_request)
+    {
+        try {
+            // Get the Curriculum
+            $_curriculum_subject = CurriculumSubject::find($_request->curriculum_subject);
+            // Set and Check the Subject Update
+            $_content_verification = [
+                'subject_code' => strtoupper(trim($_request->course_code)),
+                'subject_name' => strtoupper(trim($_request->_subject_name)),
+                'lecture_hours' => trim($_request->_hours),
+                'laboratory_hours' => trim($_request->_lab_hour),
+                'units' => trim($_request->_units),
+                'is_removed' => 0,
+            ];
+            // Set the Content of Subject 
+            $_subject_content = [
+                'subject_code' => strtoupper(trim($_request->course_code)),
+                'subject_name' => strtoupper(trim($_request->_subject_name)),
+                'lecture_hours' => trim($_request->_hours),
+                'laboratory_hours' => trim($_request->_lab_hour),
+                'units' => trim($_request->_units),
+                'created_by' => Auth::user()->name,
+                'is_removed' => 0,
+            ];
+            // Verify if the Update Subject is Existing
+            $_verify = Subject::where($_content_verification)->first();
+            $_subject = $_verify ?: Subject::create($_subject_content); // Save Subject or Get Subject
+            // Update the Subject Id in the Curriculum Subject Table
+            $_curriculum_subject->subject_id = $_subject->id;
+            $_curriculum_subject->save();
+            if ($_curriculum_subject->save()) {
+                return back()->with('success', 'Successfuly Update the Subject Curriculum');
+            } else {
+                return back()->with('success', 'Successfuly Update the Subject Curriculum');
+            }
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function curriculum_subject_remove(Request $_request)
     {
@@ -431,9 +491,9 @@ class RegistrarController extends Controller
             $_student_section = StudentSection::find(base64_decode($_request->_student_section));
             $_student_section->is_removed = 1;
             $_student_section->save();
-            return back()->with('success','Successfuly Removed the Student in Section');
-        } catch (\Throwable $th) {
-            //throw $th;
+            return back()->with('success', 'Successfuly Removed the Student in Section');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
         }
     }
     public function section_export_file(Request $_request)
