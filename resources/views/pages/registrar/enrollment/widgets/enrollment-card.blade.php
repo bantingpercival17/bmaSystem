@@ -123,7 +123,8 @@
                                                         <select name="_curriculum"
                                                             class="form-select form-select-sm mb-3 shadow-none input-curriculum">
                                                             @foreach ($_curriculums as $curriculum)
-                                                                <option value="{{ $curriculum->id }}">
+                                                                <option value="{{ $curriculum->id }}"
+                                                                    {{ $_student->enrollment_assessment_v2->curriculum_id == $curriculum->id ? 'selected' : '' }}>
                                                                     {{ $curriculum->curriculum_name }}</option>
                                                             @endforeach
                                                         </select>
