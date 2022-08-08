@@ -21,7 +21,7 @@
                     </td>
                     <td>
                         <small>TEACHER:</small>
-                        <span><b>{{ $_subject->staff->first_name . ' '. $_subject->staff->last_name}}</b></span>
+                        <span><b>{{ $_subject->staff->first_name . ' ' . $_subject->staff->last_name }}</b></span>
                     </td>
                 </tr>
             </tbody>
@@ -50,7 +50,8 @@
                     @foreach ($_students as $_key => $_student)
                         <tr>
                             <td class="text-center">{{ $_key + 1 }}</td>
-                            <td class="text-center">{{ $_student->student->account->student_number }}</td>
+                            <td class="text-center">
+                                {{ $_student->student->account ? $_student->student->account->student_number : '' }}</td>
                             <td style="padding-left: 10px;">
                                 {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
                             </td>

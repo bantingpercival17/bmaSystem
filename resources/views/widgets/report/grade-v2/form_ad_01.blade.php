@@ -121,7 +121,8 @@
                                 @endphp
                                 <tr class="text-center">
                                     <td>{{ $_key + 1 }}</td>
-                                    <td>{{ $_student->student->account->student_number }}</td>
+                                    <td>{{ $_student->student->account ? $_student->student->account->student_number : '' }}
+                                    </td>
                                     <td>{{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
                                     </td>
                                     @for ($i = 1; $i <= 10; $i++)
