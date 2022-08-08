@@ -48,6 +48,13 @@ class StudentDetails extends Model
             /* ->where('academic_id', Auth::user()->staff->current_academic()->id) */
             ->where('is_removed', 0)->orderBy('id', 'desc');
     }
+    public function enrollment_assessment_v2()
+    {
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+            ->where('academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('is_removed', 0)->orderBy('id', 'desc');
+    }
+
     public function enrollment_status()
     {
         //return Auth::user()->staff->current_academic()->id;
@@ -333,7 +340,6 @@ class StudentDetails extends Model
         $_enrollment = $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
         $_section  = $this->hasOne(StudentSection::class, 'student_id')->select('student_sections.id', 'student_sections.student_id', 'student_sections.section_id')
             ->join('sections', 'sections.id', 'student_sections.section_id')->where('sections.academic_id',  Auth::user()->staff->current_academic()->id)->where('student_sections.is_removed', false)->first();
-        //$_section = $this->hasOne(StudentSection::class, 'student_id')->where('is_removed', 0)->latest('id')->first();
         $_academic_clearance = $this->hasMany(StudentClearance::class, 'student_id')/* ->where('academic_id', Auth::user()->staff->current_academic()->id) */->where('is_approved', true)->where('is_removed', false);
         if ($_section) {
             $_subject_count = SubjectClass::where('section_id', $_section->section_id)->where('is_removed', false)->get();

@@ -76,7 +76,7 @@ class RegistrarController extends Controller
         try {
             $_student = StudentDetails::find(base64_decode($_request->_student));
             $_current_assessment = $_student->enrollment_assessment;
-            $_application = $_student->enrollment_application;
+            $_application = $_student->enrollment_application ?: $_current_assessment;
             $_value = $_application->course_id == 3 ? 1 : -1;
             if (count($_student->enrollment_history) > 0) {
                 // Set the Year Level of Old Student
