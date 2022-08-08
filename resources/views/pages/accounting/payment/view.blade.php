@@ -626,13 +626,19 @@
                                             class="text-primary fw-bolder">{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</small>
                                         <br>
                                         @php
-                                            $_course_color = $item->enrollment_assessment->course_id == 1 ? 'bg-info' : '';
-                                            $_course_color = $item->enrollment_assessment->course_id == 2 ? 'bg-primary' : $_course_color;
-                                            $_course_color = $item->enrollment_assessment->course_id == 3 ? 'bg-warning text-white' : $_course_color;
+                                            if ($item->enrollment_assessment) {
+                                                $_course_color = $item->enrollment_assessment->course_id == 1 ? 'bg-info' : '';
+                                                $_course_color = $item->enrollment_assessment->course_id == 2 ? 'bg-primary' : $_course_color;
+                                                $_course_color = $item->enrollment_assessment->course_id == 3 ? 'bg-warning text-white' : $_course_color;
+                                            } else {
+                                                $_course_color = 'text-muted';
+                                            }
+                                            
                                             //echo $_student->enrollment_assessment->course_id;
+                                            
                                         @endphp
                                         <small
-                                            class="badge {{ $_course_color }}">{{ $item->enrollment_assessment->course->course_code }}</small>
+                                            class="badge {{ $_course_color }}">{{ $item->enrollment_assessment? $item->enrollment_assessment->course->course_code :'-'}}</small>
                                         -
                                         <span>{{ $item->account ? $item->account->student_number : '' }}</span>
 
