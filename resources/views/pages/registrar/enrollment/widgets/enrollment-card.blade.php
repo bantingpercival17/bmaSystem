@@ -83,6 +83,67 @@
                             <span class="badge bg-primary">
                                 Enrollment Assessment Done
                             </span>
+                            @if (!$_student->enrollment_assessment_v2->payment_assessment)
+                                <div class="card-body">
+                                    <div class="enrollment-assessment mt-0 me-3">
+                                        <span class="h5 fw-bolder text-primary">ENROLLMENT RE-ASSESSMENT</span>
+                                        <form action="{{ route('registrar.enrollment-assessment') }}" method="post"
+                                            id="{{ base64_encode($_student->id) }}">
+                                            @csrf
+                                            <input type="hidden" name="_student"
+                                                value="{{ base64_encode($_student->id) }}">
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <div class="form-group">
+                                                        <small class="fw-bolder">COURSE : </small>
+                                                        <select name="_course"
+                                                            class="form-select form-select-sm mb-3 shadow-none input-course">
+                                                            @foreach ($_courses as $course)
+                                                                <option value="{{ $course->id }}"
+                                                                    {{ $_student->enrollment_application
+                                                                        ? ($_student->enrollment_application->course_id == $course->id
+                                                                            ? 'selected'
+                                                                            : '')
+                                                                        : '' }}>
+                                                                    {{ $course->course_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-group">
+                                                        <small class="fw-bolder">CURRICULUM : </small>
+                                                        <select name="_curriculum"
+                                                            class="form-select form-select-sm mb-3 shadow-none input-curriculum">
+                                                            @foreach ($_curriculums as $curriculum)
+                                                                <option value="{{ $curriculum->id }}">
+                                                                    {{ $curriculum->curriculum_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                @if (!$_student->account)
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <small class="fw-bolder">BRIDGING PROGRAM : </small>
+                                                            <select name="_bridging_program"
+                                                                class="form-select form-select-sm mb-3 shadow-none">
+                                                                <option value="with">WITH BRIDGING</option>
+                                                                <option value="without">WITHOUT BRIDGING</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="float-end">
+                                                <button type="button" class="btn btn-info btn-sm text-white btn-assessment"
+                                                    data-form="{{ base64_encode($_student->id) }}">FOR
+                                                    ASSESSMENT</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     @else
                         <div class="card-body">

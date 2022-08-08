@@ -102,7 +102,7 @@
                             </h4>
                             <p class="card-text">
                                 <span>STUDENT NUMBER: <b>
-                                        {{ $_student ? $_student->account ? $_student->account->student_number : 'NEW STUDENT' : '-' }}</b></span>
+                                        {{ $_student ? ($_student->account ? $_student->account->student_number : 'NEW STUDENT') : '-' }}</b></span>
                             </p>
 
                         </div>
@@ -113,20 +113,30 @@
 
                     <div class="row">
                         <div class="col-md">
-                            <label for="" class="form-label"><small><b>COURSE / STRAND</b></small>:</label>
+                            <label for="" class="form-label"><small><b>COURSE / STRAND</b></small>:</label> <br>
                             <label for=""
                                 class="text-primary"><b>{{ $_assessment ? $_assessment->course->course_name : '-' }}</b></label>
                         </div>
                         <div class="col-md-4">
-                            <label for="" class="form-label"><small><b>YEAR LEVEL</b></small>:</label>
+                            <label for="" class="form-label"><small><b>YEAR LEVEL</b></small>:</label> <br>
                             <label for=""
                                 class="text-primary"><b>{{ $_assessment ? ($_assessment->course->id != 3 ? $_assessment->year_level . ' CLASS' : 'GRADE ' . $_assessment->year_level) : '-' }}</b></label>
 
                         </div>
-                        <div class="col-md-12">
-                            <label for="" class="form-label"><small><b>ACADEMIC YEAR</b></small>: </label>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <label for="" class="form-label"><small><b>ACADEMIC YEAR</b></small>: </label> <br>
                             <label class="text-primary">
                                 <b>{{ $_assessment ? strtoupper($_assessment->academic->semester . ' | ' . $_assessment->academic->school_year) : '-' }}
+                                </b>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="" class="form-label"><small><b>CURRICULUM </b></small>: </label><br>
+                            <label class="text-primary">
+                                <b>{{ $_assessment ? strtoupper($_assessment->curriculum->curriculum_name) : '-' }}
                                 </b>
                             </label>
                         </div>
@@ -169,8 +179,7 @@
                                             <input type="hidden" class="payment-mode"
                                                 value="{{ $_assessment->payment_assessments->payment_mode }}">
                                             <div class="form-group">
-                                                <input type="hidden" class="course"
-                                                    value="{{ $_assessment->course_id }}">
+                                                <input type="hidden" class="course" value="{{ $_assessment->course_id }}">
                                                 <span class="text-muted"><b>MODE :</b></span>
                                                 <div class="col-sm">
                                                     <select name="mode" class="form-select payment-mode">
@@ -282,8 +291,7 @@
                                                 </div>
                                                 <div class="col-md-4 ">
                                                     <span class="mt-2 float-end">
-                                                        <b
-                                                            class="upon-enrollment">{{ number_format($_total_fee, 2) }}</b>
+                                                        <b class="upon-enrollment">{{ number_format($_total_fee, 2) }}</b>
                                                     </span>
                                                 </div>
                                             </div>
@@ -338,8 +346,7 @@
                                         <div class="form-group">
                                             <input type="hidden" class="payment-mode"
                                                 value="{{ $_student->enrollment_application_payment ? $_student->enrollment_application_payment->payment_mode : '' }}">
-                                            <input type="hidden" class="course"
-                                                value="{{ $_assessment->course_id }}">
+                                            <input type="hidden" class="course" value="{{ $_assessment->course_id }}">
                                             <span class="text-muted"><b>MODE :</b></span>
                                             <div class="col-sm">
                                                 <select name="mode" class="form-select payment-mode">
@@ -508,17 +515,17 @@
                                     </div>
                                     <div>
                                         @if ($item->account)
-                                        <span
-                                        class="text-primary">{{  $item->account->student_number  }}</span>
+                                            <span class="text-primary">{{ $item->account->student_number }}</span>
                                         @else
                                             <small class="badge bg-primary">NEW STUDENT</small>
                                         @endif
-                                       
+
                                     </div>
                                 </div>
                                 <div>
                                     <span
-                                        class="text-danger">{{ $item->enrollment_application_payment? ($item->enrollment_application_payment->payment_mode === 0? 'FULL-PAYMENT': ($item->enrollment_application_payment->payment_mode === 1 ||$item->enrollment_application_payment->payment_mode === 2? 'INSTALLMENT': '-')): '-' }}</span></div>
+                                        class="text-danger">{{ $item->enrollment_application_payment ? ($item->enrollment_application_payment->payment_mode === 0 ? 'FULL-PAYMENT' : ($item->enrollment_application_payment->payment_mode === 1 || $item->enrollment_application_payment->payment_mode === 2 ? 'INSTALLMENT' : '-')) : '-' }}</span>
+                                </div>
                             </div>
                         </a>
 
