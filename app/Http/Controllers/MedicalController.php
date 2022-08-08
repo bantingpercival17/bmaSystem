@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CourseApplicantMedicalList;
 use App\Models\CourseOffer;
 use App\Models\StudentDetails;
 use App\Models\StudentMedicalAppointment;
@@ -9,6 +10,7 @@ use App\Models\StudentMedicalResult;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MedicalController extends Controller
 {
@@ -155,5 +157,17 @@ class MedicalController extends Controller
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
         }
+    }
+
+
+
+    public function applicant_medical_list_report(Request $_request)
+    {
+        $_file_name = strtoupper(str_replace('_', '-', $_request->category)) . '-' . date('mdy') . '.xlsx'; // Set Filename
+        $_report = new CourseApplicantMedicalList($_request->category);
+        // $_report->setAutoSize(true);
+        $_file = Excel::download($_report, $_file_name); // Download the File
+        ob_end_clean();
+        return $_file;
     }
 }

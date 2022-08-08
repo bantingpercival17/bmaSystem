@@ -14,5 +14,7 @@ Route::prefix('medical')->group(function () {
         Route::get('/student/medical-appointment', [MedicalController::class, 'student_medical_appointment'])->name('medical.student-medical-appointment');
         Route::get('/student/medical-appointment/approval', [MedicalController::class, 'student_medical_appointment_approved'])->name('medical.student-appointment');
         Route::get('/student/medical-appointment/result', [MedicalController::class, 'student_medical_result'])->name('medical.student-medical-result');
+
+        Route::get('/student/medical-appointment/report', [MedicalController::class, 'applicant_medical_list_report'])->name('medical.export-medical-applicant-list');
     });
 });

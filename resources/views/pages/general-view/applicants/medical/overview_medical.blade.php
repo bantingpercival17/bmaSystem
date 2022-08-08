@@ -37,6 +37,9 @@ $_title = 'Applicant Medical Overview';
                                 @foreach ($_table_content as $key => $item)
                                     <th>
                                         {{ strtoupper($item[0]) }}
+                                        <br>
+                                        <a href="{{ route('medical.export-medical-applicant-list') . '?category=' . $item[1] }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                                            class="badge bg-info">EXPORT</a>
                                     </th>
                                 @endforeach
                             </tr>
