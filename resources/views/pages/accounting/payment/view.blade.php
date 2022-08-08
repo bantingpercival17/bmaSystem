@@ -638,7 +638,7 @@
                                             
                                         @endphp
                                         <small
-                                            class="badge {{ $_course_color }}">{{ $item->enrollment_assessment? $item->enrollment_assessment->course->course_code :'-'}}</small>
+                                            class="badge {{ $_course_color }}">{{ $item->enrollment_assessment ? $item->enrollment_assessment->course->course_code : '-' }}</small>
                                         -
                                         <span>{{ $item->account ? $item->account->student_number : '' }}</span>
 
