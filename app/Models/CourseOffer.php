@@ -739,8 +739,6 @@ class CourseOffer extends Model
             ->leftJoin('applicant_medical_results', 'applicant_medical_results.applicant_id', 'applicant_accounts.id')
             ->whereNotNull('applicant_medical_results.applicant_id')
             ->where('applicant_medical_results.is_removed', false);
-        # ->whereNotNull('amr.applicant_id')
-        #->where('amr.is_removed', false)
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
@@ -809,7 +807,8 @@ class CourseOffer extends Model
             ->join('applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
             ->where('ab.is_removed', false)
             ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
-            ->where('ama.is_removed', false)->where('is_approved', false);
+            ->where('ama.is_removed', false)->where('is_approved', false)
+            ->groupBy('applicant_accounts.id');
     }
     public function waiting_result()
     {
@@ -822,7 +821,8 @@ class CourseOffer extends Model
             ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
             ->where('ama.is_removed', false)->where('is_approved', true)
             ->leftJoin('applicant_medical_results', 'applicant_medical_results.applicant_id', 'ama.applicant_id')
-            ->whereNull('applicant_medical_results.applicant_id');
+            ->whereNull('applicant_medical_results.applicant_id')
+            ->groupBy('applicant_accounts.id');
     }
     public function medical_result_passed()
     {
@@ -835,7 +835,8 @@ class CourseOffer extends Model
             ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
             ->where('ama.is_removed', false)->where('is_approved', true)
             ->join('applicant_medical_results', 'applicant_medical_results.applicant_id', 'ab.applicant_id')
-            ->where('applicant_medical_results.is_fit', true)->where('applicant_medical_results.is_removed', false);
+            ->where('applicant_medical_results.is_fit', true)->where('applicant_medical_results.is_removed', false)
+            ->groupBy('applicant_accounts.id');
     }
     public function medical_result_pending()
     {
@@ -849,7 +850,8 @@ class CourseOffer extends Model
             ->where('ama.is_removed', false)->where('is_approved', true)
             ->join('applicant_medical_results', 'applicant_medical_results.applicant_id', 'ab.applicant_id')
             ->where('applicant_medical_results.is_pending', false)
-            ->where('applicant_medical_results.is_removed', false);
+            ->where('applicant_medical_results.is_removed', false)
+            ->groupBy('applicant_accounts.id');
     }
     public function medical_result_failed()
     {
@@ -862,7 +864,8 @@ class CourseOffer extends Model
             ->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
             ->where('ama.is_removed', false)->where('is_approved', true)
             ->join('applicant_medical_results', 'applicant_medical_results.applicant_id', 'ab.applicant_id')
-            ->where('applicant_medical_results.is_fit', 2)->where('applicant_medical_results.is_removed', false);
+            ->where('applicant_medical_results.is_fit', 2)->where('applicant_medical_results.is_removed', false)
+            ->groupBy('applicant_accounts.id');
     }
     public function student_medical_scheduled()
     {
@@ -929,7 +932,7 @@ class CourseOffer extends Model
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->join('student_medical_appointments', 'student_medical_appointments.student_id', 'enrollment_assessments.student_id')
             ->where('enrollment_assessments.year_level', $data)
-           // ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            // ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->whereNull('student_medical_appointments.is_approved')
             ->where('student_medical_appointments.is_removed', false)
             ->orderBy('student_medical_appointments.appointment_date', 'asc')
