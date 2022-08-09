@@ -238,7 +238,7 @@ $_route = route('applicant-lists') . '?' . (request()->input('_academic') ? '&_a
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ route('underdeveloperment') . '?_course=' . base64_encode($_course->id) }}">{{ count($_course->applicant_qualified_to_enrolled) }}</a>
+                                        href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=qualified">{{ count($_course->applicant_qualified_to_enrolled) }}</a>
                                 </td>
                             </tr>
                         @endforeach

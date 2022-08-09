@@ -45,6 +45,7 @@ class ApplicantController extends Controller
             array('view' => 'medical-appointment', 'function' => 'applicant_medical_appointment'), // Medical Appointment
             array('view' => 'medical-scheduled', 'function' => 'applicant_medical_scheduled'),
             array('view' => 'medical-results', 'function' => 'applicant_medical_results'),
+            array('view' => 'qualified', 'function' => 'applicant_qualified_to_enrolled'),
             //array('view', 'function'),
         );
         foreach ($_categories as $key => $value) {
