@@ -173,7 +173,7 @@ $_title = 'Student Medical Overview';
                                             <div class="badge bg-primary w-100">
                                                 <span>{{ $_data->student->student_medical_appointment->appointment_date }}</span>
                                             </div>
-                                            <a href="{{ route('medical.student-appointment') }}?appointment={{ base64_encode($_data->student->id) }}"
+                                            <a href="{{ route('medical.student-appointment') }}?appointment={{ base64_encode($_data->student->student_medical_appointment->id) }}"
                                                 class="btn btn-sm btn-outline-info mt-2">APPROVED</a>
                                         @endif
                                         @if (request()->input('view') == 'waiting for result' ||
@@ -189,23 +189,23 @@ $_title = 'Student Medical Overview';
                                                     @endif
                                                 @else
                                                     <span class="badge bg-info mb-4">PENDING RESULT</span>
-                                                    <a href="{{ route('medical.student-medical-result') . '?result=' . base64_encode(1) . '&student=' . base64_encode($_data->student->id) }}"
+                                                    <a href="{{ route('medical.student-medical-result') . '?result=' . base64_encode(1) . '&student=' . base64_encode($_data->student->student_medical_appointment->id) }}"
                                                         class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
                                                     <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                        data-applicant="{{ base64_encode($_data->student->id) }}"
+                                                        data-applicant="{{ base64_encode($_data->student->student_medical_appointment->id) }}"
                                                         data-bs-toggle="modal"
                                                         data-bs-target=".modal-medical-fail">FAIL</a>
                                                 @endif
                                                 <span
                                                     class="badge bg-secondary">{{ $_data->student->student_medical_result->created_at->format('F d,Y') }}</span>
                                             @else
-                                                <a href="{{ route('medical.student-medical-result') . '?result=' . base64_encode(1) . '&student=' . base64_encode($_data->student->id) }}"
+                                                <a href="{{ route('medical.student-medical-result') . '?result=' . base64_encode(1) . '&student=' . base64_encode($_data->student->student_medical_appointment->id) }}"
                                                     class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
                                                 <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                    data-applicant="{{ base64_encode($_data->student->id) }}"
+                                                    data-applicant="{{ base64_encode($_data->student->student_medical_appointment->id) }}"
                                                     data-bs-toggle="modal" data-bs-target=".modal-medical-fail">FAIL</a>
                                                 <a class="btn btn-info btn-sm w-100 text-white mb-2 btn-medical"
-                                                    data-applicant="{{ base64_encode($_data->student->id) }}"
+                                                    data-applicant="{{ base64_encode($_data->student->student_medical_appointment->id) }}"
                                                     data-bs-toggle="modal"
                                                     data-bs-target=".modal-medical-pending">PENDING</a>
                                             @endif

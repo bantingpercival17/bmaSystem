@@ -47,11 +47,6 @@ class MedicalController extends Controller
                 $_appointment = StudentMedicalAppointment::find(base64_decode($_request->appointment));
                 $_appointment->is_approved = 1;
                 $_appointment->save();
-                //$_email_model = new ApplicantEmail();
-                //$_email = 'p.banting@bma.edu.ph';
-                //$_email = $_appointment->account->email;
-                //  Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_appointment_schedule($_appointment->account));
-
                 return back()->with('success', 'Appointment Approved');
             } catch (Exception $error) {
                 return back()->with('error', $error->getMessage());
