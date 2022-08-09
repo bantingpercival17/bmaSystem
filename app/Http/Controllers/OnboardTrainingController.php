@@ -236,12 +236,16 @@ class OnboardTrainingController extends Controller
                 'oral_score' => $_request->_oral_score,
                 'staff_id' => Auth::user()->staff->id
             );
-            $_assessment = ShipboardAssessmentDetails::where('student_id', $_data->id)->where('is_removed', false)->first();
-            if ($_assessment) {
-                $_assessment->is_removed = true;
-                $_assessment->save();
+            if ($_request->_assessment_details) {
+                $_assessment = ShipboardAssessmentDetails::where('student_id', $_data->id)->where('is_removed', false)->first();
+                if ($_assessment) {
+                    $_assessment->is_removed = true;
+                    $_assessment->save();
+                }
+            } else {
+                ShipboardAssessmentDetails::create($_index);
             }
-            ShipboardAssessmentDetails::create($_index);
+
             return $_generate_report->assessment_report($_data);
         } catch (Exception $error) {
             return $error->getMessage();

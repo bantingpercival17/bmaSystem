@@ -41,17 +41,22 @@ class OnboardTrainingReport
         $_layout = $this->path . '.onboard-assessment-report';
         $_details = $_data->assessment_details;
         $_item = $_data->enrollment_assessment->course_id == 1 ? [15, 10] : [40, 15];
+
+        $_written_score = (($_data->onboard_examination->result->count() / 40) * 100) * .30;
+        $_practical_score = (($_details->practical_score / $_item[0]) * 100) * .30;
+        $_oral_score =  (($_details->oral_score / $_item[1]) * 100) * .40;
+        $_total_score = $_written_score + $_practical_score + $_oral_score +.1;
         $_assessment = array(
             'written_score' => $_data->onboard_examination->result->count(),
-            'written_final_score' => (($_data->onboard_examination->result->count() / 40) * 100) * .30,
+            'written_final_score' => $_written_score,
             'practical_score' => $_details->practical_score,
             'practical_item' => $_item[0],
-            'practical_final_score' => (($_details->practical_score / $_item[0]) * 100) * .30,
+            'practical_final_score' => $_practical_score,
             'oral_score' => $_details->oral_score,
             'oral_item' => $_item[1],
-            'oral_final_score' => (($_details->oral_score / $_item[1]) * 100) * .40,
+            'oral_final_score' => $_oral_score,
             'assesor' => strtoupper($_details->staff->first_name . ' ' . $_details->staff->last_name),
-            'total_score' => ((($_data->onboard_examination->result->count() / 40) * 100) * .30) + ((($_details->oral_score / $_item[1]) * 100) * .30) + ((($_details->oral_score / $_item[1]) * 100) * .40)
+            'total_score' => $_total_score
         );
         // Import PDF Class
         $pdf = PDF::loadView($_layout, compact('_data', '_assessment'));

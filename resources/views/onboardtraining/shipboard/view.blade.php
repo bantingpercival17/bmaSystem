@@ -184,6 +184,10 @@ $_title = 'Shipboard Monitoring';
                             <form action="{{ route('onboard.assessment-report') }}"
                                 id="{{ base64_encode($_midshipman->id) }}" method="post">
                                 @csrf
+                                @if ($_midshipman->assessment_details)
+                                    <input type="hidden" name="_assessment_details"
+                                        value="{{ $_midshipman->assessment_details->id }}">
+                                @endif
                                 <input type="hidden" name="_midshipman" value="{{ base64_encode($_midshipman->id) }}">
                                 <div class="row">
                                     <div class="col-md">
@@ -231,21 +235,33 @@ $_title = 'Shipboard Monitoring';
                                     <div class="col-md">
                                         <div class="form-group">
                                             <small>PRACTICAL ASSESSMENT</small>
-                                            <input type="text" class="form-control" name="_practical_score"
-                                                value="{{ old('_practical_score') }}">
-                                            @error('_practical_score')
-                                                <span class="badge bg-danger mt-2">{{ $message }}</span>
-                                            @enderror
+                                            @if ($_midshipman->assessment_details)
+                                                <input type="text" class="form-control" name="_practical_score"
+                                                    value="{{ $_midshipman->assessment_details->practical_score }}">
+                                            @else
+                                                <input type="text" class="form-control" name="_practical_score"
+                                                    value="{{ old('_practical_score') }}">
+                                                @error('_practical_score')
+                                                    <span class="badge bg-danger mt-2">{{ $message }}</span>
+                                                @enderror
+                                            @endif
+
                                         </div>
                                     </div>
                                     <div class="col-md">
                                         <div class="form-group">
                                             <small>ORAL ASSESSMENT</small>
-                                            <input type="text" class="form-control" name="_oral_score"
-                                                value="{{ old('_oral_score') }}">
-                                            @error('_oral_score')
-                                                <span class="badge bg-danger mt-2">{{ $message }}</span>
-                                            @enderror
+                                            @if ($_midshipman->assessment_details)
+                                                <input type="text" class="form-control" name="_oral_score"
+                                                    value="{{ $_midshipman->assessment_details->oral_score }}">
+                                            @else
+                                                <input type="text" class="form-control" name="_oral_score"
+                                                    value="{{ old('_oral_score') }}">
+                                                @error('_oral_score')
+                                                    <span class="badge bg-danger mt-2">{{ $message }}</span>
+                                                @enderror
+                                            @endif
+
                                         </div>
                                     </div>
                                 </div>

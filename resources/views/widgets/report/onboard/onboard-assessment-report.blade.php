@@ -36,7 +36,7 @@
                         </td>
                         <td width="120px"><small>SCORE:</small></td>
                         <td class="text-fill-in">
-                            <small><b>{{ number_format($_assessment['written_score'] + $_assessment['practical_score'] + $_assessment['oral_score'], 1, '.', '') }}</b></small>
+                            <small><b>{{$_assessment['total_score']}}</b></small>
                         </td>
                     </tr>
                     <tr>
