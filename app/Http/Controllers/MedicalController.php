@@ -44,7 +44,7 @@ class MedicalController extends Controller
     {
         try {
             try {
-                $_appointment = StudentMedicalAppointment::find(base64_decode($_request->appointment));
+                return $_appointment = StudentMedicalAppointment::find(base64_decode($_request->appointment));
                 $_appointment->is_approved = 1;
                 $_appointment->save();
                 return back()->with('success', 'Appointment Approved');
