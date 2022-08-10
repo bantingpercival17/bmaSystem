@@ -10,32 +10,45 @@
     </li>
 @endsection
 @section('page-content')
+
     <div class="row">
         <div class="col-md-8">
             <div class="card mb-2">
                 <div class="row no-gutters">
-                    <div class="col-md-4 col-lg-2">
-
+                    <div class="col-md-3">
                         <img src="{{ $_student ? $_student->profile_pic($_student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                            class="avatar-130 rounded" alt="#">
+                            class="card-img" alt="#">
                     </div>
-                    <div class="col-md col-lg">
-                        <div class="card-body">
-                            <h4 class="card-title text-primary">
-                                <b>{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name) : 'MIDSHIPMAN NAME' }}</b>
-                            </h4>
-                            <p class="card-text">
-                                <span>
-                                    <b>
-                                        {{ $_student ? ($_student->account ? $_student->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
-                                        |
-                                        {{ $_student ? ($_student->enrollment_status ? $_student->enrollment_status->year_level : 'YEAR LEVEL') : 'YEAR LEVEL' }}
-                                        |
-                                        {{ $_student ? ($_student->enrollment_status ? $_student->enrollment_status->course->course_name : 'COURSE') : 'COURSE' }}
-                                    </b>
-                                </span>
-
+                    <div class="col-md ps-0">
+                        <div class="card-body p-3 me-2">
+                            <label for=""
+                                class="fw-bolder text-primary h4">{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name) : 'MIDSHIPMAN NAME' }}</label>
+                            <p class="mb-0">
+                                <small class="fw-bolder badge bg-secondary">
+                                    {{ $_student ? ($_student->account ? $_student->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
+                                </small> |
+                                <small class="fw-bolder badge bg-secondary">
+                                    {{ $_student ? ($_student->enrollment_status ? strtoupper(Auth::user()->staff->convert_year_level($_student->enrollment_status->year_level)) : 'YEAR LEVEL') : 'YEAR LEVEL' }}
+                                </small> |
+                                <small class="fw-bolder badge bg-secondary">
+                                    {{ $_student ? ($_student->enrollment_status ? $_student->enrollment_status->course->course_name : 'COURSE') : 'COURSE' }}
+                                </small>
                             </p>
+                            <div class="row mt-0">
+
+                                <div class="col-md">
+                                    <small class="fw-bolder text-muted">CURRICULUM:</small> <br>
+                                    <small class="badge bg-primary">
+                                        {{ $_student ? ($_student->enrollment_status ? strtoupper($_student->enrollment_status->curriculum->curriculum_name) : 'CURRICULUM') : 'CURRICULUM' }}
+                                    </small>
+                                </div>
+                                <div class="col-md">
+                                    <small class="fw-bolder text-muted">SECTION:</small> <br>
+                                    <small class="badge bg-primary">
+                                        {{ $_student ? ($_student->enrollment_status ? strtoupper($_student->enrollment_status->academic->semester . ' | ' . $_student->enrollment_status->academic->school_year) : 'SECTION') : 'SECTION' }}
+                                    </small>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -60,7 +73,7 @@
                                 @foreach ($_student->enrollment_history as $_enrollment)
                                     <li>
                                         <a class="dropdown-item "
-                                            href="{{ $_url }}?_academic={{ base64_encode($_enrollment->academic_id) }}&_midshipman={{ request()->input('_midshipman') }}{{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
+                                            href="{{ $_url }}?_academic={{ base64_encode($_enrollment->academic_id) }}&midshipman={{ request()->input('midshipman') }}{{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
                                             {{ $_enrollment->academic->semester }} |
                                             {{ $_enrollment->academic->school_year }}</a>
                                     </li>
@@ -161,7 +174,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md">
-                                            <label for="" class="form-label"><small>PAYMENT METHOD:</small></label>
+                                            <label for="" class="form-label"><small>PAYMENT
+                                                    METHOD:</small></label>
                                             <select name="payment_method" class="form-select">
                                                 <option value="CASH">CASH</option>
                                                 <option value="CASH">GCASH</option>
@@ -228,11 +242,11 @@
                         @else
                             <div class="row">
                                 <div class="col-md">
-                                    <a href="{{ route('accounting.assessments') }}?_midshipman={{ request()->input('_midshipman') }}&reassessment=true"
+                                    <a href="{{ route('accounting.assessments') }}?midshipman={{ request()->input('midshipman') }}&reassessment=true"
                                         class="btn btn-outline-primary w-100">RE-ASSESS TUITION FEE</a>
                                 </div>
                                 <div class="col-md">
-                                    <a href="{{ route('accounting.payment-transactions') }}?_midshipman={{ request()->input('_midshipman') }}&add-transaction=true"
+                                    <a href="{{ route('accounting.payment-transactions') }}?midshipman={{ request()->input('midshipman') }}&add-transaction=true"
                                         class="btn btn-outline-primary w-100">
                                         ADD TRANSACTION</a>
                                 </div>
@@ -330,23 +344,10 @@
                                                                     VERIFICATION</span>
                                                                 <div class="row">
                                                                     <div class="col-md">
-                                                                        <form
-                                                                            action="{{ route('accounting.online-additional-payment-approved') }}"
-                                                                            method="post" class="form-group">
-                                                                            @csrf
-                                                                            <input type="hidden" name="_online_payment"
-                                                                                value="{{ $item->id }}">
 
-                                                                            <div class="mt-2">
-                                                                                <input type="text" class="form-control"
-                                                                                    placeholder="Or Number"
-                                                                                    name="or_number" required>
-                                                                            </div>
-                                                                            <div>
-                                                                                <button type="submit"
-                                                                                    class="btn btn-outline-primary btn-sm w-100">APPROVED</button>
-                                                                            </div>
-                                                                        </form>
+                                                                        <a href="{{ route('accounting.payment-transactions') }}?midshipman={{ request()->input('midshipman') }}&add-transaction=true&payment_approved={{ base64_encode($item->id) }}"
+                                                                            class="btn btn-primary btn-sm">
+                                                                            APPROVED PAYMENT</a>
                                                                     </div>
                                                                     <div class="col-md">
                                                                         <form
@@ -608,12 +609,27 @@
                     </div>
                 </div>
             </form>
+            <div class=" d-flex justify-content-between mb-2">
+                <h6 class=" fw-bolder text-muted">
+                    {{ request()->input('_student') ? 'Search Result: ' . request()->input('_student') : 'Recent Payment' }}
+                </h6>
+                <span class="text-primary h6">
+                    No. Result: <b>{{ count($_students) }}</b>
+                </span>
 
+            </div>
             @if ($_students)
+                @if (!request()->input('_students'))
+                    <div class="mb-3">
+                        {{ $_students->links() }}
+                    </div>
+                @endif
+
+
                 @foreach ($_students as $item)
                     <div class="card mb-2">
                         <a
-                            href="?_midshipman={{ base64_encode($item->id) }}{{ request()->input('_payment_category') ? '&_payment_category=' . request()->input('_payment_category') : '' }}">
+                            href="?midshipman={{ base64_encode($item->id) }}{{ request()->input('_payment_category') ? '&_payment_category=' . request()->input('_payment_category') : '' }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                             <div class="row no-gutters">
                                 <div class="col-md-4">
 

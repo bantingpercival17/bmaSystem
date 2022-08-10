@@ -82,7 +82,7 @@ class StudentDetails extends Model
     }
     public function account()
     {
-        return $this->hasOne(StudentAccount::class, 'student_id');
+        return $this->hasOne(StudentAccount::class, 'student_id')->where('is_actived', true);
     }
     public function educational_background()
     {

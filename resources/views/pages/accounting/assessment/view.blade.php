@@ -90,58 +90,42 @@
         <div class="col-md-8">
             <div class="card mb-2">
                 <div class="row no-gutters">
-                    <div class="col-md-4 col-lg-2">
-
+                    <div class="col-md-3">
                         <img src="{{ $_student ? $_student->profile_pic($_student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                            class="avatar-130 rounded" alt="#">
+                            class="card-img" alt="#">
                     </div>
-                    <div class="col-md col-lg">
-                        <div class="card-body">
-                            <h4 class="card-title text-primary">
-                                <b>{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name) : 'MIDSHIPMAN NAME' }}</b>
-                            </h4>
-                            <p class="card-text">
-                                <span>STUDENT NUMBER: <b>
-                                        {{ $_student ? ($_student->account ? $_student->account->student_number : 'NEW STUDENT') : '-' }}</b></span>
+                    <div class="col-md ps-0">
+                        <div class="card-body p-3 me-2">
+                            <label for=""
+                                class="fw-bolder text-primary h4">{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name) : 'MIDSHIPMAN NAME' }}</label>
+                            <p class="mb-0">
+                                <small class="fw-bolder badge bg-secondary">
+                                    {{ $_student ? ($_student->account ? $_student->account->student_number : 'NEW STUDENT') : 'STUDENT NUMBER' }}
+                                </small> -
+                                <small class="fw-bolder badge bg-secondary">
+                                    {{ $_assessment ? strtoupper(Auth::user()->staff->convert_year_level($_assessment->year_level)) : 'YEAR LEVEL' }}
+                                </small> -
+                                <small class="fw-bolder badge bg-secondary">
+                                    {{ $_assessment ? $_assessment->course->course_name : 'COURSE' }}
+                                </small>
                             </p>
+                            <div class="row mt-0">
+                                <div class="col-md">
+                                    <small class="fw-bolder text-muted">ACADEMIC YEAR:</small> <br>
+                                    <small
+                                        class="badge bg-primary">{{ $_assessment ? strtoupper($_assessment->academic->semester . ' | ' . $_assessment->academic->school_year) : 'ACADEMIC YEAR' }}
+                                    </small>
+                                </div>
+                                <div class="col-md">
+                                    <small class="fw-bolder text-muted">CURRICULUM:</small> <br>
+                                    <small
+                                        class="badge bg-primary">{{ $_assessment ? strtoupper($_assessment->curriculum->curriculum_name) : 'CURRICULUM' }}
+                                    </small>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
-                </div>
-                <div class="row p-3">
-                    <span class="text-primary"><b>| ENROLLMENT DETAILS</b></span>
-
-                    <div class="row">
-                        <div class="col-md">
-                            <label for="" class="form-label"><small><b>COURSE / STRAND</b></small>:</label> <br>
-                            <label for=""
-                                class="text-primary"><b>{{ $_assessment ? $_assessment->course->course_name : '-' }}</b></label>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="" class="form-label"><small><b>YEAR LEVEL</b></small>:</label> <br>
-                            <label for=""
-                                class="text-primary"><b>{{ $_assessment ? ($_assessment->course->id != 3 ? $_assessment->year_level . ' CLASS' : 'GRADE ' . $_assessment->year_level) : '-' }}</b></label>
-
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="col-md">
-                            <label for="" class="form-label"><small><b>ACADEMIC YEAR</b></small>: </label> <br>
-                            <label class="text-primary">
-                                <b>{{ $_assessment ? strtoupper($_assessment->academic->semester . ' | ' . $_assessment->academic->school_year) : '-' }}
-                                </b>
-                            </label>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="" class="form-label"><small><b>CURRICULUM </b></small>: </label><br>
-                            <label class="text-primary">
-                                <b>{{ $_assessment ? strtoupper($_assessment->curriculum->curriculum_name) : '-' }}
-                                </b>
-                            </label>
-                        </div>
-                    </div>
-
                 </div>
             </div>
             <div class="card">
@@ -317,7 +301,7 @@
                                     </div>
                                 </form>
                             @else
-                                <a href="{{ route('accounting.assessments') }}?_midshipman={{ request()->input('_midshipman') }}&reassessment=true"
+                                <a href="{{ route('accounting.assessments') }}?midshipman={{ request()->input('midshipman') }}&reassessment=true"
                                     class="btn btn-primary btn-sm w-100">RE-ASSESS FEE</a>
                             @endif
                         @else
@@ -506,7 +490,7 @@
                 @foreach ($_students as $item)
                     <div class="card border-bottom border-4 border-0 text-primary ">
                         <a
-                            href="?_midshipman={{ base64_encode($item->id) }}{{ request()->input('_course') ? '&_course=' . request()->input('_course') : '' }}">
+                            href="?midshipman={{ base64_encode($item->id) }}{{ request()->input('_course') ? '&_course=' . request()->input('_course') : '' }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>

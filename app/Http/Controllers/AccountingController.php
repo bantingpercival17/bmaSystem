@@ -27,6 +27,7 @@ use App\Models\SemestralFee;
 use App\Models\Staff;
 use App\Models\StaffPayroll;
 use App\Models\StaffPayrollDetails;
+use App\Models\StudentAccount;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentSection;
@@ -38,6 +39,7 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
@@ -231,7 +233,7 @@ class AccountingController extends Controller
     {
         try {
             $_student_detials = new StudentDetails();
-            $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
+            $_student = $_request->midshipman ? StudentDetails::find(base64_decode($_request->midshipman)) : [];
             $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
                 ->join('enrollment_assessments', 'student_details.id', 'enrollment_assessments.student_id')
                 ->leftJoin('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
@@ -239,7 +241,7 @@ class AccountingController extends Controller
                 ->whereNull('pa.enrollment_id');
             $_students = $_request->_course ? $_students->where('enrollment_assessments.course_id', base64_decode($_request->_course))->get() : $_students->get();
             $_students = $_request->_students ?   $_student_detials->student_search($_request->_students) : $_students;
-            if ($_request->_midshipman) {
+            if ($_request->midshipman) {
                 if ($_ea = $_student->enrollment_assessment) {
                     $_course_semestral_fee =  $_ea->course_semestral_fees($_ea); // Course Semestral Fee Table
                     $_semestral_fees = $_course_semestral_fee ? $_course_semestral_fee->semestral_fees() : [];
@@ -347,19 +349,18 @@ class AccountingController extends Controller
     {
         try {
             $_student_detials = new StudentDetails();
-            $_student = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
+            $_student = $_request->midshipman ? StudentDetails::find(base64_decode($_request->midshipman)) : [];
             $_vouchers = Voucher::where('is_removed', false)->get();
             $_students = StudentDetails::select('student_details.*')
                 ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
                 ->where('enrollment_assessments.is_removed', false)
-                //->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
                 ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
                 ->where('payment_assessments.is_removed', false)
                 ->join('payment_trasanction_onlines', 'payment_trasanction_onlines.assessment_id', 'payment_assessments.id')
                 ->whereNull('payment_trasanction_onlines.is_approved')
                 ->where('payment_trasanction_onlines.is_removed', false)
-                ->groupBy('student_details.id')->get();
-            //return $_students->count();
+                ->groupBy('student_details.id')->paginate(5);
             $_additional_fees = StudentDetails::select('student_details.*')
                 ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
                 ->join('payment_additional_transactions', 'payment_additional_transactions.enrollment_id', 'enrollment_assessments.id')
@@ -377,6 +378,156 @@ class AccountingController extends Controller
         }
     }
     public function payment_store(Request $_request)
+    {
+        try {
+
+
+            $_amount = str_replace(",", "", $_request->amount);
+            $_tuition_fee_remarks = ['Tuition Fee', 'Upon Enrollment', '1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
+            $_payment_transaction =  in_array($_request->remarks, $_tuition_fee_remarks) ? 'TUITION FEE' : 'ADDITIONAL FEE';
+            if (!$_request->voucher) {
+                // If this Transaction is without a Voucher we proceed to the Storing of Transaction Details
+                $_request->validate([
+                    'or_number' => 'required',
+                    'amount' => 'required',
+                ]); // Validate the Or-Number and Payment Amount
+                $_payment_details = array(
+                    'assessment_id' => $_request->_assessment,
+                    'or_number' => $_request->or_number,
+                    'payment_transaction' => $_payment_transaction,
+                    'payment_amount' => $_amount,
+                    'payment_method' => $_request->payment_method,
+                    'remarks' => $_request->remarks,
+                    'transaction_date' => $_request->tran_date ?: date('Y-m-d'),
+                    'staff_id' => Auth::user()->staff->id,
+                    'is_removed' => false
+                );
+            } else {
+                // If the Transaction is with Voucher, Find the Voucher id
+                $_vouchers = Voucher::find($_request->voucher);
+                $_payment_assessment = PaymentAssessment::find($_request->_assessment); // Get the Payment Assessment
+                $_payment_details = PaymentAssessment::find($_request->_assessment);
+                $_voucher_amount = $_vouchers->voucher_code == "TCC" ? $_payment_details->course_semestral_fee->total_payments($_payment_details) : $_vouchers->voucher_amount;
+                $_student_no = str_replace('-', '', $_payment_assessment->enrollment_assessment->student->account->student_number);
+                $_payment_details = array(
+                    'assessment_id' => $_request->_assessment,
+                    'or_number' => $_vouchers->voucher_code . "." . $_student_no,
+                    'payment_transaction' => $_payment_transaction,
+                    'payment_amount' => $_voucher_amount,
+                    'payment_method' => $_request->payment_method,
+                    'remarks' => $_request->remarks,
+                    'transaction_date' => $_request->tran_date ? $_request->tran_date : date('Y-m-d'),
+                    'staff_id' => Auth::user()->staff->id,
+                    'is_removed' => false
+                );
+            }
+            $_payment = PaymentTransaction::create($_payment_details);
+
+            // If the Student have Online Payment Transaction
+            if ($_request->_online_payment) {
+                $_online_payment = PaymentTrasanctionOnline::find($_request->_online_payment);
+                $_online_payment->payment_id = $_payment->id;
+                $_online_payment->is_approved = 1;
+                $_online_payment->or_number = $_request->or_number;
+                $_online_payment->save();
+            }
+            // Sectioning & Student number for new student 
+            if ($_request->remarks == 'Upon Enrollment') {
+                // Get the Assessment Detials
+                $_payment_assessment = PaymentAssessment::find($_request->_assessment);
+                // HOW TO IDENTIFY THE COUNT NUMBER OF THE STUDENT
+                //return $_payment_assessment->enrollment_assessment->academic;
+                if ($_payment_assessment->enrollment_assessment->academic->semester == 'First Semester') {
+                    if ($_payment_assessment->enrollment_assessment->year_level == '4') {
+                        $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
+                            ->where('enrollment_assessments.year_level', '4')
+                            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                            ->groupBy('enrollment_assessments.student_id')
+                            ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                            ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
+                            ->groupBy('enrollment_assessments.student_id')->get();
+                        $_enrollment_count = count($_enrollment_count);
+                        $_student_number = $_enrollment_count > 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
+                        $_email =  date("y") . $_student_number . '.' . str_replace(' ', '', strtolower($_payment_assessment->enrollment_assessment->student->last_name)) . '@bma.edu.ph';
+                        $_student_number = date("y") . $_student_number;
+                        $_account_details = array(
+                            'student_id' => $_payment_assessment->enrollment_assessment->student_id,
+                            'campus_email' => $_email,
+                            'personal_email' => $_email,
+                            'student_number' => $_student_number,
+                            'password' => Hash::make($_student_number),
+                            'is_actived' => true,
+                            'is_removed' => false,
+                        );
+                        if ($_payment_assessment->enrollment_assessment->student->account) {
+                            $_payment_assessment->enrollment_assessment->student->account->is_actived = false;
+                            $_payment_assessment->enrollment_assessment->student->account->save();
+                            StudentAccount::create($_account_details);
+                        } else {
+                            StudentAccount::create($_account_details);
+                        }
+                    }
+                    if ($_payment_assessment->enrollment_assessment->year_level == 11) {
+                        $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
+                            ->where('enrollment_assessments.year_level', 11)
+                            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                            ->groupBy('enrollment_assessments.student_id')
+                            ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                            ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
+                            ->groupBy('enrollment_assessments.student_id')->get();
+                        $_enrollment_count = count($_enrollment_count);
+                        $_student_number = $_enrollment_count > 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
+                        $_email =  date("y") . $_student_number . '.' . str_replace(' ', '', strtolower($_payment_assessment->enrollment_assessment->student->last_name)) . '@bma.edu.ph';
+                        $_student_number = date("y") . $_student_number;
+                        $_account_details = array(
+                            'student_id' => $_payment_assessment->enrollment_assessment->student_id,
+                            'campus_email' => $_email,
+                            'personal_email' => $_email,
+                            'student_number' => $_student_number,
+                            'password' => Hash::make($_student_number),
+                            'is_actived' => true,
+                            'is_removed' => false,
+                        );
+                        if ($_payment_assessment->enrollment_assessment->student->account) {
+                            $_payment_assessment->enrollment_assessment->student->account->is_actived = false;
+                            $_payment_assessment->enrollment_assessment->student->account->save();
+                            StudentAccount::create($_account_details);
+                        } else {
+                            StudentAccount::create($_account_details);
+                        }
+                    }
+                }
+                // Year Level
+                $_year_level = $_payment_assessment->enrollment_assessment->course_id == 3 ? 'GRADE ' . $_payment_assessment->enrollment_assessment->year_level :
+                    $_payment_assessment->enrollment_assessment->year_level . '/C';
+                // Find Section
+                $_section =   Section::where('academic_id', Auth::user()->staff->current_academic()->id)
+                    ->where('course_id', $_payment_assessment->enrollment_assessment->course_id)
+                    ->where('year_level', $_year_level)
+                    ->where('section_name', 'not like', '%BRIDING%')
+                    ->where('is_removed', false)
+                    ->where(function ($_sub_query) {
+                        $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
+                            ->whereColumn('student_sections.section_id', 'sections.id')
+                            ->where('student_sections.is_removed', false);
+                    }, '<', 40)
+                    ->first();
+                if ($_section) {
+                    $_content = array(
+                        'student_id' => $_payment_assessment->enrollment_assessment->student_id,
+                        'section_id' => $_section->id,
+                        'created_by' => 'Auto Section',
+                        'is_removed' => 0,
+                    );
+                    StudentSection::create($_content); // Store Student Section
+                }
+            }
+            return back()->with('success', 'Payment Transaction Complete!');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    public function payment_store_v1(Request $_request)
     {
         try {
             $_amount = str_replace(",", "", $_request->amount);
