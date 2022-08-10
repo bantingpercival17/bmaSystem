@@ -335,7 +335,7 @@ class ApplicantController extends Controller
             $_email_model = new ApplicantEmail();
             $_email = $_applicant->email;
             //$_email = 'p.banting@bma.edu.ph';
-           /*  if ($_request->result) {
+            if ($_request->result) {
                 if (base64_decode($_request->result) == 1) {
                     // Email Passed
                     Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
@@ -346,7 +346,7 @@ class ApplicantController extends Controller
             } else {
                 //Email "Pending";
                 Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
-            } */
+            }
             return back()->with('success', 'Successfully Transact');
 
             // return back()->with('success', 'applicant_id' . base64_decode($_request->applicant) . 'is_fit' . base64_decode($_request->result));

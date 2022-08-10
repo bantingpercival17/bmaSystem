@@ -44,7 +44,7 @@ class MedicalController extends Controller
     {
         try {
             try {
-                return $_appointment = StudentMedicalAppointment::find(base64_decode($_request->appointment));
+                $_appointment = StudentMedicalAppointment::find(base64_decode($_request->appointment));
                 $_appointment->is_approved = 1;
                 $_appointment->save();
                 return back()->with('success', 'Appointment Approved');
@@ -111,7 +111,7 @@ class MedicalController extends Controller
     public function student_medical_list_report(Request $_request)
     {
         $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_file_name =  strtoupper(str_replace('_', '-', $_request->category)) .'-'. $_course->course_code . '-' . date('mdy') . '.xlsx'; // Set Filename
+        $_file_name =  strtoupper(str_replace('_', '-', $_request->category)) . '-' . $_course->course_code . '-' . date('mdy') . '.xlsx'; // Set Filename
         $_report = new CourseStudentMedicalList($_request->category, $_course);
         $_file = Excel::download($_report, $_file_name); // Download the File
         ob_end_clean();
