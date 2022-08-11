@@ -273,12 +273,12 @@ class AccountingController extends Controller
             $_payment_assessment = PaymentAssessment::where('enrollment_id', $_request->enrollment)->first();
             if (!$_payment_assessment) {
                 PaymentAssessment::create($_details);
-                return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Complete.');
+                return redirect(route('accounting.payment-transactions') . "?midshipman=" . $_request->_student)->with('success', 'Payment Assessment Complete.');
             } else {
                 $_payment_assessment->course_semestral_fee_id =  $_request->semestral_fees;
                 $_payment_assessment->payment_mode =  $_request->mode;
                 $_payment_assessment->save();
-                return redirect(route('accounting.payment-transactions') . "?_midshipman=" . $_request->_student)->with('success', 'Payment Assessment Updated');
+                return redirect(route('accounting.payment-transactions') . "?midshipman=" . $_request->_student)->with('success', 'Payment Assessment Updated');
             }
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
