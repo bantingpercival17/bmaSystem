@@ -86,9 +86,50 @@ $_title = 'Enrolled List';
             </div>
             @if (count($_students) > 0)
                 @foreach ($_students as $_data)
-                    <div class="card">
+                    <div class="card mb-2">
+                        <div class="row no-gutters">
+                            <div class="col-md-3">
+                                <img src="{{ $_data ? $_data->profile_pic($_data->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                                    class="card-img" alt="#">
+                            </div>
+                            <div class="col-md ps-0">
+                                <div class="card-body p-3 me-2">
+                                    <label for=""
+                                        class="fw-bolder text-primary h4">{{ $_data ? strtoupper($_data->last_name . ', ' . $_data->first_name) : 'MIDSHIPMAN NAME' }}</label>
+                                    <p class="mb-0">
+                                        <small class="fw-bolder badge bg-secondary">
+                                            {{ $_data ? ($_data->account ? $_data->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
+                                        </small> |
+                                        <small class="fw-bolder badge bg-secondary">
+                                            {{ $_data ? ($_data->enrollment_status ? strtoupper(Auth::user()->staff->convert_year_level($_data->enrollment_status->year_level)) : 'YEAR LEVEL') : 'YEAR LEVEL' }}
+                                        </small> |
+                                        <small class="fw-bolder badge bg-secondary">
+                                            {{ $_data ? ($_data->enrollment_status ? $_data->enrollment_status->course->course_name : 'COURSE') : 'COURSE' }}
+                                        </small>
+                                    </p>
+                                    <div class="row mt-0">
+
+                                        <div class="col-md">
+                                            <small class="fw-bolder text-muted">CURRICULUM:</small> <br>
+                                            <small class="badge bg-primary">
+                                                {{ $_data ? ($_data->enrollment_status ? strtoupper($_data->enrollment_status->curriculum->curriculum_name) : 'CURRICULUM') : 'CURRICULUM' }}
+                                            </small>
+                                        </div>
+                                        <div class="col-md">
+                                            <small class="fw-bolder text-muted">SECTION:</small> <br>
+                                            <small class="badge bg-primary">
+                                                {{ $_data ? ($_data->enrollment_status ? strtoupper($_data->enrollment_status->academic->semester . ' | ' . $_data->enrollment_status->academic->school_year) : 'SECTION') : 'SECTION' }}
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- <div class="card">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between {{-- align-itmes-center --}}">
+                            <div class="d-flex justify-content-between ">
                                 <div>
                                     <span><b>{{ $_data->student->account ? $_data->student->account->student_number : '-' }}</b></span>
                                     <a
@@ -121,7 +162,7 @@ $_title = 'Enrolled List';
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 @endforeach
             @else
                 <div class="card">
@@ -153,7 +194,8 @@ $_title = 'Enrolled List';
                     <div class="d-flex justify-content-between">
                         <a href="{{ request()->url() }}/report?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&_report=excel-report"
                             class="btn btn-primary btn-sm">Excel</a>
-                        <a href="{{ request()->url() }}/report?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&_report=pdf-report" class="btn btn-danger btn-sm ms-2">PDF</a>
+                        <a href="{{ request()->url() }}/report?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&_report=pdf-report"
+                            class="btn btn-danger btn-sm ms-2">PDF</a>
                     </div>
                 </div>
             </div>
@@ -177,7 +219,8 @@ $_title = 'Enrolled List';
                                             {{ $_course->course_code . ' ' . $level }}/C
                                         @endif
                                     </h5>
-                                    <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg width="32" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
                                         <path
                                             d="M17.8877 10.8967C19.2827 10.7007 20.3567 9.50473 20.3597 8.05573C20.3597 6.62773 19.3187 5.44373 17.9537 5.21973"
                                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
