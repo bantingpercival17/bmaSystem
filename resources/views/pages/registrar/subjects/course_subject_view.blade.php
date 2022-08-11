@@ -29,72 +29,102 @@ $_title = 'Subjects';
 @section('page-content')
     <div class="content">
         @if ($_course)
+            <div class="curriculum-content">
+                <ul class="nav nav-tabs" id="myTab-three" role="tablist">
+                    @foreach ($_curriculums as $key => $curriculum)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $key == 0 ? 'active' : '' }}"
+                                id="{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}-tab-three"
+                                data-bs-toggle="tab"
+                                href="#{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}-three"
+                                role="tab"
+                                aria-controls="{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}"
+                                aria-selected="true"><small>{{ strtoupper($curriculum->curriculum_name) }}</small></a>
+                        </li>
+                    @endforeach
 
-            @foreach ($_curriculums as $curriculum)
-                @php
-                    $_year_level = $_course->id == 3 ? [11, 12] : [4, 3, 2, 1];
-                    $_academic = Auth::user()->staff->current_academic();
-                @endphp
-                <label for="" class="text-primary h5"><b>| {{ strtoupper($curriculum->curriculum_name) }}</b></label>
-                @foreach ($_year_level as $_level)
-                    @if (count($_course->course_subject([$curriculum->id, $_level, Auth::user()->staff->current_academic()->semester])) > 0)
-                        <div class="card">
-                            <div class="card-header">
-                                <label class="card-title text-muted">
-                                    <b>{{ $_course->id == 3 ? 'GRADE ' . $_level : $_level . ' CLASS' }}
-                                    </b>
-                                </label>
-                            </div>
-                            <div class="card-body table-responsive p-0">
-                                <table class="table table-head-fixed text-nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th>SUBJECT CODE / DESCRIPTION</th>
-                                            <th>SECTION</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if ($_subject = $_course->course_subject([$curriculum->id, $_level, Auth::user()->staff->current_academic()->semester]))
-                                            @foreach ($_subject as $_subject)
-                                                <tr>
-                                                    <td>
-                                                        <a
-                                                            href="{{ route('registrar.course-subject-handle-view') }}?_subject={{ base64_encode($_subject->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
-                                                            <span class="text-primary"><b>
-                                                                    {{ $_subject->subject_code }}</b></span>
-                                                            <br>
-                                                            <small> {{ $_subject->subject_name }}</small>
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        @if ($_subject->section($_academic->id)->count() > 0)
-                                                            @foreach ($_subject->section($_academic->id)->get() as $_section)
-                                                                <small class="mt-2 btn-form-grade badge bg-primary" data-bs-toggle="modal"
-                                                                    data-bs-target=".grade-view-modal"
-                                                                    data-grade-url="{{ route('registrar.subject-grade') }}?_subject={{ base64_encode($_section->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2">
-                                                                    {{ $_section->section->section_name }}
-                                                                    <br>[
-                                                                    {{ $_section->staff->first_name . ' ' . $_section->staff->last_name }}]</small>
-                                                            @endforeach
-                                                        @else
-                                                            <span class="badge badge-secondary">ADD SECTION</span>
-                                                        @endif
-                                                    </td>
+                </ul>
+                <div class="tab-content mt-5" id="myTabContent-4">
+                    @foreach ($_curriculums as $key => $curriculum)
+                        <div class="tab-pane fade show {{ $key == 0 ? ' active' : '' }}"
+                            id="{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}-three" role="tabpanel"
+                            aria-labelledby="{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}-tab-three">
+                            <label for=""
+                                class="h4 text-primary fw-bolder">{{ strtoupper($curriculum->curriculum_name) }}</label>
+                            @php
+                                $_year_level = $_course->id == 3 ? [11, 12] : [4, 3, 2, 1];
+                                $_academic = Auth::user()->staff->current_academic();
+                            @endphp
+                            @foreach ($_year_level as $_level)
+                                @if (count(
+                                    $_course->course_subject([$curriculum->id, $_level, Auth::user()->staff->current_academic()->semester])) > 0)
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <label class="card-title text-muted fw-bolder">
+                                                {{ strtoupper(Auth::user()->staff->convert_year_level($_level)) }}
+                                            </label>
+                                        </div>
+                                        <div class="card-body table-responsive p-0">
+                                            <table class="table table-head-fixed text-nowrap">
+                                                <thead>
+                                                    <tr>
+                                                        <th>SUBJECT CODE / DESCRIPTION</th>
+                                                        <th>SECTION</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if ($_subject = $_course->course_subject([
+                                                        $curriculum->id,
+                                                        $_level,
+                                                        Auth::user()->staff->current_academic()->semester,
+                                                    ]))
+                                                        @foreach ($_subject as $_subject)
+                                                            <tr>
+                                                                <td>
+                                                                    <a
+                                                                        href="{{ route('registrar.course-subject-handle-view') }}?_subject={{ base64_encode($_subject->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                                                        <span class="text-primary"><b>
+                                                                                {{ $_subject->subject_code }}</b></span>
+                                                                        <br>
+                                                                        <small> {{ $_subject->subject_name }}</small>
+                                                                    </a>
+                                                                </td>
+                                                                <td>
+                                                                    @if ($_subject->section($_academic->id)->count() > 0)
+                                                                        @foreach ($_subject->section($_academic->id)->get() as $_section)
+                                                                            <small
+                                                                                class="mt-2 btn-form-grade badge bg-primary"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target=".grade-view-modal"
+                                                                                data-grade-url="{{ route('registrar.subject-grade') }}?_subject={{ base64_encode($_section->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2">
+                                                                                {{ $_section->section->section_name }}
+                                                                                <br>[
+                                                                                {{ $_section->staff->first_name . ' ' . $_section->staff->last_name }}]</small>
+                                                                        @endforeach
+                                                                    @else
+                                                                        <span class="badge badge-secondary">ADD
+                                                                            SECTION</span>
+                                                                    @endif
+                                                                </td>
 
-                                                </tr>
-                                            @endforeach
-                                        @else
-                                            <tr>
-                                                <td colspan="2">NO SUBJECT</td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
+                                                            </tr>
+                                                        @endforeach
+                                                    @else
+                                                        <tr>
+                                                            <td colspan="2">NO SUBJECT</td>
+                                                        </tr>
+                                                    @endif
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
                         </div>
-                    @endif
-                @endforeach
-            @endforeach
+                    @endforeach
+                </div>
+            </div>
+
 
         @endif
     </div>
