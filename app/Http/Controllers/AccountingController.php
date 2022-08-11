@@ -504,7 +504,7 @@ class AccountingController extends Controller
                 $_section =   Section::where('academic_id', Auth::user()->staff->current_academic()->id)
                     ->where('course_id', $_payment_assessment->enrollment_assessment->course_id)
                     ->where('year_level', $_year_level)
-                    ->where('section_name', 'not like', '%BRIDING%')
+                    ->where('section_name', 'not like', '%BRIDGING%')
                     ->where('is_removed', false)
                     ->where(function ($_sub_query) {
                         $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
