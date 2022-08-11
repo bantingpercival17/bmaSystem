@@ -124,6 +124,7 @@ class RegistrarController extends Controller
                     return back()->with('success', 'Transaction Successfully.');
                 } else {
                     $_assessment_details = [
+                        "course_id" => $_request->_course ?: $_student->enrollment_assessment->course_id,
                         "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
                         "bridging_program" => $_request->_bridging_program ?: "without",
 
