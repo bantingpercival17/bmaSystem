@@ -14,7 +14,7 @@
         * {
             padding: 0;
             margin: 0;
-            font-family: "Times New Roman", Times, serif
+            /* font-family: "Times New Roman", Times, serif */
         }
 
         header {
@@ -47,7 +47,7 @@
             top: 1.3in;
             margin-right: 25px;
             margin-left: 25px;
-           
+
 
         }
 
@@ -202,19 +202,15 @@
             text-align: center;
         }
 
-
-        .form-check .form-check-input {
-            float: left;
-            /*  margin-left: 0.0em; */
-            margin-bottom: 0.0em;
+        .checkbox-container {
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
         }
 
-        .form-label {
-            float: left;
-            text-combine-upright: unset;
-            margin-top: 0.2em;
-            margin-left: 2.0em;
-
+        .checkbox-input {
+            margin: 0 12px 0 0;
+            vertical-align: middle;
+            position: relative;
+            top: 5px;
         }
 
         .subject-list-table {
@@ -246,7 +242,6 @@
         .image-signature {
             width: 30%;
         }
-
     </style>
 </head>
 

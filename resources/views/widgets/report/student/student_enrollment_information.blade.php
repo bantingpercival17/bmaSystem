@@ -52,7 +52,7 @@
                             </td>
                             <td width="3%"><small>YEAR:</small></td>
                             <td class="text-fill-in">
-                                <b>{{ $_enrollment_assessment->course_id == 3? 'GRADE ' . $_enrollment_assessment->year_level: $_enrollment_assessment->year_level . ' CLASS' }}</b>
+                                <b>{{ $_enrollment_assessment->course_id == 3 ? 'GRADE ' . $_enrollment_assessment->year_level : $_enrollment_assessment->year_level . ' CLASS' }}</b>
                             </td>
                             <td width="5%"><small>SEMESTER:</small></td>
                             <td class="text-fill-in">
@@ -189,7 +189,6 @@
                                 </tr>
 
                             </tbody>
-
                         @else
                             <tbody>
                                 @foreach ($_student->educational_background as $_data)
@@ -242,17 +241,17 @@
                         <tr>
                             <td class="text-fill-in">
                                 <b>
-                                    {{ $_parent? strtoupper($_parent->father_last_name . ', ' . $_parent->father_first_name . ' ' . $_parent->father_middle_name): '-' }}
+                                    {{ $_parent ? strtoupper($_parent->father_last_name . ', ' . $_parent->father_first_name . ' ' . $_parent->father_middle_name) : '-' }}
                                 </b>
                             </td>
                             <td class="text-fill-in">
                                 <b>
-                                    {{ $_parent? strtoupper($_parent->mother_last_name . ', ' . $_parent->mother_first_name . ' ' . $_parent->mother_middle_name): '-' }}
+                                    {{ $_parent ? strtoupper($_parent->mother_last_name . ', ' . $_parent->mother_first_name . ' ' . $_parent->mother_middle_name) : '-' }}
                                 </b>
                             </td>
                             <td class="text-fill-in">
                                 <b>
-                                    {{ $_parent? strtoupper($_parent->guardian_last_name . ', ' . $_parent->guardian_first_name . ' ' . $_parent->guardian_middle_name): '-' }}
+                                    {{ $_parent ? strtoupper($_parent->guardian_last_name . ', ' . $_parent->guardian_first_name . ' ' . $_parent->guardian_middle_name) : '-' }}
                                 </b>
                             </td>
                         </tr>
@@ -260,33 +259,27 @@
                             <td>
                                 <p><small>B2. HIGHEST EDUCATIONAL ATTAINMENT:</small></p>
                                 @foreach ($_educational_attainment as $_key => $_education)
-                                    <p>
-                                        <input type="checkbox" class="form-input-check" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->father_educational_attainment == $_education ? 'checked' : '') : '' }}>
-                                        <label class="form-label"
-                                            for="educ-{{ $_key }}">{{ $_education }}</label>
+                                    <p class="checkbox-container">
+                                        <label><input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->father_educational_attainment == $_education ? 'checked' : '') : '' }} />{{ $_education }}</label>
                                     </p>
                                 @endforeach
                             </td>
                             <td>
                                 <p><small>B7. HIGHEST EDUCATIONAL ATTAINMENT:</small></p>
                                 @foreach ($_educational_attainment as $_key => $_education)
-                                    <p>
-                                        <input type="checkbox" class="form-input-check" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->mother_educational_attainment == $_education ? 'checked' : '') : '' }}>
-                                        <label class="form-label"
-                                            for="educ-{{ $_key }}">{{ $_education }}</label>
+                                    <p class="checkbox-container">
+                                        <label><input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->mother_educational_attainment == $_education ? 'checked' : '') : '' }} />{{ $_education }}</label>
                                     </p>
                                 @endforeach
                             </td>
                             <td>
                                 <p><small>B12. HIGHEST EDUCATIONAL ATTAINMENT:</small></p>
                                 @foreach ($_educational_attainment as $_key => $_education)
-                                    <p>
-                                        <input type="checkbox" class="form-input-check" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->guardian_educational_attainment == $_education ? 'checked' : '') : '' }}>
-                                        <label class="form-label"
-                                            for="educ-{{ $_key }}">{{ $_education }}</label>
+                                    <p class="checkbox-container">
+                                        <label><input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->guardian_educational_attainment == $_education ? 'checked' : '') : '' }} />{{ $_education }}</label>
                                     </p>
                                 @endforeach
                             </td>
@@ -295,36 +288,36 @@
                             <td>
                                 <small>B3. EMPLOYMENT STATUS</small>
                                 @foreach ($_employment_status as $_key => $_status)
-                                    <p>
-                                        <input type="checkbox" class="form-input-check" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->father_employment_status == $_status ? 'checked' : '') : '' }}>
-                                        <label class="form-label"
-                                            for="educ-{{ $_key }}">{{ $_status }}</label>
-
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->father_employment_status == $_status ? 'checked' : '') : '' }} />
+                                            {{ $_status }}
+                                        </label>
                                     </p>
                                 @endforeach
                             </td>
                             <td>
                                 <small>B8. EMPLOYMENT STATUS</small>
                                 @foreach ($_employment_status as $_key => $_status)
-                                    <p>
-                                        <input type="checkbox" class="form-input-check" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->mother_employment_status == $_status ? 'checked' : '') : '' }}>
-                                        <label class="form-label"
-                                            for="educ-{{ $_key }}">{{ $_status }}</label>
-
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->mother_employment_status == $_status ? 'checked' : '') : '' }} />
+                                            {{ $_status }}
+                                        </label>
                                     </p>
                                 @endforeach
                             </td>
                             <td>
                                 <small>B13. EMPLOYMENT STATUS</small>
                                 @foreach ($_employment_status as $_key => $_status)
-                                    <p>
-                                        <input type="checkbox" class="form-input-check" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->guardian_employment_status == $_status ? 'checked' : '') : '' }}>
-                                        <label class="form-label"
-                                            for="educ-{{ $_key }}">{{ $_status }}</label>
-
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->guardian_employment_status == $_status ? 'checked' : '') : '' }} />
+                                            {{ $_status }}
+                                        </label>
                                     </p>
                                 @endforeach
                             </td>
@@ -335,33 +328,36 @@
 
 
                                 @foreach ($_arrangement as $_key => $_data)
-                                    <p>
-                                        <input type="checkbox" class="form-input-check" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->father_working_arrangement == $_data ? 'checked' : '') : '' }}>
-                                        <label class="form-label"
-                                            for="educ-{{ $_key }}">{{ $_data }}</label>
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->father_working_arrangement == $_data ? 'checked' : '') : '' }} />
+                                            {{ $_data }}
+                                        </label>
                                     </p>
                                 @endforeach
                             </td>
                             <td>
                                 <small>B9. WORKING ARRANGEMENT</small>
                                 @foreach ($_arrangement as $_key => $_data)
-                                    <p>
-                                        <input type="checkbox" name="form-input-check" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->mother_working_arrangement == $_data ? 'checked' : '') : '' }}>
-                                        <label class="form-label"
-                                            for="educ-{{ $_key }}">{{ $_data }}</label>
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->mother_working_arrangement == $_data ? 'checked' : '') : '' }} />
+                                            {{ $_data }}
+                                        </label>
                                     </p>
                                 @endforeach
                             </td>
                             <td>
                                 <small>B14. WORKING ARRANGEMENT</small>
                                 @foreach ($_arrangement as $_key => $_data)
-                                    <p>
-                                        <input type="checkbox" class="form-input-check" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->guardian_working_arrangement == $_data ? 'checked' : '') : '' }}>
-                                        <label for="educ-{{ $_key }}"
-                                            class="form-label">{{ $_data }}</label>
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->guardian_working_arrangement == $_data ? 'checked' : '') : '' }} />
+                                            {{ $_data }}
+                                        </label>
                                     </p>
                                 @endforeach
                             </td>
@@ -386,37 +382,36 @@
                             <td colspan="">
                                 <small>B16. HOUSEHOLD CAPITAL INCOME:</small><br>
                                 @foreach ($_income as $_key => $_data)
-                                    <div class="">
-                                        <input type="checkbox" class="form-check-input" name=""
-                                            id="b16-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->household_income == $_data ? 'checked' : '') : '' }}>
-                                        <label class="form-label" for="b16-{{ $_key }}">
-
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->household_income == $_data ? 'checked' : '') : '' }} />
                                             {{ $_data }}
                                         </label>
-
-                                    </div>
+                                    </p>
                                 @endforeach
                             </td>
                             <td colspan="" colspan="1" valign="top">
                                 <small>B17. IS YOUR FAMILY A BENEFICIARY OF DSWD LISTHAN / 4P's :</small><br>
                                 @foreach ($_dswd as $_key => $_data)
-                                    <p>
-                                        <input type="checkbox" class="form-check-input" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->dswd_listahan == $_data ? 'checked' : '') : '' }}>
-                                        <label for="b17-{{ $_key }}"
-                                            class="form-label">{{ $_data }}</label>
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->dswd_listahan == $_data ? 'checked' : '') : '' }} />
+                                            {{ $_data }}
+                                        </label>
                                     </p>
                                 @endforeach
                             </td>
                             <td colspan="1" colspan="1" valign="top">
                                 <small>B18. HOMEOWERSHIP:</small><br>
                                 @foreach ($_homeownership as $_key => $_data)
-                                    <p>
-                                        <input type="checkbox" class="form-check-input" id="educ-{{ $_key }}"
-                                            {{ $_parent ? ($_parent->homeownership == $_data ? 'checked' : '') : '' }}>
-                                        <label for="educ-{{ $_key }}"
-                                            class="form-label">{{ $_data }}</label>
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->homeownership == $_data ? 'checked' : '') : '' }} />
+                                            {{ $_data }}
+                                        </label>
                                     </p>
                                 @endforeach
                             </td>
@@ -425,10 +420,11 @@
                             <td colspan="3" colspan="1" valign="top">
                                 <small>B19. CAR ONWNERSHIP :</small><br>
                                 @foreach ($_cars as $_key => $_data)
-                                    <input type="checkbox" class="form-check-input" id="educ-{{ $_key }}"
-                                        {{ $_parent ? ($_parent->car_ownership == $_data ? 'checked' : '') : '' }}>
-                                    <label for="educ-{{ $_key }}"
-                                        class="form">{{ $_data }}</label>
+                                    <label class="checkbox-container">
+                                        <input class="checkbox-input"type="checkbox"
+                                            {{ $_parent ? ($_parent->car_ownership == $_data ? 'checked' : '') : '' }} />
+                                        {{ $_data }}
+                                    </label>
                                 @endforeach
                             </td>
                         </tr>
@@ -449,13 +445,13 @@
                                 $_device_1 = $_parent ? unserialize($_parent->available_devices) : [];
                             @endphp
                             @foreach ($_device as $_data)
-                                <div>
-                                    <input class="form-input-check" type="checkbox"
-                                        {{ in_array($_data, $_device_1) ? 'checked' : '' }}>
-                                    <label class="form-label">
+                                <p class="checkbox-container">
+                                    <label>
+                                        <input class="checkbox-input"type="checkbox"
+                                            {{ in_array($_data, $_device_1) ? 'checked' : '' }} />
                                         {{ $_data }}
                                     </label>
-                                </div>
+                                </p>
                             @endforeach
 
                         </td>
@@ -463,9 +459,13 @@
                             <small>C2. DO YOU HAVE A WAY TO CONNECT TO THE INTERNET? </small> <br>
                             @foreach ($_connect as $_data)
                                 <div>
-                                    <input type="checkbox" class="form-input-check"
-                                        {{ $_parent ? ($_parent->available_connection == $_data ? 'checked' : '') : '' }}>
-                                    <label class="form-label" for="">{{ $_data }}</label>
+                                    <p class="checkbox-container">
+                                        <label>
+                                            <input class="checkbox-input"type="checkbox"
+                                                {{ $_parent ? ($_parent->available_connection == $_data ? 'checked' : '') : '' }} />
+                                            {{ $_data }}
+                                        </label>
+                                    </p>
                                 </div>
                             @endforeach
                         </td>
@@ -475,11 +475,13 @@
                                 $_array = $_parent ? unserialize($_parent->available_provider) : [];
                             @endphp
                             @foreach ($_provider as $_data)
-                                <div>
-                                    <input class="form-input-check" type="checkbox"
-                                        {{ in_array($_data, $_array) ? 'checked' : '' }}>
-                                    <label class="form-label">{{ $_data }}</label>
-                                </div>
+                                <p class="checkbox-container">
+                                    <label>
+                                        <input class="checkbox-input"type="checkbox"
+                                            {{ in_array($_data, $_array) ? 'checked' : '' }} />
+                                        {{ $_data }}
+                                    </label>
+                                </p>
                             @endforeach
                         </td>
                     </tr>
@@ -491,25 +493,29 @@
                                 $_array = $_parent ? unserialize($_parent->learning_modality) : [];
                             @endphp
                             @foreach ($_learning_modality as $_data)
-                                <div>
-                                    <input class="form-input-label" type="checkbox"
-                                        {{ in_array($_data, $_array) ? 'checked' : '' }}>
-                                    <label for="" class="form-label">{{ $_data }}</label>
-                                </div>
+                                <p class="checkbox-container">
+                                    <label>
+                                        <input class="checkbox-input"type="checkbox"
+                                            {{ in_array($_data, $_array) ? 'checked' : '' }} />
+                                        {{ $_data }}
+                                    </label>
+                                </p>
                             @endforeach
                         </td>
                         <td colspan="2" valign="top">
-                            <small>C6. WHAT ARE THE CHALLENGES THAT MAY AFFECT YOUR LEARNING PROCESS THROUGH DISTANCE
+                            <small>C5. WHAT ARE THE CHALLENGES THAT MAY AFFECT YOUR LEARNING PROCESS THROUGH DISTANCE
                                 EDUCATIONAL? </small><br>
                             @php
                                 $_array = $_parent ? unserialize($_parent->distance_learning_effect) : [];
                             @endphp
                             @foreach ($_inputs as $_data)
-                                <div>
-                                    <input class="form-input-label" type="checkbox"
-                                        {{ in_array($_data, $_array) ? 'checked' : '' }}>
-                                    <label for="" class="form-label">{{ $_data }}</label>
-                                </div>
+                                <p class="checkbox-container">
+                                    <label>
+                                        <input class="checkbox-input"type="checkbox"
+                                            {{ in_array($_data, $_array) ? 'checked' : '' }} />
+                                        {{ $_data }}
+                                    </label>
+                                </p>
                             @endforeach
                         </td>
                     </tr>
@@ -573,7 +579,7 @@
                             <td>
                                 <small>LEVEL :</small>
                                 <b>
-                                    {{ $_enrollment_assessment->course_id == 3? 'GRADE ' . $_enrollment_assessment->year_level: $_enrollment_assessment->year_level . ' CLASS' }}
+                                    {{ $_enrollment_assessment->course_id == 3 ? 'GRADE ' . $_enrollment_assessment->year_level : $_enrollment_assessment->year_level . ' CLASS' }}
                                 </b>
                             </td>
                             <td>
@@ -587,7 +593,7 @@
 
                                 <small>LEVEL :</small>
                                 <b>
-                                    {{ $_enrollment_assessment->course_id == 3? 'GRADE ' . $_enrollment_assessment->year_level: $_enrollment_assessment->year_level . ' CLASS' }}
+                                    {{ $_enrollment_assessment->course_id == 3 ? 'GRADE ' . $_enrollment_assessment->year_level : $_enrollment_assessment->year_level . ' CLASS' }}
                                 </b>
                             </td>
                         @endif
@@ -673,7 +679,7 @@
                             <td>PAYMENT MODE:</td>
                             <td class="text-center">
                                 {{ $_payment_details->payment_mode == 0 ? 'FULLPAYMENT' : 'INSTALLMENT' }}
-                                
+
                             </td>
 
                         </tr>
