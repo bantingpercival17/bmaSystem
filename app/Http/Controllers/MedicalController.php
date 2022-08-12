@@ -62,7 +62,7 @@ class MedicalController extends Controller
             if ($_request->result) {
                 $_details = array('student_id' => base64_decode($_request->student), 'is_fit' => base64_decode($_request->result), 'remarks' => $_request->remarks, 'staff_id' => Auth::user()->staff->id);
             } else {
-                $_details = array('student_id' => base64_decode($_request->student), 'is_fit' => 0, 'is_pending' => 0, 'remarks' => base64_decode($_request->remarks), 'staff_id' => Auth::user()->staff->id);
+                $_details = array('student_id' => base64_decode($_request->student), 'is_pending' => 0, 'remarks' => $_request->remarks, 'staff_id' => Auth::user()->staff->id);
             }
             $_medical_result = StudentMedicalResult::where('student_id', $_student->id)->where('is_removed', false)->first();
             if ($_medical_result) {
