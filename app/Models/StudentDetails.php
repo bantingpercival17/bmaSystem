@@ -84,6 +84,10 @@ class StudentDetails extends Model
     {
         return $this->hasOne(StudentAccount::class, 'student_id')->where('is_actived', true);
     }
+    public function account_list()
+    {
+        return $this->hasMany(StudentAccount::class, 'student_id')->orderBy('id', 'desc');
+    }
     public function educational_background()
     {
         return $this->hasMany(EducationalDetails::class, 'student_id');

@@ -148,6 +148,24 @@ class AdministratorController extends Controller
 
         return back()->with('reset-password', 'Successsfully Password Reset : ' . $_password);
     }
+    public function student_account(Request $_request)
+    {
+        try {
+            $_student = StudentDetails::find(base64_decode($_request->student));
+            $_account_content = array(
+                'student_id' => $_student->id,
+                'student_number' => $_request->student_number,
+                'campus_email' => $_request->student_number . '.' . str_replace(' ', ' ', strtolower($_student->last_name)) . '@bma.edu.ph',
+                'personal_email' => $_request->personal_email ?: '',
+                'is_actived' => true,
+                'is_removed' => false
+            );
+            StudentAccount::create($_account_content);
+            return back()->with('success', 'Successfuly Created Account');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
     /* Accounts */
     public function account_view()
     {

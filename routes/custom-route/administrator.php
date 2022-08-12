@@ -4,6 +4,7 @@ use App\Http\Controllers\AdministratorController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Controllers\PaymongoApi;
+use App\Http\Middleware\Administrator;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
@@ -15,12 +16,13 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
     Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
     Route::get('/enrollment/enrolled-list', [AdministratorController::class, 'dashboard_enrolled_list_view'])->name('admin.course-enrolled');
     Route::get('/enrollment/enrolled-list/report', [AdministratorController::class, 'course_enrolled_report'])->name('admin.course-enrolled-report');
-    
+
     /* Students */
     Route::get('/students', [AdministratorController::class, 'student_view'])->name('admin.students'); // View Students
     Route::get('/students/view', [AdministratorController::class, 'student_profile'])->name('admin.student-profile');
     Route::post('/students/imports', [AdministratorController::class, 'student_imports']); // Import Student Details
     Route::get('/students/reset-password', [AdministratorController::class, 'student_reset_password'])->name('admin.student-reset-password');
+    Route::post('/students/store-student-account', [AdministratorController::class, 'student_account'])->name('admin.store-student-account');
     /* Accounts */
     Route::get('/accounts', [AdministratorController::class, 'account_view'])->name('admin.accounts'); // View Accounts
     Route::post('/accounts', [AdministratorController::class, 'account_store']); // Store Account
