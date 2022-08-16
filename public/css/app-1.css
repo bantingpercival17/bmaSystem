@@ -29057,11 +29057,10 @@ pre[class*="language-"] {
     -webkit-border-radius: 20px;
     border-radius: 20px
 }
-
 ::-webkit-scrollbar-track {
     background: #f3f3f3;
-    -webkit-border-radius: 20px;
-    border-radius: 20px
+    /* -webkit-border-radius: 20px;
+    border-radius: 20px */
 }
 
 ::-webkit-scrollbar-thumb {
