@@ -72,32 +72,11 @@ class MedicalController extends Controller
             } else {
                 StudentMedicalResult::create($_details);
             }
-
-            /* $_email_model = new ApplicantEmail();
-            $_email = $_applicant->email;
-            //$_email = 'p.banting@bma.edu.ph';
-
-            if ($_request->result) {
-                if (base64_decode($_request->result) == 1) {
-                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
-                    //return "Passed";
-                } else {
-                    //return "Failed";
-                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
-                }
-            } else {
-                //return "Pending";
-                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
-            } */
             return back()->with('success', 'Successfully Transact');
-
-            // return back()->with('success', 'applicant_id' . base64_decode($_request->applicant) . 'is_fit' . base64_decode($_request->result));
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
         }
     }
-
-
 
     public function applicant_medical_list_report(Request $_request)
     {

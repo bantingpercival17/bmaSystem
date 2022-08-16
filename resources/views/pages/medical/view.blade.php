@@ -186,6 +186,8 @@ $_title = 'Student Medical Overview';
                                                         <span class="badge bg-primary mb-4">FIT TO ENROLL</span>
                                                     @else
                                                         <span class="badge bg-danger mb-4">FAILED</span>
+                                                        <a href="{{ route('medical.student-medical-result') . '?result=' . base64_encode(1) . '&student=' . base64_encode($_data->student->id) }}"
+                                                            class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
                                                     @endif
                                                 @else
                                                     <span class="badge bg-info mb-4">PENDING RESULT</span>
