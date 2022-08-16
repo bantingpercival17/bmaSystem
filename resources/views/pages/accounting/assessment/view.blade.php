@@ -50,7 +50,7 @@
             _tuition_fee += _interest // Total Tuition Fee with Books
             var _init_tuition = parseInt($('#tuition_tags').val()) + _interest; // uition and Miscellaneous Fee
             _upon_enrollment = /* Get the 20% of Tuition and Miscellaneous */
-                (_init_tuition * 0.20) + (_tuition_fee - _init_tuition)
+                (_init_tuition * 0.30) + (_tuition_fee - _init_tuition)
             /* Subtract the total TFee and Additional Fee to the TFee and Miscellaneous */
             _monthly_fee = (_tuition_fee - _upon_enrollment) / 4
             return {
@@ -68,7 +68,7 @@
 
             console.log("Payment Interest: " + _intest);
             _total_fee = parseFloat(_tuition_fee) + parseFloat(_intest)
-            _upon_enrollment = parseFloat(_tuition_fee) * 0.2
+            _upon_enrollment = parseFloat(_tuition_fee) * 0.3
             _monthly_fee = (_total_fee - _upon_enrollment) / 4;
             return {
                 "total_tuition_fee": _total_fee,
