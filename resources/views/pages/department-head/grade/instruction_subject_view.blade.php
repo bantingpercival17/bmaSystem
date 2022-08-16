@@ -196,25 +196,7 @@ $_title = 'Grade Submission';
                     </div>
                 </div>
             </div>
-            {{-- <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-md"> <label for="" class="h5 fw-bolder text-primary"> MIDTERM GRADING
-                                SHEET</label></div>
-                        <div class="col-md">
-                            <small class="badge bg-primary float-end"data-bs-toggle="modal"
-                                data-bs-target=".grade-view-modal"
-                                data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=midterm&_preview=pdf&_form=ad1">
-                                FORM AD-01
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body"></div>
-                <div class="card-footer"></div>
-            </div> --}}
             @if ($_subject_class)
-                {{-- MIDTERM GRADE LAYOUT --}}
                 <div class="card">
                     <div class="card-header align-items-center justify-content-between p-3">
                         <div class="row">
@@ -222,7 +204,7 @@ $_title = 'Grade Submission';
                                 <label for="" class="h5 fw-bolder text-primary"> MIDTERM GRADING SHEET</label>
                             </div>
                             <div class="col-md">
-                                <small class="badge bg-primary float-end"data-bs-toggle="modal"
+                                <small class="badge bg-primary float-end  btn-form-grade"data-bs-toggle="modal"
                                     data-bs-target=".grade-view-modal"
                                     data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=midterm&_preview=pdf&_form=ad1">
                                     FORM AD-01
@@ -287,7 +269,6 @@ $_title = 'Grade Submission';
                     </div>
                 </div>
 
-                {{-- FINAL GRADE LAYOUT --}}
                 @if (count($_subject_class->finals_grade_remarks) > 0)
                     <div class="card">
                         <div class="card-header align-items-center justify-content-between p-3">
@@ -296,7 +277,7 @@ $_title = 'Grade Submission';
                                     <label for="" class="h5 fw-bolder text-primary">FINALSS GRADING SHEET</label>
                                 </div>
                                 <div class="col-md">
-                                    <small class="badge bg-primary float-end"data-bs-toggle="modal"
+                                    <small class="badge bg-primary float-end  btn-form-grade"data-bs-toggle="modal"
                                         data-bs-target=".grade-view-modal"
                                         data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=finals&_preview=pdf&_form=ad1">
                                         FORM AD-01
