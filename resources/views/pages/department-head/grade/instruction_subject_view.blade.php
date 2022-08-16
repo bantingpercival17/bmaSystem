@@ -172,7 +172,7 @@ $_title = 'Grade Submission';
         </div>
         <div class="col-md-7">
             <div class="card">
-                <div class="card-header align-items-center justify-content-between pb-4">
+                <div class="card-body align-items-center justify-content-between pb-4">
                     <div class="header-title">
                         <div class="d-flex flex-wrap row">
                             <div class="media-support-info mt-2 col-md-7">
@@ -196,221 +196,175 @@ $_title = 'Grade Submission';
                     </div>
                 </div>
             </div>
-
+            {{-- <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md"> <label for="" class="h5 fw-bolder text-primary"> MIDTERM GRADING
+                                SHEET</label></div>
+                        <div class="col-md">
+                            <small class="badge bg-primary float-end"data-bs-toggle="modal"
+                                data-bs-target=".grade-view-modal"
+                                data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=midterm&_preview=pdf&_form=ad1">
+                                FORM AD-01
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body"></div>
+                <div class="card-footer"></div>
+            </div> --}}
             @if ($_subject_class)
-                <div class="card mt-2">
-                    <div class="card-header align-items-center justify-content-between pb-4">
-                        <div class="">
-                            <div class="d-flex flex-wrap row">
-                                <div class="media-support-info mt-2 col-md-7">
-                                    <h5 class="mb-0">
-                                        MIDTERM GRADING SHEET
-                                    </h5>
-                                </div>
-                                <div class="col-md">
-                                    <button type="button" class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
-                                        data-bs-toggle="modal" data-bs-target=".grade-view-modal"
-                                        data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=midterm&_preview=pdf&_form=ad1">
-                                        FORM AD-01</button>
-                                </div>
+                {{-- MIDTERM GRADE LAYOUT --}}
+                <div class="card">
+                    <div class="card-header align-items-center justify-content-between p-3">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <label for="" class="h5 fw-bolder text-primary"> MIDTERM GRADING SHEET</label>
+                            </div>
+                            <div class="col-md">
+                                <small class="badge bg-primary float-end"data-bs-toggle="modal"
+                                    data-bs-target=".grade-view-modal"
+                                    data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=midterm&_preview=pdf&_form=ad1">
+                                    FORM AD-01
+                                </small>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="">
-                            @foreach ($_subject_class->midterm_grade_remarks as $_remarks)
-                                <div class="d-flex mt-3">
-                                    <div class="ms-3">
-                                        @if ($_remarks->is_approved == 1)
-                                            <h5 class="text-primary mb-1">APPROVED</h5>
-                                        @endif
-                                        @if ($_remarks->is_approved === 0)
-                                            <h5 class="text-danger mb-1">DISAPPROVED</h5>
-                                        @endif
-                                        @if ($_remarks->is_approved === null)
-                                            <h5 class="text-info mb-1">FOR APPROVAL</h5>
-                                        @endif
-                                        <p class="mb-1">{{ $_remarks->comments }}</p>
-                                        <div class="d-flex flex-wrap align-items-center mb-1">
-                                            <small>Date Submitted: </small>
-                                            <small class="ms-2 text-primary">
-                                                {{ $_remarks->created_at->format('d F, Y') }}
-                                            </small>
+                    <div class="card-body p-3">
+                        @foreach ($_subject_class->midterm_grade_remarks as $_remarks)
+                            <div class="p-2">
+                                @if ($_remarks->is_approved == 1)
+                                    <h5 class="text-primary mb-1">APPROVED</h5>
+                                @elseif ($_remarks->is_approved === 0)
+                                    <h5 class="text-danger mb-1">DISAPPROVED</h5>
+                                    <p class="mb-1">{{ $_remarks->comments }}</p>
+                                @elseif ($_remarks->is_approved === null)
+                                    <h5 class="text-info mb-1">FOR APPROVAL</h5>
+                                @endif
+                                <div class="d-flex flex-wrap align-items-center mb-1">
+                                    <small>Date Submitted: </small>
+                                    <small class="ms-2 text-primary">
+                                        {{ $_remarks->created_at->format('d F, Y') }}
+                                    </small>
 
-                                            @if ($_remarks->is_approved == 1)
-                                                <small class="ms-4">Date Verification: </small>
-                                                <small class="ms-2 text-primary">
-                                                    {{ $_remarks->created_at == $_remarks->updated_at ? '-' : $_remarks->updated_at->format('d F, Y') }}
-                                                </small>
-                                            @endif
-                                            @if ($_remarks->is_approved == 1)
-                                                <form class="mt-3"
-                                                    action="{{ route('department-head.submission-verification') }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="_submission"
-                                                        value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
-                                                    <input type="hidden" name="_status" value="0">
-                                                    <input type="text" class="form-control rounded-pill"
-                                                        placeholder="Leave Remarks" name="_comments">
-                                                    <div class=" d-flex align-items-center mt-2 float-end">
-                                                        <div class="me-4 text-body">
-                                                            <button class="btn btn-outline-danger rounded-pill btn-xs"
-                                                                type="submit" value="0"
-                                                                name="_status">DISAPPROVED</button>
-                                                        </div>
-                                                </form>
-                                                <div class="text-body">
-                                                    <form action="{{ route('department-head.submission-verification') }}"
-                                                        method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="_submission"
-                                                            value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
-                                                        <input type="hidden" name="_status" value="1">
-                                                        <button class="btn btn-outline-primary rounded-pill btn-xs"
-                                                            type="submit">APPROVED</button>
-                                                    </form>
+                                    @if ($_remarks->is_approved == 1)
+                                        <small class="ms-4">Date Verification: </small>
+                                        <small class="ms-2 text-primary">
+                                            {{ $_remarks->created_at == $_remarks->updated_at ? '-' : $_remarks->updated_at->format('d F, Y') }}
+                                        </small>
+                                    @endif
 
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
                                 </div>
-                            @endforeach
-                        </div>
-                        @if ($_subject_class->midterm_grade_submission)
-                            @if ($_subject_class->midterm_grade_submission->is_approved === null)
-                                <div class=" p-3">
-                                    <hr class="mt-0">
-                                    <div class="mt-3 mb-5">
-                                        <form class=""
-                                            action="{{ route('department-head.submission-verification') }}"
-                                            method="POST">
-                                            @csrf
-                                            <input type="hidden" name="_submission"
-                                                value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
-                                            <input type="hidden" name="_status" value="0">
-                                            <input type="text" class="form-control rounded-pill"
-                                                placeholder="Leave Remarks" name="_comments">
-                                            <div class=" d-flex align-items-center mt-2 float-end">
-                                                <div class="me-4 text-body">
-                                                    <button class="btn btn-outline-danger rounded-pill btn-xs"
-                                                        type="submit" value="0" name="_status">DISAPPROVED</button>
-                                                </div>
-                                        </form>
-                                        <div class="text-body">
-                                            <form action="{{ route('department-head.submission-verification') }}"
-                                                method="POST">
-                                                @csrf
-                                                <input type="hidden" name="_submission"
-                                                    value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
-                                                <input type="hidden" name="_status" value="1">
-                                                <button class="btn btn-outline-primary rounded-pill btn-xs"
-                                                    type="submit">APPROVED</button>
-                                            </form>
+                            </div>
+                        @endforeach
 
-                                        </div>
-                                    </div>
+                    </div>
+                    <div class="card-footer p-2">
+                        <hr>
+                        <form class="mt-3" action="{{ route('department-head.submission-verification') }}"
+                            method="POST">
+                            @csrf
+                            <input type="hidden" name="_submission"
+                                value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
+                            <input type="hidden" name="_status" value="0">
+                            <input type="text" class="form-control rounded-pill" placeholder="Leave Remarks"
+                                name="_comments">
+                            <div class=" d-flex align-items-center mt-2 float-end">
+                                <div class="me-4 text-body">
+                                    <button class="btn btn-outline-danger rounded-pill btn-xs" type="submit"
+                                        value="0" name="_status">DISAPPROVED</button>
                                 </div>
-                            @endif
-                        @endif
-
+                            </div>
+                        </form>
+                        <form action="{{ route('department-head.submission-verification') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="_submission"
+                                value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
+                            <input type="hidden" name="_status" value="1">
+                            <button class="btn btn-outline-primary rounded-pill float-end mt-2 me-3 btn-xs"
+                                type="submit">APPROVED</button>
+                        </form>
                     </div>
                 </div>
 
+                {{-- FINAL GRADE LAYOUT --}}
                 @if (count($_subject_class->finals_grade_remarks) > 0)
-                    <div class="card mt-2">
-                        <div class="card-header align-items-center justify-content-between pb-4">
-                            <div class="">
-                                <div class="d-flex flex-wrap row">
-                                    <div class="media-support-info mt-2 col-md-7">
-                                        <h5 class="mb-0">
-                                            FINALS GRADING SHEET
-                                        </h5>
-                                    </div>
-                                    <div class="col-md">
-                                        <button type="button" class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
-                                            data-bs-toggle="modal" data-bs-target=".grade-view-modal"
-                                            data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=finals&_preview=pdf&_form=ad1">
-                                            FORM AD-01</button>
-                                    </div>
+                    <div class="card">
+                        <div class="card-header align-items-center justify-content-between p-3">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <label for="" class="h5 fw-bolder text-primary">FINALSS GRADING SHEET</label>
+                                </div>
+                                <div class="col-md">
+                                    <small class="badge bg-primary float-end"data-bs-toggle="modal"
+                                        data-bs-target=".grade-view-modal"
+                                        data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=finals&_preview=pdf&_form=ad1">
+                                        FORM AD-01
+                                    </small>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body p-0">
-                            <ul class="list-inline p-0 m-0">
-                                @foreach ($_subject_class->finals_grade_remarks as $_remarks)
-                                    <li class=" mt-4">
-                                        <div class="d-flex">
-                                            <div class="ms-3">
-                                                @if ($_remarks->is_approved == 1)
-                                                    <h5 class="text-primary mb-1">APPROVED</h5>
-                                                @endif
-                                                @if ($_remarks->is_approved === 0)
-                                                    <h5 class="text-danger mb-1">DISAPPROVED</h5>
-                                                @endif
-                                                @if ($_remarks->is_approved === null)
-                                                    <h5 class="text-info mb-1">FOR APPROVAL</h5>
-                                                @endif
-                                                <p class="mb-1">{{ $_remarks->comments }}</p>
-                                                <div class="d-flex flex-wrap align-items-center mb-1">
-                                                    <small>Date Submitted: </small>
-                                                    <small class="ms-2 text-primary">
-                                                        {{ $_remarks->created_at->format('d F, Y') }}
-                                                    </small>
+                        <div class="card-body p-3">
+                            @foreach ($_subject_class->finals_grade_remarks as $_remarks)
+                                <div class="p-2">
+                                    @if ($_remarks->is_approved == 1)
+                                        <h5 class="text-primary mb-1">APPROVED</h5>
+                                    @elseif ($_remarks->is_approved === 0)
+                                        <h5 class="text-danger mb-1">DISAPPROVED</h5>
+                                        <p class="mb-1">{{ $_remarks->comments }}</p>
+                                    @elseif ($_remarks->is_approved === null)
+                                        <h5 class="text-info mb-1">FOR APPROVAL</h5>
+                                    @endif
+                                    <div class="d-flex flex-wrap align-items-center mb-1">
+                                        <small>Date Submitted: </small>
+                                        <small class="ms-2 text-primary">
+                                            {{ $_remarks->created_at->format('d F, Y') }}
+                                        </small>
 
-                                                    @if ($_remarks->is_approved == 1)
-                                                        <small class="ms-4">Date Verification: </small>
-                                                        <small class="ms-2 text-primary">
-                                                            {{ $_remarks->created_at == $_remarks->updated_at ? '-' : $_remarks->updated_at->format('d F, Y') }}
-                                                        </small>
-                                                    @endif
+                                        @if ($_remarks->is_approved == 1)
+                                            <small class="ms-4">Date Verification: </small>
+                                            <small class="ms-2 text-primary">
+                                                {{ $_remarks->created_at == $_remarks->updated_at ? '-' : $_remarks->updated_at->format('d F, Y') }}
+                                            </small>
+                                        @endif
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
-                            @if ($_subject_class->finals_grade_submission->is_approved === null)
-                                <div class=" p-3">
-                                    <hr class="mt-0">
-                                    <div class="mt-3 mb-5">
-                                        <form class=""
-                                            action="{{ route('department-head.submission-verification') }}"
-                                            method="POST">
-                                            @csrf
-                                            <input type="hidden" name="_submission"
-                                                value="{{ base64_encode($_subject_class->finals_grade_submission->id) }}">
-                                            <input type="hidden" name="_status" value="0">
-                                            <input type="text" class="form-control rounded-pill"
-                                                placeholder="Leave Remarks" name="_comments">
-                                            <div class=" d-flex align-items-center mt-2 float-end">
-                                                <div class="me-4 text-body">
-                                                    <button class="btn btn-outline-danger rounded-pill btn-xs"
-                                                        type="submit" value="0" name="_status">DISAPPROVED</button>
-                                                </div>
-                                        </form>
-                                        <div class="text-body">
-                                            <form action="{{ route('department-head.submission-verification') }}"
-                                                method="POST">
-                                                @csrf
-                                                <input type="hidden" name="_submission"
-                                                    value="{{ base64_encode($_subject_class->finals_grade_submission->id) }}">
-                                                <input type="hidden" name="_status" value="1">
-                                                <button class="btn btn-outline-primary rounded-pill btn-xs"
-                                                    type="submit">APPROVED</button>
-                                            </form>
-
-                                        </div>
                                     </div>
                                 </div>
-                            @endif
+                            @endforeach
+
+                        </div>
+                        <div class="card-footer p-2">
+                            <hr>
+                            <form class="mt-3" action="{{ route('department-head.submission-verification') }}"
+                                method="POST">
+                                @csrf
+                                <input type="hidden" name="_submission"
+                                    value="{{ base64_encode($_subject_class->finals_grade_submission->id) }}">
+                                <input type="hidden" name="_status" value="0">
+                                <input type="text" class="form-control rounded-pill" placeholder="Leave Remarks"
+                                    name="_comments">
+                                <div class=" d-flex align-items-center mt-2 float-end">
+                                    <div class="me-4 text-body">
+                                        <button class="btn btn-outline-danger rounded-pill btn-xs" type="submit"
+                                            value="0" name="_status">DISAPPROVED</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <form action="{{ route('department-head.submission-verification') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="_submission"
+                                    value="{{ base64_encode($_subject_class->finals_grade_submission->id) }}">
+                                <input type="hidden" name="_status" value="1">
+                                <button class="btn btn-outline-primary rounded-pill float-end mt-2 me-3 btn-xs"
+                                    type="submit">APPROVED</button>
+                            </form>
                         </div>
                     </div>
                 @endif
             @endif
+
         </div>
+
     </div>
 
     <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
