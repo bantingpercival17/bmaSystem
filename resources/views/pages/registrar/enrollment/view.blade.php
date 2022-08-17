@@ -29,7 +29,12 @@ $_title = 'Enrollment';
                     {{ request()->input('_student') ? 'Search Result: ' . request()->input('_student') : 'Recent Enrollee' }}
                 </h4>
                 <span class="text-muted pt-2">
-                    No. Result: <b>{{ count($_students) }}</b>
+                    {{-- No. Result: <b>{{ count($_students) }}</b> --}}
+                    @if (!request()->input('_students'))
+                        <div class="mb-3">
+                            {{ $_students->links() }}
+                        </div>
+                    @endif
                 </span>
 
             </div>
@@ -63,6 +68,11 @@ $_title = 'Enrollment';
                     </div>
                 @endif
             </div>
+            @if (!request()->input('_students'))
+                <div class="mb-3 float-end">
+                    {{ $_students->links() }}
+                </div>
+            @endif
         </div>
         <div class="col-md-4">
             @foreach ($_courses as $_course)

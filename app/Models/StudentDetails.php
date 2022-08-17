@@ -135,7 +135,7 @@ class StudentDetails extends Model
             ->where('ea.academic_id', $_academic->id)
             ->whereNull('ea.is_approved')
             ->where('ea.is_removed', false);
-        return $_students->get();
+        return $_students->paginate(10);
     }
     public function enrollment_application_list_view_course($_data)
 
