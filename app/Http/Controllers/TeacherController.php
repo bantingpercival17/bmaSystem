@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GradeTemplate;
 use App\Imports\GradeImport;
 use App\Mail\GradeSubmissionMail;
 use App\Mail\GradeVerificationMail;
@@ -105,8 +106,9 @@ class TeacherController extends Controller
                 $_columns[] =  ['Scientific and Technical Experiments Demonstrations of Competencies Acquired', 'A', 10];
             }
 
+            return view('pages.teacher.grading-sheet.view', compact('_subject', '_students', '_columns'));
 
-            return view('pages.teacher.grading_sheet_main', compact('_subject', '_students', '_columns'));
+            //return view('pages.teacher.grading_sheet_main', compact('_subject', '_students', '_columns'));
         }
     }
     public function subject_view()
@@ -184,6 +186,20 @@ class TeacherController extends Controller
     {
         Excel::import(new GradeImport($_request->_section), $_request->file('_file_grade'));
         return back();
+    }
+    public function subject_grade_export(Request $_request)
+    {
+        $_subject = SubjectClass::find(base64_decode($_request->_subject));
+        $_students = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name', 'student_details.middle_name')
+            ->join('student_sections as ss', 'ss.student_id', 'student_details.id')
+            ->where('ss.section_id', $_subject->section_id)
+            ->orderBy('student_details.last_name', 'ASC')
+            ->where('ss.is_removed', false)
+            ->get();
+        $_file_name = $_subject->curriculum_subject->subject->subject_code . "-" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_subject->section->section_name))) . '-EXPORT-GRADE-' . date('dmYhms');
+        $_respond =  Excel::download(new GradeTemplate($_students, $_subject), $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+        ob_end_clean();
+        return $_respond;
     }
     public function student_e_clearance(Request $_request)
     {

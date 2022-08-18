@@ -12,6 +12,87 @@
     <link rel="stylesheet" href="{{ asset('css/app-1.css') }}">
     <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+    <style>
+        .primary {
+            overflow: auto;
+            scroll-snap-type: x mandatory;
+            height: 100vh;
+        }
+
+        @media (min-width: 40em) {
+            .maint-table {
+                display: flex;
+            }
+
+            .primary {
+                order: 2;
+            }
+        }
+
+        table {
+            border-collapse: collapse;
+            border: 1px solid #aaa;
+        }
+
+        th,
+        td {
+            border: 1px solid #aaa;
+            background-clip: padding-box;
+            scroll-snap-align: start;
+        }
+
+        tbody tr:last-child th,
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        thead {
+            z-index: 1000;
+            position: relative;
+        }
+
+        th,
+        td {
+            padding: 0.6rem;
+            min-width: 6rem;
+            text-align: left;
+            margin: 0;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            border-top: 0;
+            background-clip: padding-box;
+        }
+
+        thead th.pin {
+            left: 0;
+            z-index: 1001;
+            border-left: 0;
+        }
+
+        tbody th {
+            background-clip: padding-box;
+            border-left: 0;
+        }
+
+        tbody {
+            z-index: 10;
+            position: relative;
+        }
+
+        tbody th {
+            position: sticky;
+            left: 0;
+        }
+
+        thead th,
+        tbody th {
+            background-color: #f8f8f8;
+        }
+    </style>
 </head>
 
 <body>
@@ -35,14 +116,8 @@
                     </svg>
                 </a>
                 <a class="navbar-brand">
-                    <h2 class="logo-title ">{{ $_subject->curriculum_subject->subject->subject_code }}</h2>
+                    <h2 class="logo-title ">GRADING SHEET</h2>
                 </a>
-                <div>
-                    <p class="text-primary mt-2 mb-0">
-                        {{ $_subject->curriculum_subject->subject->subject_name }}</p>
-                    <small>{{ strtoupper($_subject->staff->first_name . ' ' . $_subject->staff->last_name) }}</small>
-
-                </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -66,21 +141,14 @@
                                                     <a class="nav-link py-0 d-flex align-items-center" href="#"
                                                         id="navbarDropdown3" role="button" data-bs-toggle="dropdown"
                                                         aria-expanded="false">
-                                                        <img src="{{ asset(Auth::user()->student->profile_pic(Auth::user())) }}"
+                                                        <img src="{{ asset(Auth::user()->staff->profile_pic(Auth::user()->staff)) }}"
                                                             alt="User-Profile"
                                                             class="img-fluid avatar avatar-50 avatar-rounded me-2">
-                                                        {{ str_replace('@bma.edu.ph', '', Auth::user()->campus_email) }}
+                                                        {{ Auth::user()->name }}
                                                     </a>
                                                     <ul class="dropdown-menu  dropdown-menu-lg-end"
                                                         aria-labelledby="navbarDropdown3">
-                                                        <li><a class="dropdown-item" href="{{ route('home') }}">My
-                                                                Profile</a></li>
-                                                        <li><a class="dropdown-item"
-                                                                href="{{ route('student.accounts') }}">Accounts</a>
-                                                        </li>
-                                                        <li>
-                                                            <hr class="dropdown-divider">
-                                                        </li>
+
                                                         <li>
                                                             <form action="{{ route('logout') }}" method="post">
                                                                 @csrf
@@ -105,10 +173,12 @@
             </div>
         </nav>
 
-
-        <div class="conatiner-fluid content-inner mt-6 py-0">
+        <div class="grading-layout">
             @yield('page-content')
         </div>
+        {{-- <div class="conatiner-fluid content-inner">
+            @yield('page-content')
+        </div> --}}
     </main>
 
     <!-- Library Bundle Script -->
@@ -139,6 +209,27 @@
     <script src="{{ asset('resources/js/gigz.js') }}" defer></script>
     <script src="{{ asset('js/toastr.min.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (Session::has('success'))
+            Swal.fire({
+                title: 'Complete!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                confirmButtonText: 'Okay'
+            })
+            /* toastr.success("{{ session('message') }}") */
+        @endif
+        @if (Session::has('error'))
+            Swal.fire({
+                title: 'Existing Data!',
+                text: "{{ session('error') }}",
+                icon: 'error',
+                confirmButtonText: 'Okay'
+            })
+            /* toastr.success("{{ session('message') }}") */
+        @endif
+    </script>
+    @yield('js')
 </body>
 
 </html>
