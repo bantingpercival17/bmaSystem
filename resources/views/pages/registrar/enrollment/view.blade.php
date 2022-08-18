@@ -30,7 +30,7 @@ $_title = 'Enrollment';
                 </h4>
                 <span class="text-muted pt-2">
                     {{-- No. Result: <b>{{ count($_students) }}</b> --}}
-                    @if (!request()->input('_students'))
+                    @if (!request()->input('_student'))
                         <div class="mb-3">
                             {{ $_students->links() }}
                         </div>
@@ -68,7 +68,7 @@ $_title = 'Enrollment';
                     </div>
                 @endif
             </div>
-            @if (!request()->input('_students'))
+            @if (!request()->input('_student'))
                 <div class="mb-3 float-end">
                     {{ $_students->links() }}
                 </div>
