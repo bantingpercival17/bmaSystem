@@ -49,9 +49,11 @@
                                         @if ($_student_section = $_data->section(Auth::user()->staff->current_academic()->id)->first())
                                             <span
                                                 class="badge bg-primary">{{ $_student_section->section->section_name }}</span>
+                                            <a href="{{ route('registrar.section-store-student') }}?_section={{ base64_encode($_section->id) }}&_student={{ base64_encode($_data->id) }}"
+                                                class="btn btn-warning btn-sm">ADD</a>
                                         @else
                                             <a href="{{ route('registrar.section-store-student') }}?_section={{ base64_encode($_section->id) }}&_student={{ base64_encode($_data->id) }}"
-                                                class="btn btn-info text-white">ADD</a>
+                                                class="btn btn-info text-white btn-sm">ADD</a>
                                         @endif
                                     </td>
                                 </tr>

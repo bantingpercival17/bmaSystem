@@ -64,10 +64,6 @@
                                                     data-title="Student Section">Remove </label>
                                             @endif
                                         @endif
-
-                                        {{-- <label for="" class="text-primary btn-remove fw-bolder"
-                                            data-url="{{ route('registrar.student-section-remove') . '?_student_section=' . base64_encode($_data->student->section_id) }}"
-                                            data-title="Student Section">Remove </label> --}}
                                     </td>
                                 </tr>
                             @endforeach
