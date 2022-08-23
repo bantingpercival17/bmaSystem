@@ -57,12 +57,14 @@
                                     <td>{{ ucwords($_data->last_name . ', ' . $_data->first_name) }}
                                     </td>
                                     <td>
-
-                                        @if ($_student_section = $_data->student->section(Auth::user()->staff->current_academic()->id)->first())
-                                            <label for="" class="text-primary btn-remove fw-bolder"
-                                                data-url="{{ route('registrar.student-section-remove') . '?_student_section=' . base64_encode($_student_section->id) }}"
-                                                data-title="Student Section">Remove </label>
+                                        @if ($_data->student)
+                                            @if ($_student_section = $_data->student->section(Auth::user()->staff->current_academic()->id)->first())
+                                                <label for="" class="text-primary btn-remove fw-bolder"
+                                                    data-url="{{ route('registrar.student-section-remove') . '?_student_section=' . base64_encode($_student_section->id) }}"
+                                                    data-title="Student Section">Remove </label>
+                                            @endif
                                         @endif
+
                                         {{-- <label for="" class="text-primary btn-remove fw-bolder"
                                             data-url="{{ route('registrar.student-section-remove') . '?_student_section=' . base64_encode($_data->student->section_id) }}"
                                             data-title="Student Section">Remove </label> --}}
