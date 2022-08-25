@@ -77,4 +77,8 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
     Route::post('/examination', [AdministratorController::class, 'examination_store'])->name('admin.examination');
     Route::post('/examination/import', [AdministratorController::class, 'examination_import'])->name('admin.import-examination');
     Route::get('/examination/category', [AdministratorController::class, 'examination_category_view'])->name('admin.examination-category');
+
+
+    // Student Account 
+    Route::get('/students/account-details',[AdministratorController::class,'student_account_details'])->name('admin.student-account-details');
 });

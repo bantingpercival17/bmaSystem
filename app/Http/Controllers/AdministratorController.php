@@ -11,6 +11,7 @@ use App\Imports\StudentInformationImport;
 use App\Imports\StudentSection as ImportsStudentSection;
 use App\Imports\SubjectHandle;
 use App\Mail\ApplicantEmail;
+use App\Mail\StudentEnrollmentMail;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDocuments;
@@ -682,5 +683,20 @@ class AdministratorController extends Controller
         $_file = $_request->file('files');
         Excel::import(new ImportExamination($_request->exam), $_file);
         return back()->with('success', 'Excel File Successfully Imported');
+    }
+
+    public function student_account_details(Request $_request)
+    {
+        $_student = StudentDetails::find(90);
+
+        $_email_model = new StudentEnrollmentMail($_student);
+        //return $_applicant->email;
+
+        //Student Email 
+        $_email = $_student->account->campus_email;
+        $_cc = $_student->account->personal_email;
+        $_email = 'p.banting@bma.edu.ph';
+        $_cc = 'p.banting@bma.edu.ph';
+        Mail::to($_email)->bcc($_cc)->send($_email_model);
     }
 }
