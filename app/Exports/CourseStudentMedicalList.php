@@ -30,6 +30,7 @@ class CourseStudentMedicalList implements WithMultipleSheets
                 $_data =  $this->category == $content[0] ? $content[1] : [];
             } */
             $_data = $this->course->student_medical_scheduled_year($level)->get();
+            $_data = request()->input('category') == 'student_medical_passed' ?  $this->course->student_medical_passed_year($level)->get() : $_data;
 
             $sheet_name = Auth::user()->staff->convert_year_level($level);
             $sheets[$key] = new StudentMedicalList($_data, $sheet_name);

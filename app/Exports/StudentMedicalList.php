@@ -27,12 +27,33 @@ class StudentMedicalList implements FromCollection,  WithMapping, WithHeadings, 
     public function map($_data): array
     {
 
-
+        $_medical_status = '';
+        if ($_data->student->student_medical_appointment) {
+            if ($_data->student->student_medical_appointment->is_approved == true) {
+                if ($_data->student->student_medical_result) {
+                    if ($_data->student->student_medical_result->is_fit !== null)
+                        if ($_data->student->student_medical_result->is_fit === 1)
+                            $_medical_status = 'FIT TO ENROLL';
+                        else
+                            $_medical_status = 'FAILED';
+                    else
+                        $_medical_status = 'PENDING RESULT: ' . $_data->student->student_medial_result->remarks;
+                } else {
+                    $_medical_status = 'Waiting for Result';
+                }
+            } else {
+                $_medical_status = 'Wait for Schedule Approval';
+            }
+            # code...
+        } else {
+            $_medical_status = 'No Medical Appointment';
+        }
         return [
-            $_data->student->medical_appointment ? $_data->student->medical_appointment->appointment_date : 'NO APPOINTMENT',
+            $_data->student->student_medical_appointment ? $_data->student->student_medical_appointment->appointment_date : 'NO APPOINTMENT',
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
+            $_medical_status,
 
         ];
     }

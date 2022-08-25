@@ -952,4 +952,17 @@ class CourseOffer extends Model
             ->leftJoin('student_medical_results', 'student_medical_results.student_id', 'enrollment_assessments.student_id')
             ->whereNull('student_medical_results.student_id');
     }
+    public function student_medical_passed_year($_data)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
+            ->where('enrollment_assessments.year_level', $_data)
+            ->join('student_medical_appointments', 'student_medical_appointments.student_id', 'enrollment_assessments.student_id')
+            ->where('student_medical_appointments.is_approved', true)
+            ->orderBy('student_medical_appointments.appointment_date', 'asc')
+            ->groupBy('student_medical_appointments.student_id')
+            ->join('student_medical_results', 'student_medical_results.student_id', 'enrollment_assessments.student_id')
+            ->where('student_medical_results.is_removed', false)
+            ->where('is_fit', true);
+    }
 }
