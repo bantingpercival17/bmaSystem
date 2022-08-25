@@ -29,10 +29,10 @@ $_title = 'Enrolled List';
                     @endphp
                     <div class="card mb-2">
                         <div class="row no-gutters">
-                            <div class="col-md-3">
+                           {{--  <div class="col-md-3">
                                 <img src="{{ $_data ? $_data->student->profile_pic($_data->student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
                                     class="card-img" alt="#">
-                            </div>
+                            </div> --}}
                             <div class="col-md {{-- ps-0 --}}">
                                 <div class="card-body p-3 me-2">
                                     <div class="float-end">
