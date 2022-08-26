@@ -357,12 +357,7 @@ class Staff extends Model
         }
         if ($_decimal_number > 0) {
             $rettxt .= " and " . $_decimal_number . " / 100 only";
-            /* if ($_decimal_number < 20) {
-                $rettxt .= $ones[$_decimal_number];
-            } elseif ($_decimal_number < 100) {
-                $rettxt .= $tens[substr($_decimal_number, 0, 1)];
-                $rettxt .= " " . $ones[substr($_decimal_number, 1, 1)];
-            } */
+
         }
         return $rettxt;
     }
