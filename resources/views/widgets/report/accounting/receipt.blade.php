@@ -256,7 +256,7 @@
                         The sum of pesos <span
                             class="amount-word">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ Auth::user()->staff->amount_to_words($_data->payment_amount) }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         (P <span class="payment-amount">
-                            {{ number_format($_data->payment_amount, 2, '.', ',') }}
+                            {{ /* number_format($_data->payment_amount, 2, '.', ',') */ $_data->payment_amount }}
                         </span>)
 
                     </p>
