@@ -311,7 +311,59 @@ class Staff extends Model
     }
     public function amount_to_words($_amount)
     {
-        $digit = new NumberFormatter("ph", NumberFormatter::SPELLOUT);
+        /* $digit = new NumberFormatter('en-US', NumberFormatter::CURRENCY);
+        $_amount = $digit->formatCurrency($_amount, 'USD'); */
+        return $this->numberToWords($_amount);
+        $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
         return strtoupper($digit->format($_amount));
+    }
+    public function numberToWords($_amount)
+    {
+        /* The above code is creating an array of numbers from 0 to 19, an array of tens from 0 to 90,
+       and an array of hundreds. */
+        $ones = array(0 => "ZERO", 1 => "ONE", 2 => "TWO", 3 => "THREE", 4 => "FOUR", 5 => "FIVE", 6 => "SIX", 7 => "SEVEN", 8 => "EIGHT", 9 => "NINE", 10 => "TEN", 11 => "ELEVEN", 12 => "TWELVE", 13 => "THIRTEEN", 14 => "FOURTEEN", 15 => "FIFTEEN", 16 => "SIXTEEN", 17 => "SEVENTEEN", 18 => "EIGHTEEN", 19 => "NINETEEN");
+        $tens = array(0 => "ZERO", 1 => "TEN", 2 => "TWENTY", 3 => "THIRTY", 4 => "FORTY", 5 => "FIFTY", 6 => "SIXTY", 7 => "SEVENTY", 8 => "EIGHTY", 9 => "NINETY");
+        $hundreds = array("HUNDRED", "THOUSAND", "MILLION", "BILLION", "TRILLION", "QUARDRILLION");
+
+        /* Formatting the number to 2 decimal places. */
+        $_amount = number_format($_amount, 2, '.', ',');
+        /* Taking the amount and splitting it into an array. */
+        $_amount_array = explode('.', $_amount);
+        /* Assigning the first element of the array to the variable . */
+        $_whole_number  = $_amount_array[0];
+        $_decimal_number = $_amount_array[1];
+        /* Reversing the array and sorting it in reverse order. */
+        $whole_arr = array_reverse(explode(",", $_whole_number));
+        krsort($whole_arr, 1);
+        $rettxt = "";
+        foreach ($whole_arr as $key => $i) {
+
+            while (substr($i, 0, 1) == "0")
+                $i = substr($i, 1, 5);
+            if ($i < 20) {
+                /* echo "getting:".$i; */
+                $rettxt .= $ones[$i];
+            } elseif ($i < 100) {
+                if (substr($i, 0, 1) != "0")  $rettxt .= $tens[substr($i, 0, 1)];
+                if (substr($i, 1, 1) != "0") $rettxt .= " " . $ones[substr($i, 1, 1)];
+            } else {
+                if (substr($i, 0, 1) != "0") $rettxt .= $ones[substr($i, 0, 1)] . " " . $hundreds[0];
+                if (substr($i, 1, 1) != "0") $rettxt .= " " . $tens[substr($i, 1, 1)];
+                if (substr($i, 2, 1) != "0") $rettxt .= " " . $ones[substr($i, 2, 1)];
+            }
+            if ($key > 0) {
+                $rettxt .= " " . $hundreds[$key] . " ";
+            }
+        }
+        if ($_decimal_number > 0) {
+            $rettxt .= " and " . $_decimal_number . " / 100 only";
+            /* if ($_decimal_number < 20) {
+                $rettxt .= $ones[$_decimal_number];
+            } elseif ($_decimal_number < 100) {
+                $rettxt .= $tens[substr($_decimal_number, 0, 1)];
+                $rettxt .= " " . $ones[substr($_decimal_number, 1, 1)];
+            } */
+        }
+        return $rettxt;
     }
 }

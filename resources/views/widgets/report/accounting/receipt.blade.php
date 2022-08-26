@@ -234,7 +234,7 @@
                     </p>
 
                 </div>
-                <label style="float:right"><b>TR # {{ $_data->or_number }}</b></label>
+                <label style="float:right"><b>PR # {{ $_data->or_number }}</b></label>
                 <br>
                 <div class="sub-header">
                     <label><b>PROVISIONAL RECEIPT</b></label>
