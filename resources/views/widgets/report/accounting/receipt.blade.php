@@ -132,7 +132,9 @@
 <body>
     @php
         $_particular = ['Tuition Fee', 'Uniform', 'Books', 'Forms', 'Others'];
-        $_rows = 11;
+        $_rows = 10;
+        $_whole_1 = 0;
+        $_decimal_1 = 0;
     @endphp
     <main class="content">
         <div class="row" style="padding-bottom:0px;">
@@ -153,8 +155,13 @@
                                 if (count($_particular) > $i) {
                                     if (strtolower($_particular[$i]) == strtolower($_data->payment_transaction)) {
                                         $_amount = explode('.', $_data->payment_amount);
-                                        $_whole = $_amount[0];
-                                        $_decimal = $_amount[1];
+                                        if (count($_amount) > 1) {
+                                            $_whole = $_whole_1 = $_amount[0];
+                                            $_decimal = $_decimal_1 = $_amount[1];
+                                        } else {
+                                            $_whole = $_whole_1 = $_amount[0];
+                                            $_decimal = $_decimal_1 = '00';
+                                        }
                                     } else {
                                         $_whole = '-';
                                         $_decimal = '-';
@@ -171,7 +178,11 @@
                                 <td style="width: 15%; text-align: right;">{{ $_decimal }}</td>
                             </tr>
                         @endfor
-
+                        <tr>
+                            <td></td>
+                            <td style="text-align: right;">{{ $_whole_1 }}</td>
+                            <td style="width: 15%; text-align: right;">{{ $_decimal_1 }}</td>
+                        </tr>
                         <tr>
                             <th colspan="3" class="text-center fw-bolder">Form of Payment:</th>
                         </tr>
@@ -244,7 +255,9 @@
                     <p style="padding:2px 5px 2px 15px; text-indent: 0%;">
                         The sum of pesos <span
                             class="amount-word">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ Auth::user()->staff->amount_to_words($_data->payment_amount) }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        (P <span class="payment-amount">{{ $_data->payment_amount }}</span>)
+                        (P <span class="payment-amount">
+                            {{ number_format($_data->payment_amount, 2, '.', ',') }}
+                        </span>)
 
                     </p>
                     <p style="padding: 2px 5px 0px 15px; text-indent: 0%;">
