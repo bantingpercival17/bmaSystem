@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use NumberFormatter;
 
 class Staff extends Model
 {
@@ -307,5 +308,10 @@ class Staff extends Model
             ->where('tickets.name', '!=', 'HenryScord')
             ->where('ticket_issues.department_id', $_department->id)
             /* ->where('ticket_issues.is_removed', false) */->orderBy('ticket_concerns.created_at', 'desc')->get();
+    }
+    public function amount_to_words($_amount)
+    {
+        $digit = new NumberFormatter("ph", NumberFormatter::SPELLOUT);
+        return strtoupper($digit->format($_amount));
     }
 }

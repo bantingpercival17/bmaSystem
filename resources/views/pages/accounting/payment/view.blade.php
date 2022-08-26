@@ -578,6 +578,9 @@
                                                 <small>{{ $_payment->staff->user->name }}</small> |
                                                 <small>{{ $_payment->transaction_date }}</small>
                                             </p>
+                                            <a href="{{ route('accounting.print-reciept') }}?reciept={{ base64_encode($_payment->id) }}"
+                                                class="btn btn-primary btn-sm" target="_blank">Print
+                                                Receipt</a>
                                         @endforeach
                                     @else
                                         <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">

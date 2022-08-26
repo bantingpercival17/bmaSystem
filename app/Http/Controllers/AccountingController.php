@@ -32,6 +32,7 @@ use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentSection;
 use App\Models\Voucher;
+use App\Report\Accounting\PaymentReceipt as AccountingPaymentReceipt;
 use App\Report\PayrollReport;
 use Carbon\Carbon;
 use Exception;
@@ -818,6 +819,17 @@ class AccountingController extends Controller
             $_online_payment->or_number =  $_request->or_number;
             $_online_payment->save();
             return back()->with('success', 'Transaction Complete');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function payment_print_receipt(Request $_request)
+    {
+        try {
+            $_payment = PaymentTransaction::find(base64_decode($_request->reciept));
+            $_reciept_report = new AccountingPaymentReceipt();
+            return $_reciept_report->print($_payment);
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
