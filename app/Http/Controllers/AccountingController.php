@@ -826,7 +826,7 @@ class AccountingController extends Controller
     }
     public function payment_print_receipt(Request $_request)
     {
-        try {
+         try {
             $_payment = PaymentTransaction::find(base64_decode($_request->reciept));
             $_reciept_report = new AccountingPaymentReceipt();
             return $_reciept_report->print($_payment);
