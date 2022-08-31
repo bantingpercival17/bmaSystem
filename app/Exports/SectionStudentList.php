@@ -13,11 +13,11 @@ use Maatwebsite\Excel\Events\AfterSheet;
 class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping, WithHeadings, WithEvents, WithTitle
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function __construct($_section)
     {
-        $this->section= $_section;
+        $this->section = $_section;
     }
     public function collection()
     {
@@ -29,11 +29,10 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
     {
         return [
             'STUDENT NUMBER',
-            'EMAIL',
             'LAST NAME',
             'FIRST NAME',
             'MIDDLE NAME',
-            'FULL NAME'
+            'EMAIL',
 
         ];
     }
@@ -41,14 +40,11 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
     {
         /* return $_data; */
         return [
-            $_data->student->account->student_number,
-            $_data->student->account->campus_email,
+            $_data->student->account ? $_data->student->account->student_number : '',
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
-            $_data->student->first_name . ' '.
-            $_data->student->middle_name .', '.$_data->student->last_name . " ". $_data->student->extention_name == 'n/a' ? $_data->student->extention_name : '' ,
-
+            $_data->student->account ?  $_data->student->account->campus_email : "-",
         ];
     }
     public function registerEvents(): array

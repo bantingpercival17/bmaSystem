@@ -74,7 +74,7 @@
                                     $_sections = $_course->section([Auth::user()->staff->current_academic()->id, $level])->get();
                                 @endphp
                                 <tr>
-                                    <td>{{ $level }}</td>
+                                    <td>{{ Auth::user()->staff->convert_year_level($level) }}</td>
                                     <td>
                                         @if (count($_sections) > 0)
                                             @foreach ($_sections as $item)

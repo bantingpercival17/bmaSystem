@@ -53,7 +53,7 @@
                         @if (count($_student_list) > 0)
                             @foreach ($_student_list as $_data)
                                 <tr>
-                                    <td> {{ $_data->account ? $_data->account->student_number : '' }} </td>
+                                    <td> {{ $_data->student->account ? $_data->student->account->student_number : '' }} </td>
                                     <td>{{ ucwords($_data->last_name . ', ' . $_data->first_name) }}
                                     </td>
                                     <td>
