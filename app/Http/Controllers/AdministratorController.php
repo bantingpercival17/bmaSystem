@@ -67,28 +67,7 @@ class AdministratorController extends Controller
         $_total_applicants = ApplicantAccount::join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
         return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population', '_total_applicants'));
     }
-    public function dashboard_enrolled_list_view(Request $_request)
-    {
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_students = $_request->_year_level ?  $_course->enrolled_list($_request->_year_level)->get() : $_course->enrollment_list; // Year Level
-        $_students = $_request->_sort ? $_course->sort_enrolled_list($_request)->get() : $_students; // Sorting
-        return view('pages.general-view.enrollment.enrolled_list_view', compact('_course', '_students'));
-    }
-    public function course_enrolled_report(Request $_request)
-    {
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
-        $_file_export = new CourseStudentEnrolled($_course);
-        // Excell Report
-        if ($_request->_report == 'excel-report') {
-            $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
-            ob_end_clean();
-            return $_respond;
-        }
-        if ($_request->_report == 'pdf-report') {
-            return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File 
-        }
-    }
+  
     /* Students */
     public function student_view(Request $_request)
     {

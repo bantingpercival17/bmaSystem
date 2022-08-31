@@ -25,7 +25,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/subjects/curriculum/subject', [RegistrarController::class, 'curriculum_subject_remove'])->name('registrar.remove-curriculum-subject'); // Remove Curriculum Subject
     Route::get('/subjects/curriculum/view', [RegistrarController::class, 'curriculum_subject_view'])->name('registrar.view-curriculum-subject'); // Remove Curriculum Subject
     Route::post('/subjects/curriculum/update', [RegistrarController::class, 'curriculum_subject_update'])->name('registrar.update-curriculum-subject'); // Store Curriculum Subject
-    
+
     // Enrollment
     Route::get('/enrollment', [RegistrarController::class, 'enrollment_view'])->name('registrar.enrollment');
     Route::get('/enrollment/enrolled-list', [RegistrarController::class, 'enrolled_list_view'])->name('registrar.course-enrolled');
@@ -67,4 +67,5 @@ Route::prefix('registrar')->group(function () {
     //Route::get('/applicant');
     require __DIR__ . '/extra/applicant-route.php'; // Applicant Route
     require __DIR__ . '/extra/ticket-route.php'; // Applicant Route
+    require __DIR__ . '/extra/enrollment-route.php'; // Enrollment Route
 });

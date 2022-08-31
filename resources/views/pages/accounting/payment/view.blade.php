@@ -351,7 +351,7 @@
                                                                     </div>
                                                                     <div class="col-md">
                                                                         <form
-                                                                            action="{{ route('accounting.online-additional-payment-disapproved') }}"
+                                                                            action="{{ route('accounting.online-payment-disapproved') }}"
                                                                             method="post" class="form-group">
                                                                             @csrf
                                                                             <input type="hidden" name="_online_payment"

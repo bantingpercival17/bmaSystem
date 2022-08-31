@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdministratorController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GeneralController\ApplicantController;
+use App\Http\Controllers\GeneralController\EnrollmentController;
 use App\Http\Controllers\PaymongoApi;
 use App\Http\Middleware\Administrator;
 use Illuminate\Support\Facades\Route;
@@ -11,7 +12,9 @@ Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin
 Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(function () {
     /* Applicants */
     require __DIR__ . '/extra/applicant-route.php'; // Applicant Route
-    require __DIR__ . '/extra/ticket-route.php'; // Applicant Route
+    require __DIR__ . '/extra/ticket-route.php'; // Ticket Route
+    require __DIR__ . '/extra/enrollment-route.php'; // Enrollment Route
+  //  Route::get('/enrollment-list', [EnrollmentController::class, 'enrolled_list_view'])->name('enrollment.enrolled-list');
     Route::get('/', [AdministratorController::class, 'index'])->name('admin.dashboard');
     Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
     Route::get('/enrollment/enrolled-list', [AdministratorController::class, 'dashboard_enrolled_list_view'])->name('admin.course-enrolled');
@@ -80,5 +83,5 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
 
 
     // Student Account 
-    Route::get('/students/account-details',[AdministratorController::class,'student_account_details'])->name('admin.student-account-details');
+    Route::get('/students/account-details', [AdministratorController::class, 'student_account_details'])->name('admin.student-account-details');
 });

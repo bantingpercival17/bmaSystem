@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Enrolled List';
+$_title = 'Payment Assessment';
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -24,13 +24,13 @@ $_title = 'Enrolled List';
         @foreach ($_courses as $course)
             <div class="col-md">
                 <a
-                    href="{{ route('enrollment.enrolled-list') }}?_course={{ base64_encode($course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                    href="{{ route('enrollment.payment-assessment') }}?_course={{ base64_encode($course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                     <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
                         data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between">
                                 <h3 class="counter">
-                                    {{ count($course->enrollment_list) }}
+                                    {{ count($course->payment_assessment) }}
                                 </h3>
                                 <svg width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -146,29 +146,12 @@ $_title = 'Enrolled List';
                 @foreach ($_students as $_data)
                     <div class="card mb-2">
                         <div class="row no-gutters">
-                            @php
-                                if ($_data->student->enrollment_assessment) {
-                                    $_course_color = $_data->student->enrollment_assessment->course_id == 1 ? 'bg-primary' : '';
-                                    $_course_color = $_data->student->enrollment_assessment->course_id == 2 ? 'bg-info' : $_course_color;
-                                    $_course_color = $_data->student->enrollment_assessment->course_id == 3 ? 'bg-warning text-white' : $_course_color;
-                                } else {
-                                    $_course_color = 'text-muted';
-                                }
-                            @endphp
                             {{-- <div class="col-md-3">
                                 <img src="{{ $_data ? $_data->student->profile_pic($_data->student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
                                     class="card-img" alt="#">
                             </div> --}}
                             <div class="col-md">
                                 <div class="card-body p-3 me-2">
-                                    <div class="">
-                                        <div class="float-end">
-                                            <a href="{{ route('registrar.student-information-report') }}?_assessment={{ base64_encode($_data->student->enrollment_assessment->id) }}"
-                                                class="badge bg-info text-white">
-                                                PRINT
-                                            </a>
-                                        </div>
-                                    </div>
                                     <label for=""
                                         class="fw-bolder text-primary h4">{{ $_data ? strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) : 'MIDSHIPMAN NAME' }}</label>
                                     <p class="mb-0">
@@ -178,7 +161,7 @@ $_title = 'Enrolled List';
                                         <small class="fw-bolder badge bg-secondary">
                                             {{ $_data ? ($_data->student->enrollment_status ? strtoupper(Auth::user()->staff->convert_year_level($_data->student->enrollment_status->year_level)) : 'YEAR LEVEL') : 'YEAR LEVEL' }}
                                         </small> |
-                                        <small class="fw-bolder badge {{ $_course_color }}">
+                                        <small class="fw-bolder badge bg-secondary">
                                             {{ $_data ? ($_data->student->enrollment_status ? $_data->student->enrollment_status->course->course_name : 'COURSE') : 'COURSE' }}
                                         </small>
                                     </p>
@@ -202,6 +185,42 @@ $_title = 'Enrolled List';
                             </div>
                         </div>
                     </div>
+                    {{-- <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between ">
+                                <div>
+                                    <span><b>{{ $_data->student->account ? $_data->student->account->student_number : '-' }}</b></span>
+                                    <a
+                                        href="{{ route('registrar.student-profile') }}?_student={{ base64_encode($_data->student->id) }}">
+                                        <div class="mt-2">
+                                            <h2 class="counter" style="visibility: visible;">
+                                                {{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
+                                            </h2>
+                                        </div>
+
+                                    </a>
+                                    <span>{{ $_data->student->account ? $_data->student->account->campus_email : '-' }}</span>
+                                    <br>
+                                    <span
+                                        class="badge bg-primary">{{ $_data->student->enrollment_assessment->course->course_name }}</span>
+
+                                </div>
+                                <div>
+                                    <div class="badge bg-primary">
+                                        <span>{{ $_data->student->enrollment_status->payment_assessments->payment_assessment_paid->created_at->format('F d, Y') }}</span>
+                                    </div>
+
+                                    <a href="{{ route('registrar.student-information-report') }}?_assessment={{ base64_encode($_data->student->enrollment_assessment->id) }}"
+                                        class="badge bg-info text-white"> <svg width="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M11.2301 7.29052V3.2815C11.2301 2.85523 11.5701 2.5 12.0001 2.5C12.3851 2.5 12.7113 2.79849 12.763 3.17658L12.7701 3.2815V7.29052L17.55 7.29083C19.93 7.29083 21.8853 9.23978 21.9951 11.6704L22 11.8861V16.9254C22 19.373 20.1127 21.3822 17.768 21.495L17.56 21.5H6.44C4.06 21.5 2.11409 19.5608 2.00484 17.1213L2 16.9047L2 11.8758C2 9.4281 3.87791 7.40921 6.22199 7.29585L6.43 7.29083H11.23V13.6932L9.63 12.041C9.33 11.7312 8.84 11.7312 8.54 12.041C8.39 12.1959 8.32 12.4024 8.32 12.6089C8.32 12.7659 8.3648 12.9295 8.45952 13.0679L8.54 13.1666L11.45 16.1819C11.59 16.3368 11.79 16.4194 12 16.4194C12.1667 16.4194 12.3333 16.362 12.4653 16.2533L12.54 16.1819L15.45 13.1666C15.75 12.8568 15.75 12.3508 15.45 12.041C15.1773 11.7594 14.7475 11.7338 14.4462 11.9642L14.36 12.041L12.77 13.6932V7.29083L11.2301 7.29052Z"
+                                                fill="currentColor"></path>
+                                        </svg> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div> --}}
                 @endforeach
             @else
                 <div class="card">
@@ -222,7 +241,7 @@ $_title = 'Enrolled List';
             @endif
         </div>
         <div class="col-md-4">
-            <div class="d-flex justify-content-between mb-3">
+            {{-- <div class="d-flex justify-content-between mb-3">
                 <div>
                     <span class="fw-bolder">
                         Export File :
@@ -237,7 +256,7 @@ $_title = 'Enrolled List';
                             class="btn btn-danger btn-sm ms-2">PDF</a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             @php
                 $_level = [11, 12];
@@ -293,7 +312,7 @@ $_title = 'Enrolled List';
                                     </svg>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <h3 class="conter">{{ count($_course->enrolled_list($level)->get()) }}</h3>
+                                    <h3 class="conter">{{ count($_course->payment_assessment_sort($level)->get()) }}</h3>
                                     {{-- <p class="mb-0 ms-2">+3 last/d</p> --}}
                                 </div>
                             </div>

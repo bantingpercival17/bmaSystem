@@ -150,7 +150,7 @@ class StudentDetails extends Model
             ->where('eas.course_id', base64_decode($_data))
             ->where('eas.is_removed', false)
             ->where('eas.academic_id', $_prevous_academic->id);
-        return $_students->get();
+        return $_students->paginate(10);
     }
     /* Grading Query */
     public function subject_score($_data)
