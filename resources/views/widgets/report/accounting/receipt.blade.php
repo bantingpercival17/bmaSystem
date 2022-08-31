@@ -150,10 +150,9 @@
                         </tr>
                         @for ($i = 0; $i < $_rows; $i++)
                             @php
-                                $_amount = count($_particular) > $i ? (strtolower($_particular[$i]) == strtolower($_data->payment_transaction) ? explode('.', $_data->payment_amount) : '-') : '-';
-                                $_amount = $_amount;
                                 if (count($_particular) > $i) {
-                                    if (strtolower($_particular[$i]) == strtolower($_data->payment_transaction)) {
+                                    if (strtolower(trim($_data->payment_transaction)) == strtolower(trim($_particular[$i]))) {
+                                        // The the Particular in Database and the Receipt is match we will get the amount
                                         $_amount = explode('.', $_data->payment_amount);
                                         if (count($_amount) > 1) {
                                             $_whole = $_whole_1 = $_amount[0];
@@ -163,8 +162,20 @@
                                             $_decimal = $_decimal_1 = '00';
                                         }
                                     } else {
-                                        $_whole = '-';
-                                        $_decimal = '-';
+                                        if (strtolower(trim($_data->remarks)) == strtolower(trim($_particular[$i]))) {
+                                            // The the Particular in Database and the Receipt is match we will get the amount
+                                            $_amount = explode('.', $_data->payment_amount);
+                                            if (count($_amount) > 1) {
+                                                $_whole = $_whole_1 = $_amount[0];
+                                                $_decimal = $_decimal_1 = $_amount[1];
+                                            } else {
+                                                $_whole = $_whole_1 = $_amount[0];
+                                                $_decimal = $_decimal_1 = '00';
+                                            }
+                                        } else {
+                                            $_whole = '-';
+                                            $_decimal = '-';
+                                        }
                                     }
                                 } else {
                                     $_whole = '-';
