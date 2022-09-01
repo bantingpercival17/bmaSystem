@@ -134,7 +134,7 @@ class Staff extends Model
         return EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
             ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
             ->where('pt.remarks', 'Upon Enrollment')
-            ->where('enrollment_assessments.is_removed', false)
+            ->where('pt.is_removed', false)
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->groupBy('pt.assessment_id')
             ->orderBy('pa.created_at', 'DESC')->get();

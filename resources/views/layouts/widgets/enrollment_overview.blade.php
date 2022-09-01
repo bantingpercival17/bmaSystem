@@ -115,6 +115,25 @@ foreach ($_url_role as $key => $_data) {
                                 </h5>
 
                             </div>
+                            @php
+                                
+                                $_level = [4, 3, 2, 1];
+                                $_level = $_course->id == 3 ? [11, 12] : $_level;
+                                $_course_color = $_course->id == 1 ? 'text-primary' : '';
+                                $_course_color = $_course->id == 2 ? 'text-info' : $_course_color;
+                                $_course_color = $_course->id == 3 ? 'text-warning' : $_course_color;
+                            @endphp
+                            @foreach ($_level as $item)
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h5 class="text-muted">
+                                        {{ Auth::user()->staff->convert_year_level($item) }}
+                                    </h5>
+                                    <h5 class="fw-bolder text-primary">
+                                        {{ count($_course->enrolled_list($item)->get()) }}
+                                    </h5>
+                                </div>
+                            @endforeach
+
                         </div>
                     </div>
                 </a>

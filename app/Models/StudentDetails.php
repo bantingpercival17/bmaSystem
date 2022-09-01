@@ -82,7 +82,7 @@ class StudentDetails extends Model
     }
     public function account()
     {
-        return $this->hasOne(StudentAccount::class, 'student_id')->where('is_actived', true);
+        return $this->hasOne(StudentAccount::class, 'student_id')->where('is_actived', true)->orderBy('id', 'desc');
     }
     public function account_list()
     {
@@ -811,6 +811,6 @@ class StudentDetails extends Model
     }
     public function student_medical_result()
     {
-        return $this->hasOne(StudentMedicalResult::class, 'student_id')->where('is_removed', false)->orderBy('id','desc');
+        return $this->hasOne(StudentMedicalResult::class, 'student_id')->where('is_removed', false)->orderBy('id', 'desc');
     }
 }
