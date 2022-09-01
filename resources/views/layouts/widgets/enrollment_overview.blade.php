@@ -208,6 +208,73 @@ foreach ($_url_role as $key => $_data) {
                 </tbody>
             </table>
         </div>
+        <div class="table-responsive mt-4">
+            @php
+                $_title = ['EXPECTED ENROLLEE', 'NOT CLEARED', 'CLEARED', 'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM', 'FOR ASSESSMENT', 'PAYMENT VERIFICATION', 'TOTAL ENROLLED'];
+            @endphp
+            <table id="basic-table" class="table table-striped mb-0" role="grid">
+                <thead>
+                    <tr>
+                        <th>COURSE</th>
+                        @foreach ($_courses as $course)
+                            <th class="text-center"colspan="{{ $course->id == 3 ? 2 : 4 }}">
+                                {{ $course->course_name }}</th>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        <th>YEAR LEVEL</th>
+                        @foreach ($_courses as $course)
+                            @php
+                                $_level = [4, 3, 2, 1];
+                                $_level = $course->id == 3 ? [11, 12] : $_level;
+                                $_course_color = $course->id == 1 ? 'text-primary' : '';
+                                $_course_color = $course->id == 2 ? 'text-info' : $_course_color;
+                                $_course_color = $course->id == 3 ? 'text-primary' : $_course_color;
+                            @endphp
+                            @foreach ($_level as $level)
+                                <th class="{{ $_course_color }}">
+                                    {{ $course->id == 3 ? 'G' . $level : $level . '/C' }}</th>
+                            @endforeach
+                        @endforeach
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach ($_title as $item)
+                        <tr>
+                            <th>{{ $item }}</th>
+                            @foreach ($_courses as $course_1)
+                                @php
+                                    $_level = [4, 3, 2, 1];
+                                    $_level = $course_1->id == 3 ? [11, 12] : $_level;
+                                    $_course_color = $course_1->id == 1 ? 'text-primary' : '';
+                                    $_course_color = $course_1->id == 2 ? 'text-info' : $_course_color;
+                                    $_course_color = $course_1->id == 3 ? 'text-primary' : $_course_color;
+                                    
+                                @endphp
+                                @foreach ($_level as $level)
+                                    @php
+                                        
+                                        //'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM',
+                                        $_function = [];
+                                        $_function = $item == 'EXPECTED ENROLLEE' ? $_course->expected_enrollee_year_level($level)->get() : $_function;
+                                        $_function = $item == 'NOT CLEARED' ? $course_1->students_not_clearance_year_level($level)->get() : $_function;
+                                        $_function = $item == 'ENROLLMENT ASSESSMENT' ? $course_1->enrollment_assessment_year_level($level)->get() : $_function;
+                                        $_function = $item == 'BRIDGING PROGRAM' ? $course_1->student_bridging_program_year_level($level)->get() : $_function;
+                                        $_function = $item == 'FOR ASSESSMENT' ? $course_1->payment_assessment_sort($level)->get() : $_function;
+                                        $_function = $item == 'PAYMENT VERIFICATION' ? $_function : $_function;
+                                        $_function = $item == 'TOTAL ENROLLED' ? $course_1->enrolled_list($level)->get() : $_function;
+                                        $value = count($_function);
+                                    @endphp
+                                    <th class="{{ $_course_color }}">{{ $value }}</th>
+                                @endforeach
+                            @endforeach
+                        </tr>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 @section('js')

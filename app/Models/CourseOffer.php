@@ -124,6 +124,16 @@ class CourseOffer extends Model
             #->groupBy('pt.assessment_id')
             ->orderBy('pa.created_at', 'DESC');
     }
+    public function expected_enrollee_year_level($data)
+    {
+        $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('enrollment_assessments.academic_id', $_academic->id)
+            ->where('enrollment_assessments.year_level', $data)
+            ->orderBy('pa.created_at', 'DESC');
+    }
     public function students_clearance()
     {
         $_previous_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
@@ -171,6 +181,17 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.academic_id', $_academic->id);
     }
 
+    public function enrollment_assessment_year_level($data)
+    {
+        $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('enrollment_applications as ea', 'ea.student_id', 'enrollment_assessments.student_id')
+            ->whereNull('ea.is_approved')
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('enrollment_assessments.year_level', $data)
+            ->where('enrollment_assessments.academic_id',  $_academic->id);
+    }
     public function payment_assessment_year_level($_year_level)
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
@@ -186,6 +207,14 @@ class CourseOffer extends Model
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('enrollment_assessments.bridging_program', 'with')
+            ->where('enrollment_assessments.is_removed', false);
+    }
+    public function student_bridging_program_year_level($data)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.bridging_program', 'with')
+            ->where('enrollment_assessments.year_level', $data)
             ->where('enrollment_assessments.is_removed', false);
     }
     public function payment_assessment()
