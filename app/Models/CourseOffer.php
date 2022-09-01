@@ -252,6 +252,16 @@ class CourseOffer extends Model
             ->whereNull('pt.assessment_id')
             ->where('enrollment_assessments.year_level', $_year_level);
     }
+    public function payment_transaction_online_year_level($data)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->join('payment_transaction_onlines','pa.id')
+            ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
+            ->whereNull('pt.assessment_id')
+            ->where('enrollment_assessments.year_level', $data);
+    }
     public function sections()
     {
         $_academic = Auth::user()->staff->current_academic();

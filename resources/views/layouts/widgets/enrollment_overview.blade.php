@@ -257,7 +257,7 @@ foreach ($_url_role as $key => $_data) {
                                         
                                         //'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM',
                                         $_function = [];
-                                        $_function = $item == 'EXPECTED ENROLLEE' ? $_course->expected_enrollee_year_level($level)->get() : $_function;
+                                        $_function = $item == 'EXPECTED ENROLLEE' ? $course_1->expected_enrollee_year_level($level)->get() : $_function;
                                         $_function = $item == 'NOT CLEARED' ? $course_1->students_not_clearance_year_level($level)->get() : $_function;
                                         $_function = $item == 'ENROLLMENT ASSESSMENT' ? $course_1->enrollment_assessment_year_level($level)->get() : $_function;
                                         $_function = $item == 'BRIDGING PROGRAM' ? $course_1->student_bridging_program_year_level($level)->get() : $_function;
