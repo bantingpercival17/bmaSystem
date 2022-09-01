@@ -43,7 +43,7 @@ class EnrolledStudentList implements FromCollection, ShouldAutoSize, WithMapping
     {
         /* return $_data; */
         return [
-            $_data->student->account->student_number,
+            $_data->student->account ? $_data->student->account->student_number : '',
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
