@@ -34,6 +34,15 @@ class CourseOffer extends Model
     public function enrollment_list()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
+            ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('payment_transactions.is_removed', false)
+            ->where('payment_transactions.remarks', 'Upon Enrollment')
+            ->groupBy('enrollment_assessments.id')
+            ->orderBy('payment_transactions.created_at', 'DESC');
+        /*  return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
             ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
             ->where('pt.remarks', 'Upon Enrollment')
@@ -41,7 +50,7 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.is_removed', false)
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->groupBy('pt.assessment_id')
-            ->orderBy('pt.created_at', 'DESC');
+            ->orderBy('pt.created_at', 'DESC'); */
     }
     public function enrolled_list($_data)
     {
@@ -257,7 +266,7 @@ class CourseOffer extends Model
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->join('payment_transaction_onlines','pa.id')
+            ->join('payment_transaction_onlines', 'pa.id')
             ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
             ->whereNull('pt.assessment_id')
             ->where('enrollment_assessments.year_level', $data);

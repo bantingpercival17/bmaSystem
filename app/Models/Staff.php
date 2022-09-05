@@ -133,18 +133,19 @@ class Staff extends Model
     {
         return EnrollmentAssessment::join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
             ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
             ->where('payment_transactions.remarks', 'Upon Enrollment')
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC')->get();
-        return EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+        /* return EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
             ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
             ->where('pt.remarks', 'Upon Enrollment')
             ->where('pt.is_removed', false)
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->groupBy('pt.assessment_id')
-            ->orderBy('pa.created_at', 'DESC')->get();
+            ->orderBy('pa.created_at', 'DESC')->get(); */
     }
     public function total_applicants()
     {
