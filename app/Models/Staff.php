@@ -131,6 +131,13 @@ class Staff extends Model
 
     public function enrollment_count()
     {
+        return EnrollmentAssessment::join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
+            ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
+            ->where('payment_transactions.is_removed', false)
+            #->where('payment_transactions.remarks', 'Upon Enrollment')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->groupBy('payment_transactions.assessment_id')
+            ->orderBy('payment_transactions.created_at', 'DESC')->get();
         return EnrollmentAssessment::join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
             ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
             ->where('pt.remarks', 'Upon Enrollment')
