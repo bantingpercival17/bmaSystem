@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = strtoupper(request()->input('category'));
+$_title = ucwords(request()->input('category'));
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -67,9 +67,9 @@ $_title = strtoupper(request()->input('category'));
                             </div> --}}
                             <div class="col-md">
                                 <div class="card-body p-3 me-2">
-
                                     <label for=""
                                         class="fw-bolder text-primary h4">{{ $_data ? strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) : 'MIDSHIPMAN NAME' }}</label>
+
                                     <p class="mb-0">
                                         <small class="fw-bolder badge bg-secondary">
                                             {{ $_data ? ($_data->student->account ? $_data->student->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
@@ -95,6 +95,14 @@ $_title = strtoupper(request()->input('category'));
                                                 {{ $_data ? ($_data->student->enrollment_status ? strtoupper($_data->student->enrollment_status->academic->semester . ' | ' . $_data->student->enrollment_status->academic->school_year) : 'SECTION') : 'SECTION' }}
                                             </small>
                                         </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        @foreach (Auth::user()->roles as $role)
+                                            @if ($role->name == 'accounting')
+                                                <a href="{{route('accounting.payment-transaction').'?midshipman='.base64_encode($_data->student_id)}}" class="btn btn-sm btn-primary">Payment Tuition Fee</a>
+                                            @endif
+                                        @endforeach
+
                                     </div>
 
                                 </div>
