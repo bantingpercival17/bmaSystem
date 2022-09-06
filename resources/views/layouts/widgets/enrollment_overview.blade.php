@@ -64,7 +64,7 @@ foreach ($_url_role as $key => $_data) {
             </div>
         </div>
         @foreach ($_courses as $_course)
-            <div class="col-md-3">
+            {{-- <div class="col-md-3">
                 <a
                     href="{{ route('enrollment.enrolled-list') }}?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                     <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
@@ -129,7 +129,7 @@ foreach ($_url_role as $key => $_data) {
                                         {{ Auth::user()->staff->convert_year_level($item) }}
                                     </h5>
                                     <h5 class="fw-bolder text-primary">
-                                        {{ count($_course->enrolled_list($item)->get()) }}
+                                        {{ count($_course->enrollment_list_by_year_level($item)->get()) }}
                                     </h5>
                                 </div>
                             @endforeach
@@ -137,6 +137,45 @@ foreach ($_url_role as $key => $_data) {
                         </div>
                     </div>
                 </a>
+            </div> --}}
+            <div class="col-md">
+                <a
+                    href="{{ route('enrollment.enrolled-list') }}?_course={{ base64_encode($_course->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                    <div class="card">
+                        <div class="card-body">
+                            @php
+                                $_level = [4, 3, 2, 1];
+                                $_level = $_course->id == 3 ? [11, 12] : $_level;
+                                $_course_color = $_course->id == 1 ? 'text-primary' : '';
+                                $_course_color = $_course->id == 2 ? 'text-info' : $_course_color;
+                                $_course_color = $_course->id == 3 ? 'text-warning' : $_course_color;
+                            @endphp
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div>
+                                        <h2 class="counter fw-bolder text-muted" style="visibility: visible;">
+                                            {{ count($_course->enrollment_list) }}</h2>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span><b class="badge bg-primary">{{ $_course->course_code }}</b></span>
+                                </div>
+                            </div>
+                            @foreach ($_level as $item)
+                                <div class="d-flex justify-content-between mt-2">
+                                    <div>
+                                        <span> {{ Auth::user()->staff->convert_year_level($item) }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="counter text-muted fw-bolder" style="visibility: visible;">
+                                            {{ count($_course->enrollment_list_by_year_level($item)->get()) }}</span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </a>
+
             </div>
         @endforeach
     </div>
@@ -229,7 +268,7 @@ foreach ($_url_role as $key => $_data) {
         </div>
         <div class="table-responsive mt-4">
             @php
-                $_title = ['EXPECTED ENROLLEE', 'NOT CLEARED', 'CLEARED', 'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM', 'FOR ASSESSMENT', 'PAYMENT VERIFICATION', 'TOTAL ENROLLED'];
+                $_title = ['EXPECTED ENROLLEE', 'NOT CLEARED', 'CLEARED', 'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM', 'TUITION FEE ASSESSMENT', 'TUITION FEE PAYMENT', 'PAYMENT VERIFICATION', 'TOTAL ENROLLED'];
             @endphp
             <table id="basic-table" class="table table-striped mb-0" role="grid">
                 <thead>
@@ -273,19 +312,20 @@ foreach ($_url_role as $key => $_data) {
                                 @endphp
                                 @foreach ($_level as $level)
                                     @php
-                                        
                                         //'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM',
                                         $_function = [];
                                         $_function = $item == 'EXPECTED ENROLLEE' ? $course_1->expected_enrollee_year_level($level)->get() : $_function;
                                         $_function = $item == 'NOT CLEARED' ? $course_1->students_not_clearance_year_level($level)->get() : $_function;
                                         $_function = $item == 'ENROLLMENT ASSESSMENT' ? $course_1->enrollment_assessment_year_level($level)->get() : $_function;
                                         $_function = $item == 'BRIDGING PROGRAM' ? $course_1->student_bridging_program_year_level($level)->get() : $_function;
-                                        $_function = $item == 'FOR ASSESSMENT' ? $course_1->payment_assessment_sort($level)->get() : $_function;
-                                        $_function = $item == 'PAYMENT VERIFICATION' ? $_function : $_function;
-                                        $_function = $item == 'TOTAL ENROLLED' ? $course_1->enrolled_list($level)->get() : $_function;
+                                        $_function = $item == 'TUITION FEE ASSESSMENT' ? $course_1->payment_assessment_sort($level)->get() : $_function;
+                                        $_function = $item == 'TUITION FEE PAYMENT' ? $course_1->payment_transaction_year_level($level)->get() : $_function;
+                                        $_function = $item == 'PAYMENT VERIFICATION' ? $course_1->payment_transaction_online_year_level($level)->get() : $_function;
+                                        $_function = $item == 'TOTAL ENROLLED' ? $course_1->enrollment_list_by_year_level($level)->get() : $_function;
                                         $value = count($_function);
                                     @endphp
-                                    <th class="{{ $_course_color }}">{{ $value }}</th>
+                                    <th><a href="{{ route('enrollment.status') . '?_course=' . base64_encode($course_1->id) . '&level=' . $level . '&category=' . strtolower($item) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                                            class="{{ $_course_color }}">{{ $value }}</a></th>
                                 @endforeach
                             @endforeach
                         </tr>

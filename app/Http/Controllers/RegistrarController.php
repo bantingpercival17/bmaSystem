@@ -175,7 +175,7 @@ class RegistrarController extends Controller
     public function enrolled_list_view(Request $_request)
     {
         $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_students = $_request->_year_level ?  $_course->enrolled_list($_request->_year_level)->get() : $_course->enrollment_list;
+        $_students = $_request->_year_level ?  $_course->enrollment_list_by_year_level($_request->_year_level)->get() : $_course->enrollment_list;
         return view('pages.registrar.enrollment.enrolled_list_view', compact('_course', '_students'));
     }
 

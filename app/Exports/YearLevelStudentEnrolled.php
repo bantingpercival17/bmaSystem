@@ -25,7 +25,7 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
     }
     public function collection()
     {
-        return $this->course->enrolled_list($this->level)->get();
+        return $this->course->enrollment_list_by_year_level($this->level)->get();
     }
     public function headings(): array
     {

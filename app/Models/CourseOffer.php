@@ -31,40 +31,66 @@ class CourseOffer extends Model
             ->where('is_removed', false)
             /* ->get() */;
     }
+
+
+    /**
+     * It returns a list of enrollment_assessments that are not removed, are in the current academic
+     * year, and have a payment transaction that is not removed
+     * 
+     * @return The query is returning the enrollment_assessments table with the following conditions:
+     * 1. The academic_id is the current academic id of the user
+     * 2. The is_removed is false
+     * 3. The payment_transactions is_removed is false
+     * 4. The query is grouped by the enrollment_assessments id
+     * 5. The query is ordered by the payment
+     */
     public function enrollment_list()
     {
-        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+        $_query = $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
             ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
             ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
-            ->where('payment_transactions.remarks', 'Upon Enrollment')
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
-        /*  return $this->hasMany(EnrollmentAssessment::class, 'course_id')
-            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->leftJoin('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment')
-            ->where('pt.is_removed', false)
-            ->where('enrollment_assessments.is_removed', false)
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-            ->groupBy('pt.assessment_id')
-            ->orderBy('pt.created_at', 'DESC'); */
+        return $_query;
     }
-    public function enrolled_list($_data)
+    /**
+     * It returns a collection of `EnrollmentAssessment` models that are related to the current
+     * `Course` model, and are filtered by the `academic_id`, `year_level`, and `is_removed` attributes
+     * 
+     * @param data the year level
+     * 
+     * @return It returns the enrollment_assessments table with the following columns:
+     *         id, student_id, academic_id, course_id, year_level, is_removed, created_at, updated_at
+     */
+    public function enrollment_list_by_year_level($data)
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->select('enrollment_assessments.*')
-            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->join('payment_transactions as pt', 'pt.assessment_id', 'pa.id')
-            ->where('pt.remarks', 'Upon Enrollment')
-            ->where('pt.is_removed', false)
-            ->groupBy('pt.assessment_id')
+            ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
+            ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-            ->orderBy('enrollment_assessments.created_at', 'DESC')
-            ->where('enrollment_assessments.year_level', $_data)
-            ->where('enrollment_assessments.is_removed', false);
+            ->where('enrollment_assessments.year_level', $data)
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('payment_transactions.is_removed', false)
+            ->groupBy('enrollment_assessments.id')
+            ->orderBy('payment_transactions.created_at', 'DESC');
+    }
+    public function enrolled_list($data)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
+            ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
+            ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.year_level', $data)
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('payment_transactions.is_removed', false)
+            ->groupBy('enrollment_assessments.id')
+            ->orderBy('payment_transactions.created_at', 'DESC');
     }
     public function sort_enrolled_list($_request)
     {
@@ -265,10 +291,10 @@ class CourseOffer extends Model
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
-            ->join('payment_transaction_onlines', 'pa.id')
-            ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
-            ->whereNull('pt.assessment_id')
+            ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+            ->join('payment_trasanction_onlines', 'payment_assessments.id', 'payment_trasanction_onlines.assessment_id')
+            //->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
+            ->whereNull('payment_assessments.id')
             ->where('enrollment_assessments.year_level', $data);
     }
     public function sections()

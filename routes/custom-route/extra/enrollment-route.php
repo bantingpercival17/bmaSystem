@@ -8,4 +8,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/enrollment-list', [EnrollmentController::class, 'enrolled_list_view'])->name('enrollment.enrolled-list');
     Route::get('/enrollment-list/report', [EnrollmentController::class, 'course_enrolled_report'])->name('enrollment.enrolled-list-report');
     Route::get('/enrollment/payment-assessment', [EnrollmentController::class, 'enrollment_payment_assessment'])->name('enrollment.payment-assessment');
+
+    Route::get('/enrollment/category', [EnrollmentController::class, 'enrollment_category'])->name('enrollment.status');
+
+
+    Route::get('/enrollment/student-number',[EnrollmentController::class,'enrollment_student_number'])->name('enrollment.student-number');
 });
