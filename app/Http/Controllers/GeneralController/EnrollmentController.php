@@ -79,10 +79,13 @@ class EnrollmentController extends Controller
     public function enrollment_category(Request $_request)
     {
         try {
+            $_courses = CourseOffer::orderBy('id', 'desc')->get();
             $_course = CourseOffer::find(base64_decode($_request->_course));
             $_function = [];
             $item = strtoupper($_request->category);
             $level = $_request->level;
+            $_category = ['EXPECTED ENROLLEE', 'NOT CLEARED', 'CLEARED', 'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM', 'TUITION FEE ASSESSMENT', 'TUITION FEE PAYMENT', 'PAYMENT VERIFICATION', 'TOTAL ENROLLED'];
+
             $_function = $item == 'EXPECTED ENROLLEE' ? $_course->expected_enrollee_year_level($level)->get() : $_function;
             $_function = $item == 'NOT CLEARED' ? $_course->students_not_clearance_year_level($level)->get() : $_function;
             $_function = $item == 'ENROLLMENT ASSESSMENT' ? $_course->enrollment_assessment_year_level($level)->get() : $_function;
@@ -91,6 +94,10 @@ class EnrollmentController extends Controller
             $_function = $item == 'TUITION FEE PAYMENT' ? $_course->payment_transaction_year_level($level)->get() : $_function;
             $_function = $item == 'PAYMENT VERIFICATION' ? $_course->payment_transaction_online_year_level($level)->get() : $_function;
             $_function = $item == 'TOTAL ENROLLED' ? $_course->enrollment_list_by_year_level($level)->get() : $_function;
+
+            $_students = $_function;
+            $_category_content = $item == 'TUITION FEE ASSESSMENT' ? 'payment_assessment' : '';
+            return view('pages.general-view.enrollment.enrollment-category-list', compact('_students', '_courses', '_course', '_category_content'));
             return $_function;
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());

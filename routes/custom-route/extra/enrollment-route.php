@@ -11,6 +11,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/enrollment/category', [EnrollmentController::class, 'enrollment_category'])->name('enrollment.status');
 
+    Route::get('/enrollment/category/status-report')->name('enrollment.category-report');
 
-    Route::get('/enrollment/student-number',[EnrollmentController::class,'enrollment_student_number'])->name('enrollment.student-number');
+    Route::get('/enrollment/student-number', [EnrollmentController::class, 'enrollment_student_number'])->name('enrollment.student-number');
 });
