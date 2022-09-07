@@ -458,7 +458,9 @@ class RegistrarController extends Controller
         $_year_level = str_replace('/C', '', $_year_level);
         $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
             ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
-            ->where('ea.year_level', trim($_year_level))->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('ea.year_level', trim($_year_level))
+            ->where('ea.course_id', $_section->course_id)
+            ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('ea.is_removed', false)
             ->orderBy('student_details.last_name')
             ->orderBy('student_details.first_name')

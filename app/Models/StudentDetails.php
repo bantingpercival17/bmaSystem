@@ -309,7 +309,7 @@ class StudentDetails extends Model
     }
     public function grade_publish()
     {
-        return $this->hasOne(GradePublish::class, 'student_id')/* ->where('is_removed', false) */;
+        return $this->hasOne(GradePublish::class, 'student_id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('is_removed', false)/* ->where('is_removed', false) */;
     }
     /* Shipboard Model */
 

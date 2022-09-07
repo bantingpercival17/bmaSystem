@@ -11,8 +11,11 @@
             </svg>Sections
         </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">
-        {{ $_section->section_name }}
+    <li class="breadcrumb-item" aria-current="page">
+        <a
+            href="{{ route('registrar.section-add-student-view') . '?_section=' . request('_section') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+            {{ $_section->section_name }}</a>
+
     </li>
     <li class="breadcrumb-item active" aria-current="page">
         Add Student
@@ -35,6 +38,7 @@
                         <tr>
                             <th>STUDENT NUMBER</th>
                             <th>FULL NAME</th>
+                            <th>ENROLLMENT STATUS</th>
                             <th>ACTION</th>
                         </tr>
                     </thead>
@@ -44,6 +48,35 @@
                                 <tr>
                                     <td> {{ $_data->account ? $_data->account->student_number : '' }} </td>
                                     <td>{{ ucwords($_data->last_name . ', ' . $_data->first_name) }}
+                                    </td>
+                                    <td>
+                                        @if ($_data->enrollment_status)
+                                            @if ($_data->enrollment_status->payment_assessments)
+                                                @if ($_data->enrollment_status->payment_assessments->payment_assessment_paid)
+                                                    <span class="badge bg-primary">ENROLLED</span> <br>
+                                                    <small
+                                                        class="text-muted fw-bolder">{{ $_data->enrollment_status->payment_assessments->payment_assessment_paid->created_at->format('F d,Y') }}</small>
+                                                @else
+                                                    @if ($_data->enrollment_status->payment_assessments->online_enrollment_payment)
+                                                        @if ($_data->enrollment_status->payment_assessments->online_enrollment_payment->is_approved == true)
+                                                            <span class="badge bg-primary">ENROLLED</span> <br>
+                                                            <small
+                                                                class="text-muted fw-bolder">{{ $_data->enrollment_status->payment_assessments->payment_assessment_paid->created_at->format('F d,Y') }}</small>
+                                                        @else
+                                                            <span class="badge bg-info">PAYMENT
+                                                                VERIFICATION DISAPPROVED</span>
+                                                        @endif
+                                                    @else
+                                                        <span class="badge bg-info">FOR TUITION FEE PAYMENT
+                                                            VERIFICATION</span>
+                                                    @endif
+                                                @endif
+                                            @else
+                                                <span class="badge bg-info">FOR TUITION FEE ASSESSMENT</span>
+                                            @endif
+                                        @else
+                                            <span class="badge bg-danger">NOT ENROLLED</span>
+                                        @endif
                                     </td>
                                     <td>
                                         @if ($_student_section = $_data->section(Auth::user()->staff->current_academic()->id)->first())
