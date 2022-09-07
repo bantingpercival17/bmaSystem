@@ -111,13 +111,16 @@ class EnrollmentController extends Controller
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
-            ->where('enrollment_assessments.year_level', 11)
+            /*  ->where('enrollment_assessments.year_level', 11)
             ->where('enrollment_assessments.course_id', 3)
+            */
+            ->where('enrollment_assessments.year_level', 4)
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'ASC')->get();
         $_student_count = 0;
         foreach ($_enrollee as $key => $value) {
-            $_student_number = '06-22';
+            //$_student_number = '06-22';
+            $_student_number = '22';
             $_student_count += 1;
             $_number = $_student_count > 9 ? ($_student_count >= 100 ? $_student_count : '0' . $_student_count) : '00' . $_student_count;
             $_student_number = $_student_number . $_number;
@@ -132,7 +135,7 @@ class EnrollmentController extends Controller
                 'is_removed' => false,
             );
             echo '<br>';
-            if ($value->student->account) {
+             if ($value->student->account) {
                 $value->student->account->update($_account_details);
                 echo json_encode($_account_details);
             } else {
@@ -140,7 +143,7 @@ class EnrollmentController extends Controller
                 StudentAccount::create($_account_details);
             }
 
-            //echo json_encode($_account_details);
+            echo json_encode($_account_details);
             echo "<br>";
         }
     }
