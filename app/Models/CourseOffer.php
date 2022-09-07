@@ -294,8 +294,11 @@ class CourseOffer extends Model
             ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
             ->join('payment_trasanction_onlines', 'payment_assessments.id', 'payment_trasanction_onlines.assessment_id')
             //->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
-            ->whereNull('payment_assessments.id')
-            ->where('enrollment_assessments.year_level', $data);
+            //->whereNull('payment_assessments.id')
+            ->where('enrollment_assessments.year_level', $data)
+            ->where('payment_trasanction_onlines.is_removed',false)
+            ->whereNull('payment_trasanction_onlines.is_approved')
+            ;
     }
     public function sections()
     {
