@@ -89,7 +89,9 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('registrar.section-export') }}?_course={{ base64_encode($_course->id) }}&_year_level={{ $level }}&_report_type=excel-file"
-                                            class="btn btn-primary btn-sm">EXCEL</a>
+                                            class="btn btn-primary btn-sm">EXPORT SECTION</a>
+                                        {{-- <a href="{{ route('registrar.section-export') }}?_course={{ base64_encode($_course->id) }}&_year_level={{ $level }}&_report_type=excel-file&subject='true"
+                                            class="btn btn-primary btn-sm">EXPORT SECTION WITH SUBJECT</a> --}}
                                     </td>
                                 </tr>
                             @endforeach

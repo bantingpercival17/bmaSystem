@@ -18,22 +18,22 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
     public function __construct($_section)
     {
         $this->section = $_section;
+        $this->curriculum = $this->section->curriculum_subject_class;
     }
     public function collection()
     {
-
         $_student = $this->section->student_sections;
         return $_student;
     }
     public function headings(): array
     {
+        $_fields = array(0 => 'STUDENT NUMBER', 1 => 'EMAIL', 2 => 'LAST NAME', 3 => 'FIRST NAME', 4 => 'MIDDLE NAME');
         return [
             'STUDENT NUMBER',
+            'EMAIL',
             'LAST NAME',
             'FIRST NAME',
             'MIDDLE NAME',
-            'EMAIL',
-
         ];
     }
     public function map($_data): array
@@ -41,10 +41,10 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
         /* return $_data; */
         return [
             $_data->student->account ? $_data->student->account->student_number : '',
+            $_data->student->account ?  $_data->student->account->campus_email : "-",
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
-            $_data->student->account ?  $_data->student->account->campus_email : "-",
         ];
     }
     public function registerEvents(): array

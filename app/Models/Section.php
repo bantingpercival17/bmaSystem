@@ -60,4 +60,8 @@ class Section extends Model
     {
         return $this->hasOne(SubjectClass::class, 'section_id')/* ->where('curriculum_subject_id', $_data->id) */;
     }
+    public function curriculum_subjects()
+    {
+        return $this->hasMany('curriculum_id');
+    }
 }
