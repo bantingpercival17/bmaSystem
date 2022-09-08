@@ -35,21 +35,25 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
             'LAST NAME',
             'FIRST NAME',
             'MIDDLE NAME',
-            'FULL NAME',
-            'CONTACT NUMBER'
+            'CONTACT NUMBER',
+            'YEAR LEVEL',
+            'COURSE',
+            'SECTION',
         ];
     }
     public function map($_data): array
     {
+        $_student_section = $_data->student->section(Auth::user()->staff->current_academic()->id)->first();
         return [
             $_data->student->account ? $_data->student->account->campus_email : '-',
             $_data->student->account ? $_data->student->account->student_number : '-',
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
-            $_data->student->last_name . ', ' . $_data->student->first_name . " " . $_data->student->extention_name == 'n/a' ? $_data->student->extention_name : '',
-            $_data->student->contact_number
-
+            $_data->student->contact_number,
+            Auth::user()->staff->convert_year_level($_data->student->enrollment_assessment->year_level),
+            $_data->student->enrollment_assessment->course->course_name,
+            $_student_section ? $_student_section->section->section_name : '-',
         ];
     }
     public function registerEvents(): array

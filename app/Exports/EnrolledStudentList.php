@@ -36,18 +36,22 @@ class EnrolledStudentList implements FromCollection, ShouldAutoSize, WithMapping
             'LAST NAME',
             'FIRST NAME',
             'MIDDLE NAME',
+            'YEAR LEVEL',
+            'COURSE',
+            'SECTION',
 
         ];
     }
     public function map($_data): array
     {
-        /* return $_data; */
         return [
             $_data->student->account ? $_data->student->account->student_number : '',
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
-
+            $_data->student->enrollment_assessment->year_level,
+            $_data->student->enrollment_assessment->course->course_name,
+            $_data->student->section->section_name,
         ];
     }
     public function registerEvents(): array
