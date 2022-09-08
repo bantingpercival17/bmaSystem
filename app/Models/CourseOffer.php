@@ -1063,4 +1063,49 @@ class CourseOffer extends Model
             ->where('student_medical_results.is_removed', false)
             ->where('is_fit', true);
     }
+    /* UMAK STUDENT */
+    public function enrollment_assessment_umak_student()
+    {
+        $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)->orderBy('id', 'desc')->first();
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('enrollment_applications as ea', 'ea.student_id', 'enrollment_assessments.student_id')
+            ->whereNull('ea.is_approved')
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('enrollment_assessments.curriculum_id', 8)
+            #->where('enrollment_assessments.year_level', $data)
+            ->where('enrollment_assessments.academic_id',  $_academic->id);
+    }
+    public function payment_assessment_umak_student()
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.curriculum_id', 8)
+            //->where('enrollment_assessments.year_level', $data)
+            ->leftJoin('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
+            ->whereNull('pa.enrollment_id');
+    }
+    public function payment_transaction_umak_student()
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->join('payment_assessments as pa', 'pa.enrollment_id', 'enrollment_assessments.id')
+            ->where('enrollment_assessments.curriculum_id', 8)
+            ->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
+            ->whereNull('pt.assessment_id');
+    }
+    public function enrolled_list_umak_student()
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
+            ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
+            ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            //->where('enrollment_assessments.year_level', $data)
+            ->where('enrollment_assessments.curriculum_id', 8)
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('payment_transactions.is_removed', false)
+            ->groupBy('enrollment_assessments.id')
+            ->orderBy('payment_transactions.created_at', 'DESC');
+    }
 }

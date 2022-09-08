@@ -268,7 +268,7 @@ foreach ($_url_role as $key => $_data) {
         </div>
         <div class="table-responsive mt-4">
             @php
-                $_title = ['EXPECTED ENROLLEE', 'NOT CLEARED', 'CLEARED', 'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM', 'TUITION FEE ASSESSMENT', 'TUITION FEE PAYMENT', 'PAYMENT VERIFICATION','PAYMENT VERIFICATION [DISAPPROVED]', 'TOTAL ENROLLED'];
+                $_title = ['NOT CLEARED', 'CLEARED', 'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM', 'TUITION FEE ASSESSMENT', 'TUITION FEE PAYMENT', 'PAYMENT VERIFICATION', 'PAYMENT VERIFICATION [DISAPPROVED]', 'TOTAL ENROLLED'];
             @endphp
             <table id="basic-table" class="table table-striped mb-0" role="grid">
                 <thead>
@@ -334,6 +334,112 @@ foreach ($_url_role as $key => $_data) {
                         </tr>
                     @endforeach
                 </tbody>
+            </table>
+        </div>
+        <div class="table-responsive mt-4">
+            @php
+                $_title = ['ENROLLMENT ASSESSMENT', 'TUITION FEE ASSESSMENT', 'TUITION FEE PAYMENT', 'PAYMENT VERIFICATION', 'PAYMENT VERIFICATION [DISAPPROVED]', 'TOTAL ENROLLED'];
+            @endphp
+            <label for="" class="ps-5 fw-bolder">UMAK STUDENTS</label>
+            <table id="basic-table" class="table table-striped mb-0" role="grid">
+                <thead>
+                    <tr>
+                        <th>COURSE</th>
+                        @foreach ($_title as $item)
+                            <th>{{ $item }}</th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($_courses as $course)
+                        <tr>
+                            <td class="text-center">
+                                {{ $course->course_name }}
+                            </td>
+                            @foreach ($_title as $item)
+                                @php
+                                    //'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM',
+                                    $_function = [];
+                                    $_function = $item == 'ENROLLMENT ASSESSMENT' ? $course->enrollment_assessment_umak_student : $_function;
+                                    $_function = $item == 'TUITION FEE ASSESSMENT' ? $course->payment_assessment_umak_student : $_function;
+                                    $_function = $item == 'TUITION FEE PAYMENT' ? $course->payment_transaction_umak_student : $_function;
+                                    #$_function = $item == 'PAYMENT VERIFICATION' ? $course_1->payment_transaction_online_year_level($level)->get() : $_function;
+                                    #$_function = $item == 'PAYMENT VERIFICATION [DISAPPROVED]' ? $course_1->payment_transaction_online_status_year_level($level)->get() : $_function;
+                                    $_function = $item == 'TOTAL ENROLLED' ? $course->enrolled_list_umak_student : $_function;
+                                    $value = count($_function);
+                                @endphp
+                                <td>
+                                    {{ $value }}
+                                </td>
+                            @endforeach
+
+                        </tr>
+                    @endforeach
+
+                </tbody>
+                {{-- <thead>
+                    <tr>
+                        <th>COURSE</th>
+                        @foreach ($_courses as $course)
+                            <th class="text-center"colspan="{{ $course->id == 3 ? 2 : 4 }}">
+                                {{ $course->course_name }}</th>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        <th>YEAR LEVEL</th>
+                        @foreach ($_courses as $course)
+                            @php
+                                $_level = [4, 3, 2, 1];
+                                $_level = $course->id == 3 ? [11, 12] : $_level;
+                                $_course_color = $course->id == 1 ? 'text-primary' : '';
+                                $_course_color = $course->id == 2 ? 'text-info' : $_course_color;
+                                $_course_color = $course->id == 3 ? 'text-primary' : $_course_color;
+                            @endphp
+                            @foreach ($_level as $level)
+                                <th class="{{ $_course_color }}">
+                                    {{ $course->id == 3 ? 'G' . $level : $level . '/C' }}</th>
+                            @endforeach
+                        @endforeach
+                    </tr>
+
+                </thead>
+                <tbody>
+                    @foreach ($_title as $item)
+                        <tr>
+                            <th>{{ $item }}</th>
+                            @foreach ($_courses as $course_1)
+                                @php
+                                    $_level = [4, 3, 2, 1];
+                                    $_level = $course_1->id == 3 ? [11, 12] : $_level;
+                                    $_course_color = $course_1->id == 1 ? 'text-primary' : '';
+                                    $_course_color = $course_1->id == 2 ? 'text-info' : $_course_color;
+                                    $_course_color = $course_1->id == 3 ? 'text-primary' : $_course_color;
+                                    
+                                @endphp
+                                @foreach ($_level as $level)
+                                    @php
+                                        //'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM',
+                                        $_function = [];
+                                        $_function = $item == 'EXPECTED ENROLLEE' ? $course_1->expected_enrollee_year_level($level)->get() : $_function;
+                                        $_function = $item == 'NOT CLEARED' ? $course_1->students_not_clearance_year_level($level)->get() : $_function;
+                                        $_function = $item == 'ENROLLMENT ASSESSMENT' ? $course_1->enrollment_assessment_year_level($level)->get() : $_function;
+                                        $_function = $item == 'BRIDGING PROGRAM' ? $course_1->student_bridging_program_year_level($level)->get() : $_function;
+                                        $_function = $item == 'TUITION FEE ASSESSMENT' ? $course_1->payment_assessment_sort($level)->get() : $_function;
+                                        $_function = $item == 'TUITION FEE PAYMENT' ? $course_1->payment_transaction_year_level($level)->get() : $_function;
+                                        $_function = $item == 'PAYMENT VERIFICATION' ? $course_1->payment_transaction_online_year_level($level)->get() : $_function;
+                                        $_function = $item == 'PAYMENT VERIFICATION [DISAPPROVED]' ? $course_1->payment_transaction_online_status_year_level($level)->get() : $_function;
+                                        $_function = $item == 'TOTAL ENROLLED' ? $course_1->enrollment_list_by_year_level($level)->get() : $_function;
+                                        
+                                        $value = count($_function);
+                                    @endphp
+                                    <th><a href="{{ route('enrollment.status') . '?_course=' . base64_encode($course_1->id) . '&level=' . $level . '&category=' . strtolower($item) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                                            class="{{ $_course_color }}">{{ $value }}</a></th>
+                                @endforeach
+                            @endforeach
+                        </tr>
+                        </tr>
+                    @endforeach
+                </tbody> --}}
             </table>
         </div>
     </div>
