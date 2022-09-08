@@ -268,7 +268,7 @@ foreach ($_url_role as $key => $_data) {
         </div>
         <div class="table-responsive mt-4">
             @php
-                $_title = ['EXPECTED ENROLLEE', 'NOT CLEARED', 'CLEARED', 'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM', 'TUITION FEE ASSESSMENT', 'TUITION FEE PAYMENT', 'PAYMENT VERIFICATION', 'TOTAL ENROLLED'];
+                $_title = ['EXPECTED ENROLLEE', 'NOT CLEARED', 'CLEARED', 'ENROLLMENT ASSESSMENT', 'BRIDGING PROGRAM', 'TUITION FEE ASSESSMENT', 'TUITION FEE PAYMENT', 'PAYMENT VERIFICATION','PAYMENT VERIFICATION [DISAPPROVED]', 'TOTAL ENROLLED'];
             @endphp
             <table id="basic-table" class="table table-striped mb-0" role="grid">
                 <thead>
@@ -321,7 +321,9 @@ foreach ($_url_role as $key => $_data) {
                                         $_function = $item == 'TUITION FEE ASSESSMENT' ? $course_1->payment_assessment_sort($level)->get() : $_function;
                                         $_function = $item == 'TUITION FEE PAYMENT' ? $course_1->payment_transaction_year_level($level)->get() : $_function;
                                         $_function = $item == 'PAYMENT VERIFICATION' ? $course_1->payment_transaction_online_year_level($level)->get() : $_function;
+                                        $_function = $item == 'PAYMENT VERIFICATION [DISAPPROVED]' ? $course_1->payment_transaction_online_status_year_level($level)->get() : $_function;
                                         $_function = $item == 'TOTAL ENROLLED' ? $course_1->enrollment_list_by_year_level($level)->get() : $_function;
+                                        
                                         $value = count($_function);
                                     @endphp
                                     <th><a href="{{ route('enrollment.status') . '?_course=' . base64_encode($course_1->id) . '&level=' . $level . '&category=' . strtolower($item) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"

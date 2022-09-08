@@ -296,9 +296,20 @@ class CourseOffer extends Model
             //->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
             //->whereNull('payment_assessments.id')
             ->where('enrollment_assessments.year_level', $data)
-            ->where('payment_trasanction_onlines.is_removed',false)
-            ->whereNull('payment_trasanction_onlines.is_approved')
-            ;
+            ->where('payment_trasanction_onlines.is_removed', false)
+            ->whereNull('payment_trasanction_onlines.is_approved');
+    }
+    public function payment_transaction_online_status_year_level($data)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+            ->join('payment_trasanction_onlines', 'payment_assessments.id', 'payment_trasanction_onlines.assessment_id')
+            //->leftJoin('payment_transactions as pt', 'pa.id', 'pt.assessment_id')
+            //->whereNull('payment_assessments.id')
+            ->where('enrollment_assessments.year_level', $data)
+            ->where('payment_trasanction_onlines.is_removed', false)
+            ->where('payment_trasanction_onlines.is_approved', 0);
     }
     public function sections()
     {
