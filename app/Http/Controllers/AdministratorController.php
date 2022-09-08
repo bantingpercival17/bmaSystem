@@ -87,7 +87,14 @@ class AdministratorController extends Controller
     public function student_profile(Request $_request)
     {
         $_student = StudentDetails::find(base64_decode($_request->student));
-        return view('pages.administrator.student.profile', compact('_student'));
+        if ($_request->_course  || $_request->_academic || $_request->search_student) {
+            $_student_detials = new StudentDetails();
+            $_students = $_request->search_student ? $_student_detials->student_search($_request->search_student) : [];
+            //return $_students;
+        } else {
+            $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
+        }
+        return view('pages.administrator.student.profile', compact('_student', '_students'));
     }
     public function student_imports(Request $_request)
     {
