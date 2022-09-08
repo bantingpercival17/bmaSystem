@@ -104,7 +104,7 @@
                             </div>
                         </div>
                     </li>
-                    @if ($_enrollment_status->payment_assessments->payment_transaction)
+                    @if ($_enrollment_status->payment_assessments->payment_assessment_paid)
                         <li>
                             <div class="timeline-dots1 border-primary text-primary">
                                 <svg width="20" viewBox="0 2 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
