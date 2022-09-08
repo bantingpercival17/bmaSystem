@@ -124,12 +124,12 @@
                                 <div class="col-md">
                                     <small class="text-muted">TRANSACT BY:</small>
                                     <span
-                                        class="badge bg-primary">{{ $_enrollment_status->payment_assessments->payment_transaction[0]->staff->user->name }}</span>
+                                        class="badge bg-primary">{{ $_enrollment_status->payment_assessments->payment_assessment_paid->staff->user->name }}</span>
                                 </div>
                                 <div class="col-md">
                                     <small class="text-muted">TRANSACTION DATE:</small>
                                     <span
-                                        class="badge bg-primary">{{ $_enrollment_status->payment_assessments->payment_transaction[0]->created_at->format('F d,Y') }}</span>
+                                        class="badge bg-primary">{{ $_enrollment_status->payment_assessments->payment_assessment_paid->created_at->format('F d,Y') }}</span>
                                 </div>
                             </div>
                         </li>
