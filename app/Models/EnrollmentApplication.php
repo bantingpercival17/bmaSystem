@@ -12,6 +12,10 @@ class EnrollmentApplication extends Model
 
     public function course()
     {
-        return $this->belongsTo(CourseOffer::class,'course_id');
+        return $this->belongsTo(CourseOffer::class, 'course_id');
+    }
+    public function academic()
+    {
+        return $this->belongsTo(AcademicYear::class, 'academic_id');
     }
 }

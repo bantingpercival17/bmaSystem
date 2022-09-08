@@ -67,7 +67,7 @@ class AdministratorController extends Controller
         $_total_applicants = ApplicantAccount::join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
         return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population', '_total_applicants'));
     }
-  
+
     /* Students */
     public function student_view(Request $_request)
     {
@@ -86,7 +86,7 @@ class AdministratorController extends Controller
     } /* View Student  */
     public function student_profile(Request $_request)
     {
-        $_student = StudentDetails::find(base64_decode($_request->_s));
+        $_student = StudentDetails::find(base64_decode($_request->student));
         return view('pages.administrator.student.profile', compact('_student'));
     }
     public function student_imports(Request $_request)

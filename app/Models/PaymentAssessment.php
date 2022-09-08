@@ -17,7 +17,10 @@ class PaymentAssessment extends Model
         'staff_id',
         'is_removed',
     ];
-
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
+    }
     public function enrollment_assessment()
     {
         return $this->belongsTo(EnrollmentAssessment::class, 'enrollment_id');
@@ -45,5 +48,9 @@ class PaymentAssessment extends Model
     public function payment_assessment_paid()
     {
         return $this->hasOne(PaymentTransaction::class, 'assessment_id')/* ->where('remarks', 'Upon Enrollment') */->where('is_removed', false);
+    }
+    public function payment_transaction_online()
+    {
+        return $this->hasOne(PaymentTransaction::class, 'assessment_id')->where('remarks', 'Upon Enrollment')->where('is_removed', false);
     }
 }

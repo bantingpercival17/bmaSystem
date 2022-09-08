@@ -76,6 +76,10 @@ class StudentDetails extends Model
     {
         return $this->hasOne(EnrollmentApplication::class, 'student_id')->where('is_removed', false)->where('academic_id', Auth::user()->staff->current_academic()->id);
     }
+    public function enrollment_application_status($_data)
+    {
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('is_removed', 0)->where('academic_id', $_data->id);
+    }
     public function enrollment_application_payment()
     {
         return $this->hasOne(EnrollmentApplication::class, 'student_id')->where('is_approved', true)->where('academic_id', Auth::user()->staff->current_academic()->id)->where('is_removed', false);
