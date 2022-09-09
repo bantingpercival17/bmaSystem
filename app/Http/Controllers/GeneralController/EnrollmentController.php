@@ -114,18 +114,21 @@ class EnrollmentController extends Controller
             /*  ->where('enrollment_assessments.year_level', 11)
             ->where('enrollment_assessments.course_id', 3)
             */
-            ->where('enrollment_assessments.year_level', 4)
+            //->where('enrollment_assessments.year_level', 4)
+            ->where('enrollment_assessments.curriculum_id', 8)
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'ASC')->get();
         $_student_count = 0;
         foreach ($_enrollee as $key => $value) {
             //$_student_number = '06-22';
-            $_student_number = '22';
+            $_student_number = '223';
             $_student_count += 1;
-            $_number = $_student_count > 9 ? ($_student_count >= 100 ? $_student_count : '0' . $_student_count) : '00' . $_student_count;
+            $_number = $_student_count > 9 ? ($_student_count >= 100 ? $_student_count : '' . $_student_count) : '0' . $_student_count;
             $_student_number = $_student_number . $_number;
             echo 'STUDENT COUNT:' . $_student_number;
-            $_email =  $_student_number . '.' . str_replace(' ', '', strtolower($value->student->last_name)) . '@bma.edu.ph';
+            echo '<br>';
+            echo json_encode($value->student->account);
+            $_email =  $_student_number . '.' . str_replace(' ', '', str_replace('.', '', strtolower($value->student->last_name))) . '@bma.edu.ph';
             $_account_details = array(
                 'student_id' => $value->student_id,
                 'campus_email' => $_email,
@@ -134,17 +137,18 @@ class EnrollmentController extends Controller
                 'is_actived' => true,
                 'is_removed' => false,
             );
-            echo '<br>';
-             if ($value->student->account) {
-                $value->student->account->update($_account_details);
+            echo "<br>";
+            if ($value->student->account) {
+                // $value->student->account->update($_account_details);
                 echo json_encode($_account_details);
             } else {
                 $_account_details['personal_email'] = $_email;
-                StudentAccount::create($_account_details);
+                echo json_encode($value);
+                //StudentAccount::create($_account_details);
             }
-
-            echo json_encode($_account_details);
             echo "<br>";
+            // echo json_encode($_account_details);
+            // /echo "<br><br>";
         }
     }
     //  Un-use Function
