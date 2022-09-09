@@ -34,11 +34,11 @@ $_title = 'Subjects';
                     @foreach ($_curriculums as $key => $curriculum)
                         <li class="nav-item">
                             <a class="nav-link {{ $key == 0 ? 'active' : '' }}"
-                                id="{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}-tab-three"
+                                id="{{ str_replace(' ', '-', str_replace('[3-1]', '', strtolower($curriculum->curriculum_name))) }}-tab-three"
                                 data-bs-toggle="tab"
-                                href="#{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}-three"
+                                href="#{{ str_replace(' ', '-', str_replace('[3-1]', '', strtolower($curriculum->curriculum_name))) }}-three"
                                 role="tab"
-                                aria-controls="{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}"
+                                aria-controls="{{ str_replace(' ', '-', str_replace('[3-1]', '', strtolower($curriculum->curriculum_name))) }}"
                                 aria-selected="true"><small>{{ strtoupper($curriculum->curriculum_name) }}</small></a>
                         </li>
                     @endforeach
@@ -47,8 +47,9 @@ $_title = 'Subjects';
                 <div class="tab-content mt-5" id="myTabContent-4">
                     @foreach ($_curriculums as $key => $curriculum)
                         <div class="tab-pane fade show {{ $key == 0 ? ' active' : '' }}"
-                            id="{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}-three" role="tabpanel"
-                            aria-labelledby="{{ str_replace(' ', '-', strtolower($curriculum->curriculum_name)) }}-tab-three">
+                            id="{{ str_replace(' ', '-', str_replace('[3-1]', '', strtolower($curriculum->curriculum_name))) }}-three"
+                            role="tabpanel"
+                            aria-labelledby="{{ str_replace(' ', '-', str_replace('[3-1]', '', strtolower($curriculum->curriculum_name))) }}-tab-three">
                             <label for=""
                                 class="h4 text-primary fw-bolder">{{ strtoupper($curriculum->curriculum_name) }}</label>
                             @php
