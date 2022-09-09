@@ -103,7 +103,7 @@ class StudentDetails extends Model
     public function section($_academic)
     {
         return $this->hasOne(StudentSection::class, 'student_id')->select('student_sections.id', 'student_sections.student_id', 'student_sections.section_id')
-            ->join('sections', 'sections.id', 'student_sections.section_id')->where('sections.academic_id', $_academic)->where('student_sections.is_removed', false);
+            ->join('sections', 'sections.id', 'student_sections.section_id')->where('sections.section_name', 'not like', '%BRIDGING%')->where('sections.academic_id', $_academic)->where('student_sections.is_removed', false);
     }
 
     /* Student Search Query */
