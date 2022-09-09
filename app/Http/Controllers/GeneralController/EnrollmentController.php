@@ -128,7 +128,7 @@ class EnrollmentController extends Controller
             echo 'STUDENT COUNT:' . $_student_number;
             echo '<br>';
             echo json_encode($value->student->account);
-            $_email =  $_student_number . '.' . str_replace(' ', '', str_replace('.', '', strtolower($value->student->last_name))) . '@bma.edu.ph';
+            $_email =  $_student_number . '.' . str_replace(' ', '', str_replace('.', '', mb_strtolower($value->student->last_name))) . '@bma.edu.ph';
             $_account_details = array(
                 'student_id' => $value->student_id,
                 'campus_email' => $_email,
@@ -137,14 +137,18 @@ class EnrollmentController extends Controller
                 'is_actived' => true,
                 'is_removed' => false,
             );
+            //echo "<br>";
+            //echo $_email;
+            //echo json_encode($_account_details);
             echo "<br>";
             if ($value->student->account) {
-                // $value->student->account->update($_account_details);
+                $value->student->account->update($_account_details);
                 echo json_encode($_account_details);
+                echo true;
             } else {
                 $_account_details['personal_email'] = $_email;
-                echo json_encode($value);
-                //StudentAccount::create($_account_details);
+                StudentAccount::create($_account_details);
+                echo false;
             }
             echo "<br>";
             // echo json_encode($_account_details);
