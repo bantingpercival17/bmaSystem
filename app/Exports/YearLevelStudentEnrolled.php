@@ -30,14 +30,19 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
     public function headings(): array
     {
         return [
-            'EMAIL ACCOUNT',
+
             'STUDENT NUMBER',
             'LAST NAME',
             'FIRST NAME',
             'MIDDLE NAME',
+            'EMAIL ACCOUNT',
             'CONTACT NUMBER',
+            'MARITIME DEPARTMENT',
             'YEAR LEVEL',
+            'CCI YEAR',
             'COURSE',
+            'CURRICULUM',
+            'ETRB',
             'SECTION',
         ];
     }
@@ -45,14 +50,18 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
     {
         $_student_section = $_data->student->section(Auth::user()->staff->current_academic()->id)->first();
         return [
-            $_data->student->account ? $_data->student->account->campus_email : '-',
+
             $_data->student->account ? $_data->student->account->student_number : '-',
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
             $_data->student->contact_number,
+            $_data->student->account ? $_data->student->account->campus_email : '-',
+            $_data->student->enrollment_assessment->course_id == 1 ? 'ENGINE' : 'DECK',
             Auth::user()->staff->convert_year_level($_data->student->enrollment_assessment->year_level),
-            $_data->student->enrollment_assessment->course->course_name,
+            $_data->student->enrollment_assessment->course->course_code,
+            'JCMMC01-22',
+            'TRMF',
             $_student_section ? $_student_section->section->section_name : '-',
         ];
     }
