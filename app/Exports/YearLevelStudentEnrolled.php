@@ -55,8 +55,9 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
-            $_data->student->contact_number,
             $_data->student->account ? $_data->student->account->campus_email : '-',
+            $_data->student->contact_number,
+            
             $_data->student->enrollment_assessment->course_id == 1 ? 'ENGINE' : 'DECK',
             Auth::user()->staff->convert_year_level($_data->student->enrollment_assessment->year_level),
             '2026',
