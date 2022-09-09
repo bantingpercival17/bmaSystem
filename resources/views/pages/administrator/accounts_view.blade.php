@@ -19,11 +19,11 @@
                             <button class="btn btn-info text-white" type="submit">UPLOAD</button>
                         </div>
                         <div class="col-md-4">
-                            <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal"
                                 data-bs-target="#add-employee">
                                 Add Employee
                             </button>
-
+                            <a href="{{ route('export-employee') }}" class="btn btn-info btn-sm">EXPORT</a>
                         </div>
                     </div>
 
@@ -72,8 +72,7 @@
                                     <td>
                                         <form action="{{ route('admin.reset-password') }}" method="post">
                                             @csrf
-                                            <input type="hidden" name="_employee"
-                                                value="{{ base64_encode($_data->id) }}">
+                                            <input type="hidden" name="_employee" value="{{ base64_encode($_data->id) }}">
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-primary">Reset Password</button>
                                             </div>
