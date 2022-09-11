@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 
 use App\Exports\CourseSectionStudentList;
 use App\Exports\CurriculumSummaryGradeSheet;
+use App\Exports\SubjectScheduleTemplate;
+use App\Exports\SubjectScheduleWorkbook;
 use App\Exports\SummaryGradeSheet;
+use App\Imports\SubjectScheduleImport;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\CourseOffer;
@@ -276,6 +279,30 @@ class RegistrarController extends Controller
         $_schedule->save();
         return back()->with('success', 'Successfully Removed Schedule');
     }
+    public function class_schedule_template(Request $_request)
+    {
+        try {
+            /* Finding the course offer and then getting the course subject. */
+            $_course = CourseOffer::find(base64_decode($_request->course));
+            //return  $_subject = $_course->course_subject(json_decode(base64_decode($_request->data)));
+            $_file_export = new SubjectScheduleWorkbook($_course, $_request);
+            $_respond =  Excel::download($_file_export, $_course->course_code . '-subject-schedule-' . base64_decode($_request->data) . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+            ob_end_clean();
+            return $_respond;
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+        }
+    }
+    public function class_schedule_upload(Request $_request)
+    {
+        try {
+            if ($_request->file('upload-file')) {
+                Excel::import(new SubjectScheduleImport(), $_request->file('upload-file'));
+            }
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+        }
+    }
     public function curriculum_view(Request $_request)
     {
         $_course = $_request->d ? base64_decode($_request->d) : '';
@@ -335,8 +362,8 @@ class RegistrarController extends Controller
             $_curriculum_subject = CurriculumSubject::find(base64_decode($_request->curriculum));
             $_subject = $_curriculum_subject->subject;
             return compact('_curriculum_subject', '_subject');
-        } catch (\Throwable $th) {
-            //throw $th;
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
         }
     }
     public function curriculum_subject_update(Request $_request)

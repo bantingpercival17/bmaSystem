@@ -20,6 +20,8 @@ Route::prefix('registrar')->group(function () {
     Route::post('/subjects.classes/subject-handle', [RegistrarController::class, 'classes_schedule'])->name('registrar.class-schedule');
     Route::get('/subjects.classes/subject-handle', [RegistrarController::class, 'classes_schedule_removed'])->name('registrar.class-schedule-remove');
     Route::get('/subjects/classes/removed', [RegistrarController::class, 'classes_removed'])->name('registrar.subject-class-removed'); // Remove Subjects Clases Handled
+    Route::get('/subjects/classes/schedule-template', [RegistrarController::class, 'class_schedule_template'])->name('registrar.subject-schedule-template');
+    Route::post('/subjects/classes/schedule-upload', [RegistrarController::class, 'class_schedule_upload'])->name('registrar.subject-schedule-upload');
     Route::get('/subjects/curriculum', [RegistrarController::class, 'curriculum_view'])->name('registrar.curriculum-view'); // Curriculum Subject View
     Route::post('/subjects/curriculum', [RegistrarController::class, 'curriculum_subject_store'])->name('registrar.curriculum-store'); // Store Curriculum Subject
     Route::get('/subjects/curriculum/subject', [RegistrarController::class, 'curriculum_subject_remove'])->name('registrar.remove-curriculum-subject'); // Remove Curriculum Subject

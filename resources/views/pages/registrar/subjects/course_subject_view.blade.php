@@ -64,6 +64,31 @@ $_title = 'Subjects';
                                             <label class="card-title text-muted fw-bolder">
                                                 {{ strtoupper(Auth::user()->staff->convert_year_level($_level)) }}
                                             </label>
+                                            <div class="float-end">
+                                                <form action="{{ route('registrar.subject-schedule-upload') }}"
+                                                    method="post" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <div class="row">
+                                                        <div class="col-md">
+                                                            <div class="form-group">
+                                                                <input class="form-control form-control-sm" type="file"
+                                                                    id="customFile1" name="upload-file">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <button class="btn btn-info text-white btn-sm"
+                                                                type="submit">UPLOAD</button>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <a href="{{ route('registrar.subject-schedule-template') }}?course={{ base64_encode($_course->id) }}&data={{ base64_encode(json_encode([$curriculum->id, $_level, Auth::user()->staff->current_academic()->semester])) }}&section={{ base64_encode(json_encode([Auth::user()->staff->current_academic()->id, $_level])) }}"
+                                                                class="btn btn-info btn-sm text-white">SCHEDULE
+                                                                TEMPLATE</a>
+                                                        </div>
+                                                    </div>
+
+                                                </form>
+
+                                            </div>
                                         </div>
                                         <div class="card-body table-responsive p-0">
                                             <table class="table table-head-fixed text-nowrap">
