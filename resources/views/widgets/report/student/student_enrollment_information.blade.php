@@ -665,7 +665,6 @@
                     $_upon_enrollment = 0;
                     $_monthly_payment = 0;
                     $_total_fees = 0;
-                    echo $_payment_details;
                 @endphp
                 <p class="title-header"><b>| ASSESSMENT SUMMARY</b></p>
                 <table class="subject-list-table ">
