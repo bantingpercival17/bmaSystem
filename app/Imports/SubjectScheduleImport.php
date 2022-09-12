@@ -21,8 +21,8 @@ class SubjectScheduleImport implements ToCollection
                 $_academic = base64_decode($value[0]); // Academic Year
                 $_curriculum = base64_decode($value[1]); // Subject Curriculum,
                 $_subject = base64_decode($value[2]); // Subject Course
-                $_section = base64_decode($value[4]);
-                $_staff = User::where('email', $value[6])->first();
+                $_section = base64_decode($value[5]);
+                $_staff = User::where('email', $value[7])->first();
                 if ($_staff) {
                     $_subject_class_detail = [
                         'staff_id' => $_staff->staff->id,

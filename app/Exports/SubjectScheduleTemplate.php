@@ -30,7 +30,8 @@ class SubjectScheduleTemplate implements FromCollection, WithHeadings, WithMappi
             'ACADEMIC CODE',
             'CURRICULUM CODE',
             'SUBJECT CODE',
-            'SUBJECT NAME',
+            'SUBJECT',
+            'SUBJECT DESCRIPTION',
             'SECTION CODE',
             'SECTION NAME',
             'TEACHER EMAIL',
@@ -45,6 +46,7 @@ class SubjectScheduleTemplate implements FromCollection, WithHeadings, WithMappi
             base64_encode($this->section->academic->id),
             base64_encode($_data->curriculum_id),
             base64_encode($_data->id),
+            $_data->subject_code,
             $_data->subject_name,
             base64_encode($this->section->id),
             $this->section->section_name
