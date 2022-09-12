@@ -52,7 +52,7 @@
                             </td>
                             <td width="3%"><small>YEAR:</small></td>
                             <td class="text-fill-in">
-                                <b>{{ $_enrollment_assessment->course_id == 3 ? 'GRADE ' . $_enrollment_assessment->year_level : $_enrollment_assessment->year_level . ' CLASS' }}</b>
+                                <b>{{ strtoupper(Auth::user()->staff->convert_year_level($_enrollment_assessment->year_level)) }}</b>
                             </td>
                             <td width="5%"><small>SEMESTER:</small></td>
                             <td class="text-fill-in">
@@ -579,7 +579,7 @@
                             <td>
                                 <small>LEVEL :</small>
                                 <b>
-                                    {{ $_enrollment_assessment->course_id == 3 ? 'GRADE ' . $_enrollment_assessment->year_level : $_enrollment_assessment->year_level . ' CLASS' }}
+                                    {{ strtoupper(Auth::user()->staff->convert_year_level($_enrollment_assessment->year_level)) }}
                                 </b>
                             </td>
                             <td>
@@ -660,11 +660,12 @@
                 @php
                     $_assessment = $_enrollment_assessment->payment_assessments;
                     $_course_semestral_fee = $_enrollment_assessment->payment_assessments->course_semestral_fee;
-                    $_payment_details = $_student->enrollment_assessment->payment_assessments;
+                    $_payment_details = $_assessment;
                     $_total_payment = 0;
                     $_upon_enrollment = 0;
                     $_monthly_payment = 0;
                     $_total_fees = 0;
+                    echo $_payment_details;
                 @endphp
                 <p class="title-header"><b>| ASSESSMENT SUMMARY</b></p>
                 <table class="subject-list-table ">
@@ -746,7 +747,11 @@
                         <tr>
                             <td><b>TOTAL FEES</b></td>
                             <td class="text-center">
-                                <b>{{ number_format($_payment_details->course_semestral_fee->total_payments($_payment_details), '2') }}</b>
+                                <b>{{ $_payment_details
+                                    ? ($_payment_details->course_semestral_fee_id
+                                        ? number_format($_payment_details->course_semestral_fee->total_payments($_payment_details), 2)
+                                        : number_format($_payment_details->total_payment, 2))
+                                    : '-' }}</b>
                             </td>
                         </tr>
                         {{-- @foreach ($_monthly_fee as $_due)
