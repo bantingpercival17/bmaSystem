@@ -56,7 +56,9 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
         $_status = '';
         if ($_enrollment_status) {
             if ($_enrollment_status->payment_assessments) {
+                //$_status = $_enrollment_status->payment_assessments;
                 if ($_enrollment_status->payment_assessments->payment_assessment_paid) {
+                    //$_status= $_enrollment_status->payment_assessments;
                     $_status = 'ENROLLED';
                 } else {
                     $_status = 'FOR PAYMENT';
