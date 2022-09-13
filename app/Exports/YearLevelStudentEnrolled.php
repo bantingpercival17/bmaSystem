@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Auth;
@@ -44,11 +45,29 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
             'CURRICULUM',
             'ETRB',
             'SECTION',
+            'Enrollment Status',
         ];
     }
     public function map($_data): array
     {
+        $_academic = AcademicYear::find(5);
         $_student_section = $_data->student->section(Auth::user()->staff->current_academic()->id)->first();
+        $_enrollment_status = $_data->student->enrollment_application_status($_academic)->first();
+        $_status = '';
+        if ($_enrollment_status) {
+            if ($_enrollment_status->payment_assessments) {
+                if ($_enrollment_status->payment_assessments->payment_transaction_paid) {
+                    $_status = 'ENROLLED';
+                } else {
+                    $_status = 'FOR PAYMENT';
+                }
+            } else {
+                $_status = 'FOR PAYMENT ASSESSMENT';
+            }
+        } else {
+            $_status = 'NOT ENROLLED';
+        }
+
         return [
 
             $_data->student->account ? $_data->student->account->student_number : '-',
@@ -57,7 +76,6 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
             $_data->student->middle_name,
             $_data->student->account ? $_data->student->account->campus_email : '-',
             $_data->student->contact_number,
-
             $_data->student->enrollment_assessment->course_id == 1 ? 'ENGINE' : 'DECK',
             Auth::user()->staff->convert_year_level($_data->student->enrollment_assessment->year_level),
             '2026',
@@ -65,6 +83,7 @@ class YearLevelStudentEnrolled  implements FromCollection, ShouldAutoSize, WithM
             'JCMMC01-22',
             'TRMF',
             $_student_section ? $_student_section->section->section_name : '-',
+            $_status
         ];
     }
     public function registerEvents(): array
