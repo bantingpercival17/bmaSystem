@@ -10,6 +10,7 @@ use App\Exports\MonthlyCollectionReport;
 use App\Exports\SalaryDetailsTemplate;
 use App\Imports\ImportSalaryDetails;
 use App\Mail\ApplicantEmail;
+use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantPayment;
 use App\Models\CourseOffer;
@@ -750,7 +751,8 @@ class AccountingController extends Controller
     }
     public function generate_report_view()
     {
-        return view('pages.accounting.generate-report.view');
+        $_academic = AcademicYear::where('is_removed', false)->orderBy('id', 'desc')->get();
+        return view('pages.accounting.generate-report.view', compact('_academic'));
     }
     public function colletion_report(Request $_request)
     {
@@ -826,7 +828,7 @@ class AccountingController extends Controller
     }
     public function payment_print_receipt(Request $_request)
     {
-         try {
+        try {
             $_payment = PaymentTransaction::find(base64_decode($_request->reciept));
             $_reciept_report = new AccountingPaymentReceipt();
             return $_reciept_report->print($_payment);

@@ -80,13 +80,11 @@ $_title = 'Generate Report';
                                                 <div class="form-group">
                                                     <label for="">Academic Year</label>
                                                     <select name="_academic" class="form-control">
-                                                        <option value="{{ base64_encode(4) }}">2nd Semester | 2021 - 2022
-                                                        </option>
-                                                        <option value="{{ base64_encode(3) }}">1st Semester | 2021 - 2022
-                                                        </option>
-                                                        <option value="{{ base64_encode(2) }}">2nd Semester | 2020 - 2021
-                                                        </option>
-
+                                                        @foreach ($_academic as $academic)
+                                                            <option value="{{ base64_encode($academic->id) }}">
+                                                                {{ $academic->semester }} | {{ $academic->school_year }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>

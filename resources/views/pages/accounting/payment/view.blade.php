@@ -246,7 +246,7 @@
                                         class="btn btn-outline-primary w-100">RE-ASSESS TUITION FEE</a>
                                 </div>
                                 <div class="col-md">
-                                    <a href="{{ route('accounting.payment-transactions') }}?midshipman={{ request()->input('midshipman') }}&add-transaction=true"
+                                    <a href="{{ route('accounting.payment-transactions') }}?midshipman={{ request()->input('midshipman') }}&add-transaction=true{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
                                         class="btn btn-outline-primary w-100">
                                         ADD TRANSACTION</a>
                                 </div>
