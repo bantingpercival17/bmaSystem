@@ -38,7 +38,9 @@ $_title = 'Semestral Grades';
                         <h6 class="card-title">Semestral Grade</h6>
                     </div>
                     <div class="card-tool">
-                        <div class="form-check d-block">
+                        <a href="{{ route('registrar.semestral-grade-publish-all') }}?section={{ request()->input('_section') }}&academic={{ request()->input('_academic') }}"
+                            class="btn btn-primary btn-sm">PUBLISH ALL GRADES</a>
+                        {{-- <div class="form-check d-block">
                             <input class="form-check-input input-select" data-check="subject-clearance" type="checkbox"
                                 id="flexCheckChecked-4">
                             <label class="form-check-label" for="flexCheckChecked-4">
@@ -47,7 +49,7 @@ $_title = 'Semestral Grades';
                         </div>
                         <input type="hidden" name="_academic" value="{{ Auth::user()->staff->current_academic()->id }}">
                         <input type="hidden" name="_clearance_data" value="registrar">
-                        <button type="submit" class="btn btn-primary">SUBMIT</button>
+                        <button type="submit" class="btn btn-primary">SUBMIT</button> --}}
                     </div>
                 </div>
                 <div class="card-body">
@@ -74,7 +76,7 @@ $_title = 'Semestral Grades';
                                                     class="btn btn-sm btn-primary" target="_blank">FORM AD-02-A</a>
                                                 @if ($_data->student->grade_publish)
                                                     <span class="badge bg-secondary">GRADE PUBLISHED <br>
-                                                        {{ $_data->student->grade_publish->staff->user->name .' - ' .$_data->student->grade_publish->created_at->format('F d, Y') }}</span>
+                                                        {{ $_data->student->grade_publish->staff->user->name . ' - ' . $_data->student->grade_publish->created_at->format('F d, Y') }}</span>
                                                 @else
                                                     <a href="{{ route('registrar.semestral-grade-publish') }}?_student={{ base64_encode($_data->id) }}&_academic={{ request()->input('_academic') }}"
                                                         class="btn btn-sm btn-info text-white">PUBLISH GRADE</a>

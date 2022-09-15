@@ -665,6 +665,20 @@ class RegistrarController extends Controller
         ]);
         return back()->with('success', 'Grade Publish.');
     }
+    public function semestral_grade_publish_all(Request $_request)
+    {
+        $_section = Section::find(base64_decode($_request->section));
+        $_student_section = StudentSection::where('section_id', base64_decode($_request->section))->where('is_removed', false)->get();
+        foreach ($_student_section as $key => $value) {
+            GradePublish::create([
+                'student_id' => $value->student_id,
+                'academic_id' => base64_decode($_request->academic),
+                'staff_id' => Auth::user()->staff->id,
+                'is_removed' => 0,
+            ]);
+        }
+        return back()->with('success', $_section->section_name . ' Successfully Published Grade.');
+    }
     public function semestral_subject_grade(Request $_request)
     {
         $_subject = SubjectClass::find(base64_decode($_request->_subject));
