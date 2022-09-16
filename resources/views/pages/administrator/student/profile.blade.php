@@ -380,7 +380,12 @@ $_title = 'Student';
                     @if (request()->input('view') == 'account')
                         <div class="card">
                             <div class="card-header pb-0 p-3">
+                                <div class="float-end mb-3">
+                                    <a href="{{ route('admin.student-reset-password') }}?_student={{ base64_encode($_student->id) }}"
+                                        class="btn btn-primary btn-sm">RESET PASSWORD</a>
+                                </div>
                                 <h5 class="mb-1"><b>ACCOUNT SETTING</b></h5>
+
                             </div>
                             <div class="card-body">
 
