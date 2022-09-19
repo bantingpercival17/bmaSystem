@@ -102,18 +102,18 @@
                                     <div class="row mb-2">
                                         <div class="col-6">
                                             <a href="{{ route('exo.qrcode-scanner') }}?_user=employee"
-                                                class="btn {{ request()->input('_user')? (request()->input('_user') == 'employee'? 'btn-primary': 'btn-secondary'): 'btn-secondary' }} w-100 mt-2 mb-2">EMPLOYEE</a>
+                                                class="btn {{ request()->input('_user') ? (request()->input('_user') == 'employee' ? 'btn-primary' : 'btn-secondary') : 'btn-secondary' }} w-100 mt-2 mb-2">EMPLOYEE</a>
                                         </div>
                                         <div class="col-6">
                                             <a href="{{ route('exo.qrcode-scanner') }}?_user=student"
-                                                class="btn {{ request()->input('_user')? (request()->input('_user') == 'student'? 'btn-primary': 'btn-secondary'): 'btn-secondary' }} w-100 mt-2 mb-2">STUDENT</a>
+                                                class="btn {{ request()->input('_user') ? (request()->input('_user') == 'student' ? 'btn-primary' : 'btn-secondary') : 'btn-secondary' }} w-100 mt-2 mb-2">STUDENT</a>
                                         </div>
                                     </div>
                                     @if (request()->input('_user') == 'employee')
                                         <div class="row">
                                             <div class="col-6">
-                                                <img src="{{ asset('/assets/img/staff/avatar.png') }}"
-                                                    alt="user-avatar" class="rounded img-fluid  image">
+                                                <img src="{{ asset('/assets/img/staff/avatar.png') }}" alt="user-avatar"
+                                                    class="rounded img-fluid  image">
                                             </div>
                                             <div class="col-6">
                                                 <span class="text-muted  h4">
@@ -137,8 +137,7 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <img src="{{ asset('/assets/img/student-picture/midship-man.jpg') }}"
-                                                    alt="user-avatar" class="rounded img-fluid  image"
-                                                    >
+                                                    alt="user-avatar" class="rounded img-fluid  image">
                                             </div>
                                             <div class="col-6">
                                                 <span class="text-muted  h4">
@@ -191,7 +190,7 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        {{ $_data->staff? ($_data->time_in? ($_data->time_out != null? date_format(date_create($_data->time_out), 'h:i:s a'): '-'): '-'): '-' }}
+                                                        {{ $_data->staff ? ($_data->time_in ? ($_data->time_out != null ? date_format(date_create($_data->time_out), 'h:i:s a') : '-') : '-') : '-' }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -238,7 +237,7 @@
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        {{ $_data->student? ($_data->time_in? ($_data->time_out != null? date_format(date_create($_data->time_out), 'h:i:s a'): '-'): '-'): '-' }}
+                                                        {{ $_data->student ? ($_data->time_in ? ($_data->time_out != null ? date_format(date_create($_data->time_out), 'h:i:s a') : '-') : '-') : '-' }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -290,10 +289,10 @@
     <script>
         @if (Session::has('success'))
             Swal.fire({
-            title: 'Complete!',
-            text:"{{ session('success') }}",
-            icon: 'success',
-            confirmButtonText: 'Okay'
+                title: 'Complete!',
+                text: "{{ session('success') }}",
+                icon: 'success',
+                confirmButtonText: 'Okay'
             })
             /* toastr.success("{{ session('message') }}") */
         @endif
@@ -377,7 +376,9 @@
         function scannerQrcodeStudent(_data) {
             //audioCadetTimeIn.play()
             $.get('/executive/attendance-checket/scan-code/' + user + '/' + _data, function(res) {
-                var res = res._data._data;
+                console.log(res);
+                var res = res._data;
+
                 if (res.respond == 200) {
 
                     var file_name = res.details.link

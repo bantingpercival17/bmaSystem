@@ -53,7 +53,8 @@
             <div class="row">
                 <div class="col-md">
                     <label for="" class="text-center">
-                        {!! QrCode::size(300)->generate($_data) !!}
+                        {{-- {!! QrCode::style('round', 0.5)->eye('circle')->size(300)->generate($_data) !!} --}}
+                        {!! QrCode::style('round', 0.5)->eye('square')->size(300)->generate($_data) !!}
                     </label>
 
                 </div>
