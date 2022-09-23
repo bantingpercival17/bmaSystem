@@ -205,7 +205,7 @@ class Staff extends Model
                 'role_id' => 8,
                 'role_name' => 'Executive',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'exo.dashboard'], ['Staff Attendance', 'exo.staff-attendance'], ['Semestral Clearance', 'exo.semestral-clearance'], ['Qr Code Scanner', 'exo.qrcode-scanner']],
+                'role_routes' => [['Dashboard', 'exo.dashboard'], ['Staff Attendance', 'exo.staff-attendance'], ['Student Onboarding', 'exo.student-onboarding'], ['Semestral Clearance', 'exo.semestral-clearance'], ['Qr Code Scanner', 'exo.qrcode-scanner']],
             ],
             [
                 'role_id' => 9,
