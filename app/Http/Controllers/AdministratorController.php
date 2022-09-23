@@ -404,7 +404,8 @@ class AdministratorController extends Controller
         return $_report->student_section_list([
             'course_id' => Crypt::decrypt($_request->_c),
             'year_level' => Crypt::decrypt($_request->_l),
-            'academic_id' => Crypt::decrypt($_request->_a)
+            'academic_id' => Crypt::decrypt($_request->_a),
+            'is_removed' => false
         ]);
     }
     /*  Class */
