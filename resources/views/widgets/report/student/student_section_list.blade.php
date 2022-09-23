@@ -6,8 +6,8 @@
         @foreach ($_sections as $_section)
             @if ($_section->count() > 0)
                 <h3 class="text-center"><b>STUDENT SECTION LIST</b></h3>
-                <h4 class="text-center"><b>{{ $_academic->semester . ' ' . $_academic->school_year }}</b></h4>
-                <h5 class="text-center"><b>{{ $_section->section_name }}</b></h5>
+                <h4 class="text-center"><b>{{ $_academic->semester . ' ' . $_academic->school_year }} |
+                        <b>{{ $_section->section_name }}</b></b></h4>
                 <table class="table-content ">
                     <thead>
                         <tr>
@@ -27,11 +27,13 @@
                                 <tr>
                                     <td class="text-center">
                                         <img src="data:image/png;base64, {!! base64_encode(
-                                            QrCode::style('round', 0.5)->eye('square')->size(100)->generate(
-                                                    $_student->student_number . '.' . mb_strtolower(str_replace(' ', '', $_student->student->last_name)),
+                                            QrCode::style('round', 0.5)->eye('square')->size(200)->generate(
+                                                    $_student->student->account->student_number .
+                                                        '.' .
+                                                        mb_strtolower(str_replace(' ', '', $_student->student->last_name)),
                                                 ),
                                         ) !!} "> <br>
-                                        {{ $_student->student_number . '.' . mb_strtolower(str_replace(' ', '', $_student->student->last_name)) }}
+                                        {{ $_student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $_student->student->last_name)) }}
                                     </td>
                                     <td>{{ strtoupper($_student->student->last_name) }}</td>
                                     <td>{{ strtoupper($_student->student->first_name) }}</td>

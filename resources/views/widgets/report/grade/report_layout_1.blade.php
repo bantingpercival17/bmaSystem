@@ -255,7 +255,7 @@
 
     </header>
     @yield('content')
-    <footer>
+   {{--  <footer>
         <table class="table text-center">
             <tbody>
                 <tr>
@@ -273,7 +273,7 @@
             </tbody>
         </table>
     </footer>
-
+ --}}
 </body>
 
 </html>

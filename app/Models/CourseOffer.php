@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -1107,5 +1108,20 @@ class CourseOffer extends Model
             ->where('payment_transactions.is_removed', false)
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
+    }
+
+    public function student_onboarding($_level)
+    {
+        $_first_day =  new DateTime();
+        $_last_day = new DateTime();
+        $_first_day->modify('Last Sunday');
+        $_last_day->modify('Next Saturday');
+        return $this->hasMany(StudentOnboardingAttendance::class, 'course_id')
+            ->where('student_onboarding_attendances.academic_id', Auth::user()->staff->current_academic()->id)
+            ->whereBetween('student_onboarding_attendances.created_at', [$_first_day->format('Y-m-d') . '%', $_last_day->format('Y-m-d') . '%'])
+            ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_onboarding_attendances.student_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('enrollment_assessments.year_level', $_level);
     }
 }

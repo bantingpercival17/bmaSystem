@@ -11,6 +11,9 @@ use App\Models\StudentAccount;
 use App\Models\StudentAttendance;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
+use App\Models\StudentOnboardingAttendance;
+use App\Models\User;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,6 +23,10 @@ class ExecutiveOfficeController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('executive');
+        $this->first_day =  new DateTime();
+        $this->last_day = new DateTime();
+        $this->first_day->modify('Last Sunday');
+        $this->last_day->modify('Next Saturday');
         set_time_limit(0);
     }
     public function index()
@@ -36,21 +43,25 @@ class ExecutiveOfficeController extends Controller
     }
     public function json_attendance(Request $_request)
     {
+
         $_data = Staff::select('staff.id', 'staff.user_id', 'staff.first_name', 'staff.last_name', 'staff.department', 'ea.staff_id', 'ea.description', 'ea.time_in', 'ea.time_out', 'ea.created_at')
             ->leftJoin('employee_attendances as ea', 'ea.staff_id', 'staff.id')
             ->where('ea.created_at', 'like', '%' . now()->format('Y-m-d') . '%')
             ->groupBy('staff.id')
             ->orderBy('ea.updated_at', 'desc')->get();
         $_data = $_request->_user == 'employee' ?  EmployeeAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : $_data;
-        $_data = $_request->_user == 'student' ? StudentAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->with('student', 'student.enrollment_assessment.course')->orderBy('updated_at', 'desc')->get() : $_data;
+        $_data = $_request->_user == 'student' ? StudentOnboardingAttendance::whereBetween('created_at', [$this->first_day->format('Y-m-d') . '%', $this->last_day->format('Y-m-d') . '%'])
+            ->with('student:id,last_name,first_name,middle_name', /* 'student.enrollment_assessment', */ 'student.current_section.section')
 
+            /* ->with('') */->orderBy('updated_at', 'desc')->get() : $_data;
+        //->with('user:id,name,image')
         return compact('_data');
     }
 
     public function qrcode_scanner_view(Request $_request)
     {
         $_employees = $_request->_user == 'employee' ?  EmployeeAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : [];
-        $_students = $_request->_user == 'student' ? StudentAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : [];
+        $_students = $_request->_user == 'student' ? StudentOnboardingAttendance::whereBetween('created_at', [$this->first_day->format('Y-m-d') . '%', $this->last_day->format('Y-m-d') . '%'])->orderBy('updated_at', 'desc')->get() : [];
         return view('pages.exo.gatekeeper.qrcode-scanner', compact('_employees', '_students'));
     }
     public function qrcode_scanner($_user, $_data)
@@ -59,85 +70,113 @@ class ExecutiveOfficeController extends Controller
         if ($_user == 'student') {
             $_data = $this->student_qrcode_data($_data, $_date);
         } else {
-            $_data = base64_decode($_data); // Decrypt the Data
-            $_data = json_decode($_data); // Decode the Data
+            $_data = $this->employee_qrcode_data($_data, $_date);
         }
         return compact('_data');
     }
     public function employee_qrcode_data($_data, $_date)
     {
-        $_email = $_data[0]; // Email 
-        $_time_in = date_create($_data[2]);
-        $_time_in =   date_format($_time_in, "Y-m-d");
-        $_staff = Staff::select('staff.id', 'staff.user_id')->join('users', 'users.id', 'staff.user_id')->where('users.email', $_data[0])->first(); // Get Staff Id
-        if ($_date == $_time_in) {
-            if ($_staff) {
-                $_attendance = EmployeeAttendance::where('staff_id', $_staff->id)
-                    ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first();
-                $_staff_details = array(
-                    'name' => strtoupper(trim($_staff->user->name)),
-                    'department' => $_staff->user->staff->department,
+        $_data_content = json_decode(base64_decode($_data)); // Decode the Qr-Code Data
+        $_date_now = date('Y-m-d'); // Get the Current Date
+        $_email = $_data_content[0]; // Get the Email of the Staff in Qr-code Data
+        $_time_in = date_format(date_create($_data_content[2]), 'Y-m-d'); // Get the Time in of the Staff and Format into Y-m-d
+        $_account = User::where('email', $_email)->first(); // Get the Staff Account using the Email Address
+        if ($_date_now == $_time_in || $_email == 'p.banting@bma.edu.ph') {
+            if ($_account) {
+                $_time_in_content_respond = array(
+                    'name' => strtoupper(trim($_account->name)),
+                    'department' => $_account->staff->department,
                     'time_status' => 'TIME IN',
                     'time' =>  date('H:i:s'),
-                    'image' =>  strtolower(str_replace(' ', '_', $_staff->user->name)) . '.jpg',
-                    'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_staff->user->staff->first_name))))) . '-good-morning.mp3'
+                    'image' =>  strtolower(str_replace(' ', '_', $_account->name)) . '.jpg',
+                    'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_account->staff->first_name))))) . '-good-morning.mp3'
+                ); // Set up the Return Value
+                $_time_out_content_respond = array(
+                    'name' => strtoupper(trim($_account->name)),
+                    'department' => $_account->staff->department,
+                    'time_status' => 'TIME OUT',
+                    'time' =>  date('H:i:s'),
+                    'image' =>  strtolower(str_replace(' ', '_', $_account->name)) . '.jpg',
+                    'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_account->staff->first_name))))) . '-good-bye.mp3'
                 );
-                if ($_attendance) {
-                    $_attendance->time_out = now();
-                    $_attendance->save();
-                    $_staff_details['time_status'] = 'TIME OUT';
-                    $_staff_details['link'] = '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_staff->user->staff->first_name))))) . '-good-bye.mp3';
-                    //$_staff_details = json_encode($_staff_details);
-                    $_data = array('respond' => '200', 'message' => 'Good bye and Keep Safe ' . $_staff->user->staff->first_name . "!", 'data' => $_staff_details);
-                } else {
-                    $_description = json_decode($_data[1]);
-                    $_staff_ = array(
-                        'staff_id' => $_staff->id,
-                        'description' => json_encode(array(
-                            'body_temprature' => $_description[0],
-                            'have_any' => $_description[1],
-                            'experience' => $_description[2],
-                            'positive' => $_description[3],
-                            'gatekeeper_in' => Auth::user()->name
+                $_description = json_decode($_data_content[1]);
+                $_staff_content = array(
+                    'staff_id' => $_account->staff->id,
+                    'description' => json_encode(array(
+                        'body_temprature' => $_description[0],
+                        'have_any' => $_description[1],
+                        'experience' => $_description[2],
+                        'positive' => $_description[3],
+                        'gatekeeper_in' => Auth::user()->name
 
-                        )),
-                        'time_in' => date('Y-m-d H:i:s'),
-                    );
-                    EmployeeAttendance::create($_staff_);
-                    $_staff_details['time_status'] = 'TIME IN';
-                    $_data = array('respond' => '200', 'message' => 'Welcome' . $_staff->user->staff->first_name . "!", 'data' => $_staff_details);
-                }
+                    )),
+                    'time_in' => date('Y-m-d H:i:s'),
+                );
+                $_attendance = EmployeeAttendance::where('staff_id', $_account->staff->id)
+                    ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first(); // Get the Attendance Data
+                $_respond = $_attendance ? $_time_out_content_respond : $_time_in_content_respond; // Get the Respond Content
+                $_attendance ? $_attendance->update(['time_out' => now()]) : EmployeeAttendance::create($_staff_content); // Save Time in and Update the time Out
+                $_attendance = EmployeeAttendance::find($_attendance->id);
+                $_respond['attendance_details'] = $_attendance;
+                $_data = $_attendance ? array('respond' => '200', 'message' => 'Good bye and Keep Safe ' . $_account->staff->first_name . "!", 'data' => $_respond) :
+                    array('respond' => '200', 'message' => 'Welcome' . $_account->staff->first_name . "!", 'data' => $_respond);
             } else {
                 $_data = array('respond' => '404', 'message' => 'Invalid Email');
             }
         } else {
-            $_staff_details = array(
-                'name' => strtoupper(trim($_staff->user->name)),
-                'department' => $_staff->user->staff->department,
+            $_respond = array(
+                'name' => strtoupper(trim($_account->name)),
+                'department' => $_account->staff->department,
                 'time_status' => 'invalid qr code',
                 'time' =>  date('H:i:s'),
                 'image' =>  '',
                 'link' => '/assets/audio/expired_qr_code.mp3'
             );
-            $_data = array('respond' => '404', 'message' => 'Qr Code is Expired', 'data' => $_staff_details);
+            $_data = array('respond' => '404', 'message' => 'Qr Code is Expired', 'data' => $_respond);
         }
-
-        return compact('_data');
+        return $_data;
     }
     public function student_qrcode_data($_data, $_date)
     {
         $_data = explode('.', $_data);
         $_account = StudentAccount::where('student_number', $_data[0])->first();
-
         if ($_account) {
+            $_image = $_account->student->profile_pic($_account);
             $_details = array(
-                'name' => strtoupper(trim($_account->student->first_name . " " . $_account->student->last_name)),
-                'course' => $_account->student->enrollment_assessment->course->course_name,
-                'time_status' => 'Time In',
-                'time' =>  date('H:i:s'),
-                'image' =>  '/assets/img/staff/student/' . trim($_account->student_number) . ".png",
-                'link' => '/assets/audio/cadet_timein.mp3'
+                'student_name' => strtoupper($_account->student->last_name . ', ' . $_account->student->first_name),
+                'student_course' => $_account->student->enrollment_assessment->course->course_name,
+                'student' => $_account->student->with('enrollment_assessment'),
+                'image' => $_image,
             );
+            $_attendance_details = array(
+                'student_id' => $_account->student->id,
+                'course_id' => $_account->student->enrollment_assessment->course_id,
+                'academic_id' => $_account->student->enrollment_assessment->academic_id,
+                'time_in' => now(),
+                'time_in_status', 'time_in_remarks',
+                'time_in_process_by' => Auth::user()->name,
+            );
+            $mon =  new DateTime();
+            $fri = new DateTime();
+            $mon->modify('Last Monday');
+            $fri->modify('Next Friday');
+            $attendance = StudentOnboardingAttendance::where([
+                'student_id' => $_account->student->id,
+                'course_id' => $_account->student->enrollment_assessment->course_id,
+                'academic_id' => $_account->student->enrollment_assessment->academic_id,
+            ])
+                ->whereBetween('created_at', [$mon->format('Y-m-d') . '%', $fri->format('Y-m-d') . '%'])->first();
+            if ($attendance) {
+                $attendance->time_out = now();
+                $attendance->time_out_process_by = Auth::user()->name;
+                $attendance->save();
+                $_attendance = StudentOnboardingAttendance::find($attendance->id);
+            } else {
+                $_attendance = StudentOnboardingAttendance::create($_attendance_details);
+                $_attendance = StudentOnboardingAttendance::find($_attendance->id);
+            }
+
+            $_details['student_attendance'] = $_attendance;
             $_data = array('respond' => '200', 'message' => 'Welcome ' . $_data[0] . " have a Great Day!", 'details' => $_details);
         } else {
             $_details = array(

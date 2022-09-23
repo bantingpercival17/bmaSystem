@@ -157,7 +157,15 @@ $_title = 'Dashboard';
                                     <tr>
                                         <th>{{ $_course->course_name }}</th>
                                         @foreach ($_level as $level)
-                                            <td> {{ count($_course->enrollment_list_by_year_level($level)->get()) }}</td>
+                                            <td>
+                                                <span class="text-primary fw-bolder">
+                                                    {{ count($_course->student_onboarding($level)->get()) }}
+                                                </span>
+                                                <span class="text-muted fw-bolder">
+                                                    /
+                                                    {{ count($_course->enrollment_list_by_year_level($level)->get()) }}
+                                                </span>
+                                            </td>
                                         @endforeach
                                     </tr>
                                 @endif

@@ -4,7 +4,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ExecutiveOfficeController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('executive')->group(function () {
+Route::prefix('executive')->middleware(['auth'])->group(function () {
     Route::get('/', [ExecutiveOfficeController::class, 'index'])->name('exo.dashboard'); // Dashboard View
     Route::get('/attendance', [ExecutiveOfficeController::class, 'index'])->name('exo.dashboard'); // Dashboard View
     Route::get('/attendance-checker', [ExecutiveOfficeController::class, 'qrcode_scanner_view'])->name('exo.qrcode-scanner');
