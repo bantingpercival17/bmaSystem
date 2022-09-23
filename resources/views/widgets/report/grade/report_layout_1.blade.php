@@ -16,7 +16,14 @@
             margin: 0;
             /* font-family: "Times New Roman", Times, serif */
         }
-
+        header {
+            position: fixed;
+            top: 10px;
+            left: 0px;
+            right: 0px;
+            text-align: left;
+            justify-content: center;
+        }
 
         b {
             font-family: Helvetica, sans-serif;
@@ -36,7 +43,7 @@
 
         .content {
             position: relative;
-            top: 1in;
+            top: 1.5in;
             margin-right: 25px;
             margin-left: 25px;
 
@@ -239,15 +246,15 @@
 
 <body>
 
-    {{-- <header>
+    <header>
         <span class="form-code">BMA FORM @yield('form-code')<span>
                 <center>
                     <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
                 </center>
 
-    </header> --}}
+    </header>
     @yield('content')
-    {{--  <footer>
+    <footer>
         <table class="table text-center">
             <tbody>
                 <tr>
@@ -265,7 +272,7 @@
             </tbody>
         </table>
     </footer>
- --}}
+
 </body>
 
 </html>
