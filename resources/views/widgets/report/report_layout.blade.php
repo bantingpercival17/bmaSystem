@@ -22,6 +22,8 @@
             left: 0px;
             right: 0px;
             text-align: left;
+            justify-content: center;
+            /* text-align: left; */
         }
 
         b {
@@ -156,25 +158,37 @@
             margin-top: -10px
         }
 
-      
+        .table-content {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid rgb(0, 0, 0);
+            margin-top: 20px;
+        }
 
+        .table-content td,
+        .table-content th {
+            padding: 5px;
+            border: 1px solid rgb(0, 0, 0);
+
+        }
+
+        .table-content th {
+            font-size: 12px;
+        }
+
+        .table-content td {
+            font-size: 12px;
+        }
     </style>
 </head>
 
 <body>
 
     <header>
-        <span class="form-code">BMA FORM @yield('form-code')<span>
-                <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
+
+        <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
     </header>
     @yield('content')
-    {{-- <footer>
-        <label><i>This is a system generated report
-                @php
-                    date_default_timezone_set('Asia/Manila');
-                    echo date('m/d/Y h:m:s');
-                @endphp @ @yield('department')</i></label>
-    </footer> --}}
     <footer>
         <table class="table">
             <tbody>

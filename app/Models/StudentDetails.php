@@ -826,4 +826,8 @@ class StudentDetails extends Model
     {
         return $this->hasOne(StudentMedicalResult::class, 'student_id')->where('is_removed', false)->orderBy('id', 'desc');
     }
+    public function onboarding_attendance()
+    {
+        return $this->hasOne(StudentOnboardingAttendance::class, 'student_id');
+    }
 }

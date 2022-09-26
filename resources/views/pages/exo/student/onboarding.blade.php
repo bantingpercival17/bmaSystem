@@ -21,6 +21,40 @@ $_title = 'Midshipman Onboarding Monitoring';
     <section>
         <p class="display-6 fw-bolder text-primary">Onboard Midshipman's</p>
         <div class="card">
+            <div class="card-header">
+                <form action="{{ route('exo.onboarding-student-list-report') }}" method="get">
+
+                    <div class="row">
+                        <div class="col-md">
+                            <label for="" class="fw-bolder text-muted">COURSE</label>
+                            <select name="course" class="form-select">
+                                <option value="1">BSMARE</option>
+                                <option value="2">BSMT</option>
+                            </select>
+                        </div>
+                        <div class="col-md">
+                            <label for="" class="fw-bolder text-muted">YEAR LEVEL</label>
+                            <select name="level" class="form-select">
+                                <option value="all">All Levels</option>
+                                <option value="1">1st Class</option>
+                                <option value="2">2nd Class</option>
+                                <option value="3">3rd Class</option>
+                                <option value="4">4th Class</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="" class="fw-bolder text-muted">DATE</label>
+                            <input type="date" name="week" class="form-control">
+                        </div>
+                        <div class="col-md">
+                            <button type="submit" class="btn btn-primary mt-4">GENERATE REPORT</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <div class="card">
             <div class="card-body p-0">
                 <div class="table-responsive mt-4">
                     <table id="basic-table" class="table table-striped mb-0" role="grid">
@@ -134,4 +168,3 @@ $_title = 'Midshipman Onboarding Monitoring';
         </div>
     </div>
 @endsection
-

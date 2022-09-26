@@ -13,6 +13,7 @@ use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentOnboardingAttendance;
 use App\Models\User;
+use App\Report\ExecutiveFilesReport;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -301,5 +302,16 @@ class ExecutiveOfficeController extends Controller
         $_courses  = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->get();
         return view('pages.exo.student.onboarding', compact('_courses', '_students'));
+    }
+    public function onboarding_student_list_report(Request $_request)
+    {
+        $_course = CourseOffer::find($_request->course);
+        $_sections = Section::where('course_id', $_course->id)
+            ->where('is_removed', false)
+            ->where('academic_id', Auth::user()->staff->current_academic()->id);
+        $_sections = $_request->level == 'all' ? $_sections : $_sections->where('year_level', 'like', '%' . $_request->level . '%');
+        $_sections = $_sections->orderBy('year_level', 'desc')->get();
+        $_report = new ExecutiveFilesReport();
+        return $_report->student_onboarding_report($_sections);
     }
 }

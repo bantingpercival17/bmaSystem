@@ -6,8 +6,8 @@
         @foreach ($_sections as $_section)
             @if ($_section->count() > 0)
                 <h3 class="text-center"><b>STUDENT SECTION LIST</b></h3>
-                <h4 class="text-center"><b>{{ $_academic->semester . ' ' . $_academic->school_year }} |
-                        <b>{{ $_section->section_name }}</b></b></h4>
+                <h4 class="text-center"><b>{{ $_academic->semester . ' ' . $_academic->school_year }}</b></h4>
+                <h5 class="text-center"></h5>
                 <table class="table-content ">
                     <thead>
                         <tr>

@@ -26,4 +26,5 @@ Route::prefix('executive')->middleware(['auth'])->group(function () {
 
     // Student Onboarding
     Route::get('/student/onboarding', [ExecutiveOfficeController::class, 'onboarding_attendances'])->name('exo.student-onboarding');
+    Route::get('/student/onboarding/report', [ExecutiveOfficeController::class, 'onboarding_student_list_report'])->name('exo.onboarding-student-list-report');
 });
