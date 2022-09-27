@@ -157,9 +157,9 @@ function display_data(data, _data) {
         $('.text-department').text(_data.data.department + ' OFFICE')
         $('.image').attr('src', "/assets/img/staff/" + _data.data.image)
         console.log(timeConvert(_data.data.attendance_details.time_in));
-        var time_in = _data.data.attendance_details.time_in != null ? timeConvert(_data.data.attendance_details.time_in) : '- - : - -';
+        var time_in = _data.data.attendance_details.time_in != null ? (_data.data.attendance_details.time_in) : '- - : - -';
         $('.employee-time-in').text(time_in)
-        var time_out = _data.data.attendance_details.time_out != null ? timeConvert(_data.data.attendance_details.time_out) : '- - : - -';
+        var time_out = _data.data.attendance_details.time_out != null ? (_data.data.attendance_details.time_out) : '- - : - -';
         $('.employee-time-out').text(time_out)
         //console.log(_data);
     } else {
@@ -168,9 +168,9 @@ function display_data(data, _data) {
         $('.student-course').text(_data.details.student_course);
         $('.student-level').text();
         $('.image').attr('src', _data.details.image)
-        var time_in = _data.details.student_attendance.time_in != null ? timeConvert(_data.details.student_attendance.time_in) : '- - : - -';
+        var time_in = _data.details.student_attendance.time_in != null ? (_data.details.student_attendance.time_in) : '- - : - -';
         $('.student-time-in').text(time_in)
-        var time_out = _data.details.student_attendance.time_out != null ? timeConvert(_data.details.student_attendance.time_out) : '- - : - -';
+        var time_out = _data.details.student_attendance.time_out != null ? (_data.details.student_attendance.time_out) : '- - : - -';
         $('.student-time-out').text(time_out)
     }
 
@@ -202,7 +202,7 @@ function timeConvert(date) {
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? '0' + minutes : minutes;
-    var strTime = hours + ':' + minutes + ':' + minutes +' ' + ampm;
+    var strTime = hours + ':' + minutes + ':' + minutes + ' ' + ampm;
     return strTime;
 
 }
@@ -222,8 +222,10 @@ function table_data() {
                 $('.table-body-100').append(
                     "<tr>" +
                     "<td>" + data.first_name + " " + data.last_name + "</td>" +
-                    "<td>" + timeConvert(data.time_in) + "</td>" +
-                    "<td>" + timeConvert(time_out) + "</td>" +
+                    "<td>" + (data.time_in) + "</td>" +
+                    "<td>" + (time_out) + "</td>" +
+                    /*  "<td>" + timeConvert(data.time_in) + "</td>" +
+                     "<td>" + timeConvert(time_out) + "</td>" + */
 
                     "</tr>"
                 );
