@@ -28,28 +28,22 @@ class SubjectScheduleTemplate implements FromCollection, WithHeadings, WithMappi
     {
         return [
             'ACADEMIC CODE',
-            'CURRICULUM CODE',
             'SUBJECT CODE',
+            'SECTION CODE',
             'SUBJECT',
             'SUBJECT DESCRIPTION',
-            'SECTION CODE',
-            'SECTION NAME',
             'TEACHER EMAIL',
             'TEACHER NAME',
-
-
         ];
     }
     public function map($_data): array
     {
         return  [
             base64_encode($this->section->academic->id),
-            base64_encode($_data->curriculum_id),
             base64_encode($_data->id),
+            base64_encode($this->section->id),
             $_data->subject_code,
             $_data->subject_name,
-            base64_encode($this->section->id),
-            $this->section->section_name
         ];
     }
     public function title(): string

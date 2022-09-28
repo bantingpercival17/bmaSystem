@@ -298,6 +298,7 @@ class RegistrarController extends Controller
         try {
             if ($_request->file('upload-file')) {
                 Excel::import(new SubjectScheduleImport(), $_request->file('upload-file'));
+                return back()->with('success', 'Successfully Upload the Class Scheduled');
             }
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
