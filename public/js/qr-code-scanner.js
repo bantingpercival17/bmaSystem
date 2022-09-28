@@ -114,6 +114,7 @@ function scannerQrcodeEmployee(_data) {
     //table_data()
     url = '/executive/attendance-checket/scan-code/' + user + '/' + _data;
     $.get(url, function (data) {
+        console.log(data._data)
         if (data._data.respond == 200) {
             //toastr.success(data._data.message, data._data.data.time_status)
             audio_success.play()
@@ -141,7 +142,7 @@ function scannerQrcodeEmployee(_data) {
         })
         // toastr.error('Invalid QR Code.', 'Error!')
         audio_error.play()
-        var audio_custom = new Audio("{{ asset('assets/audio/invalid_qr_code_1.mp3') }}");
+       
         audio_custom.play()
         clear_details()
     })

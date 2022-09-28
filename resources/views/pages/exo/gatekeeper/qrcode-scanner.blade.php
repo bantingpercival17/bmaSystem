@@ -333,6 +333,7 @@
         var user_select = new Audio("{{ asset('assets/audio/user_select.mp3') }}")
         var audioCadetTimeIn = new Audio("{{ asset('assets/audio/cadet_timein.mp3') }}");
         var audioCadetTimeOut = new Audio("{{ asset('assets/audio/cadet_timeout.mp3') }}");
+        var audio_custom = new Audio("{{ asset('assets/audio/invalid_qr_code_1.mp3') }}");
         var user = "{{ request()->input('_user') }}";
     </script>
     <script src="{{ asset('js/moments.js') }}"></script>

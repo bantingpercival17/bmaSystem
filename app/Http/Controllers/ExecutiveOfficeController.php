@@ -82,6 +82,7 @@ class ExecutiveOfficeController extends Controller
         $_email = $_data_content[0]; // Get the Email of the Staff in Qr-code Data
         $_time_in = date_format(date_create($_data_content[2]), 'Y-m-d'); // Get the Time in of the Staff and Format into Y-m-d
         $_account = User::where('email', $_email)->first(); // Get the Staff Account using the Email Address
+        // return $_email;
         if ($_date_now == $_time_in || $_email == 'p.banting@bma.edu.ph') {
             if ($_account) {
                 $_time_in_content_respond = array(
@@ -116,7 +117,12 @@ class ExecutiveOfficeController extends Controller
                 $_attendance = EmployeeAttendance::where('staff_id', $_account->staff->id)
                     ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first(); // Get the Attendance Data
                 $_respond = $_attendance ? $_time_out_content_respond : $_time_in_content_respond; // Get the Respond Content
-                $_attendance ? $_attendance->update(['time_out' => now()]) : EmployeeAttendance::create($_staff_content); // Save Time in and Update the time Out
+                if ($_attendance) {
+                    $_attendance->update(['time_out' => now()]); // Update the time Out
+                } else {
+                    $_attendance = EmployeeAttendance::create($_staff_content); // Save Time in 
+                }
+                //$_attendance = $_attendance ? $_attendance->update(['time_out' => now()]) : EmployeeAttendance::create($_staff_content); // Save Time in and Update the time Out
                 $_attendance = EmployeeAttendance::find($_attendance->id);
                 $_respond['attendance_details'] = $_attendance;
                 $_data = $_attendance ? array('respond' => '200', 'message' => 'Good bye and Keep Safe ' . $_account->staff->first_name . "!", 'data' => $_respond) :
@@ -126,11 +132,7 @@ class ExecutiveOfficeController extends Controller
             }
         } else {
             $_respond = array(
-                'name' => strtoupper(trim($_account->name)),
-                'department' => $_account->staff->department,
                 'time_status' => 'invalid qr code',
-                'time' =>  date('H:i:s'),
-                'image' =>  '',
                 'link' => '/assets/audio/expired_qr_code.mp3'
             );
             $_data = array('respond' => '404', 'message' => 'Qr Code is Expired', 'data' => $_respond);
