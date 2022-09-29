@@ -48,6 +48,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/section/view/store', [RegistrarController::class, 'section_store_student'])->name('registrar.section-store-student');
     Route::get('/section/view/remove', [RegistrarController::class, 'section_remove_student'])->name('registrar.student-section-remove');
     Route::get('/section/export-file', [RegistrarController::class, 'section_export_file'])->name('registrar.section-export');
+    Route::post('/section/import-file', [RegistrarController::class, 'section_import_files'])->name('registrar.section-import');
     // E-clearance
     Route::get('/semestral-clearance', [RegistrarController::class, 'clearance_view'])->name('registrar.semestral-clearance');
     Route::get('/semestral-clearance/view', [RegistrarController::class, 'semestral_student_list_view'])->name('registrar.semestral-student-list'); // Section view

@@ -23,14 +23,37 @@
                 <label for="" class="h6 text-muted">TOTAL STUDENTS: {{ $_student_list->count() }}</label>
             </div>
             <div class="card-tool">
-                <a href="{{ route('registrar.section-add-student') . '?_section=' . base64_encode($_section->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
-                    class="mt-2 btn btn-primary btn-sm">
-                    <svg width="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M9.5 12.5537C12.2546 12.5537 14.4626 10.3171 14.4626 7.52684C14.4626 4.73663 12.2546 2.5 9.5 2.5C6.74543 2.5 4.53737 4.73663 4.53737 7.52684C4.53737 10.3171 6.74543 12.5537 9.5 12.5537ZM9.5 15.0152C5.45422 15.0152 2 15.6621 2 18.2464C2 20.8298 5.4332 21.5 9.5 21.5C13.5448 21.5 17 20.8531 17 18.2687C17 15.6844 13.5668 15.0152 9.5 15.0152ZM19.8979 9.58786H21.101C21.5962 9.58786 22 9.99731 22 10.4995C22 11.0016 21.5962 11.4111 21.101 11.4111H19.8979V12.5884C19.8979 13.0906 19.4952 13.5 18.999 13.5C18.5038 13.5 18.1 13.0906 18.1 12.5884V11.4111H16.899C16.4027 11.4111 16 11.0016 16 10.4995C16 9.99731 16.4027 9.58786 16.899 9.58786H18.1V8.41162C18.1 7.90945 18.5038 7.5 18.999 7.5C19.4952 7.5 19.8979 7.90945 19.8979 8.41162V9.58786Z"
-                            fill="currentColor"></path>
-                    </svg> Add Students
-                </a>
+
+                <div class="">
+                    <form action="{{ route('registrar.section-import') }}" method="post" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md">
+                                <div class="form-group">
+                                    <input class="form-control form-control-sm" type="file" id="customFile1"
+                                        name="upload-file" required>
+                                    <input type="hidden" name="section" value="{{ request()->input('_section') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-info text-white btn-sm" type="submit">UPLOAD</button>
+                            </div>
+                            <div class="col-md">
+                                <a href="{{ route('registrar.section-add-student') . '?_section=' . base64_encode($_section->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                                    class=" btn btn-primary btn-sm">
+                                    <svg width="16" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M9.5 12.5537C12.2546 12.5537 14.4626 10.3171 14.4626 7.52684C14.4626 4.73663 12.2546 2.5 9.5 2.5C6.74543 2.5 4.53737 4.73663 4.53737 7.52684C4.53737 10.3171 6.74543 12.5537 9.5 12.5537ZM9.5 15.0152C5.45422 15.0152 2 15.6621 2 18.2464C2 20.8298 5.4332 21.5 9.5 21.5C13.5448 21.5 17 20.8531 17 18.2687C17 15.6844 13.5668 15.0152 9.5 15.0152ZM19.8979 9.58786H21.101C21.5962 9.58786 22 9.99731 22 10.4995C22 11.0016 21.5962 11.4111 21.101 11.4111H19.8979V12.5884C19.8979 13.0906 19.4952 13.5 18.999 13.5C18.5038 13.5 18.1 13.0906 18.1 12.5884V11.4111H16.899C16.4027 11.4111 16 11.0016 16 10.4995C16 9.99731 16.4027 9.58786 16.899 9.58786H18.1V8.41162C18.1 7.90945 18.5038 7.5 18.999 7.5C19.4952 7.5 19.8979 7.90945 19.8979 8.41162V9.58786Z"
+                                            fill="currentColor"></path>
+                                    </svg> Add Students
+                                </a>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
                 {{-- <button type="button" class="mt-2 btn btn-info btn-sm text-white">
                     <svg width="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path

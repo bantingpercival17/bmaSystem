@@ -73,6 +73,12 @@ $_title = 'Subjects';
                                                             <div class="form-group">
                                                                 <input class="form-control form-control-sm" type="file"
                                                                     id="customFile1" name="upload-file">
+                                                                <input type="hidden" name="curriculum"
+                                                                    value="{{ $curriculum->id }}">
+                                                                <input type="hidden" name="course"
+                                                                    value="{{ $_course->id }}">
+                                                                <input type="hidden" name="level"
+                                                                    value="{{ Auth::user()->staff->convert_year_level($_level) }}">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">

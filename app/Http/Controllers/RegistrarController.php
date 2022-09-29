@@ -8,6 +8,7 @@ use App\Exports\CurriculumSummaryGradeSheet;
 use App\Exports\SubjectScheduleTemplate;
 use App\Exports\SubjectScheduleWorkbook;
 use App\Exports\SummaryGradeSheet;
+use App\Imports\StudentSection as ImportsStudentSection;
 use App\Imports\SubjectScheduleImport;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
@@ -33,6 +34,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class RegistrarController extends Controller
@@ -285,6 +287,7 @@ class RegistrarController extends Controller
             /* Finding the course offer and then getting the course subject. */
             $_course = CourseOffer::find(base64_decode($_request->course));
             //return  $_subject = $_course->course_subject(json_decode(base64_decode($_request->data)));
+
             $_file_export = new SubjectScheduleWorkbook($_course, $_request);
             $_respond =  Excel::download($_file_export, $_course->course_code . '-subject-schedule-' . base64_decode($_request->data) . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
             ob_end_clean();
@@ -296,11 +299,19 @@ class RegistrarController extends Controller
     public function class_schedule_upload(Request $_request)
     {
         try {
+            $_curriculum = Curriculum::find($_request->curriculum);
+            $_course = CourseOffer::find($_request->course);
+            $_file_name = $_course->course_code . '-' . $_request->level . '-' . $_curriculum->curriculum_name;
+            $_file_extention =  $_request->file('upload-file')->getClientOriginalExtension();
+            $_file_name = "/registrar/scheduled-import/" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_file_name))) . date('dmyhis') . '.' . $_file_extention;
+
             if ($_request->file('upload-file')) {
+                Storage::disk('public')->put($_file_name, fopen($_request->file('upload-file'), 'r+'));
                 Excel::import(new SubjectScheduleImport(), $_request->file('upload-file'));
                 return back()->with('success', 'Successfully Upload the Class Scheduled');
             }
         } catch (Exception $err) {
+            return $err;
             return back()->with('error', $err->getMessage());
         }
     }
@@ -533,6 +544,23 @@ class RegistrarController extends Controller
         }
         if ($_request->_report_type == 'pdf-report') {
             return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File 
+        }
+    }
+    public function section_import_files(Request $_request)
+    {
+        try {
+            $_section = Section::find(base64_decode($_request->section));
+            StudentSection::where('section_id', $_section->id)->where('is_removed', false)->update(['is_removed' => true]);
+            if ($_request->file('upload-file')) {
+                $_file_extention =  $_request->file('upload-file')->getClientOriginalExtension();
+                $_file_name = "/registrar/section-import/" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_section->section_name))) . date('dmyhis') . '.' . $_file_extention;
+                Storage::disk('public')->put($_file_name, fopen($_request->file('upload-file'), 'r+'));
+                Excel::import(new ImportsStudentSection($_section), $_request->file('upload-file'));
+                return back()->with('success', 'Successfully Uploaded');
+            }
+        } catch (Exception $err) {
+            //return $err;
+            return back()->with('error', $err->getMessage());
         }
     }
     // Semestral clearance
