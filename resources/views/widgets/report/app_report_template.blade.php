@@ -104,6 +104,7 @@
             text-align: center;
         }
     </style>
+    @yield('style')
 </head>
 
 <body>
@@ -116,7 +117,7 @@
 
     </header>
     @yield('content')
-    <footer class="mt-5">
+    {{-- <footer class="mt-5">
         <table class="table-content text-center">
             <tbody>
                 <tr>
@@ -133,7 +134,7 @@
                 </tr>
             </tbody>
         </table>
-    </footer>
+    </footer> --}}
 </body>
 
 </html>

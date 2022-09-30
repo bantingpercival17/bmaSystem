@@ -13,6 +13,8 @@ class StudentReport
     {
 
         $this->legal = [0, 0, 612.00, 1008.00];
+        $this->crosswise_short = [0, 0, 612, 396];
+        $this->path = "widgets.report.student.";
     }
 
     public function enrollment_information($_assessment_id)
@@ -38,5 +40,11 @@ class StudentReport
         $pdf = PDF::loadView("widgets.report.student.certificate_of_grades", compact('_student', '_section'));
         $file_name =   'FORM AD-02a  - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    public function student_card_report($_student)
+    {
+        $pdf = PDF::loadView($this->path . 'student-card-report', compact('_student'));
+        $file_name =   'BMA FORM ACC-12  - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
+        return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
     }
 }

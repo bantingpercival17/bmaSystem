@@ -35,6 +35,7 @@ use App\Models\StudentSection;
 use App\Models\Voucher;
 use App\Report\Accounting\PaymentReceipt as AccountingPaymentReceipt;
 use App\Report\PayrollReport;
+use App\Report\Students\StudentReport;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Query\Expression;
@@ -833,6 +834,18 @@ class AccountingController extends Controller
             $_reciept_report = new AccountingPaymentReceipt();
             return $_reciept_report->print($_payment);
         } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function student_card(Request $_request)
+    {
+        try {
+            $_student = StudentDetails::find(base64_decode($_request->student));
+            $_report = new StudentReport();
+            return $_report->student_card_report($_student);
+        } catch (Exception $err) {
+            return $err;
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
         }

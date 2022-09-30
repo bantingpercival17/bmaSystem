@@ -92,7 +92,10 @@
                                         {{ $_student->enrollment_status->academic->school_year }}</small>
                                 </b>
                             </label>
-
+                            <div class="float-end">
+                                <a href="{{ route('accounting.student-card') }}?student={{ request()->input('midshipman') }}"
+                                    target="_blank" class="btn btn-info text-white btn-sm">STUDENT CARD</a>
+                            </div>
                             @php
                                 $_payment_details = $_student->enrollment_status->payment_assessments;
                             @endphp
@@ -598,7 +601,7 @@
             @endif
 
         </div>
-        <div class="col-md">
+        <div class="col-md-4">
             <form action="" method="get">
 
                 <div class="form-group search-input">
