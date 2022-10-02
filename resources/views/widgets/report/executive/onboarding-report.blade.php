@@ -1,6 +1,6 @@
 {{-- @extends('widgets.report.report_layout') --}}
 @extends('widgets.report.app_report_template')
-@section('title-report', 'LIBERTY REPORT - ' . date('Ymd'))
+@section('title-report', 'ONBOARDING MASTER LIST - ' . date('Ymd'))
 @section('form-code', '')
 @section('content')
 

@@ -828,6 +828,6 @@ class StudentDetails extends Model
     }
     public function onboarding_attendance()
     {
-        return $this->hasOne(StudentOnboardingAttendance::class, 'student_id');
+        return $this->hasOne(StudentOnboardingAttendance::class, 'student_id')->where('created_at', 'like', '%' . request()->input('week'));
     }
 }
