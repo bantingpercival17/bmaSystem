@@ -54,14 +54,14 @@
                     </thead>
                     <tbody>
 
-                        @if ($_section->student_section)
-                            @foreach ($_section->student_section as $section)
+                        @if (count($_section->student_sections) > 0)
+                            @foreach ($_section->student_sections as $section)
                                 <tr>
                                     <td style="padding-left: 10px; width:40%">
                                         {{ strtoupper($section->student->last_name . ', ' . $section->student->first_name . ' ' . $section->student->middle_name) }}
                                     </td>
                                     <td class="text-center"style="padding-left: 10px; width:45%">
-                                        {{ $section->student->municipality . ', ' .$section->student->province }}
+                                        {{ $section->student->municipality . ', ' . $section->student->province }}
                                     </td>
                                     <td style="padding-left: 10px; width:30%">
                                         {{ $section->student->onboarding_attendance ? $section->student->onboarding_attendance->time_in : '' }}
