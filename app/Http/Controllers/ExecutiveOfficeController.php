@@ -173,7 +173,7 @@ class ExecutiveOfficeController extends Controller
                 'course_id' => $_account->student->enrollment_assessment->course_id,
                 'academic_id' => $_account->student->enrollment_assessment->academic_id,
             ])
-                ->whereBetween('created_at', [$mon->format('Y-m-d') . '%', $fri->format('Y-m-d') . '%'])->first();
+                ->whereBetween('created_at', $this->week_dates)->first();
             if ($attendance) {
                 $attendance->time_out = now();
                 $attendance->time_out_process_by = Auth::user()->name;
