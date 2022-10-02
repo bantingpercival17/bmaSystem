@@ -1114,11 +1114,14 @@ class CourseOffer extends Model
     {
         $_first_day =  new DateTime();
         $_last_day = new DateTime();
-        $_first_day->modify('Last Sunday');
+        $_first_day->modify('Sunday');
         $_last_day->modify('Next Saturday');
+        $_week_dates = array(
+            $_first_day->format('Y-m-d') . '%',  $_last_day->format('Y-m-d') . '%'
+        );
         return $this->hasMany(StudentOnboardingAttendance::class, 'course_id')
             ->where('student_onboarding_attendances.academic_id', Auth::user()->staff->current_academic()->id)
-            ->whereBetween('student_onboarding_attendances.created_at', [$_first_day->format('Y-m-d') . '%', $_last_day->format('Y-m-d') . '%'])
+            ->whereBetween('student_onboarding_attendances.created_at', $_week_dates)
             ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_onboarding_attendances.student_id')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('enrollment_assessments.is_removed', false)

@@ -26,13 +26,20 @@ class ExecutiveOfficeController extends Controller
         $this->middleware('executive');
         $this->first_day =  new DateTime();
         $this->last_day = new DateTime();
-        $this->first_day->modify('Last Sunday');
+        $this->first_day->modify('Sunday');
         $this->last_day->modify('Next Saturday');
+        $this->week_dates = array(
+            $this->first_day->format('Y-m-d') . '%',  $this->last_day->format('Y-m-d') . '%'
+        );
         set_time_limit(0);
     }
     public function index()
     {
+        echo $this->first_day->format('Y-m-d') . "<br>";
+        echo $this->last_day->format('Y-m-d');
         $_courses = CourseOffer::where('is_removed', false)->get();
+        //StudentOnboardingAttendance::where('created_at', 'like', '%' . $this->first_day->format('Y-m-d') . '%')->get();
+        // StudentOnboardingAttendance::whereBetween('created_at', $this->week_dates)->get();
         return view('pages.exo.dashboard.view', compact('_courses'));
         /*   $_employees = Staff::select('staff.id', 'staff.user_id', 'staff.first_name', 'staff.last_name', 'staff.department', 'ea.staff_id', 'ea.description', 'ea.created_at')
             ->leftJoin('employee_attendances as ea', 'ea.staff_id', 'staff.id')
@@ -51,18 +58,16 @@ class ExecutiveOfficeController extends Controller
             ->groupBy('staff.id')
             ->orderBy('ea.updated_at', 'desc')->get();
         $_data = $_request->_user == 'employee' ?  EmployeeAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : $_data;
-        $_data = $_request->_user == 'student' ? StudentOnboardingAttendance::whereBetween('created_at', [$this->first_day->format('Y-m-d') . '%', $this->last_day->format('Y-m-d') . '%'])
+        $_data = $_request->_user == 'student' ? StudentOnboardingAttendance::whereBetween('created_at', $this->week_dates)
             ->with('student:id,last_name,first_name,middle_name', /* 'student.enrollment_assessment', */ 'student.current_section.section')
-
-            /* ->with('') */->orderBy('updated_at', 'desc')->get() : $_data;
-        //->with('user:id,name,image')
+            ->orderBy('updated_at', 'desc')->get() : $_data;
         return compact('_data');
     }
 
     public function qrcode_scanner_view(Request $_request)
     {
         $_employees = $_request->_user == 'employee' ?  EmployeeAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : [];
-        $_students = $_request->_user == 'student' ? StudentOnboardingAttendance::whereBetween('created_at', [$this->first_day->format('Y-m-d') . '%', $this->last_day->format('Y-m-d') . '%'])->orderBy('updated_at', 'desc')->get() : [];
+        $_students = $_request->_user == 'student' ? StudentOnboardingAttendance::whereBetween('created_at', $this->week_dates)->orderBy('updated_at', 'desc')->get() : [];
         return view('pages.exo.gatekeeper.qrcode-scanner', compact('_employees', '_students'));
     }
     public function qrcode_scanner($_user, $_data)
@@ -303,10 +308,12 @@ class ExecutiveOfficeController extends Controller
     {
         $_courses  = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->get();
+
         return view('pages.exo.student.onboarding', compact('_courses', '_students'));
     }
     public function onboarding_student_list_report(Request $_request)
     {
+
         $_course = CourseOffer::find($_request->course);
         $_sections = Section::where('course_id', $_course->id)
             ->where('is_removed', false)
