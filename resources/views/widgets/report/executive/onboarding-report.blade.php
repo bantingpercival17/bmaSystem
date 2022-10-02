@@ -1,11 +1,12 @@
 {{-- @extends('widgets.report.report_layout') --}}
-@extends('widgets.report.grade-v2.report_layout_1')
+@extends('widgets.report.app_report_template')
 @section('title-report', 'LIBERTY REPORT - ' . date('Ymd'))
 @section('form-code', '')
 @section('content')
-    <div class="content">
-        @foreach ($_sections as $_section)
-            @if ($_section->count() > 0)
+
+    @foreach ($_sections as $_section)
+        @if ($_section->count() > 0)
+            <div class="content">
                 <h3 class="text-center"><b>ONBOARDING MASTER LIST</b></h3>
                 <table class="table-content">
                     <tbody>
@@ -17,23 +18,23 @@
                         <tr>
                             <td>DATE RANGE:</td>
                             <td>
-                                START DAY:
+                                START DATE:
                                 <b>
                                     @php
                                         $first_day = new DateTime();
-                                        $first_day->modify('Last Sunday');
+                                        $first_day->modify('Sunday');
                                     @endphp
-                                    {{ $first_day->format('F d, Y') }}
+                                    {{ strtoupper($first_day->format('F d, Y')) }}
                                 </b>
                             </td>
                             <td>
-                                END DAY:
+                                END DATE:
                                 <b>
                                     @php
                                         $first_day = new DateTime();
                                         $first_day->modify('Next Saturday');
                                     @endphp
-                                    {{ $first_day->format('F d, Y') }}
+                                    {{ strtoupper($first_day->format('F d, Y')) }}
                                 </b>
                             </td>
                         </tr>
@@ -54,17 +55,19 @@
                     <tbody>
 
                         @if ($_section->student_section)
-                            @foreach ($_section->student_section as $_student)
+                            @foreach ($_section->student_section as $section)
                                 <tr>
-                                    <td style="padding-left: 10px; width:30%">
-                                        {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name . ' ' . $_student->student->middle_name) }}
+                                    <td style="padding-left: 10px; width:40%">
+                                        {{ strtoupper($section->student->last_name . ', ' . $section->student->first_name . ' ' . $section->student->middle_name) }}
                                     </td>
                                     <td class="text-center"style="padding-left: 10px; width:45%">
-
+                                        {{ $section->student->municipality . ', ' .$section->student->province }}
                                     </td>
-                                    <td></td>
-                                    <td>
-                                        {{ $_student->onboarding_attendance }}
+                                    <td style="padding-left: 10px; width:30%">
+                                        {{ $section->student->onboarding_attendance ? $section->student->onboarding_attendance->time_in : '' }}
+                                    </td>
+                                    <td style="padding-left: 10px; width:30%">
+                                        {{ $section->student->onboarding_attendance ? $section->student->onboarding_attendance->time_out : '' }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -79,8 +82,9 @@
                     </thead>
                 </table>
                 <div class="page-break"></div>
-            @endif
-           
-        @endforeach
-    </div>
+
+            </div>
+        @endif
+
+    @endforeach
 @endsection
