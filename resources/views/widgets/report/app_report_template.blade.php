@@ -95,9 +95,11 @@
         }
 
         .page-break {
-            page-break-after: always;
+            page-break-after:always;
         }
-
+        .content: last-child {
+            page-break-after: avoid;
+        }
         .text-fill-in {
             /* text-decoration: underline; */
             border-bottom: 1px solid rgb(0, 0, 0);
