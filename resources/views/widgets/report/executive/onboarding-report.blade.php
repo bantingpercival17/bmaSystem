@@ -22,7 +22,7 @@
                                 <b>
                                     @php
                                         $first_day = new DateTime();
-                                        $first_day->modify('Sunday');
+                                        $first_day->modify('Last Sunday');
                                     @endphp
                                     {{ strtoupper($first_day->format('F d, Y')) }}
                                 </b>
