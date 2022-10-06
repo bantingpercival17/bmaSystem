@@ -15,29 +15,37 @@
         }
 
         header {
-            /* position: fixed; */
+            position: fixed;
             top: 10px;
             left: 0px;
             right: 0px;
+            height: 20%;
             text-align: left;
             justify-content: center;
         }
 
         footer {
-            /*  bottom: -30px;
-            left: 20px;
-            right: 0px; */
-            justify-content: center;
+            position: fixed;
+            bottom: -60px;
+            left: 0px;
+            right: 0px;
+            height: 10%;
+
+            /** Extra personal styles **/
+            background-color: #03a9f4;
+            color: white;
+            text-align: center;
+            line-height: 35px;
+
         }
 
         .content {
-            /* position: relative; */
-            top: 1.3in;
+            position: relative;
+            top: 1.2in;
             max-height: 100%;
             overflow: auto;
             margin-right: 25px;
             margin-left: 25px;
-
 
         }
 
@@ -95,11 +103,13 @@
         }
 
         .page-break {
-            page-break-after:always;
+            page-break-after: always;
         }
+
         .content: last-child {
             page-break-after: avoid;
         }
+
         .text-fill-in {
             /* text-decoration: underline; */
             border-bottom: 1px solid rgb(0, 0, 0);
@@ -118,7 +128,10 @@
                 </center>
 
     </header>
-    @yield('content')
+    <div class="body-content">
+        @yield('content')
+    </div>
+
     {{-- <footer class="mt-5">
         <table class="table-content text-center">
             <tbody>

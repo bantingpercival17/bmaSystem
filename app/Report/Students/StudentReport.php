@@ -13,6 +13,7 @@ class StudentReport
     {
 
         $this->legal = [0, 0, 612.00, 1008.00];
+        $this->crosswise_legal = [0, 0, 612, 504.00];
         $this->crosswise_short = [0, 0, 612, 396];
         $this->path = "widgets.report.student.";
     }
@@ -45,6 +46,6 @@ class StudentReport
     {
         $pdf = PDF::loadView($this->path . 'student-card-report', compact('_student'));
         $file_name =   'BMA FORM ACC-12  - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
-        return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
+        return $pdf->setPaper($this->crosswise_legal, 'portrait')->stream($file_name . '.pdf');
     }
 }
