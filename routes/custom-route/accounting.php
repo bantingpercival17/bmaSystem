@@ -75,4 +75,6 @@ Route::prefix('accounting')->group(function () {
     Route::get('/payment-transaction/print-receipt', [AccountingController::class, 'payment_print_receipt'])->name('accounting.print-reciept');
 
     Route::get('/payment-transaction/student-card', [AccountingController::class, 'student_card'])->name('accounting.student-card');
+
+    Route::post('/payment-transaction/student-transaction-import', [AccountingController::class, 'student_transaction_import'])->name('accounting.student-transacion-import');
 });

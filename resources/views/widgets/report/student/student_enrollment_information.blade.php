@@ -213,17 +213,17 @@
                 @php
                     $_parent = $_student->parent_details;
                     $_educational_attainment = ['Elementary Graduate', 'High School Graduate', 'College', 'Vocational', "Master's / Doctorate Degree", 'Did not attend school', 'Other: ________'];
-                    $_employment_status = ['Full Time', 'Part Time', 'Self-employed (i.e. Family Business)', 'Unemployed due to community quarantine', 'Not Working'];
-                    $_arrangement = ['WFH', 'Office', 'Field Work'];
-                    $_income = ['Below 10,000', '10,000-20,000', '20,000-40,000', '40,000-60,000', '60,000 Above'];
-                    $_dswd = ['Yes', 'No'];
-                    $_homeownership = ['Owned', 'Mortgaged', 'Rented'];
-                    $_cars = ['0', '1', '2', '3', 'Others'];
-                    $_device = ['Cable TV', 'Non-Cable TV', 'Basic Cellphone', 'Smartphone', 'Tablet', 'Radio', 'Desktop Computer', 'Laptop', 'None', 'Others ______'];
-                    $_connect = ['Yes', 'No'];
-                    $_provider = ['own mobile data', 'own broadband (DSL, Wireless Fiber, Satellite)', 'computer shop', 'other places outside the home with internet connection (library, barangay,municipal hall neighbor, relatives)', 'none'];
-                    $_learning_modality = ['online learning', 'Blended', 'Face-to-Face'];
-                    $_inputs = ['lack of available gadgets / equipment', 'insufficient load/data allowance', 'existing health condition/s', 'difficulty in independent learning', 'conflict with other activities (i.e. house chores)', 'none or lack of available space for studying', 'distractions (i.e. social media, noise from community/ neighbor)', 'none'];
+$_employment_status = ['Full Time', 'Part Time', 'Self-employed (i.e. Family Business)', 'Unemployed due to community quarantine', 'Not Working'];
+$_arrangement = ['WFH', 'Office', 'Field Work'];
+$_income = ['Below 10,000', '10,000-20,000', '20,000-40,000', '40,000-60,000', '60,000 Above'];
+$_dswd = ['Yes', 'No'];
+$_homeownership = ['Owned', 'Mortgaged', 'Rented'];
+$_cars = ['0', '1', '2', '3', 'Others'];
+$_device = ['Cable TV', 'Non-Cable TV', 'Basic Cellphone', 'Smartphone', 'Tablet', 'Radio', 'Desktop Computer', 'Laptop', 'None', 'Others ______'];
+$_connect = ['Yes', 'No'];
+$_provider = ['own mobile data', 'own broadband (DSL, Wireless Fiber, Satellite)', 'computer shop', 'other places outside the home with internet connection (library, barangay,municipal hall neighbor, relatives)', 'none'];
+$_learning_modality = ['online learning', 'Blended', 'Face-to-Face'];
+$_inputs = ['lack of available gadgets / equipment', 'insufficient load/data allowance', 'existing health condition/s', 'difficulty in independent learning', 'conflict with other activities (i.e. house chores)', 'none or lack of available space for studying', 'distractions (i.e. social media, noise from community/ neighbor)', 'none'];
                     
                 @endphp
                 <table class="form-rg-table">
@@ -593,7 +593,7 @@
 
                                 <small>LEVEL :</small>
                                 <b>
-                                    {{ $_enrollment_assessment->course_id == 3 ? 'GRADE ' . $_enrollment_assessment->year_level : $_enrollment_assessment->year_level . ' CLASS' }}
+                                    {{ strtoupper(Auth::user()->staff->convert_year_level($_enrollment_assessment->year_level)) }}
                                 </b>
                             </td>
                         @endif

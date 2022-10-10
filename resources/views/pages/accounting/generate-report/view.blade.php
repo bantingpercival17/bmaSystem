@@ -121,8 +121,31 @@ $_title = 'Generate Report';
                                         </div>
                                     </form>
                                 </td>
-                            </tr>
 
+                            </tr>
+                            <tr>
+                                <td>Import Transaction</td>
+                                <td>
+                                    <form action="{{route('accounting.student-transacion-import')}}" method="post"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="">Attach File</label>
+                                                    <input type="file" name="upload-file" id=""
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <button class="btn btn-info btn-sm text-white w-100">UPLOAD </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

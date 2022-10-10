@@ -579,7 +579,7 @@
                                             </div>
                                             <p class="mb-0">
                                                 <small>{{ $_payment->staff->user->name }}</small> |
-                                                <small>{{ $_payment->transaction_date }}</small>
+                                                <small>{{ $_payment->created_at }}</small>
                                             </p>
                                             <a href="{{ route('accounting.print-reciept') }}?reciept={{ base64_encode($_payment->id) }}"
                                                 class="btn btn-primary btn-sm" target="_blank">Print

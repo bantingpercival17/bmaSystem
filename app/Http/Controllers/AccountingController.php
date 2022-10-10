@@ -9,6 +9,7 @@ use App\Exports\EnrolledStudentList;
 use App\Exports\MonthlyCollectionReport;
 use App\Exports\SalaryDetailsTemplate;
 use App\Imports\ImportSalaryDetails;
+use App\Imports\StudentTransactionHistoryImport;
 use App\Mail\ApplicantEmail;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
@@ -844,6 +845,22 @@ class AccountingController extends Controller
             $_student = StudentDetails::find(base64_decode($_request->student));
             $_report = new StudentReport();
             return $_report->student_card_report($_student);
+        } catch (Exception $err) {
+            return $err;
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function student_transaction_import(Request $_request)
+    {
+        try {
+            if ($_request->file('upload-file')) {
+                //$_file_extention =  $_request->file('upload-file')->getClientOriginalExtension();
+                //$_file_name = "/registrar/section-import/" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_section->section_name))) . date('dmyhis') . '.' . $_file_extention;
+             //   Storage::disk('public')->put($_file_name, fopen($_request->file('upload-file'), 'r+'));
+                Excel::import(new StudentTransactionHistoryImport(), $_request->file('upload-file'));
+               // return back()->with('success', 'Successfully Uploaded');
+            }
         } catch (Exception $err) {
             return $err;
             return back()->with('error', $err->getMessage());
