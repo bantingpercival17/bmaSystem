@@ -548,6 +548,26 @@ $_inputs = ['lack of available gadgets / equipment', 'insufficient load/data all
                     </tbody>
                 </table>
             </div>
+            <p class="note">
+                <label for=""><b>PRIVACY NOTICE</b></label>
+                <br>
+                BMA is committed to comply with all government requirement as RA No. 10173, otherwise known as the Data
+                Privacy Act. BMA will by way of contracts, requires to submit personal information of customers.
+                <br>
+                The above personal information will be used to facilitate your registration and admission in the Academy. We
+                ask for certain sensitive personal information that will
+                be processed in the school's information system to be used only to serve its educational activities as well
+                as to comply with legal obligation which includes periodic submission
+                of requirements to government agency/ies with jurisdiction over the school. Only authorized personnel have
+                access to these data which will
+                be stored for a limited time duration that is relevant to the purpose for which these were processed and for
+                as long as required be applicable law. Disposal
+                of stored data after the retention period shall be done using secure methods.
+                {{--   I hereby certify that the above information given are true and correct to the best of my knowledge and I
+                allow the Baliwag Maritime Academy Inc, to use the information provided herein for the purpose of the
+                Learner Information System and personal porfile. The information herein shall be treated as confidential in
+                compliance with the Data Privacy Act of 2012. --}}
+            </p>
         </div>
         <div class="page-break"></div>
         <div class="form-rg-assessment">
