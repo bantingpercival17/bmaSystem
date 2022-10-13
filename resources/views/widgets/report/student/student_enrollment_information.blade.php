@@ -550,10 +550,10 @@ $_inputs = ['lack of available gadgets / equipment', 'insufficient load/data all
             </div>
             <p class="note">
                 <label for=""><b>PRIVACY NOTICE</b></label>
-                <br>
+                <br> <br>
                 BMA is committed to comply with all government requirement as RA No. 10173, otherwise known as the Data
                 Privacy Act. BMA will by way of contracts, requires to submit personal information of customers.
-                <br>
+                <br><br>
                 The above personal information will be used to facilitate your registration and admission in the Academy. We
                 ask for certain sensitive personal information that will
                 be processed in the school's information system to be used only to serve its educational activities as well
