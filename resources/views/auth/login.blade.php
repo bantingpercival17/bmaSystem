@@ -4,7 +4,7 @@
 
 
     <div class="wrapper">
-        <div class="res-hide row m-0 align-items-center vh-100">
+        <div class="row m-0 align-items-center vh-100">
 
             <div class="col-lg-7 d-md-block d-none p-0">
                 <img src="{{ asset('resources\image/BMA BUILDING.gif') }}" class="img-fluid gradient-main vh-100"
