@@ -5,7 +5,7 @@
 @section('content')
     <main class="content">
         <div class="narative-report-summart">
-            <h3 class="text-center">NARATIVE REPORT SUMMARY</h3>
+            <h3 class="text-center">MONTHLY OBT PERFORMANCE MONITORING REPORT (MOPM)</h3>
             <br>
             <div class="mb-3">
                 <table class="">

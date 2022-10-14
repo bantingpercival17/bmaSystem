@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Shipboard Monitoring';
+$_title = 'Onboard Training Monitoring';
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -119,7 +119,7 @@ $_title = 'Shipboard Monitoring';
                 <div class="card">
                     <div class="card-body">
                         <div class="header-title d-flex justify-content-between">
-                            <span class="h5 text-primary fw-bolder">NARRATIVE REPORT</span>
+                            <span class="h5 text-primary fw-bolder">MONTHLY OBT PERFORMANCE MONITORING REPORT (MOPM)</span>
                             <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
                                 class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
                         </div>
