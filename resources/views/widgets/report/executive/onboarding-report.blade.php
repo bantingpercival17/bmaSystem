@@ -21,8 +21,8 @@
                                 START DATE:
                                 <b>
                                     @php
-                                        $first_day = new DateTime();
-                                        $first_day->modify('Last Sunday');
+                                        $first_day = new DateTime(request()->input('week'));
+                                        $first_day->modify('Sunday');
                                     @endphp
                                     {{ strtoupper($first_day->format('F d, Y')) }}
                                 </b>
@@ -31,7 +31,7 @@
                                 END DATE:
                                 <b>
                                     @php
-                                        $first_day = new DateTime();
+                                        $first_day = new DateTime(request()->input('week'));
                                         $first_day->modify('Next Saturday');
                                     @endphp
                                     {{ strtoupper($first_day->format('F d, Y')) }}
