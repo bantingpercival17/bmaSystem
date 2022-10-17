@@ -48,4 +48,11 @@ class StudentReport
         $file_name =   'BMA FORM ACC-12  - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
         return $pdf->setPaper($this->crosswise_legal, 'portrait')->stream($file_name . '.pdf');
     }
+    public function student_qr_code($_student)
+    {
+        $pdf = PDF::loadView($this->path . 'student-qr-code', compact('_student'));
+        $file_name =   'BMA QR-CODE  - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
+        return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
+    
+    }
 }
