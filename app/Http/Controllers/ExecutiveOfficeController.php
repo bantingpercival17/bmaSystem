@@ -26,17 +26,28 @@ class ExecutiveOfficeController extends Controller
         $this->middleware('executive');
         $this->first_day =  new DateTime();
         $this->last_day = new DateTime();
-        $this->first_day->modify('Sunday');
+        $this->first_day->modify('last Sunday');
         $this->last_day->modify('Next Saturday');
         $this->week_dates = array(
             $this->first_day->format('Y-m-d') . '%',  $this->last_day->format('Y-m-d') . '%'
         );
         set_time_limit(0);
+        $now = now();
+        $day = new DateTime($now);
+        $week =  date('l', strtotime($now));
+        $modify = $week == 'Sunday' ? 'Sunday' : 'Last Sunday';
+        $this->week_start = $day->modify($modify);
+        $this->week_start = $day->format('Y-m-d');
+        $this->week_end = $day->modify('Next Saturday');
+        $this->week_end = $day->format('Y-m-d');
+        $this->week_dates = [$this->week_start . '%', $this->week_end . '%'];
     }
     public function index()
     {
+        /*    echo "Start Date: " . $this->week_start . "<br>";
+        echo "End Date: " . $this->week_end . "<br>";
         echo $this->first_day->format('Y-m-d') . "<br>";
-        echo $this->last_day->format('Y-m-d');
+        echo $this->last_day->format('Y-m-d'); */
         $_courses = CourseOffer::where('is_removed', false)->get();
         //StudentOnboardingAttendance::where('created_at', 'like', '%' . $this->first_day->format('Y-m-d') . '%')->get();
         // StudentOnboardingAttendance::whereBetween('created_at', $this->week_dates)->get();

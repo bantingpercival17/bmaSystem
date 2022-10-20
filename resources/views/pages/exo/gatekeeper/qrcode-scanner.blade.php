@@ -94,7 +94,7 @@
                                 <div class="card mb-2">
                                     <div class="row no-gutters">
                                         <div class="col-md-3">
-                                            <img src="http://bma.edu.ph:70/assets/img/staff/avatar.png"
+                                            <img src="http://20.0.0.120:70/assets/img/staff/avatar.png"
                                                 class="card-img image" alt="#">
                                         </div>
                                         <div class="col-md ps-0">
@@ -137,7 +137,7 @@
                                 <div class="card mb-2">
                                     <div class="row no-gutters">
                                         <div class="col-md-3">
-                                            <img src="http://bma.edu.ph/img/student-picture/midship-man.jpg"
+                                            <img src="http://20.0.0.120/img/student-picture/midship-man.jpg"
                                                 class="card-img" alt="#">
                                         </div>
                                         <div class="col-md ps-0">

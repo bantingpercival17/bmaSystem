@@ -1112,13 +1112,22 @@ class CourseOffer extends Model
 
     public function student_onboarding($_level)
     {
-        $_first_day =  new DateTime();
+        /*  $_first_day =  new DateTime();
         $_last_day = new DateTime();
         $_first_day->modify('Sunday');
         $_last_day->modify('Next Saturday');
         $_week_dates = array(
             $_first_day->format('Y-m-d') . '%',  $_last_day->format('Y-m-d') . '%'
-        );
+        ); */
+        $now = now();
+        $day = new DateTime($now);
+        $week =  date('l', strtotime($now));
+        $modify = $week == 'Sunday' ? 'Sunday' : 'Last Sunday';
+        $_week_start = $day->modify($modify);
+        $_week_start = $day->format('Y-m-d');
+        $_week_end = $day->modify('Next Saturday');
+        $_week_end = $day->format('Y-m-d');
+        $_week_dates = [$_week_start . '%', $_week_end . '%'];
         return $this->hasMany(StudentOnboardingAttendance::class, 'course_id')
             ->where('student_onboarding_attendances.academic_id', Auth::user()->staff->current_academic()->id)
             ->whereBetween('student_onboarding_attendances.created_at', $_week_dates)
