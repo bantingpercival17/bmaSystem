@@ -154,7 +154,8 @@ $_title = 'Student';
                                 <h5 class="mb-1"><b>PROFILE INFORMATION</b></h5>
                                 <p class="text-sm">Student Information of the cadet's/ student's at Baliwag Maritime Academy
                                 </p>
-
+                                <a href="{{ route('admin.student-qrcode') }}?_student={{ base64_encode($_student->id) }}"
+                                    class="btn btn-primary btn-sm float-end">GENERATE QR-CODE</a>
                             </div>
                             <div class="card-body p-3">
 

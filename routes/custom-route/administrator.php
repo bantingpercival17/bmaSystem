@@ -7,6 +7,9 @@ use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Controllers\GeneralController\EnrollmentController;
 use App\Http\Controllers\PaymongoApi;
 use App\Http\Middleware\Administrator;
+use App\Models\StudentDetails;
+use App\Report\Students\StudentReport;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -86,6 +89,11 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
 
   // Student Account 
   Route::get('/students/account-details', [AdministratorController::class, 'student_account_details'])->name('admin.student-account-details');
+  Route::get('/student/qr-code', function (Request $_request) {
+    $_report = new StudentReport();
+    $_student = StudentDetails::find(base64_decode($_request->_student));
+    return $_report->student_qr_code($_student);
+  })->name('admin.student-qrcode');
   Route::get('employee/export', function () {
     $_file_export = new EmployeeListExport();
     $_respond =  Excel::download($_file_export, 'employee' . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
