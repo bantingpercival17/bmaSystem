@@ -44,21 +44,8 @@ class ExecutiveOfficeController extends Controller
     }
     public function index()
     {
-        /*    echo "Start Date: " . $this->week_start . "<br>";
-        echo "End Date: " . $this->week_end . "<br>";
-        echo $this->first_day->format('Y-m-d') . "<br>";
-        echo $this->last_day->format('Y-m-d'); */
         $_courses = CourseOffer::where('is_removed', false)->get();
-        //StudentOnboardingAttendance::where('created_at', 'like', '%' . $this->first_day->format('Y-m-d') . '%')->get();
-        // StudentOnboardingAttendance::whereBetween('created_at', $this->week_dates)->get();
         return view('pages.exo.dashboard.view', compact('_courses'));
-        /*   $_employees = Staff::select('staff.id', 'staff.user_id', 'staff.first_name', 'staff.last_name', 'staff.department', 'ea.staff_id', 'ea.description', 'ea.created_at')
-            ->leftJoin('employee_attendances as ea', 'ea.staff_id', 'staff.id')
-            ->groupBy('staff.id')
-            ->orderBy('staff.last_name', 'asc')
-            //->orderBy('ea.updated_at', 'desc')
-            ->get();
-        return view('pages.exo.gatekeeper.view', compact('_employees')); */
     }
     public function json_attendance(Request $_request)
     {
@@ -164,8 +151,9 @@ class ExecutiveOfficeController extends Controller
             $_details = array(
                 'student_name' => strtoupper($_account->student->last_name . ', ' . $_account->student->first_name),
                 'student_course' => $_account->student->enrollment_assessment->course->course_name,
-                'student' => $_account->student->with('enrollment_assessment'),
-                'image' => $_image,
+                'student_section' => $_account->student->current_section->section->section_name,
+                //'student' => $_account->student->with('enrollment_assessment'),
+                'image' => str_replace('bma.edu.ph', '20.0.0.120', $_image),
             );
             $_attendance_details = array(
                 'student_id' => $_account->student->id,

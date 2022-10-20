@@ -167,8 +167,8 @@ function display_data(data, _data) {
         tableDisplayData()
         $('.student-name').text(_data.details.student_name);
         $('.student-course').text(_data.details.student_course);
-        $('.student-level').text();
-        $('.image').attr('src', _data.details.image)
+        $('.student-level').text(_data.details.student_section);
+        $('.card-img').attr('src', _data.details.image)
         var time_in = _data.details.student_attendance.time_in != null ? (_data.details.student_attendance.time_in) : '- - : - -';
         $('.student-time-in').text(time_in)
         var time_out = _data.details.student_attendance.time_out != null ? (_data.details.student_attendance.time_out) : '- - : - -';

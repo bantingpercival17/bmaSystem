@@ -3,7 +3,12 @@
 @section('title-report', 'ONBOARDING MASTER LIST - ' . date('Ymd'))
 @section('form-code', '')
 @section('content')
-
+    @php
+        $now = request()->input('week');
+        $day = new DateTime($now);
+        $week = date('l', strtotime($now));
+        $modify = $week == 'Sunday' ? 'Sunday' : 'Last Sunday';
+    @endphp
     @foreach ($_sections as $_section)
         @if ($_section->count() > 0)
             <div class="content">
@@ -22,7 +27,7 @@
                                 <b>
                                     @php
                                         $first_day = new DateTime(request()->input('week'));
-                                        $first_day->modify('Sunday');
+                                        $first_day->modify($modify);
                                     @endphp
                                     {{ strtoupper($first_day->format('F d, Y')) }}
                                 </b>

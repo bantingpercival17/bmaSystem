@@ -244,7 +244,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>CADET'S NAME</th>
-                                                    <th>COURSE</th>
+                                                    <th>SECTION</th>
                                                     <th>TIME IN</th>
                                                     <th>TIME OUT</th>
                                                 </tr>
@@ -258,7 +258,7 @@
                                                                     {{ strtoupper($_data->student->first_name . ' ' . $_data->student->last_name) }}<br>
                                                                 </span>
                                                             </td>
-                                                            <td> {{ $_data->student->enrollment_assessment->course->course_name }}
+                                                            <td> {{ $_data->student->current_section->section->section_name }}
                                                             </td>
                                                             <td>
                                                                 <span class="text-muted">
