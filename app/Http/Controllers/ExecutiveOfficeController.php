@@ -163,10 +163,6 @@ class ExecutiveOfficeController extends Controller
                 'time_in_status', 'time_in_remarks',
                 'time_in_process_by' => Auth::user()->name,
             );
-            $mon =  new DateTime();
-            $fri = new DateTime();
-            $mon->modify('Last Monday');
-            $fri->modify('Next Friday');
             $attendance = StudentOnboardingAttendance::where([
                 'student_id' => $_account->student->id,
                 'course_id' => $_account->student->enrollment_assessment->course_id,
@@ -174,10 +170,15 @@ class ExecutiveOfficeController extends Controller
             ])
                 ->whereBetween('created_at', $this->week_dates)->first();
             if ($attendance) {
-                $attendance->time_out = now();
-                $attendance->time_out_process_by = Auth::user()->name;
-                $attendance->save();
-                $_attendance = StudentOnboardingAttendance::find($attendance->id);
+                if ($attendance->time_out !== null) {
+                    $_attendance = StudentOnboardingAttendance::create($_attendance_details);
+                    $_attendance = StudentOnboardingAttendance::find($_attendance->id);
+                } else {
+                    $attendance->time_out = now();
+                    $attendance->time_out_process_by = Auth::user()->name;
+                    $attendance->save();
+                    $_attendance = StudentOnboardingAttendance::find($attendance->id);
+                }
             } else {
                 $_attendance = StudentOnboardingAttendance::create($_attendance_details);
                 $_attendance = StudentOnboardingAttendance::find($_attendance->id);
