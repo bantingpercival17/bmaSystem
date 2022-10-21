@@ -18,6 +18,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/applicant/examination', [ApplicantController::class, 'applicant_entrance_examination'])->name('applicant-examination-status');
     Route::get('/applicant/examination-reset', [ApplicantController::class, 'applicant_examination_reset'])->name('applicant-examination-reset');
     Route::get('/applicant/examination-logs', [ApplicantController::class, 'applicant_examination_log'])->name('applicant-examination-log');
+    Route::get('/applicant/examination-result', [ApplicantController::class, 'appllicant_examination_result'])->name('applicant-examination-result');
     ROute::get('/applicant/examination-remove', [ApplicantController::class, 'examination_remove'])->name('examination.remove');
     Route::get('/applicant/virtual-briefing', [ApplicantController::class, 'virtual_briefing_view'])->name('applicant-virtual-briefing');
 });

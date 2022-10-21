@@ -74,7 +74,10 @@ class ApplicantEntranceExamination extends Model
         }
         return [$_grade, $_percentage];
     }
-
+    public function choice_answer($_data)
+    {
+        return $this->hasOne(ApplicantExaminationAnswer::class, 'examination_id')->where('question_id', $_data)->where('is_removed', false);
+    }
 
     public function examination_questioner()
     {

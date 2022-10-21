@@ -172,6 +172,8 @@
 @elseif(request()->input('_fill') == 'entrance-examination')
     <div class="tab-content" id="pills-tabContent-2">
         <div class="tab-pane fade active show">
+            <a href="{{ route('applicant-examination-result') }}?_applicant={{ base64_encode($_account->id) }}"
+                class="btn btn-primary btn-sm">Examination Result</a>
             <a href="{{ route('applicant-examination-log') }}?_applicant={{ base64_encode($_account->id) }}"
                 class="btn btn-secondary btn-sm">Examination Log</a>
             <div class="row">
@@ -195,7 +197,7 @@
                         </div>
                     </div>
                 </div>
-             
+
                 <div class="col-md">
                     <p>
                         <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_account->id) }}"
@@ -238,7 +240,7 @@
                 @endif
             @endforeach
 
-            
+
         </div>
     </div>
 @else

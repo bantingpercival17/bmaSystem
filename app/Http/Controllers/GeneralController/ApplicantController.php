@@ -244,6 +244,16 @@ class ApplicantController extends Controller
             return back()->with('error', $error->getMessage());
         }
     }
+    public function appllicant_examination_result(Request $_request)
+    {
+        try {
+            $applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
+            $_report = new ApplicantReport();
+            return $_report->applicant_examination_result($applicant);
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
     public function briefing_notification(Request $_request)
     {
         $_course = CourseOffer::find($_request->_course);

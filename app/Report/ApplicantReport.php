@@ -2,6 +2,7 @@
 
 namespace App\Report;
 
+use App\Models\Examination;
 use Barryvdh\DomPDF\Facade as PDF;
 
 class ApplicantReport
@@ -29,6 +30,20 @@ class ApplicantReport
         // Set the Filename of report
         // Name format PART - SUBJECT CODE - DATE GENERATED
         $file_name = 'EXAMINATION SYSTEM LOGS -' . $_data->applicant_number . '-' . date('Ymd') . '.pdf';
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    public function applicant_examination_result($_data)
+    {
+        // Set the Layout for the report
+        $_layout = $this->path . '.examination-result';
+        $_department = $_data->course_id == 3 ? 'SENIOR HIGHSCHOOL' : 'COLLEGE';
+        $_examination = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department', $_department)->first();
+        $_examination_categories = $_examination->categories;
+        // Import PDF Class
+        $pdf = PDF::loadView($_layout, compact('_data', '_examination_categories'));
+        // Set the Filename of report
+
+        $file_name = 'EXAMINATION RESULT - ' . $_data->applicant_number . '-' . date('Ymd') . '.pdf';
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 }
