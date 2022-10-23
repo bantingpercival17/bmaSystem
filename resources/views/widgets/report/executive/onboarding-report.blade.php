@@ -67,11 +67,30 @@
                                     </td>
                                     <td class="text-center"style="padding-left: 10px; width:45%">
                                         {{ $section->student->municipality . ', ' . $section->student->province }}
+                                        @php
+                                            $_year_level = intval(str_replace('/C', '', $_section->year_level));
+                                            $_style = '';
+                                            if ($section->student->onboarding_attendance) {
+                                                $date = new DateTime($section->student->onboarding_attendance->time_in);
+                                                $time = $date->format('Hi');
+                                                //  echo $time;
+                                                //$time = intval(str_replace(':', '', $section->student->onboarding_attendance->time_in));
+                                                foreach ($_time_arrival as $item) {
+                                                    if ($item['year_level'] == $_year_level) {
+                                                        //echo '<br>' . $time . ' | ' . $item['time_arrival'];
+                                                        if ($time > $item['time_arrival']) {
+                                                            $_style = 'color:red; font-weight:bold;';
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            
+                                        @endphp
                                     </td>
-                                    <td style="padding-left: 10px; width:30%">
+                                    <td style="padding-left: 10px; width:30%; {{ $_style }}" class="text-center">
                                         {{ $section->student->onboarding_attendance ? $section->student->onboarding_attendance->time_in : '' }}
                                     </td>
-                                    <td style="padding-left: 10px; width:30%">
+                                    <td style="padding-left: 10px; width:30%" class="text-center">
                                         {{ $section->student->onboarding_attendance ? $section->student->onboarding_attendance->time_out : '' }}
                                     </td>
                                 </tr>
