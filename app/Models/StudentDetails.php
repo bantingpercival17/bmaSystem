@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -828,6 +829,15 @@ class StudentDetails extends Model
     }
     public function onboarding_attendance()
     {
-        return $this->hasOne(StudentOnboardingAttendance::class, 'student_id')->where('created_at', 'like', '%' . request()->input('week').'%');
+        $now =  request()->input('week');
+        $day = new DateTime($now);
+        $week =  date('l', strtotime($now));
+        $modify = $week == 'Sunday' ? 'Sunday' : 'Last Sunday';
+        $_week_start = $day->modify($modify);
+        $_week_start = $day->format('Y-m-d');
+        $_week_end = $day->modify('Next Saturday');
+        $_week_end = $day->format('Y-m-d');
+        $_week_dates = [$_week_start . '%', $_week_end . '%'];
+        return $this->hasOne(StudentOnboardingAttendance::class, 'student_id')->whereBetween('created_at', $_week_dates);
     }
 }
