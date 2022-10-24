@@ -33,6 +33,7 @@ use App\Models\StudentAccount;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentSection;
+use App\Models\VoidTransaction;
 use App\Models\Voucher;
 use App\Report\Accounting\PaymentReceipt as AccountingPaymentReceipt;
 use App\Report\PayrollReport;
@@ -857,12 +858,57 @@ class AccountingController extends Controller
             if ($_request->file('upload-file')) {
                 //$_file_extention =  $_request->file('upload-file')->getClientOriginalExtension();
                 //$_file_name = "/registrar/section-import/" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_section->section_name))) . date('dmyhis') . '.' . $_file_extention;
-             //   Storage::disk('public')->put($_file_name, fopen($_request->file('upload-file'), 'r+'));
+                //   Storage::disk('public')->put($_file_name, fopen($_request->file('upload-file'), 'r+'));
                 Excel::import(new StudentTransactionHistoryImport(), $_request->file('upload-file'));
-               // return back()->with('success', 'Successfully Uploaded');
+                // return back()->with('success', 'Successfully Uploaded');
             }
         } catch (Exception $err) {
             return $err;
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function payment_transaction_void(Request $_request)
+    {
+        try {
+            $_void_details = array(
+                'payment_id' => base64_decode($_request->payment),
+                'void_reason' => base64_encode($_request->reason),
+            );
+            VoidTransaction::create($_void_details);
+            return back()->with('success', 'Void Transaction Pending');
+        } catch (Exception $err) {
+            return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function void_view()
+    {
+        $_void_list = VoidTransaction::where('is_removed', false)->orderBy('id', 'desc')->get();
+        return view('pages.accounting.void.view', compact('_void_list'));
+    }
+    public function void_transaction(Request $_request)
+    {
+        try {
+            $_transaction = VoidTransaction::find(base64_decode($_request->void));
+            $_staff = Auth::user()->staff;
+            if ("ACCOUNTING" == $_staff->department && "DEPARTMENT HEAD" == $_staff->job_description) {
+                //return base64_decode($_request->status);
+                if (base64_decode($_request->status) == 1) {
+                    $_transaction->is_approved = true;
+                    $_transaction->staff_id = $_staff->id;
+                    $_transaction->save();
+                    $_transaction->payment->is_removed = true;
+                    $_transaction->payment->save();
+                } else {
+                    # code...
+                }
+                return back()->with('success', 'Void Approved');
+            } else {
+                return back()->with('success', 'Invalid User Account');
+            }
+            return $_staff;
+        } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
         }

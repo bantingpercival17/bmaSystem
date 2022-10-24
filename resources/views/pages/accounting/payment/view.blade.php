@@ -561,9 +561,13 @@
 
                                                 <div>
                                                     <small>PARTIAL: </small> <br>
-                                                    <h5><span
-                                                            class="text-secondary fw-bolder">{{ $_payment->remarks }}</span>
-                                                    </h5>
+                                                    <a href="{{ route('accounting.print-reciept') }}?reciept={{ base64_encode($_payment->id) }}"
+                                                        target="_blank">
+                                                        <h5><span
+                                                                class="text-primary fw-bolder">{{ $_payment->remarks }}</span>
+                                                        </h5>
+                                                    </a>
+
                                                 </div>
                                                 <div>
                                                     <small>AMOUNT: </small> <br>
@@ -576,14 +580,27 @@
                                                     <h5><span
                                                             class="text-secondary fw-bolder">{{ $_payment->or_number }}</span>
                                                 </div>
+                                                <div>
+                                                    @if ($_payment->payment_void)
+                                                        @if ($_payment->payment_void->is_approved)
+                                                        @else
+                                                            <span class="badge bg-info">Void Pending</span>
+                                                        @endif
+                                                    @else
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm btn-form-void w-100 mt-2"
+                                                            data-bs-toggle="modal" data-bs-target=".void-view-modal"
+                                                            data-void-payment="{{ base64_encode($_payment->id) }}">
+                                                            VOID</button>
+                                                    @endif
+
+                                                    {{-- <button class="btn btn-danger btn-sm">VOID</button> --}}
+                                                </div>
                                             </div>
                                             <p class="mb-0">
                                                 <small>{{ $_payment->staff->user->name }}</small> |
                                                 <small>{{ $_payment->created_at }}</small>
                                             </p>
-                                            <a href="{{ route('accounting.print-reciept') }}?reciept={{ base64_encode($_payment->id) }}"
-                                                class="btn btn-primary btn-sm" target="_blank">Print
-                                                Receipt</a>
                                         @endforeach
                                     @else
                                         <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
@@ -699,6 +716,28 @@
             </div>
         </div>
     </div>
+    <div class="modal fade void-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bolder">Online Payment View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('accounting.transaction-void') }}" method="post">
+                        @csrf
+                        <input type="hidden" name="payment" class="modal-payment">
+                        <div class="form-group">
+                            <small for="" class="form-label fw-bolder">VOID REASON</small>
+                            <input type="text" class="form-control" name="reason">
+                        </div>
+                        <button class="btn btn-primary btn-sm w-100">REQUEST VOID</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @section('js')
     <script>
@@ -745,6 +784,10 @@
                 }
             })
             event.preventDefault();
+        })
+        $('.btn-form-void').click(function() {
+            $('.modal-payment').val($(this).data('void-payment'))
+            //alert($(this).data('void-payment'));
         })
     </script>
 @endsection

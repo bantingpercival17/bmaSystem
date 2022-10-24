@@ -77,4 +77,7 @@ Route::prefix('accounting')->group(function () {
     Route::get('/payment-transaction/student-card', [AccountingController::class, 'student_card'])->name('accounting.student-card');
 
     Route::post('/payment-transaction/student-transaction-import', [AccountingController::class, 'student_transaction_import'])->name('accounting.student-transacion-import');
+    Route::post('/payment-transaction/payment-void', [AccountingController::class, 'payment_transaction_void'])->name('accounting.transaction-void');
+    Route::get('/payment-void-transaction', [AccountingController::class, 'void_view'])->name('accounting.payment-void');
+    Route::post('/payment-void-transaction', [AccountingController::class, 'void_transaction'])->name('accounting.transaction-void');
 });
