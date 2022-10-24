@@ -37,7 +37,7 @@
                                         @elseif($item->is_approved === 0)
                                             <span class="badge bg-danger">DISAPPROVED</span>
                                         @else
-                                            <form action="{{ route('accounting.transaction-void') }}" method="post"
+                                            <form action="{{ route('accounting.void-transaction') }}" method="post"
                                                 id="form-approved">
                                                 @csrf
                                                 <input type="hidden" name="void" value="{{ base64_encode($item->id) }}">
@@ -45,7 +45,7 @@
                                                 <button class="btn btn-primary btn-sm btn-remove"
                                                     type="submit"  data-form="form-approved">APPROVED</button>
                                             </form>
-                                            <form action="{{ route('accounting.transaction-void') }}" method="post"
+                                            <form action="{{ route('accounting.void-transaction') }}" method="post"
                                                 id="form-disapproved">
                                                 @csrf
                                                 <input type="hidden" name="void"
