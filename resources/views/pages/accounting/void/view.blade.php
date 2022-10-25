@@ -42,8 +42,8 @@
                                                 @csrf
                                                 <input type="hidden" name="void" value="{{ base64_encode($item->id) }}">
                                                 <input type="hidden" name="status" value="{{ base64_encode(1) }}">
-                                                <button class="btn btn-primary btn-sm btn-remove"
-                                                    type="submit"  data-form="form-approved">APPROVED</button>
+                                                <button class="btn btn-primary btn-sm btn-remove" type="submit"
+                                                    data-form="form-approved">APPROVED</button>
                                             </form>
                                             <form action="{{ route('accounting.void-transaction') }}" method="post"
                                                 id="form-disapproved">
