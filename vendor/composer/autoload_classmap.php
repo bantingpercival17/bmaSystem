@@ -157,6 +157,7 @@ return array(
     'App\\Models\\StudentAttendance' => $baseDir . '/app/Models/StudentAttendance.php',
     'App\\Models\\StudentClearance' => $baseDir . '/app/Models/StudentClearance.php',
     'App\\Models\\StudentDetails' => $baseDir . '/app/Models/StudentDetails.php',
+    'App\\Models\\StudentGadget' => $baseDir . '/app/Models/StudentGadget.php',
     'App\\Models\\StudentMedicalAppointment' => $baseDir . '/app/Models/StudentMedicalAppointment.php',
     'App\\Models\\StudentMedicalResult' => $baseDir . '/app/Models/StudentMedicalResult.php',
     'App\\Models\\StudentNonAcademicClearance' => $baseDir . '/app/Models/StudentNonAcademicClearance.php',

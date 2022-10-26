@@ -763,6 +763,7 @@ class ComposerStaticInitad9a3fefd2e4c6a7edf47485ac1509a3
         'App\\Models\\StudentAttendance' => __DIR__ . '/../..' . '/app/Models/StudentAttendance.php',
         'App\\Models\\StudentClearance' => __DIR__ . '/../..' . '/app/Models/StudentClearance.php',
         'App\\Models\\StudentDetails' => __DIR__ . '/../..' . '/app/Models/StudentDetails.php',
+        'App\\Models\\StudentGadget' => __DIR__ . '/../..' . '/app/Models/StudentGadget.php',
         'App\\Models\\StudentMedicalAppointment' => __DIR__ . '/../..' . '/app/Models/StudentMedicalAppointment.php',
         'App\\Models\\StudentMedicalResult' => __DIR__ . '/../..' . '/app/Models/StudentMedicalResult.php',
         'App\\Models\\StudentNonAcademicClearance' => __DIR__ . '/../..' . '/app/Models/StudentNonAcademicClearance.php',

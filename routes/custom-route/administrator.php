@@ -100,4 +100,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
     ob_end_clean();
     return $_respond;
   })->name('export-employee');
+  Route::get('/students/gadgets', [AdministratorController::class, 'student_gadgets_view'])->name('admin.student-gadget-view');
+  Route::post('/student/gadgets', [AdministratorController::class, 'gadget_upload_file'])->name('admin.student-gadget-import');
+  Route::get('/students/gadget-finder', [AdministratorController::class, 'gadget_finder'])->name('admin.student-gadget-finder');
 });

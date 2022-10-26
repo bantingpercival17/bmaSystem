@@ -7,6 +7,7 @@ use App\Exports\EnrolledStudentList;
 use App\Imports\ImportExamination;
 use App\Imports\ShipboardInformationImport;
 use App\Imports\StaffImport;
+use App\Imports\StudentGadgetImport;
 use App\Imports\StudentInformationImport;
 use App\Imports\StudentSection as ImportsStudentSection;
 use App\Imports\SubjectHandle;
@@ -31,6 +32,7 @@ use App\Models\Section;
 use App\Models\Staff;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
+use App\Models\StudentGadget;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentPasswordReset;
 use App\Models\StudentSection;
@@ -675,15 +677,35 @@ class AdministratorController extends Controller
     public function student_account_details(Request $_request)
     {
         $_student = StudentDetails::find(90);
-
         $_email_model = new StudentEnrollmentMail($_student);
         //return $_applicant->email;
-
         //Student Email 
         $_email = $_student->account->campus_email;
         $_cc = $_student->account->personal_email;
         $_email = 'p.banting@bma.edu.ph';
         $_cc = 'p.banting@bma.edu.ph';
         Mail::to($_email)->bcc($_cc)->send($_email_model);
+    }
+
+    public function student_gadgets_view()
+    {
+        $_student = [];
+        $_students = [];
+        return view('pages.administrator.student.gadget_view', compact('_students', '_student'));
+    }
+    public function gadget_upload_file(Request $_request)
+    {
+        $_request->validate([
+            'files' => 'required|mimes:xlsx',
+        ]);
+        $_file = $_request->file('files');
+        Excel::import(new StudentGadgetImport, $_file);
+        return back()->with('success', 'Excel File Successfully Imported');
+    }
+    public function gadget_finder(Request $_request)
+    {
+        // R22J5003FEX
+        $_gadget = StudentGadget::where('gadget_serial', 'like', '%' . $_request->serial . '%')->with('student:id,first_name,last_name')->get();
+        return compact('_gadget');
     }
 }
