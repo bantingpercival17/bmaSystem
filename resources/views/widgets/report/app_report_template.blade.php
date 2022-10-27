@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title-report')</title>
-   {{--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    {{--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> --}}
     <style>
         @page {
@@ -41,9 +41,10 @@
 
         .content {
             position: relative;
-            top: 1.2in;
-            max-height: 100%;
-            overflow: auto;
+            top: 1.3in;
+            bottom: 60px;
+            max-height: 50%;
+           /*  overflow: auto; */
             margin-right: 25px;
             margin-left: 25px;
 

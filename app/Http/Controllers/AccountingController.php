@@ -8,6 +8,7 @@ use App\Exports\DepartmentBalanceSheet;
 use App\Exports\EnrolledStudentList;
 use App\Exports\MonthlyCollectionReport;
 use App\Exports\SalaryDetailsTemplate;
+use App\Exports\WorkBook\MonthlyPaymentMonitoring;
 use App\Imports\ImportSalaryDetails;
 use App\Imports\StudentTransactionHistoryImport;
 use App\Mail\ApplicantEmail;
@@ -36,6 +37,8 @@ use App\Models\StudentSection;
 use App\Models\VoidTransaction;
 use App\Models\Voucher;
 use App\Report\Accounting\PaymentReceipt as AccountingPaymentReceipt;
+use App\Report\Accounting\PaymentReport;
+use App\Report\Accounting\PaymentReports;
 use App\Report\PayrollReport;
 use App\Report\Students\StudentReport;
 use Carbon\Carbon;
@@ -911,6 +914,25 @@ class AccountingController extends Controller
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
+        }
+    }
+    public function report_student_monthly_payment(Request $_request)
+    {
+        try {
+            $_course = CourseOffer::find($_request->balance_course); // Course
+            $_academic = base64_decode($_request->_academic); // Academic
+            $_academic = AcademicYear::find($_academic);
+            $_date = now();
+            $_section = Section::where('course_id', $_course->id)->where('academic_id', $_academic->id)->get();
+           /*  $_report = new PaymentReports;
+            return $_report->monthly_payment_report($_section); */
+            $_file_name = strtoupper($_course->course_code) . '-MONTHLY-PAYMENT-MONITORING-' . strtoupper($_academic->school_year . "-" . $_academic->semester) . '-' . $_date . '.xlsx'; // Name of the File
+            $_excel = new MonthlyPaymentMonitoring($_section); // Excel Function
+            $_file = Excel::download($_excel, $_file_name); // Download the File
+            ob_end_clean();
+            return $_file;
+        } catch (Expression $er) {
+            return back()->with('error', $er);
         }
     }
 }

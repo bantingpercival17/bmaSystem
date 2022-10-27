@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Generate Report';
+    $_title = 'Generate Report';
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -79,7 +79,7 @@ $_title = 'Generate Report';
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="">Academic Year</label>
-                                                    <select name="_academic" class="form-control">
+                                                    <select name="collection_academic" class="form-control">
                                                         @foreach ($_academic as $academic)
                                                             <option value="{{ base64_encode($academic->id) }}">
                                                                 {{ $academic->semester }} | {{ $academic->school_year }}
@@ -124,9 +124,53 @@ $_title = 'Generate Report';
 
                             </tr>
                             <tr>
+                                <td>
+                                    <b>STUDENT MONTHLY PAYMENT REPORT</b>
+                                    <ul>
+                                        <li>You can generate Student Balance Report by Course Category</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <form action="{{ route('accounting.monthly-payment-report') }}" method="post"
+                                        target="_blank">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="">Academic Year</label>
+                                                    <select name="_academic" class="form-control">
+                                                        @foreach ($_academic as $academic)
+                                                            <option value="{{ base64_encode($academic->id) }}">
+                                                                {{ $academic->semester }} | {{ $academic->school_year }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="">Course</label>
+                                                    <select name="balance_course" class="form-control">
+                                                        <option value="1">BSME</option>
+                                                        <option value="2">BSMT</option>
+                                                        <option value="3">PBM SPECIALIZATION</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-outline-primary btn-sm w-100">GENERATE</button>
+                                        </div>
+                                    </form>
+                                </td>
+
+                            </tr>
+                            <tr>
                                 <td>Import Transaction</td>
                                 <td>
-                                    <form action="{{route('accounting.student-transacion-import')}}" method="post"
+                                    <form action="{{ route('accounting.student-transacion-import') }}" method="post"
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="row">
