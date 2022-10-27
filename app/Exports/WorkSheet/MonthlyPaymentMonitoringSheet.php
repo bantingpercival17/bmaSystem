@@ -20,7 +20,7 @@ class MonthlyPaymentMonitoringSheet implements FromCollection, ShouldAutoSize,  
      */
     public function collection()
     {
-        return $this->section->student_section;
+        return $this->section->student_sections;
     }
     public function headings(): array
     {
