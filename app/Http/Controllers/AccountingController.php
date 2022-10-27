@@ -923,8 +923,8 @@ class AccountingController extends Controller
             $_academic = base64_decode($_request->_academic); // Academic
             $_academic = AcademicYear::find($_academic);
             $_date = now();
-            $_section = Section::where('course_id', $_course->id)->where('academic_id', $_academic->id)->get();
-           /*  $_report = new PaymentReports;
+            $_section = Section::where('course_id', $_course->id)->where('academic_id', $_academic->id)->where('is_removed', false)->get();
+            /*  $_report = new PaymentReports;
             return $_report->monthly_payment_report($_section); */
             $_file_name = strtoupper($_course->course_code) . '-MONTHLY-PAYMENT-MONITORING-' . strtoupper($_academic->school_year . "-" . $_academic->semester) . '-' . $_date . '.xlsx'; // Name of the File
             $_excel = new MonthlyPaymentMonitoring($_section); // Excel Function
