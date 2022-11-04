@@ -15,17 +15,17 @@
         }
 
         header {
-            position: fixed;
+          /*   position: fixed; */
             top: 10px;
             left: 0px;
             right: 0px;
-            height: 20%;
+            /* height: 20%; */
             text-align: left;
             justify-content: center;
         }
 
         footer {
-            position: fixed;
+           /*  position: fixed; */
             bottom: -60px;
             left: 0px;
             right: 0px;
@@ -40,7 +40,7 @@
         }
 
         .content {
-            position: relative;
+           /*  position: relative; */
             top: 1.3in;
             bottom: 60px;
             max-height: 50%;
