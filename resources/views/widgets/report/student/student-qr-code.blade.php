@@ -1,7 +1,7 @@
 {{-- @extends('widgets.report.grade.report_layout_1') --}}
 @extends('widgets.report.app_report_template')
-@section('title-report', 'MIDSHIPMAN ACCOUNT CARD - ' . strtoupper($_student->last_name . ', ' . $_student->first_name))
-@section('form-code', 'ACC-12')
+@section('title-report', 'MIDSHIPMAN QR-Code - ' . strtoupper($_student->last_name . ', ' . $_student->first_name))
+@section('form-code', 'QR-CODE')
 @section('style')
     <style>
         .account-card-title {
