@@ -53,7 +53,6 @@ class ExecutiveOfficeController extends Controller
         $_data = Staff::select('staff.id', 'staff.user_id', 'staff.first_name', 'staff.last_name', 'staff.department', 'ea.staff_id', 'ea.description', 'ea.time_in', 'ea.time_out', 'ea.created_at')
             ->leftJoin('employee_attendances as ea', 'ea.staff_id', 'staff.id')
             ->where('ea.created_at', 'like', '%' . now()->format('Y-m-d') . '%')
-            ->groupBy('staff.id')
             ->orderBy('ea.updated_at', 'desc')->get();
         $_data = $_request->_user == 'employee' ?  EmployeeAttendance::where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('updated_at', 'desc')->get() : $_data;
         $_data = $_request->_user == 'student' ? StudentOnboardingAttendance::whereBetween('created_at', $this->week_dates)
@@ -74,9 +73,60 @@ class ExecutiveOfficeController extends Controller
         if ($_user == 'student') {
             $_data = $this->student_qrcode_data($_data, $_date);
         } else {
-            $_data = $this->employee_qrcode_data($_data, $_date);
+            $_data = $this->employee_qrcode_data_v2($_data);
         }
         return compact('_data');
+    }
+    public function employee_qrcode_data_v2($_data)
+    {
+        //The is a Email value for the Employees
+        $_account = User::where('email', $_data)->first(); // Get the Staff Account using the Email Address
+        if ($_account) {
+            $_time_in_content_respond = array(
+                'name' => strtoupper(trim($_account->name)),
+                'department' => $_account->staff->department,
+                'time_status' => 'TIME IN',
+                'time' =>  date('H:i:s'),
+                'image' =>  strtolower(str_replace(' ', '_', $_account->name)) . '.jpg',
+                'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_account->staff->first_name))))) . '-good-morning.mp3'
+            ); // Set up the Return Value for Time In
+            $_time_out_content_respond = array(
+                'name' => strtoupper(trim($_account->name)),
+                'department' => $_account->staff->department,
+                'time_status' => 'TIME OUT',
+                'time' =>  date('H:i:s'),
+                'image' =>  strtolower(str_replace(' ', '_', $_account->name)) . '.jpg',
+                'link' => '/assets/audio/' . trim(strtolower(str_replace(' ', '-', trim(str_replace('/', '-', $_account->staff->first_name))))) . '-good-bye.mp3'
+            ); // Set up the Return Value for Time Out
+            $_staff_content = array(
+                'staff_id' => $_account->staff->id,
+                'description' => 'n/a',
+                'time_in' => date('Y-m-d H:i:s'),
+            ); // Create an time in
+            $_attendance = EmployeeAttendance::where('staff_id', $_account->staff->id)
+                ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('id', 'desc')->first(); // Get the Attendance Data
+            //$_respond = $_attendance ? $_time_out_content_respond : $_time_in_content_respond; // Get the Respond Content
+            if ($_attendance) {
+                if ($_attendance->time_out) {
+                    $_attendance = EmployeeAttendance::create($_staff_content); // Create a new Time Data
+                    $_respond = $_time_in_content_respond;
+                } else {
+                    $_attendance->update(['time_out' => now()]); // Update the time Out
+                    $_respond = $_time_out_content_respond;
+                }
+            } else {
+                $_attendance = EmployeeAttendance::create($_staff_content); // Save Time in 
+                $_respond = $_time_in_content_respond;
+            }
+            //$_attendance = $_attendance ? $_attendance->update(['time_out' => now()]) : EmployeeAttendance::create($_staff_content); // Save Time in and Update the time Out
+            $_attendance = EmployeeAttendance::find($_attendance->id);
+            $_respond['attendance_details'] = $_attendance;
+            $_data = $_attendance ? array('respond' => '200', 'message' => 'Good bye and Keep Safe ' . $_account->staff->first_name . "!", 'data' => $_respond) :
+                array('respond' => '200', 'message' => 'Welcome' . $_account->staff->first_name . "!", 'data' => $_respond);
+        } else {
+            $_data = array('respond' => '404', 'message' => 'Invalid Email');
+        }
+        return $_data;
     }
     public function employee_qrcode_data($_data, $_date)
     {
