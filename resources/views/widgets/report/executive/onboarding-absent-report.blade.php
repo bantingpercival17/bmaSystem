@@ -44,6 +44,7 @@
                     <th>SECTION NAME</th>
                     <th>NAME OF MIDSHIPMAN</th>
                     <th>ADDRESS</th>
+                    <th>REMARKS</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,8 +60,11 @@
                                             <td style="padding-left: 10px; width:40%">
                                                 {{ strtoupper($item->student->last_name . ', ' . $item->student->first_name . ' ' . $item->student->middle_name) }}
                                             </td>
-                                            <td class="text-center"style="padding-left: 10px; width:45%">
+                                            <td class="text-center"style="padding-left: 10px; width:20%">
                                                 {{ $item->student->municipality . ', ' . $item->student->province }}
+                                            </td>
+                                            <td style="padding-left: 10px; width:30%">
+
                                             </td>
                                         </tr>
                                     @endif
