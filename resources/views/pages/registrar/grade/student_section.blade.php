@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Semestral Grades';
+    $_title = 'Semestral Grades';
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -64,21 +64,21 @@ $_title = 'Semestral Grades';
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (count($_section->student_section) > 0)
-                                    @foreach ($_section->student_section as $_key => $_data)
+                                @if (count($_section->student_sections) > 0)
+                                    @foreach ($_section->student_sections as $_key => $_data)
                                         <tr>
                                             <td>{{ $_data->student->account ? $_data->student->account->student_number : '-' }}
                                             </td>
                                             <td>{{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
                                             </td>
                                             <td>
-                                                <a href="{{ route('registrar.semestral-grade-form-ad2') }}?_student={{ base64_encode($_data->id) }}&_section={{ request()->input('_section') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                                                <a href="{{ route('registrar.semestral-grade-form-ad2') }}?student={{ base64_encode($_data->student->id) }}&_section={{ request()->input('_section') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
                                                     class="btn btn-sm btn-primary" target="_blank">FORM AD-02-A</a>
                                                 @if ($_data->student->grade_publish)
                                                     <span class="badge bg-secondary">GRADE PUBLISHED <br>
                                                         {{ $_data->student->grade_publish->staff->user->name . ' - ' . $_data->student->grade_publish->created_at->format('F d, Y') }}</span>
                                                 @else
-                                                    <a href="{{ route('registrar.semestral-grade-publish') }}?_student={{ base64_encode($_data->id) }}&_academic={{ request()->input('_academic') }}"
+                                                    <a href="{{ route('registrar.semestral-grade-publish') }}? student={{ base64_encode($_data->student->id) }}&_academic={{ request()->input('_academic') }}"
                                                         class="btn btn-sm btn-info text-white">PUBLISH GRADE</a>
                                                 @endif
 

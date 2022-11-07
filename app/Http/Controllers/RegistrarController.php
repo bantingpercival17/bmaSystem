@@ -656,7 +656,7 @@ class RegistrarController extends Controller
     }
     public function semestral_grade_report_form(Request $_request)
     {
-        $_student = StudentDetails::find(base64_decode($_request->_student));
+        $_student = StudentDetails::find(base64_decode($_request->student));
         $_section = Section::find(base64_decode($_request->_section));
         $_report = new StudentReport();
         return $_report->certificate_of_grade($_student, $_section);
