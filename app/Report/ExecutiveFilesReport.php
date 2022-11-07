@@ -26,7 +26,19 @@ class ExecutiveFilesReport
         // Import PDF Class
         $pdf = PDF::loadView($_layout, compact('_sections', '_time_arrival'));
         // Set the Filename of report
-        $file_name = 'LIBERTY REPORT - ' . date('Ymd') . '.pdf';
+        $file_name = 'ONBOARDING MASTERLIST REPORT - ' . date('Ymd') . '.pdf';
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    public function student_onboarding_absent_report($_data)
+    {
+        $_sections = $_data;
+        // Set the Layout for the report
+        $_layout = $this->path . '.onboarding-absent-report';
+        // Additional Data
+        // Import PDF Class
+        $pdf = PDF::loadView($_layout, compact('_sections'));
+        // Set the Filename of report
+        $file_name = 'LIST OF MIDSHIPMAN ABSENT - ' . date('Ymd') . '.pdf';
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 }

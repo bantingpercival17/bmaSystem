@@ -9,9 +9,9 @@
         $week = date('l', strtotime($now));
         $modify = $week == 'Sunday' ? 'Sunday' : 'Last Sunday';
     @endphp
-    @foreach ($_sections as $_section)
-        @if ($_section->count() > 0)
-            <div class="content">
+    <div class="content">
+        @foreach ($_sections as $_section)
+            @if ($_section->count() > 0)
                 <h3 class="text-center"><b>ONBOARDING MASTER LIST</b></h3>
                 <table class="table-content">
                     <tbody>
@@ -106,9 +106,8 @@
                     </thead>
                 </table>
                 <div class="page-break"></div>
+            @endif
 
-            </div>
-        @endif
-
-    @endforeach
+        @endforeach
+    </div>
 @endsection

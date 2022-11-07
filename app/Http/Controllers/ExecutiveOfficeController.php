@@ -363,7 +363,6 @@ class ExecutiveOfficeController extends Controller
     }
     public function onboarding_student_list_report(Request $_request)
     {
-
         $_course = CourseOffer::find($_request->course);
         $_sections = Section::where('course_id', $_course->id)
             ->where('is_removed', false)
@@ -372,5 +371,16 @@ class ExecutiveOfficeController extends Controller
         $_sections = $_sections->orderBy('year_level', 'desc')->get();
         $_report = new ExecutiveFilesReport();
         return $_report->student_onboarding_report($_sections);
+    }
+    public function absent_student_list_report(Request $_request)
+    {
+        $_course = CourseOffer::find($_request->course);
+        $_sections = Section::where('course_id', $_course->id)
+            ->where('is_removed', false)
+            ->where('academic_id', Auth::user()->staff->current_academic()->id);
+        //$_sections = $_request->level == 'all' ? $_sections : $_sections->where('year_level', 'like', '%' . $_request->level . '%');
+        $_sections = $_sections->orderBy('year_level', 'desc')->get();
+        $_report = new ExecutiveFilesReport();
+        return $_report->student_onboarding_absent_report($_sections);
     }
 }
