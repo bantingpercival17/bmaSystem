@@ -36,10 +36,10 @@
                                 END DATE:
                                 <b>
                                     @php
-                                        $first_day = new DateTime(request()->input('week'));
-                                        $first_day->modify('Next Saturday');
+                                        $last_day = new DateTime(request()->input('week'));
+                                        $last_day->modify('Next Saturday');
                                     @endphp
-                                    {{ strtoupper($first_day->format('F d, Y')) }}
+                                    {{ strtoupper($last_day->format('F d, Y')) }}
                                 </b>
                             </td>
                         </tr>
@@ -52,6 +52,7 @@
                             <th>ADDRESS</th>
                             <th>TIME IN</th>
                             <th>TIME OUT</th>
+                           {{--  <th>REMARK</th> --}}
                         </tr>
                         <tr>
 
@@ -72,9 +73,13 @@
                                             $_style = '';
                                             if ($section->student->onboarding_attendance) {
                                                 $date = new DateTime($section->student->onboarding_attendance->time_in);
+                                                $_date = $date->format('Y-m-d');
                                                 $time = $date->format('Hi');
                                                 //  echo $time;
                                                 //$time = intval(str_replace(':', '', $section->student->onboarding_attendance->time_in));
+                                                if ($_date != $first_day->format('Y-m-d')) {
+                                                    $_style = 'color:red; font-weight:bold;';
+                                                }
                                                 foreach ($_time_arrival as $item) {
                                                     if ($item['year_level'] == $_year_level) {
                                                         //echo '<br>' . $time . ' | ' . $item['time_arrival'];
@@ -91,8 +96,10 @@
                                         {{ $section->student->onboarding_attendance ? $section->student->onboarding_attendance->time_in : '' }}
                                     </td>
                                     <td style="padding-left: 10px; width:30%" class="text-center">
+                                       
                                         {{ $section->student->onboarding_attendance ? $section->student->onboarding_attendance->time_out : '' }}
                                     </td>
+                                    {{-- <td></td> --}}
                                 </tr>
                             @endforeach
                         @endif
