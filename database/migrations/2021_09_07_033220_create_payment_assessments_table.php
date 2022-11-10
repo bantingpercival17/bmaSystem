@@ -19,7 +19,10 @@ class CreatePaymentAssessmentsTable extends Migration
             $table->foreign('enrollment_id')->references('id')->on('enrollment_assessments');
             $table->integer('payment_mode');
             $table->integer('voucher_amount');
+            $table->double('partial_payment')->nullable();
             $table->double('total_payment', 15, 2);
+            $table->string('assessment_tagging')->nullable();
+
             $table->unsignedBigInteger('staff_id');
             $table->foreign('staff_id')->references('id')->on('staff');
             $table->boolean('is_removed')->nullable();

@@ -17,7 +17,7 @@ class CreateStudentAccountsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('student_id');
             $table->foreign('student_id')->references('id')->on('student_details');
-            $table->string('campus_email')->nullable();
+            $table->string('email')->nullable();
             $table->string('personal_email');
             $table->string('student_number')->unique()->nullable();
             $table->string('password');
