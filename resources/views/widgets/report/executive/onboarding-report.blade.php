@@ -108,7 +108,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <td>TOTAL NUMBER OF CADETS : <b>{{ $_section->student_section->count() }}</b></td>
+                            <td>TOTAL NUMBER OF CADETS : <b>{{ $_section->student_sections->count() }}</b></td>
                         </tr>
                     </thead>
                 </table>

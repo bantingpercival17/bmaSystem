@@ -303,7 +303,7 @@
                                                     <button type="button"
                                                         class="btn btn-primary btn-sm btn-form-document w-100 mt-2"
                                                         data-bs-toggle="modal" data-bs-target=".document-view-modal"
-                                                        data-document-url="{{ $item->reciept_attach_path }}">
+                                                        data-document-url="{{ str_replace('bma.edu.ph', '20.0.0.120', $item->reciept_attach_path) }}">
                                                         VIEW</button>
                                                 </div>
                                             </div>
