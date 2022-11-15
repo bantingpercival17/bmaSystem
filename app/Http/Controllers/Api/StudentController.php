@@ -28,7 +28,7 @@ class StudentController extends Controller
             $onboard_assessment = ShipBoardInformation::where('student_id', $account->student_id)->get();
             $journal = $_journal = ShipboardJournal::select('month', DB::raw('count(*) as total'))->where('student_id', $account->student_id)->where('is_removed', false)->groupBy('month')->get();
 
-            return response(['shipboard_information' => $onboard_assessment, 'onboard_journal' => $journal], 200);
+            return response(['shipboard_information' => $onboard_assessment], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
         }
