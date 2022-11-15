@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ApplicantController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\PaymongoApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,9 +25,16 @@ Route::post('/register', [AuthController::class, 'register']);
 /* Route::middleware('auth:applicant')->group(function () {
     Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
 }); */
+Route::post('/student/login', [AuthController::class, 'student_login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
     Route::post('/logout', [ApplicantController::class, 'logout']);
+
+
+
+    // Student API
+    Route::get('/student', [StudentController::class, 'student_details']);
+    Route::get('/student/onboard', [StudentController::class, 'student_onboarding']);
 });
 Route::post('/paymongo-sources', [PaymongoApi::class, 'paymongo_sources']);
 Route::get('/paymongo', [PaymongoApi::class, 'paymongo_view']);

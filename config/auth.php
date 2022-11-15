@@ -45,6 +45,11 @@ return [
             'provider' => 'applicant',
             'hash' => false,
         ],
+        'student' => [
+            'driver' => 'session',
+            'provider' => 'students',
+            'hash' => false
+        ],
     ],
 
     /*
@@ -72,6 +77,10 @@ return [
         'applicant' => [
             'driver' => 'eloquent',
             'model' => App\Models\ApplicantAccount::class,
+        ],
+        'students' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\StudentAccount::class,
         ],
         // 'users' => [
         //     'driver' => 'database',

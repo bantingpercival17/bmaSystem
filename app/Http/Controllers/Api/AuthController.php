@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
+use App\Models\StudentAccount;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -53,5 +56,50 @@ class AuthController extends Controller
             'token' => $_token
         ];
         return response($_reponse, 201);
+    }
+
+    public function student_login(Request $_request)
+    {
+        try {
+            $_fields = $_request->validate([
+                'email' => 'required|email',
+                'password' => 'required|string',
+
+            ]);
+            if (!Auth::guard('student')->attempt($_fields)) {
+                return response([
+                    'message' => 'Invalide Credentials.'
+                ], 401);
+            }
+            $_data = Auth::guard('student')->user();
+            $_student = StudentAccount::find($_data->id);
+            $account = auth()->user();
+            $student = StudentAccount::where('id', $_data->id)->with('student')->first();
+            return response(
+                [
+                    'account' => $student,
+                    'token' => $_student->createToken('secretToken')->plainTextToken
+                ],
+                200
+            );
+            //return Auth::user()->student;
+            /* if (!Auth::attempt($_fields)) {
+                return response([
+                    'message' => 'Invalide Credentials.'
+                ], 401);
+            }
+            $_user = User::find(Auth::user()->id);
+            return response(
+                [
+                    'user' => Auth::user(),
+                    'token' => $_user->createToken('secretToken')->plainTextToken
+                ],
+                200
+            ); */
+        } catch (Expression $error) {
+            return response([
+                'message' => $error
+            ], 402);
+        }
     }
 }
