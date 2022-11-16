@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Grade Submission';
+    $_title = 'Grade Submission';
 @endphp
 @section('page-title', $_title)
 @section('page-mode', 'dark-mode')
@@ -243,29 +243,34 @@ $_title = 'Grade Submission';
                     </div>
                     <div class="card-footer p-2">
                         <hr>
-                        <form class="mt-3" action="{{ route('department-head.submission-verification') }}"
-                            method="POST">
-                            @csrf
-                            <input type="hidden" name="_submission"
-                                value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
-                            <input type="hidden" name="_status" value="0">
-                            <input type="text" class="form-control rounded-pill" placeholder="Leave Remarks"
-                                name="_comments">
-                            <div class=" d-flex align-items-center mt-2 float-end">
-                                <div class="me-4 text-body">
-                                    <button class="btn btn-outline-danger rounded-pill btn-xs" type="submit"
-                                        value="0" name="_status">DISAPPROVED</button>
+                        @if ($_subject_class->midterm_grade_submissionssion)
+                            <form class="mt-3" action="{{ route('department-head.submission-verification') }}"
+                                method="POST">
+                                @csrf
+                                <input type="hidden" name="_submission"
+                                    value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
+                                <input type="hidden" name="_status" value="0">
+                                <input type="text" class="form-control rounded-pill" placeholder="Leave Remarks"
+                                    name="_comments">
+                                <div class=" d-flex align-items-center mt-2 float-end">
+                                    <div class="me-4 text-body">
+                                        <button class="btn btn-outline-danger rounded-pill btn-xs" type="submit"
+                                            value="0" name="_status">DISAPPROVED</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                        <form action="{{ route('department-head.submission-verification') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="_submission"
-                                value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
-                            <input type="hidden" name="_status" value="1">
-                            <button class="btn btn-outline-primary rounded-pill float-end mt-2 me-3 btn-xs"
-                                type="submit">APPROVED</button>
-                        </form>
+                            </form>
+                            <form action="{{ route('department-head.submission-verification') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="_submission"
+                                    value="{{ base64_encode($_subject_class->midterm_grade_submission->id) }}">
+                                <input type="hidden" name="_status" value="1">
+                                <button class="btn btn-outline-primary rounded-pill float-end mt-2 me-3 btn-xs"
+                                    type="submit">APPROVED</button>
+                            </form>
+                        @else
+                        <label for="" class="fw-bolder text-danger">NO GRADE SUBMISSION</label>
+                        @endif
+
                     </div>
                 </div>
 
