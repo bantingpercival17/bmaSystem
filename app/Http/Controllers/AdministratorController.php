@@ -158,7 +158,7 @@ class AdministratorController extends Controller
     /* Accounts */
     public function account_view()
     {
-        $_employees = Staff::orderBy('last_name', 'asc')->where('is_removed', false)->get();
+        $_employees = Staff::orderBy('last_name', 'asc')/* ->where('is_removed', false) */->get();
         $_role = Role::all();
         return view('pages.administrator.accounts_view', compact('_employees', '_role'));
     }
@@ -711,7 +711,12 @@ class AdministratorController extends Controller
     public function deactive_account(Request $_request)
     {
         $_staff = Staff::find(base64_decode($_request->staff));
-        $_staff->is_removed = true;
+        if ($_request->status = 'deactive') {
+            $_staff->is_removed = true;
+        } else {
+            $_staff->is_removed = false;
+        }
+
         $_staff->save();
         return back()->with('success', 'Successfully De-active');
     }

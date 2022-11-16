@@ -36,18 +36,29 @@
                 <table id="datatable" class="table table-striped" data-toggle="data-table">
                     <thead>
                         <tr>
+                            <th>Account Status</th>
                             <th>Employee Name</th>
                             <th>Department</th>
                             <th>Email</th>
                             <th>Roles</th>
                             <th>Password Reset</th>
-                            <th>Account Status</th>
+
                         </tr>
                     </thead>
                     <tbody>
                         @if (count($_employees) > 0)
                             @foreach ($_employees as $_data)
                                 <tr>
+                                    <td>
+                                        @if ($_data->is_removed == true)
+                                            <a href="{{ route('admin.deactive-account') }}?staff={{ base64_encode($_data->id) }}&status=active"
+                                                class="btn btn-primary btn-sm text-white">ACTIVE</a>
+                                        @else
+                                            <a href="{{ route('admin.deactive-account') }}?staff={{ base64_encode($_data->id) }}&status=deactive"
+                                                class="btn btn-danger btn-sm text-white">DEACTIVE</a>
+                                        @endif
+
+                                    </td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <img class=" avatar-rounded img-fluid avatar-45 me-3 bg-soft-primary"
@@ -80,10 +91,7 @@
 
                                         </form>
                                     </td>
-                                    <td>
-                                        <a href="{{ route('admin.deactive-account') }}?staff={{ base64_encode($_data->id) }}"
-                                            class="btn btn-info btn-sm text-white">DEACTIVE</a>
-                                    </td>
+
                                 </tr>
                             @endforeach
                         @else
