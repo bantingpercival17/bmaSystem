@@ -189,6 +189,8 @@
                                         data-bs-toggle="modal" data-bs-target=".grade-view-modal"
                                         data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2">
                                         View Form AD-02</button>
+                                    <a href="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2"
+                                        class="btn btn-secondary btn-sm">View Page</a>
                                 @endif
 
                             </div>
@@ -268,7 +270,7 @@
                                     type="submit">APPROVED</button>
                             </form>
                         @else
-                        <label for="" class="fw-bolder text-danger">NO GRADE SUBMISSION</label>
+                            <label for="" class="fw-bolder text-danger">NO GRADE SUBMISSION</label>
                         @endif
 
                     </div>
