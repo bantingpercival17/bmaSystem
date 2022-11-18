@@ -21,6 +21,7 @@ class AttendanceSheetReport
             ->where('ea.time_in', 'like', '%' . date('Y-m-d') . '%')
             ->get(); */
         $_employees = Staff::orderBy('staff.department', 'asc')
+            ->where('is_removed', false)
             ->orderBy('staff.last_name', 'asc')->get();
         $pdf = PDF::loadView("widgets.report.employee.daily_report_attendance", compact('_employees'));
         $file_name = "Daily Attendance: "; // With Date now
