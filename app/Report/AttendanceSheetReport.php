@@ -26,7 +26,7 @@ class AttendanceSheetReport
             ->orderBy('staff.last_name', 'asc')->get();
         $pdf = PDF::loadView("widgets.report.employee.daily_report_attendance", compact('_employees'));
         $file_name = "Daily Attendance: "; // With Date now
-        return $pdf->setPaper($this->crosswire_short, 'portrait')->stream($file_name . '.pdf');
+        return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
     }
     public function daily_time_record_report($_start_date, $_end_date)
     {
