@@ -13,7 +13,7 @@
                 <tr>
                     <th>QR CODE</th>
                     <th>NAME</th>
-                    <th></th>
+
 
                     {{--  <th>DEPARTMENT</th> --}}
                     {{-- <th width="100">TIME-IN</th>
@@ -24,36 +24,44 @@
             <tbody>
                 @foreach ($_employees as $_employee)
                     <tr>
-                        <td class="text-center" style="width: 25%; hiegth:100px;">
-                            <br><br><br><br>
-                            <img src="data:image/png;base64, {!! base64_encode(
-                                QrCode::style('round', 0.5)->eye('square')->size(170)->generate('employee:' . $_employee->user->email),
-                            ) !!} ">
-                            <br><br>
-                            <label for="" style="font-size: 14px">
-                                {{ ucwords($_employee->first_name . ' ' . $_employee->last_name) }}
-                            </label>
-                            <br>
-                            <label for="" style="font-size: 9px">
-                                {{ ucwords($_employee->department) }}
-                            </label>
-                            <br><br>
+                        <td style="width: 25%; hiegth:100px; ">
+                            <table class="table-content" >
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center" style=" border: 0px solid rgb(0, 0, 0);">
+                                            <img src="{{ public_path() . $_employee->profile_pic($_employee) }}"
+                                                width="100"alt="" >
+                                        </td>
+                                        <td style=" border: 0px solid rgb(0, 0, 0);">
+                                            <div class="text-center">
+                                                <img src="data:image/png;base64, {!! base64_encode(
+                                                    QrCode::style('round', 0.5)->eye('square')->size(170)->generate('employee:' . $_employee->user->email),
+                                                ) !!} ">
+                                                <br><br>
+                                                <label for="" style="font-size: 14px;font-weight:bolder">
+                                                    {{ ucwords($_employee->first_name . ' ' . $_employee->last_name) }}
+                                                </label>
+                                                <br>
+                                                <label for="" style="font-size: 9px">
+                                                    {{ ucwords($_employee->department) }}
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div style="display: inline;">
+
+
+
+                            </div>
+
                         </td>
                         <td style="width: 25%;text-align:center;">
                             <img src="{{ public_path() . '/assets/image/bma-logo-1.png' }}" alt="" width="150">
                             <br> bma.edu.ph
                         </td>
-                        <td class="text-center" style="width: 30%; hiegth:100px;">
-                            {{--  <br><br>
-                            <img src="data:image/png;base64, {!! base64_encode(
-                                QrCode::style('round', 0.5)->eye('square')->size(170)->generate('employee:' . $_employee->user->email),
-                            ) !!} ">
-                            <br>
-                            <label for="">
-                                {{ ucwords($_employee->first_name . ' ' . $_employee->last_name) }}
-                            </label> --}}
 
-                        </td>
                         {{--  <td style="width: 30%;text-align:center;">
                             <img src="{{ public_path() . '/assets/image/bma-logo-1.png' }}" alt="" width="150">
                             <br> bma.edu.ph
