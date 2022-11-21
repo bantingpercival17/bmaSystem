@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Api\ApplicantController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\PaymongoApi;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -41,3 +43,6 @@ Route::get('/paymongo', [PaymongoApi::class, 'paymongo_view']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/staff-details',[ExportController::class,'export_staff']);
+Route::get('/course',[ExportController::class,'export_course']);
