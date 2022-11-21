@@ -113,13 +113,13 @@ class Staff extends Model
     }
     public function academic_head($_course)
     {
-        $_course = $_course == 1 ? 'MARINE ENGINEERING' : ($_course == 2 ? 'MARINE TRANSPORTATION' : '');
+        $_course = $_course == 1 ? 'BSMARE' : ($_course == 2 ? 'BSMT' : '');
         $_staff = Staff::where('job_description', 'DEPARTMENT HEAD')->where('department', $_course)->first();
         return trim($_staff->first_name) . " " . trim($_staff->middle_name) . " " . trim($_staff->last_name);
     }
     public function academic_head_signature($_course)
     {
-        $_course = $_course == 1 ? 'MARINE ENGINEERING' : ($_course == 2 ? 'MARINE TRANSPORTATION' : '');
+        $_course = $_course == 1 ? 'BSMARE' : ($_course == 2 ? 'BSMT' : '');
         $_staff = Staff::where('job_description', 'DEPARTMENT HEAD')->where('department', $_course)->first();
         return $_staff->user->email;
     }
@@ -180,7 +180,7 @@ class Staff extends Model
                 'role_id' => 4,
                 'role_name' => 'Accounting',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Payment Transaction', 'accounting.payment-transactions'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars'], ['Semestral Clearance', 'accounting.semestral-clearance'], ['Applicant Payment', 'accounting.applicant-transaction'], ['Payroll', 'accounting.payroll-view'], ['Report', 'accounting.report'],['Void Transaction', 'accounting.payment-void']],
+                'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Payment Transaction', 'accounting.payment-transactions'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars'], ['Semestral Clearance', 'accounting.semestral-clearance'], ['Applicant Payment', 'accounting.applicant-transaction'], ['Payroll', 'accounting.payroll-view'], ['Report', 'accounting.report'], ['Void Transaction', 'accounting.payment-void']],
             ],
             [
                 'role_id' => 5,
