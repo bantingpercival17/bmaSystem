@@ -169,7 +169,7 @@ $_total_percentage = 0;
                             <td colspan="2">
                                 <br><br>
                                 <img class="image-signature"
-                                    src="{{ public_path() . '/assets/img/signature/' . Auth::user()->staff->dean_signature('MARINE TRANSPORTATION') . '.png' }}"
+                                    src="{{ public_path() . '/assets/img/signature/' . Auth::user()->staff->dean_signature('Administrative') . '.png' }}"
                                     alt="department-head">
                                 <br>
                                 <b>Capt. Maximo M. Pesta&ntilde;o</b>
