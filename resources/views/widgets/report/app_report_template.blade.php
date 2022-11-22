@@ -122,13 +122,13 @@
 
 <body>
 
-    <header>
+   {{--  <header>
         <span class="form-code">BMA FORM @yield('form-code')<span>
                 <center>
                     <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
                 </center>
 
-    </header>
+    </header> --}}
     <div class="body-content">
         @yield('content')
     </div>

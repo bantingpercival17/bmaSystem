@@ -36,6 +36,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::post('/accounts', [AdministratorController::class, 'account_store']); // Store Account
   Route::post('/accounts/profile-picture', [AdministratorController::class, 'account_upload_profile']);
   Route::post('/accounts/role', [AdministratorController::class, 'account_roles_store']);
+  Route::get('/accounts/deactive',[AdministratorController::class,'deactive_account'])->name('admin.deactive-account');
   /* Subject and Curriculum Routes */
   Route::get('/subjects', [AdministratorController::class, 'subject_view'])->name('admin.subjects'); // Subject Curriculum
   Route::post('/curriculum', [AdministratorController::class, 'curriculum_store']); // Store a Curriculum

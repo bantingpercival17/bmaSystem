@@ -19,7 +19,7 @@ class EmployeeListExport implements FromCollection, ShouldAutoSize, WithMapping,
      */
     public function collection()
     {
-        return Staff::all();
+        return Staff::where('is_removed', false)->get();
     }
     public function headings(): array
     {
@@ -55,7 +55,7 @@ class EmployeeListExport implements FromCollection, ShouldAutoSize, WithMapping,
             $_data->middle_name,
             $_data->user->email,
             $_data->department,
-            QrCode::format('png')->style('round', 0.5)->eye('square')->size(300)->generate($_qr_Code)
+            // QrCode::format('png')->style('round', 0.5)->eye('square')->size(300)->generate($_qr_Code)
         ];
     }
     public function registerEvents(): array

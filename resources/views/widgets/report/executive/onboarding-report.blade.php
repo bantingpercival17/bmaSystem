@@ -18,7 +18,7 @@
                         <tr>
                             <td>SECTION: </td>
                             <td><b>{{ $_section->section_name }}</b></td>
-                            <td></td>
+                            <td>TOTAL STUDENTS:  <b>{{ $_section->student_sections->count() }}</td>
                         </tr>
                         <tr>
                             <td>DATE RANGE:</td>
@@ -52,14 +52,9 @@
                             <th>ADDRESS</th>
                             <th>TIME IN</th>
                             <th>TIME OUT</th>
-                           {{--  <th>REMARK</th> --}}
-                        </tr>
-                        <tr>
-
                         </tr>
                     </thead>
                     <tbody>
-
                         @if (count($_section->student_sections) > 0)
                             @foreach ($_section->student_sections as $section)
                                 <tr>
@@ -99,18 +94,10 @@
                                        
                                         {{ $section->student->onboarding_attendance ? $section->student->onboarding_attendance->time_out : '' }}
                                     </td>
-                                    {{-- <td></td> --}}
                                 </tr>
                             @endforeach
                         @endif
                     </tbody>
-                </table>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <td>TOTAL NUMBER OF CADETS : <b>{{ $_section->student_section->count() }}</b></td>
-                        </tr>
-                    </thead>
                 </table>
                 <div class="page-break"></div>
             @endif

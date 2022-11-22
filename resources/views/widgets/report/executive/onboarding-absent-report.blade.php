@@ -45,6 +45,7 @@
             <thead>
                 <tr>
                     <th>SECTION NAME</th>
+                    <th>STUDENT NUMBER</th>
                     <th>NAME OF MIDSHIPMAN</th>
                     <th>ADDRESS</th>
                     <th>REMARKS</th>
@@ -66,6 +67,7 @@
                                         @endphp
                                         <tr>
                                             <td style="padding-left: 10px; width:20%">{{ $section->section_name }}</td>
+                                            <td style="padding-left: 10px; width:10%">{{ $item->student->account->student_number }}</td>
                                             <td style="padding-left: 10px; width:40%">
                                                 {{ strtoupper($item->student->last_name . ', ' . $item->student->first_name . ' ' . $item->student->middle_name) }}
                                             </td>
