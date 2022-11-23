@@ -79,6 +79,13 @@ class ExecutiveOfficeController extends Controller
     }
     public function employee_qrcode_data_v2($_data)
     {
+        $data =  explode(":", $_data);
+        //return count($data);
+        if (count($data) > 1) {
+            $_data = $data[1];
+        } else {
+            $_data = $_data;
+        }
         //The is a Email value for the Employees
         $_account = User::where('email', $_data)->first(); // Get the Staff Account using the Email Address
         if ($_account) {

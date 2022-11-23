@@ -44,5 +44,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/staff-details',[ExportController::class,'export_staff']);
-Route::get('/course',[ExportController::class,'export_course']);
+Route::get('/staff-details', [ExportController::class, 'export_staff']);
+Route::get('/course', [ExportController::class, 'export_course']);
+
+Route::get('/academic-year', [ExportController::class, 'export_academic_year']);
