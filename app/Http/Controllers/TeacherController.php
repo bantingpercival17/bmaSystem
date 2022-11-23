@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TeacherController extends Controller
@@ -184,8 +185,17 @@ class TeacherController extends Controller
     }
     public function subject_grade_bulk_upload(Request $_request)
     {
-        Excel::import(new GradeImport($_request->_section), $_request->file('_file_grade'));
-        return back();
+        $_section = SubjectClass::find(Crypt::decrypt($_request->_section));
+        $_path = '/teacher/grade-sheet/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . "/";
+        $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_name . date('dmyhis'));
+        $_file_extention =  $_request->file('_file_grade')->getClientOriginalExtension();
+        $_file_name = $_file_name . "." . $_file_extention;
+
+        if ($_request->file('_file_grade')) {
+            Storage::disk('public')->put($_file_name, fopen($_request->file('_file_grade'), 'r+'));
+            Excel::import(new GradeImport($_request->_section), $_request->file('_file_grade'));
+            return back()->with('success', 'Successfully Upload your Grades');
+        }
     }
     public function subject_grade_export(Request $_request)
     {

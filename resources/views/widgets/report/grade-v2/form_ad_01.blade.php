@@ -72,11 +72,13 @@
                             @for ($i = 1; $i <= 5; $i++)
                                 <td style="width: 20px;"><b>O{{ $i }}</b></td>
                             @endfor
-                            <th style="width: 20px; text-align: center;"><b>15%</b></th>
+                            <th style="width: 20px; text-align: center;">
+                                <b>{{ Auth::user()->staff->current_academic()->id > 4 ? '20%' : '15%' }}</b></th>
                             @for ($i = 1; $i <= 10; $i++)
                                 <th style="width: 20px;">R{{ $i }}</th>
                             @endfor
-                            <th style="width: 20px; text-align: center;"><b>15%</b></th>
+                            <th style="width: 20px; text-align: center;">
+                                <b>{{ Auth::user()->staff->current_academic()->id > 4 ? '20%' : '15%' }}</b></th>
                             <th style="width: 22px; text-align: center;">
                                 {{ strtoupper(request()->input('_period'))[0] }}E
                             </th>
