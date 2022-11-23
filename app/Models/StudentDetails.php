@@ -179,12 +179,12 @@ class StudentDetails extends Model
     public function subject_average_score($_data)
     {
         // Set the for Formula by Academic
-        if (Auth::user()->staff->current_academic()->id > 4) {
+        /* if (Auth::user()->staff->current_academic()->id > 4) {
             $_percent = $_data['2'] == 'Q' ? .15 : ($_data['2'] == 'O' || $_data['2'] == 'R' ? .20 : .55);
         } else {
             $_percent = $_data['2'] == 'Q' || $_data['2'] == 'O' || $_data['2'] == 'R'  ? .15 : .55;
-        }
-
+        } */
+        $_percent = $_data['2'] == 'Q' || $_data['2'] == 'O' || $_data['2'] == 'R'  ? .15 : .55;
         return $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $_data[0])
             ->where('period', $_data[1])
