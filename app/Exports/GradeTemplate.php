@@ -38,6 +38,16 @@ class GradeTemplate implements FromCollection, /* ShouldAutoSize,  */ WithEvents
             $_content += array($_count => (float)$_content_value /* ? number_format($_content_value, 2, '.', '') : '' */);
             $_count += 1;
         }
+        for ($i = 1; $i <= 5; $i++) {
+            $_content_value = $_data->subject_score([$this->subject->id, request()->input('_period'), "O" . $i]);
+            $_content += array($_count => (float)$_content_value /* ? number_format($_content_value, 2, '.', '') : '' */);
+            $_count += 1;
+        }
+        for ($i = 1; $i <= 10; $i++) {
+            $_content_value = $_data->subject_score([$this->subject->id, request()->input('_period'), "R" . $i]);
+            $_content += array($_count => (float)$_content_value /* ? number_format($_content_value, 2, '.', '') : '' */);
+            $_count += 1;
+        }
         return $_content;
     }
     public function headings(): array
