@@ -111,7 +111,7 @@ class GradeImport implements ToCollection
         switch ($_data[0]) {
             case 'Quiz':
                 switch (trim($_data[2])) {
-                    case str_contains($_data[2], 'ASSESSMENT'):
+                    case str_contains($_data[2], 'ASSESSMENT') || str_contains($_data[2], 'EXAMINATION'):
                         $_label = trim($_data[1])[0] . 'E1';
                         break;
                     default:

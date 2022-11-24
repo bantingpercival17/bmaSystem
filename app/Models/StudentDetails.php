@@ -178,13 +178,14 @@ class StudentDetails extends Model
     }
     public function subject_average_score($_data)
     {
+        $_subject_class = SubjectClass::find($_data[0]);
         // Set the for Formula by Academic
-        /* if (Auth::user()->staff->current_academic()->id > 4) {
-            $_percent = $_data['2'] == 'Q' ? .15 : ($_data['2'] == 'O' || $_data['2'] == 'R' ? .20 : .55);
+        if ($_subject_class->academic_id > 4) {
+            $_percent = $_data['2'] == 'Q' ? .15 : ($_data['2'] == 'O' || $_data['2'] == 'R' ? .20 : .45);
         } else {
             $_percent = $_data['2'] == 'Q' || $_data['2'] == 'O' || $_data['2'] == 'R'  ? .15 : .55;
-        } */
-        $_percent = $_data['2'] == 'Q' || $_data['2'] == 'O' || $_data['2'] == 'R'  ? .15 : .55;
+        }
+        // $_percent = $_data['2'] == 'Q' || $_data['2'] == 'O' || $_data['2'] == 'R'  ? .15 : .55;
         return $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $_data[0])
             ->where('period', $_data[1])
@@ -198,7 +199,9 @@ class StudentDetails extends Model
         foreach ($_categories as $key => $value) {
             $_tScore += $this->subject_average_score([$_data[0], $_data[1], $value]);
         }
-        return $_tScore * .4;
+        $_subject_class = SubjectClass::find($_data[0]);
+        $_percent = $_subject_class->academic_id > 4 ? .50 : .40;
+        return $_tScore * $_percent;
     }
     function lec_grade($_data)
     {
@@ -226,14 +229,19 @@ class StudentDetails extends Model
     }
     public function laboratory_grade($_data)
     {
+        // Get the Percentage
+        $_subject_class = SubjectClass::find($_data[0]);
+        $_percent = $_subject_class->academic_id > 4 ? .50 : .60;
+        // Compute Laboratory Grades
         return $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $_data[0])
             ->where('period', $_data[1])
             ->where('type', 'like',  "A%")
-            ->where('is_removed', false)->average('score') * .60;
+            ->where('is_removed', false)->average('score') * $_percent;
     }
     public function laboratory_item($_data)
     {
+        // Count the total number of items in Laboratory
         return $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $_data[0])
             ->where('period', $_data[1])
@@ -248,31 +256,47 @@ class StudentDetails extends Model
         $midtermLaboratoryItem = $this->laboratory_item([$_data, 'midterm']);
         $finalGradeLecture = $this->lecture_grade([$_data, 'finals']);
         $finalGradeLaboratory = $this->laboratory_grade([$_data, 'finals']);
-        if ($_period == 'midterm') {
-            if ($midtermLaboratoryItem > 0) {
-                $_final_grade = $midtermGradeLecture + $midtermGradeLaboratory; // Midterm Grade Formula With Laboratory
-            } else {
-                $_final_grade = $midtermGradeLecture / .4; // Midterm Grade Formula without Laboratory
-            }
-        } else {
-            if ($finalGradeLaboratory > 0) {
-                if ($midtermGradeLaboratory > 0) {
-                    $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+        $_subject_class = SubjectClass::find(base64_decode(request()->input('_subject')));
+        if ($_subject_class->academic_id) {
+            if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
+                if ($midtermGradeLecture > 0) {
+                    $_final_grade = $_period == 'midterm' ? ($midtermGradeLecture + $midtermGradeLaboratory) : ($finalGradeLecture + $finalGradeLaboratory);
                 } else {
-                    $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                    $_final_grade = ($_period == 'midterm' ? $midtermGradeLaboratory : $finalGradeLaboratory) / .5;
                 }
             } else {
-                if ($finalGradeLecture > 0) {
+                $_final_grade = ($_period == 'midterm' ? $midtermGradeLecture : $finalGradeLecture) / .5;
+            }
+        } else {
+            if ($_period == 'midterm') {
+                if ($midtermLaboratoryItem > 0) {
+                    $_final_grade = $midtermGradeLecture + $midtermGradeLaboratory; // Midterm Grade Formula With Laboratory
+                } else {
+                    $_final_grade = $midtermGradeLecture / .4; // Midterm Grade Formula without Laboratory
+                }
+            } else {
+                if ($finalGradeLaboratory > 0) {
                     if ($midtermGradeLaboratory > 0) {
                         $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
                     } else {
-                        $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture / .4) * .5);
+                        $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
                     }
                 } else {
-                    $_final_grade = null;
+                    if ($finalGradeLecture > 0) {
+                        if ($midtermGradeLaboratory > 0) {
+                            $_final_grade =  (($midtermGradeLecture + $midtermGradeLaboratory) * .5) + (($finalGradeLecture + $finalGradeLaboratory) * .5);
+                        } else {
+                            $_final_grade =  (($midtermGradeLecture / .4) * .5) + (($finalGradeLecture / .4) * .5);
+                        }
+                    } else {
+                        $_final_grade = null;
+                    }
                 }
             }
         }
+
+        //$_subject_class->academic_id;
+
         //return $midtermGradeLaboratory;
         return $_final_grade;
     }

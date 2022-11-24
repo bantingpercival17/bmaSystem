@@ -47,6 +47,29 @@
             <div>
                 <table class="table-2">
                     <thead>
+                        <tr>
+                            <th class="pin text-primary fw-bolder"> {{ strtoupper(request()->input('_period')) }} -
+                                MIDSHIPMAN
+                                INFORMATION
+                            </th>
+                            @foreach ($_columns as $col)
+                                <th colspan="{{ $col[2] }}" class="text-center text-primary fw-bolder">
+                                    {{ strtoupper($col[0]) }}
+                                </th>
+                            @endforeach
+                        </tr>
+                        <tr>
+                            <th class="pin text-primary fw-bolder">STUDENT NO. - COMPLETE NAME</th>
+                            @foreach ($_columns as $col)
+                                @for ($i = 1; $i <= $col[2]; $i++)
+                                    <th class=" text-center table-bordered text-primary fw-bolder">
+                                        {{ strtoupper($col[1]) . $i }}
+                                    </th>
+                                @endfor
+                            @endforeach
+                        </tr>
+                    </thead>
+                    {{--  <thead>
                         <tr class="text-center">
                             <th colspan="3" class="fixed">NAME OF MIDSHIPMAN</th>
                             <th colspan="11">QUIZZES</th>
@@ -97,8 +120,29 @@
                             <th>(FG)</th>
                             <th>(GP)</th>
                         </tr>
-                    </thead>
+                    </thead> --}}
                     <tbody>
+                        @foreach ($_students as $_key => $_student)
+                            <tr>
+                                <th class="text-primary fw-bolder">
+                                    {{ $_student->student->account ? $_student->student->account->student_number : '-' }}
+                                    -
+                                    {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
+                                </th>
+                                @foreach ($_columns as $col)
+                                    @for ($i = 1; $i <= $col[2]; $i++)
+                                        <td class="text-center table-bordered">
+                                            @php
+                                                $_score = $_student->student->subject_score([$_subject->id, request()->input('_period'), $col[1] . $i]);
+                                            @endphp
+                                            <input type="text" class="score-cell" style="width: 38px; font-size:12px"
+                                                value="{{ $_score }}">
+                                        </td>
+                                    @endfor
+                                @endforeach
+
+                            </tr>
+                        @endforeach
                         @if ($_students->count() > 0)
                             @php
                                 $count = 0;
@@ -174,19 +218,14 @@
                                     <th>
                                         {{ $_lab_grade }}
                                     </th>
-                                    @php
-                                        $_final = $_student->student->final_grade_v2($_subject->id, request()->input('_period'));
-                                        if ($_subject->curriculum_subject->subject->laboratory_hours > 0) {
-                                            $_final = number_format($_final, 2);
-                                        } else {
-                                            $_final = $_lecture_grade !== '' ? number_format($_final, 2) : '';
-                                        }
-                                    @endphp
                                     <th>
+                                        @php
+                                            $_final = $_student->student->final_grade_v2($_subject->id, request()->input('_period'));
+                                            $_final = $_lecture_grade !== '' ? number_format($_final, 2) : '';
+                                        @endphp
                                         {{ $_final }}
                                     </th>
                                     <th>
-
                                         @php
                                             $_final_grade = $_final !== '' ? ($_final >= 0 && $_exam_avg >= 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : 'INC') : '';
                                         @endphp

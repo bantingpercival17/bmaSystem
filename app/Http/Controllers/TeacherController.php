@@ -91,25 +91,25 @@ class TeacherController extends Controller
         $_subject = SubjectClass::find(base64_decode($_request->_subject));
         $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
 
-        //return $_subject->academic_id;
+        // Set the Student List
         if ($_subject_code == 'BRDGE') {
             $_students = $_subject->section->student_with_bdg_sections;
         } else {
             $_students = $_subject->section->student_sections;
         }
+        // Viewing for Report and Grading Sheet
+        $_columns = [['QUIZZES', 'Q', 10], ['ORAL EXAM', 'O', 5], ['R W - OUTPUT', 'R', 10], [request()->input('_period'),  strtoupper(request()->input('_period')[0]) . 'E', 1]];
+        $_subject_code = $_subject->curriculum_subject->subject->subject_code;
+        if ($_subject->curriculum_subject->subject->laboratory_hours > 0 && $_subject_code !=  str_contains($_subject_code, 'P.E.')) {
+            $_columns[] =  ['Scientific and Technical Experiments Demonstrations of Competencies Acquired', 'A', 10];
+        }
         if ($_request->_preview) {
+            // Report View
             $_report = new GradingSheetReport($_students, $_subject);
             return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
         } else {
-            $_columns = [['QUIZZES', 'Q', 10], ['ORAL EXAM', 'O', 5], ['R W - OUTPUT', 'R', 10], [request()->input('_period'),  strtoupper(request()->input('_period')[0]) . 'E', 1]];
-            $_subject_code = $_subject->curriculum_subject->subject->subject_code;
-            if ($_subject->curriculum_subject->subject->laboratory_hours > 0 && $_subject_code !=  str_contains($_subject_code, 'P.E.')) {
-                $_columns[] =  ['Scientific and Technical Experiments Demonstrations of Competencies Acquired', 'A', 10];
-            }
-
+            // Grading Sheet
             return view('pages.teacher.grading-sheet.view', compact('_subject', '_students', '_columns'));
-
-            //return view('pages.teacher.grading_sheet_main', compact('_subject', '_students', '_columns'));
         }
     }
     public function subject_view()
