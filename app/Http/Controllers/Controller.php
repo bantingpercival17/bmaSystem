@@ -119,4 +119,11 @@ class Controller extends BaseController
         }
         return back()->with('message', "Successfully Setup the Curriculum Subjects");
     }
+    public function debugTracker()
+    {
+        // User
+        // IP Address
+        // Device
+        // Date / Time
+    }
 }

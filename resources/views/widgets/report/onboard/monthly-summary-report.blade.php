@@ -1,16 +1,16 @@
 @extends('widgets.report.app_report_template')
-@section('title-report', 'BMA OBT-20: ' . strtoupper($_data->first_name . ' ' . $_data->last_name))
-@section('form-code', 'OBT - 20')
+@section('title-report', 'BMA OBT-11: ' . strtoupper($_data->first_name . ' ' . $_data->last_name))
+@section('form-code', 'OBT - 11')
 
 @section('content')
     <main class="content">
         <div class="narative-report-summart">
-            <h5 class="text-center mt-3">MONTHLY NARRATIVE REPORT OF 2ND CLASS </h5>
+            <h5 class="text-center mt-3">MONTHLY OBT PERFORMANCE MONITORING REPORT (MOPM)</h5>
             <div class="mt-3 mb-5">
                 <table class="table-content">
                     <tbody>
                         <tr>
-                            <td width="150px">
+                            <td width="25%">
                                 <small>NAME OF MIDSHIPMAN:</small>
                             </td>
                             <td class="text-fill-in" width="40%" colspan="2">
@@ -70,9 +70,16 @@
                     <small>
                         <li>
                             <i>
+                                Accomplished Daily Journal for the month covered including front page and summary checklist
+                                make sure never missed any single specified on it.
+                            </i>
+                        </li>
+                        <li>
+
+                            <i>
                                 Narrative Report must have content of the daily task onboard including your job stated at
                                 TRB
-                                and Daily Journal Watchkeeping.
+                                and Daily Journal Watchkeeping. (Refer to OPT for guidance)
                             </i>
                         </li>
                         <li>
@@ -83,16 +90,19 @@
                             <i>Picture while working & condition onboard and during meal time.
                             </i>
                         </li>
-                        <li>
+                       {{--  <li>
                             <i>
                                 Accomplished data on Daily Journal for the month covered including front page and summary
                                 checklist. (Make sure never missed any single specified on it.)
                             </i>
-                        </li>
+                        </li> --}}
                         <li>
                             <i>
                                 Crewlist and MDSD for the month covered with signature.
                             </i>
+                        </li>
+                        <li>
+                            <i>MDSD for the month covered with signature (Domestic Only)</i>
                         </li>
                     </small>
 

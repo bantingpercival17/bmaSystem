@@ -24,4 +24,8 @@ class ShipBoardInformation extends Model
   {
     return $this->belongsTo(StudentDetails::class, 'student_id');
   }
+  public function performance_report()
+  {
+    return $this->hasMany(ShipboardPerformanceReport::class,'shipboard_id')->where('is_removed', false)->orderBy('date_covered', 'asc');
+  }
 }

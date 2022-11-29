@@ -3,8 +3,10 @@
 use App\Http\Controllers\Api\ApplicantController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\ShipboardTraining;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\PaymongoApi;
+use App\Models\ShipboardPerformanceReport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,8 +22,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
+//Route::post('/login', [AuthController::class, 'login']);
+//Route::post('/register', [AuthController::class, 'register']);
 
 //Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
 /* Route::middleware('auth:applicant')->group(function () {
@@ -29,14 +31,14 @@ Route::post('/register', [AuthController::class, 'register']);
 }); */
 Route::post('/student/login', [AuthController::class, 'student_login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
-    Route::post('/logout', [ApplicantController::class, 'logout']);
-
-
+    //Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
+    //Route::post('/logout', [ApplicantController::class, 'logout']);
 
     // Student API
     Route::get('/student', [StudentController::class, 'student_details']);
     Route::get('/student/onboard', [StudentController::class, 'student_onboarding']);
+    Route::get('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_view']);
+    Route::post('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_store']);
 });
 Route::post('/paymongo-sources', [PaymongoApi::class, 'paymongo_sources']);
 Route::get('/paymongo', [PaymongoApi::class, 'paymongo_view']);

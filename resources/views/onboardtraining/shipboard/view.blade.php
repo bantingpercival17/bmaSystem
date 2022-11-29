@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Onboard Training Monitoring';
+    $_title = ucwords(strtolower('MONTHLY OBT PERFORMANCE MONITORING REPORT'));
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
