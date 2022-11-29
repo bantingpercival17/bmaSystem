@@ -256,7 +256,7 @@ class StudentDetails extends Model
         $midtermLaboratoryItem = $this->laboratory_item([$_data, 'midterm']);
         $finalGradeLecture = $this->lecture_grade([$_data, 'finals']);
         $finalGradeLaboratory = $this->laboratory_grade([$_data, 'finals']);
-        $_subject_class = SubjectClass::find(base64_decode(request()->input('_subject')));
+        $_subject_class = SubjectClass::find($_data);
         if ($_subject_class->academic_id) {
             if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
                 if ($midtermGradeLecture > 0) {
