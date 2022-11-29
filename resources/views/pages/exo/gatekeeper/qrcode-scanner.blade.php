@@ -67,6 +67,13 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="card">
+
+                                <div class="card-body">
+                                    <img src="{{ asset('/assets/announcement/monthly-payment-december.jpg') }}"
+                                        class="card-img" alt="#">
+                                </div>
+                            </div>
+                            <div class="card">
                                 <div class="card-body">
                                     <video id="preview" style="width:100%"></video>
 
