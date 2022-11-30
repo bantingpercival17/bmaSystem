@@ -245,7 +245,7 @@
                     </div>
                     <div class="card-footer p-2">
                         <hr>
-                        @if ($_subject_class->midterm_grade_submissionssion)
+                        @if ($_subject_class->midterm_grade_submission)
                             <form class="mt-3" action="{{ route('department-head.submission-verification') }}"
                                 method="POST">
                                 @csrf
