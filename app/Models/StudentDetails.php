@@ -257,7 +257,7 @@ class StudentDetails extends Model
         $finalGradeLecture = $this->lecture_grade([$_data, 'finals']);
         $finalGradeLaboratory = $this->laboratory_grade([$_data, 'finals']);
         $_subject_class = SubjectClass::find($_data);
-        if ($_subject_class->academic_id) {
+        if ($_subject_class->academic_id > 5) {
             if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
                 if ($midtermGradeLecture > 0) {
                     $_final_grade = $_period == 'midterm' ? ($midtermGradeLecture + $midtermGradeLaboratory) : ($finalGradeLecture + $finalGradeLaboratory);
