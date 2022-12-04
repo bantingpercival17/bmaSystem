@@ -70,7 +70,7 @@
 
                                 <div class="card-body">
                                     <img src="{{ asset('/assets/announcement/monthly-payment-december.jpg') }}"
-                                        class="" alt="#" style="height:50%">
+                                        class="" alt="#" style="height:400px;">
                                 </div>
                             </div>
                             <div class="card">
