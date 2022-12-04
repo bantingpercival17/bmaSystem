@@ -70,7 +70,7 @@
 
                                 <div class="card-body">
                                     <img src="{{ asset('/assets/announcement/monthly-payment-december.jpg') }}"
-                                        class="card-img" alt="#">
+                                        class="card" alt="#">
                                 </div>
                             </div>
                             <div class="card">
