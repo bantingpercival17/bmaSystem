@@ -212,7 +212,7 @@ class GradeImport implements ToCollection
         $_data = explode(":", $_value); // Separates the Header Categories
         $_index_zero = trim($_data[0]); // First Value
         $_index_one = trim($_data[1]); // Second Value  
-        $_index_two = trim($_data[3]); // Three Value
+        $_index_two = trim($_data[2]); // Three Value
         $_period = isset($_index_one) ? $_index_one : null; // get the Period of terms
         $_number = count($_data) > 2 ? (int)filter_var($_index_two, FILTER_SANITIZE_NUMBER_INT) : ''; // Get the Number of Item of Category
         // Check the index 0 for Category 
