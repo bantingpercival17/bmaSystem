@@ -23,8 +23,8 @@ class GradeImport implements ToCollection
     }
     public function collection(Collection $collection)
     {
-        // $this->grade_upload($collection);
-        $this->grade_upload_v2($collection);
+        $this->grade_upload($collection);
+        //$this->grade_upload_v2($collection);
     }
     public function grade_upload($collection)
     {
@@ -147,7 +147,7 @@ class GradeImport implements ToCollection
     {
         $_section = SubjectClass::find($this->section); // Get the Subject Section
         $_path = 'upload-logs/upload-grades/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . "/"; // Set the File Path
-        $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_code . date('dmyhis')); // Set the Filename
+        $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_code . date('dmyhis')) . '.log'; // Set the Filename
         $_headers = $data[0]; // The Headers
         $_data_to_log = array(
             date("Y-m-d H:i:s"), //Date and time
