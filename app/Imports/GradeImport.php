@@ -23,8 +23,8 @@ class GradeImport implements ToCollection
     }
     public function collection(Collection $collection)
     {
-        $this->grade_upload($collection);
-        //$this->grade_upload_v2($collection);
+        //$this->grade_upload($collection);
+        $this->grade_upload_v2($collection);
     }
     public function grade_upload($collection)
     {
@@ -143,67 +143,72 @@ class GradeImport implements ToCollection
         return array('type' => $_label, 'period' => $_period);
     }
 
-    public function grade_upload_v2($data)
+    public function grade_upload_v2($collection)
     {
         $_section = SubjectClass::find($this->section); // Get the Subject Section
         $_path = 'upload-logs/upload-grades/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . "/"; // Set the File Path
         $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_code . date('dmyhis')) . '.log'; // Set the Filename
-        $_headers = $data[0]; // The Headers
-        $_data_to_log = array(
-            date("Y-m-d H:i:s"), //Date and time
-            $_SERVER['REMOTE_ADDR'], //IP address
-        );
-        foreach ($data as $key => $_data) {
+        $_headers = $collection[0]; // The Headers
+
+        foreach ($collection as $key => $_data) {
+            $_data_to_log[] =  $_SERVER['REMOTE_ADDR'];
+            $_data_to_log[]  = date("Y-m-d H:i:s");
             if ($key > 0 && $_data[0]) {
                 $_account = StudentAccount::where('campus_email',  $_data[5])->first(); // Find Student Id
                 $_student_subject = StudentSection::where('student_id', $_account->student_id)->where('section_id', $_section->section->id)->first();
                 if ($_student_subject) {
                     $_data_to_log[] = 'Email : ' . $_data[5]; // Email Status for Logs
-                    $_data_to_log[] .= PHP_EOL; // Next line in log file
                     foreach ($_headers as $column => $header) {
-                        // Fetch the Headers
                         if ($column > 5) {
+                            // Fetch the Headers
+                            $_data_to_log[] .= PHP_EOL; // Next line in log file
+                            $_data_to_log[] = "Header: "  . trim($header);
                             $_data_header = $this->header_checker_v2($header);
-                            $logDetails[] = "Section: " . $this->section;
-                            $logDetails[] = "Student: " . $_account->student_id;
+                            $_data_to_log[] .= PHP_EOL; // Next line in log file
+                            $_data_to_log[] = "Section: " . $this->section;
+                            $_data_to_log[] = "Student: " . $_account->student_id;
                             if ($_data_header['type'] != null) {
                                 $_score_details = array(
                                     'student_id' => $_account->student_id,
                                     'subject_class_id' => $this->section,
                                     'period' => strtolower(trim($_data_header['period'])),
                                     'type' => $_data_header['type'],
-                                ); // Score Details
-                                $logDetails[] = "Header: " . $_data_header['type'] . " " . $_data_header['period'];
+                                );
+                                // Score Details
+                                $_data_to_log[] = 'Header status: ' . implode(':', $_data_header);
                                 $_check_details = GradeEncode::where($_score_details)->first();
                                 if ($_check_details) {
                                     // Update Score
                                     $_save = GradeEncode::where($_score_details)->update(['score' => floatval($_data[$column]), 'is_removed' => 0]);
-                                    $logDetails[] = 'Updated Grades';
+                                    $_data_to_log[] = 'Updated Grades';
                                 } else {
                                     // Save Score
                                     $_score_details['score'] = floatval($_data[$column]);
                                     $_score_details['is_removed'] = 0;
                                     $_save = GradeEncode::create($_score_details);
-                                    $logDetails[] = 'Saved Grades:' . floatval($_data[$column]);
+                                    $_data_to_log[] = 'Saved Grades:' . floatval($_data[$column]);
                                 }
                             } else {
-                                $logDetails[] = 'Header: ' . $header;
+                                $_data_to_log[] = "Header Status: Invalid ";
+                                $_data_to_log[] = 'Header Error: ' . $_data_header['error'];
                             }
-                            $_data_to_log[] = implode(" ~ ", $logDetails);
-                            $_data_to_log[] .= PHP_EOL; // Next line in log file
+                            // $_data_to_log[] .= PHP_EOL; // Next line in log file
+
+
                         }
                     }
+                    $_data_to_log[] .= PHP_EOL; // Next line in log file
                 } else {
                     $_data_to_log[] = 'Email : ' . $_data[5] . " | Invalid Student"; // Email Status
                 }
             } else {
                 $_data_to_log[] = 'Email : ' . $_data[5] . " | Missing Student"; // Email Status
             }
-        }
 
+            $_data_to_log[] .= PHP_EOL; // Next line in log file
+        }
         // Config for the Log Activities
         $_data_to_log = implode(" - ", $_data_to_log);
-        $_data_to_log .= PHP_EOL;
         Storage::disk('public')->append($_file_name, $_data_to_log, null);
     }
 
@@ -215,30 +220,45 @@ class GradeImport implements ToCollection
         $_index_two = trim($_data[2]); // Three Value
         $_period = isset($_index_one) ? $_index_one : null; // get the Period of terms
         $_number = count($_data) > 2 ? (int)filter_var($_index_two, FILTER_SANITIZE_NUMBER_INT) : ''; // Get the Number of Item of Category
+        $_error = null;
         // Check the index 0 for Category 
-        if (strcasecmp($_index_zero, 'Quiz')) {
-            if (str_contains($_index_two, 'ASSESSMENT') || str_contains($_index_two, 'EXAMINATION')) {
-                $_label = $_index_one[0] . 'E1';
-            } elseif (str_contains($_index_two, 'QUIZ')) {
-                $_label = 'Q' . $_number;
-            } else {
+        switch ($_index_zero) {
+            case 'Quiz':
+                switch ($_index_two) {
+                    case str_contains($_index_two, 'ASSESSMENT') || str_contains($_index_two, 'EXAMINATION'):
+                        $_label = $_index_one[0] . 'E1';
+                        break;
+                    case str_contains($_index_two, 'Quiz'):
+                        $_label = 'Q' . $_number;
+                        break;
+                    default:
+                        $_label = null;
+                        $_error = str_contains($_index_two, 'Oral');
+                        break;
+                }
+                break;
+            case 'Assignment':
+                switch ($_index_two) {
+                    case str_contains($_index_two, 'Oral'):
+                        $_label = 'O' . $_number;
+                        break;
+                    case str_contains($_index_two, 'Laboratory'):
+                        $_label = 'A' . $_number;
+                        break;
+                    case str_contains($_index_two, 'Activity'):
+                        $_label = 'R' . $_number;
+                        break;
+                    default:
+                        $_label = null;
+                        $_error = str_contains($_index_two, 'Oral');
+                        break;
+                }
+                break;
+            default:
                 $_label = null;
-            }
-        } elseif (strcasecmp($_index_zero, 'ASSIGNMENT')) {
-            if (str_contains($_index_two, 'ASSESSMENT') || str_contains($_index_two, 'EXAMINATION')) {
-                $_label = 'O' . $_number;
-            } elseif (strcasecmp(str_contains($_index_two, 'Oral'), 'Oral')) {
-                $_label = 'O' . $_number;
-            } elseif (strcasecmp(str_contains($_index_two, 'Laboratory'), 'oral')) {
-                $_label = 'A' . $_number;
-            } elseif (strcasecmp(str_contains($_index_two, 'Activity'), 'activity')) {
-                $_label = 'R' . $_number;
-            } else {
-                $_label = null;
-            }
-        } else {
-            $_label = null;
+                $_error = null;
+                break;
         }
-        return array('type' => $_label, 'period' => $_period);
+        return array('type' => $_label, 'period' => $_period, 'error' => $_error);
     }
 }
