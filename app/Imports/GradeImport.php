@@ -23,7 +23,8 @@ class GradeImport implements ToCollection
     }
     public function collection(Collection $collection)
     {
-        $this->grade_upload($collection);
+        // $this->grade_upload($collection);
+        $this->grade_upload_v2($collection);
     }
     public function grade_upload($collection)
     {
@@ -101,6 +102,7 @@ class GradeImport implements ToCollection
             }
         }
     }
+
     public function header_check($_value)
     {
         $_data = explode(":", $_value);
@@ -138,6 +140,105 @@ class GradeImport implements ToCollection
         }
 
         $_period = isset($_data[1]) ? $_data[1] : null;
+        return array('type' => $_label, 'period' => $_period);
+    }
+
+    public function grade_upload_v2($data)
+    {
+        $_section = SubjectClass::find($this->section); // Get the Subject Section
+        $_path = 'upload-logs/upload-grades/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . "/"; // Set the File Path
+        $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_code . date('dmyhis')); // Set the Filename
+        $_headers = $data[0]; // The Headers
+        $_data_to_log = array(
+            date("Y-m-d H:i:s"), //Date and time
+            $_SERVER['REMOTE_ADDR'], //IP address
+        );
+        foreach ($data as $key => $_data) {
+            if ($key > 0 && $_data[0]) {
+                $_account = StudentAccount::where('campus_email',  $_data[5])->first(); // Find Student Id
+                $_student_subject = StudentSection::where('student_id', $_account->student_id)->where('section_id', $_section->section->id)->first();
+                if ($_student_subject) {
+                    $_data_to_log[] = 'Email : ' . $_data[5]; // Email Status for Logs
+                    $_data_to_log[] .= PHP_EOL; // Next line in log file
+                    foreach ($_headers as $column => $header) {
+                        // Fetch the Headers
+                        if ($column > 5) {
+                            $_data_header = $this->header_checker_v2($header);
+                            $logDetails[] = "Section: " . $this->section;
+                            $logDetails[] = "Student: " . $_account->student_id;
+                            if ($_data_header['type'] != null) {
+                                $_score_details = array(
+                                    'student_id' => $_account->student_id,
+                                    'subject_class_id' => $this->section,
+                                    'period' => strtolower(trim($_data_header['period'])),
+                                    'type' => $_data_header['type'],
+                                ); // Score Details
+                                $logDetails[] = "Header: " . $_data_header['type'] . " " . $_data_header['period'];
+                                $_check_details = GradeEncode::where($_score_details)->first();
+                                if ($_check_details) {
+                                    // Update Score
+                                    $_save = GradeEncode::where($_score_details)->update(['score' => floatval($_data[$column]), 'is_removed' => 0]);
+                                    $logDetails[] = 'Updated Grades';
+                                } else {
+                                    // Save Score
+                                    $_score_details['score'] = floatval($_data[$column]);
+                                    $_score_details['is_removed'] = 0;
+                                    $_save = GradeEncode::create($_score_details);
+                                    $logDetails[] = 'Saved Grades:' . floatval($_data[$column]);
+                                }
+                            } else {
+                                $logDetails[] = 'Header: ' . $header;
+                            }
+                            $_data_to_log[] = implode(" ~ ", $logDetails);
+                            $_data_to_log[] .= PHP_EOL; // Next line in log file
+                        }
+                    }
+                } else {
+                    $_data_to_log[] = 'Email : ' . $_data[5] . " | Invalid Student"; // Email Status
+                }
+            } else {
+                $_data_to_log[] = 'Email : ' . $_data[5] . " | Missing Student"; // Email Status
+            }
+        }
+
+        // Config for the Log Activities
+        $_data_to_log = implode(" - ", $_data_to_log);
+        $_data_to_log .= PHP_EOL;
+        Storage::disk('public')->append($_file_name, $_data_to_log, null);
+    }
+
+    public function header_checker_v2($_value)
+    {
+        $_data = explode(":", $_value); // Separates the Header Categories
+        $_index_zero = trim($_data[0]); // First Value
+        $_index_one = trim($_data[1]); // Second Value  
+        $_index_two = trim($_data[3]); // Three Value
+        $_period = isset($_index_one) ? $_index_one : null; // get the Period of terms
+        $_number = count($_data) > 2 ? (int)filter_var($_index_two, FILTER_SANITIZE_NUMBER_INT) : ''; // Get the Number of Item of Category
+        // Check the index 0 for Category 
+        if (strcasecmp($_index_zero, 'Quiz')) {
+            if (str_contains($_index_two, 'ASSESSMENT') || str_contains($_index_two, 'EXAMINATION')) {
+                $_label = $_index_one[0] . 'E1';
+            } elseif (str_contains($_index_two, 'QUIZ')) {
+                $_label = 'Q' . $_number;
+            } else {
+                $_label = null;
+            }
+        } elseif (strcasecmp($_index_zero, 'ASSIGNMENT')) {
+            if (str_contains($_index_two, 'ASSESSMENT') || str_contains($_index_two, 'EXAMINATION')) {
+                $_label = 'O' . $_number;
+            } elseif (strcasecmp(str_contains($_index_two, 'Oral'), 'Oral')) {
+                $_label = 'O' . $_number;
+            } elseif (strcasecmp(str_contains($_index_two, 'Laboratory'), 'oral')) {
+                $_label = 'A' . $_number;
+            } elseif (strcasecmp(str_contains($_index_two, 'Activity'), 'activity')) {
+                $_label = 'R' . $_number;
+            } else {
+                $_label = null;
+            }
+        } else {
+            $_label = null;
+        }
         return array('type' => $_label, 'period' => $_period);
     }
 }
