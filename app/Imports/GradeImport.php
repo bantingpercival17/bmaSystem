@@ -155,50 +155,53 @@ class GradeImport implements ToCollection
             $_data_to_log[]  = date("Y-m-d H:i:s");
             if ($key > 0 && $_data[0]) {
                 $_account = StudentAccount::where('campus_email',  $_data[5])->first(); // Find Student Id
-                $_student_subject = StudentSection::where('student_id', $_account->student_id)->where('section_id', $_section->section->id)->first();
-                if ($_student_subject) {
-                    $_data_to_log[] = 'Email : ' . $_data[5]; // Email Status for Logs
-                    foreach ($_headers as $column => $header) {
-                        if ($column > 5) {
-                            // Fetch the Headers
-                            $_data_to_log[] .= PHP_EOL; // Next line in log file
-                            $_data_to_log[] = "Header: "  . trim($header);
-                            $_data_header = $this->header_checker_v2($header);
-                            $_data_to_log[] .= PHP_EOL; // Next line in log file
-                            $_data_to_log[] = "Section: " . $this->section;
-                            $_data_to_log[] = "Student: " . $_account->student_id;
-                            if ($_data_header['type'] != null) {
-                                $_score_details = array(
-                                    'student_id' => $_account->student_id,
-                                    'subject_class_id' => $this->section,
-                                    'period' => strtolower(trim($_data_header['period'])),
-                                    'type' => $_data_header['type'],
-                                );
-                                // Score Details
-                                $_data_to_log[] = 'Header status: ' . implode(':', $_data_header);
-                                $_check_details = GradeEncode::where($_score_details)->first();
-                                if ($_check_details) {
-                                    // Update Score
-                                    $_save = GradeEncode::where($_score_details)->update(['score' => floatval($_data[$column]), 'is_removed' => 0]);
-                                    $_data_to_log[] = 'Updated Grades';
+                if ($_account) {
+                    $_student_subject = StudentSection::where('student_id', $_account->student_id)->where('section_id', $_section->section->id)->first();
+                    if ($_student_subject) {
+                        $_data_to_log[] = 'Email : ' . $_data[5]; // Email Status for Logs
+                        foreach ($_headers as $column => $header) {
+                            if ($column > 5) {
+                                // Fetch the Headers
+                                $_data_to_log[] .= PHP_EOL; // Next line in log file
+                                $_data_to_log[] = "Header: "  . trim($header);
+                                $_data_header = $this->header_checker_v2($header);
+                                $_data_to_log[] .= PHP_EOL; // Next line in log file
+                                $_data_to_log[] = "Section: " . $this->section;
+                                $_data_to_log[] = "Student: " . $_account->student_id;
+                                if ($_data_header['type'] != null) {
+                                    $_score_details = array(
+                                        'student_id' => $_account->student_id,
+                                        'subject_class_id' => $this->section,
+                                        'period' => strtolower(trim($_data_header['period'])),
+                                        'type' => $_data_header['type'],
+                                    );
+                                    // Score Details
+                                    $_data_to_log[] = 'Header status: ' . implode(':', $_data_header);
+                                    $_check_details = GradeEncode::where($_score_details)->first();
+                                    if ($_check_details) {
+                                        // Update Score
+                                        $_save = GradeEncode::where($_score_details)->update(['score' => floatval($_data[$column]), 'is_removed' => 0]);
+                                        $_data_to_log[] = 'Updated Grades';
+                                    } else {
+                                        // Save Score
+                                        $_score_details['score'] = floatval($_data[$column]);
+                                        $_score_details['is_removed'] = 0;
+                                        $_save = GradeEncode::create($_score_details);
+                                        $_data_to_log[] = 'Saved Grades:' . floatval($_data[$column]);
+                                    }
                                 } else {
-                                    // Save Score
-                                    $_score_details['score'] = floatval($_data[$column]);
-                                    $_score_details['is_removed'] = 0;
-                                    $_save = GradeEncode::create($_score_details);
-                                    $_data_to_log[] = 'Saved Grades:' . floatval($_data[$column]);
+                                    $_data_to_log[] = "Header Status: Invalid ";
+                                    $_data_to_log[] = 'Header Error: ' . $_data_header['error'];
                                 }
-                            } else {
-                                $_data_to_log[] = "Header Status: Invalid ";
-                                $_data_to_log[] = 'Header Error: ' . $_data_header['error'];
+                                // $_data_to_log[] .= PHP_EOL; // Next line in log file
+
+
                             }
-                            // $_data_to_log[] .= PHP_EOL; // Next line in log file
-
-
                         }
+                        $_data_to_log[] .= PHP_EOL; // Next line in log file
+                    } else {
+                        $_data_to_log[] = 'Section : ' . $_data[5] . " | Invalid Section"; // Email Status
                     }
-                    $_data_to_log[] .= PHP_EOL; // Next line in log file
-                } else {
                     $_data_to_log[] = 'Email : ' . $_data[5] . " | Invalid Student"; // Email Status
                 }
             } else {
