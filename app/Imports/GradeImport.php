@@ -215,49 +215,55 @@ class GradeImport implements ToCollection
     public function header_checker_v2($_value)
     {
         $_data = explode(":", $_value); // Separates the Header Categories
-        $_index_zero = trim($_data[0]); // First Value
-        $_index_one = trim($_data[1]); // Second Value  
-        $_index_two = trim($_data[2]); // Three Value
-        $_period = isset($_index_one) ? $_index_one : null; // get the Period of terms
-        $_number = count($_data) > 2 ? (int)filter_var($_index_two, FILTER_SANITIZE_NUMBER_INT) : ''; // Get the Number of Item of Category
-        $_error = null;
-        // Check the index 0 for Category 
-        switch ($_index_zero) {
-            case 'Quiz':
-                switch ($_index_two) {
-                    case str_contains($_index_two, 'ASSESSMENT') || str_contains($_index_two, 'EXAMINATION'):
-                        $_label = $_index_one[0] . 'E1';
-                        break;
-                    case str_contains($_index_two, 'Quiz'):
-                        $_label = 'Q' . $_number;
-                        break;
-                    default:
-                        $_label = null;
-                        $_error = str_contains($_index_two, 'Oral');
-                        break;
-                }
-                break;
-            case 'Assignment':
-                switch ($_index_two) {
-                    case str_contains($_index_two, 'Oral'):
-                        $_label = 'O' . $_number;
-                        break;
-                    case str_contains($_index_two, 'Laboratory'):
-                        $_label = 'A' . $_number;
-                        break;
-                    case str_contains($_index_two, 'Activity'):
-                        $_label = 'R' . $_number;
-                        break;
-                    default:
-                        $_label = null;
-                        $_error = str_contains($_index_two, 'Oral');
-                        break;
-                }
-                break;
-            default:
-                $_label = null;
-                $_error = null;
-                break;
+        if (count($_data) > 2) {
+            $_index_zero = trim($_data[0]); // First Value
+            $_index_one = trim($_data[1]); // Second Value  
+            $_index_two = trim($_data[2]); // Three Value
+            $_period = isset($_index_one) ? $_index_one : null; // get the Period of terms
+            $_number = count($_data) > 2 ? (int)filter_var($_index_two, FILTER_SANITIZE_NUMBER_INT) : ''; // Get the Number of Item of Category
+            $_error = null;
+            // Check the index 0 for Category 
+            switch ($_index_zero) {
+                case 'Quiz':
+                    switch ($_index_two) {
+                        case str_contains($_index_two, 'ASSESSMENT') || str_contains($_index_two, 'EXAMINATION'):
+                            $_label = $_index_one[0] . 'E1';
+                            break;
+                        case str_contains($_index_two, 'Quiz'):
+                            $_label = 'Q' . $_number;
+                            break;
+                        default:
+                            $_label = null;
+                            $_error = str_contains($_index_two, 'Oral');
+                            break;
+                    }
+                    break;
+                case 'Assignment':
+                    switch ($_index_two) {
+                        case str_contains($_index_two, 'Oral'):
+                            $_label = 'O' . $_number;
+                            break;
+                        case str_contains($_index_two, 'Laboratory'):
+                            $_label = 'A' . $_number;
+                            break;
+                        case str_contains($_index_two, 'Activity'):
+                            $_label = 'R' . $_number;
+                            break;
+                        default:
+                            $_label = null;
+                            $_error = str_contains($_index_two, 'Oral');
+                            break;
+                    }
+                    break;
+                default:
+                    $_label = null;
+                    $_error = null;
+                    break;
+            }
+        } else {
+            $_label = null;
+            $_period = null;
+            $_error = null;
         }
         return array('type' => $_label, 'period' => $_period, 'error' => $_error);
     }
