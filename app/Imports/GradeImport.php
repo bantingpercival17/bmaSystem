@@ -227,7 +227,7 @@ class GradeImport implements ToCollection
             $_error = null;
             // Check the index 0 for Category 
             switch ($_index_zero) {
-                case 'Quiz':
+                case 'QUIZ':
                     switch ($_index_two) {
                         case str_contains($_index_two, 'ASSESSMENT') || str_contains($_index_two, 'EXAMINATION'):
                             $_label = $_index_one[0] . 'E1';
@@ -241,7 +241,7 @@ class GradeImport implements ToCollection
                             break;
                     }
                     break;
-                case 'Assignment':
+                case 'ASSIGNMENT':
                     switch ($_index_two) {
                         case str_contains($_index_two, 'ORAL'):
                             $_label = 'O' . $_number;
