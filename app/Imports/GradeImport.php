@@ -164,7 +164,7 @@ class GradeImport implements ToCollection
                                 // Fetch the Headers
                                 $_data_to_log[] .= PHP_EOL; // Next line in log file
                                 $_data_to_log[] = "Header: "  . trim($header);
-                                $_data_header = $this->header_checker_v2($header);
+                                $_data_header = $this->header_checker_v2(strtoupper($header));
                                 $_data_to_log[] .= PHP_EOL; // Next line in log file
                                 $_data_to_log[] = "Section: " . $this->section;
                                 $_data_to_log[] = "Student: " . $_account->student_id;
@@ -232,7 +232,7 @@ class GradeImport implements ToCollection
                         case str_contains($_index_two, 'ASSESSMENT') || str_contains($_index_two, 'EXAMINATION'):
                             $_label = $_index_one[0] . 'E1';
                             break;
-                        case str_contains($_index_two, 'Quiz'):
+                        case str_contains($_index_two, 'QUIZ'):
                             $_label = 'Q' . $_number;
                             break;
                         default:
@@ -243,13 +243,13 @@ class GradeImport implements ToCollection
                     break;
                 case 'Assignment':
                     switch ($_index_two) {
-                        case str_contains($_index_two, 'Oral'):
+                        case str_contains($_index_two, 'ORAL'):
                             $_label = 'O' . $_number;
                             break;
-                        case str_contains($_index_two, 'Laboratory'):
+                        case str_contains($_index_two, 'LABORATORY'):
                             $_label = 'A' . $_number;
                             break;
-                        case str_contains($_index_two, 'Activity'):
+                        case str_contains($_index_two, 'ACTIVITY'):
                             $_label = 'R' . $_number;
                             break;
                         default:
