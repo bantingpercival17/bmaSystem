@@ -164,7 +164,7 @@ class GradeImport implements ToCollection
                                 // Fetch the Headers
                                 $_data_to_log[] .= PHP_EOL; // Next line in log file
                                 $_data_to_log[] = "Header: "  . trim($header);
-                                $_data_header = $this->header_checker_v2(strtoupper($header));
+                                $_data_header = $this->header_checker_v2(strtoupper(strtolower($header)));
                                 $_data_to_log[] .= PHP_EOL; // Next line in log file
                                 $_data_to_log[] = "Section: " . $this->section;
                                 $_data_to_log[] = "Student: " . $_account->student_id;
