@@ -46,7 +46,7 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
                // ->merge('img/t.jpg', 0.1, true)
                 ->size(200)->errorCorrection('H')
                 ->generate($_student_number . "." . mb_strtolower(str_replace(' ', '', $_data->student->last_name)));
-            $output_file = '/student/qr-code/' + $this->section->section_name + '/' . $_student_number . '.png';
+            $output_file = '/student/qr-code/' + $this->section->section_name + '/' . strval($_student_number) . '.png';
             Storage::disk('local')->put($output_file, $image); //storage/app/public/img/qr-code/img-1557309130.png 
         }
 
