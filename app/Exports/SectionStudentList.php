@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -9,6 +10,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping, WithHeadings, WithEvents, WithTitle
 {
@@ -38,7 +40,16 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
     }
     public function map($_data): array
     {
-        /* return $_data; */
+        if ($_data->student->account) {
+            $_student_number = $_data->student->account->student_number;
+            $image = QrCode::format('png')
+               // ->merge('img/t.jpg', 0.1, true)
+                ->size(200)->errorCorrection('H')
+                ->generate($_student_number . "." . mb_strtolower(str_replace(' ', '', $_data->student->last_name)));
+            $output_file = '/student/qr-code/' + $this->section->section_name + '/' . $_student_number . '.png';
+            Storage::disk('local')->put($output_file, $image); //storage/app/public/img/qr-code/img-1557309130.png 
+        }
+
         return [
             $_data->student->account ? $_data->student->account->student_number : '',
             $_data->student->account ?  $_data->student->account->campus_email : "-",
