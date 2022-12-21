@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeploymentAssesment;
+use App\Models\DocumentRequirements;
+use App\Models\Documents;
 use App\Models\Examination;
 use App\Models\ExaminationCategory;
 use App\Models\ExaminationQuestion;
@@ -46,11 +49,39 @@ class OnboardTrainingController extends Controller
     }
     public function midshipman_view(Request $_request)
     {
-        $_student_detials = new StudentDetails();
+        $_student_details = new StudentDetails();
+        $_shipboard_application = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')->join('deployment_assesments', 'student_details.id', 'deployment_assesments.student_id')->whereNull('staff_id')->orderby('deployment_assesments.id', 'desc')->paginate(10);
+        $_documents = Documents::where('is_removed', 1)->where('document_propose', 'PRE-DEPLOYMENT')->orderByRaw('CHAR_LENGTH("document_name")')->get();
+
         $_certificates = TrainingCertificates::where('is_removed', 1)->orderByRaw('CHAR_LENGTH("training_name")')->get();
-        $_students = $_request->_cadet ? $_student_detials->student_search($_request->_cadet) : [];
-        $_midshipman = $_request->_midshipman ? $_student_detials->find(base64_decode($_request->_midshipman)) : [];
-        return view('onboardtraining.student.view', compact('_midshipman', '_students', '_certificates'));
+        $_students = $_request->_cadet ? $_student_details->student_search($_request->_cadet) : $_shipboard_application;
+        $_midshipman = $_request->_midshipman ? $_student_details->find(base64_decode($_request->_midshipman)) : [];
+        return view('onboardtraining.student.view', compact('_midshipman', '_students', '_certificates', '_documents'));
+    }
+
+    public function shipboard_application_verification(Request $_request)
+    {
+        try {
+            $_document_verification = DocumentRequirements::find(base64_decode($_request->_document));
+            if ($_request->document_status == 1) {
+                $_document_verification->document_status = 1;
+            } else {
+                $_document_verification->document_status = 2;
+                $_document_verification->document_comment = $_request->_comment;
+            }
+            $_document_verification->staff_id = Auth::user()->id;
+            $_document_verification->save();
+            $_documents = Documents::where('is_removed', 1)->where('document_propose', 'PRE-DEPLOYMENT')->orderByRaw('CHAR_LENGTH("document_name")')->get();
+            $_document_status = DocumentRequirements::where('student_id', $_document_verification->student_id)->where('document_status', 1)->where('is_removed', false)->count();
+            if (count($_documents) == $_document_status) {
+                $_deployment = DeploymentAssesment::where('student_id', $_document_verification->student_id)->where('is_removed', false)->last();
+                $_deployment->staff = Auth::user()->id;
+                $_deployment->save();
+            }
+            return back()->with('message', 'Successfully Verified!');
+        } catch (Exception $error) {
+            return response(['error' => $error->getMessage()], 505);
+        }
     }
     public function midshipman_certificate_store(Request $_request)
     {

@@ -11,6 +11,8 @@ Route::prefix('onboard')->group(function () {
 
 
     Route::get('/midship-man', [OnboardTrainingController::class, 'midshipman_view'])->name('onboard.midshipman'); // Midship Man Profile
+    Route::get('miship-man/shipboard-application/document-verification', [OnboardTrainingController::class, 'shipboard_application_verification'])->name('onboard.midshipman-shipboard-application');
+
     Route::post('/midship-man/shipboard-training', [OnboardTrainingController::class, 'onboard_info_store'])->name('onboard.onboard-info-store');
     Route::post('/midship-man/shipboard-training-update', [OnboardTrainingController::class, 'onboard_info_store'])->name('onboard.onboard-info-update');
 

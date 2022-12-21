@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Route;
 /* Route::middleware('auth:applicant')->group(function () {
     Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
 }); */
+
 Route::post('/student/login', [AuthController::class, 'student_login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
@@ -37,6 +38,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // Student API
     Route::get('/student', [StudentController::class, 'student_details']);
     Route::get('/student/onboard', [StudentController::class, 'student_onboarding']);
+
+    Route::get('student/onboard/shipboard-application', [ShipboardTraining::class, 'student_shipboard_application']);
+    Route::post('/student/onboard/application-form', [ShipboardTraining::class, 'onboard_application']);
+    Route::post('/student/onboard/upload-file', [ShipboardTraining::class, 'upload_documents']);
+
     Route::get('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_view']);
     Route::post('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_store']);
 });

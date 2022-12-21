@@ -14,6 +14,9 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 
 class Controller extends BaseController
@@ -125,5 +128,19 @@ class Controller extends BaseController
         // IP Address
         // Device
         // Date / Time
+    }
+    public function saveFiles($_file, $_path = 'public', $_folder = 'extra')
+    {
+        if (!$_file) {
+            return null;
+        }
+        // Get Student Number
+        $_student_number = Auth::user() ? str_replace('@bma.edu.ph', '', trim(Auth::user()->email)) : str_replace('@gmail.com', '', trim(Auth::user()->personal_email));
+        // Get the extention of files
+        $filename =  $_student_number . '/' . $_folder . '/' . time() . '.' . $_file->getClientOriginalExtension();
+        // File Path Format : $_path.'/'.student-number.'/'.$_folder
+        $_path = $_path;
+        Storage::disk($_path)->put($filename, fopen($_file, 'r+'));
+        return URL::to('/') . '/storage/' . $_path . '/' . $filename;
     }
 }

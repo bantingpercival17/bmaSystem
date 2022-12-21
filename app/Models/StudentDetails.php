@@ -829,6 +829,10 @@ class StudentDetails extends Model
             ->join('shipboard_journals', 'shipboard_journals.student_id', 'student_details.id')
             ->where('shipboard_journals.is_approved', null)->groupBy('shipboard_journals.student_id')->where('shipboard_journals.is_removed', false);
     }
+    public function shipboard_application()
+    {
+        return $this->hasOne(DeploymentAssesment::class, 'student_id')/* ->where('is_removed', false)->whereNull('staff_id') */;
+    }
     public function shipboard_narative_status()
     {
         return $this->hasMany(ShipboardJournal::class, 'student_id')->groupBy('month')->whereNull('is_approved')->where('is_removed', false);
