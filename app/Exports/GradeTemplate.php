@@ -60,17 +60,18 @@ class GradeTemplate implements FromCollection, /* ShouldAutoSize,  */ WithEvents
             $_count += 1;
         }
         for ($i = 1; $i <= 10; $i++) {
-            $_data += array($_count => 'QUIZ :' . strtoupper(request()->input('_period')) . ": Quiz No." . $i);
+            $_data += array($_count => 'Quiz :' . strtoupper(request()->input('_period')) . ": Quiz No." . $i);
             $_count += 1;
         }
         for ($i = 1; $i <= 5; $i++) {
-            $_data += array($_count => 'ACTIVITY :' . strtoupper(request()->input('_period')) . ": Oral No." . $i);
+            $_data += array($_count => 'Assignment :' . strtoupper(request()->input('_period')) . ": Oral No." . $i);
             $_count += 1;
         }
         for ($i = 1; $i <= 10; $i++) {
-            $_data += array($_count => 'ACTIVITY :' . strtoupper(request()->input('_period')) . ": Activity No." . $i);
+            $_data += array($_count => 'Assignment :' . strtoupper(request()->input('_period')) . ": Activity No." . $i);
             $_count += 1;
         }
+        $_data+=array($_count=>'Quiz:'. strtoupper(request()->input('_period')) . ":EXAMINATION");
         return $_data;
     }
     public function registerEvents(): array
