@@ -1,10 +1,10 @@
 @extends('widgets.report.grade-v2.report_layout_1')
 @section('title-report', ' SUMMARY GRADES : ' . $_course->course_name)
 @php
-$_year_level = $_level == '4' ? 'First Year' : '';
-$_year_level = $_level == '3' ? 'Second Year' : $_year_level;
-$_year_level = $_level == '2' ? 'Third Year' : $_year_level;
-$_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
+    $_year_level = $_level == '4' ? 'First Year' : '';
+    $_year_level = $_level == '3' ? 'Second Year' : $_year_level;
+    $_year_level = $_level == '2' ? 'Third Year' : $_year_level;
+    $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
 @endphp
 @section('form-code', '')
 @section('content')
@@ -46,12 +46,12 @@ $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
                             @endphp
                             @foreach ($curriculum->curriculum->subject_lists([$_course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
                                 @php
-                                    $_subject_class= $_subject->curriculum_subject_class($_data->section_id);
+                                    $_subject_class = $_subject->curriculum_subject_class($_data->section_id);
                                     if ($_subject_class) {
                                         if ($_subject_class->grade_final_verification) {
-                                            $_final_grade = number_format($_data->student->final_grade($_subject_class->id, 'finals'), 2);
+                                            $_final_grade = number_format($_data->student->final_grade_v2($_subject_class->id, 'finals'), 2);
                                             $_final_grade = number_format($_data->student->percentage_grade($_final_grade), 2);
-                                            
+                                    
                                             if ($_subject->subject->subject_code == 'BRDGE') {
                                                 $_final_grade = $_data->student->enrollment_status->bridging_program == 'with' ? $_final_grade : '';
                                             } else {
