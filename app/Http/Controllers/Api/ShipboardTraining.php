@@ -126,4 +126,32 @@ class ShipboardTraining extends Controller
             // Create a function to Controler file to save and store the details of bugs
         }
     }
+    public function reupload_documents(Request $_request)
+    {
+        try {
+            //return $_request;
+            $_document = DocumentRequirements::find(base64_decode($_request->document));
+            $_data_link = $this->saveFiles($_request->file, 'public', 'onboard');
+            $_details = array(
+                'student_id' => $_document->student_id,
+                'document_id' => $_document->document_id,
+                'file_path' => $_data_link,
+                'document_path' => $_data_link,
+            );
+            if ($_data_link != null) {
+                DocumentRequirements::create($_details);
+                $_document->is_removed = true;
+                $_document->save();
+            }
+
+            $_data_link =  $_data_link != null ?
+                $_data_link = $_request->document . "~" . $_data_link :
+                $_data_link = null;
+            return response(['data' => $_data_link], 200);
+        } catch (Exception $error) {
+            return response(['error' => $error->getMessage()], 505);
+            $_request->header('User-Agent');
+            // Create a function to Controler file to save and store the details of bugs
+        }
+    }
 }
