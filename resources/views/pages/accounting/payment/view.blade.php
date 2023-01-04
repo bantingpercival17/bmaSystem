@@ -189,7 +189,7 @@
                                                 <option value="LOAN">LOAN</option>
                                                 <option value="CREDIT CARD">CREDIT CARD</option>
                                                 <option value="OVER-PAYMENT">OVER-PAYMENT</option>
-                                                <option value="DAND SCHOLAR">DAND SCHOLAR</option>
+                                                <option value="DAND SCHOLAR">BAND SCHOLAR</option>
                                             </select>
                                         </div>
 
