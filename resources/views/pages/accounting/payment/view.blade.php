@@ -174,6 +174,7 @@
                                                 <option value="Tuition Fee">TUITION FEE</option>
                                                 <option value="UNIFORM">UNIFORM</option>
                                                 <option value="GRADUATION FEE">GRADUATION FEE</option>
+                                                <option value="TABLET FEE">TABLET FEE</option>
                                             </select>
                                         </div>
                                         <div class="col-md">
