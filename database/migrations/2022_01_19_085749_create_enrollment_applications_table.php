@@ -21,6 +21,7 @@ class CreateEnrollmentApplicationsTable extends Migration
             $table->foreign('course_id')->references('id')->on('course_offers');
             $table->unsignedBigInteger('academic_id')->nullable();
             $table->foreign('academic_id')->references('id')->on('academic_years');
+            $table->string('enrollment_category')->nullbel();
             $table->string('enrollment_place'); // Online or Onsite
             $table->unsignedBigInteger('staff_id')->nullable();
             $table->foreign('staff_id')->references('id')->on('staff');

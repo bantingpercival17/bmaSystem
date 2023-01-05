@@ -51,7 +51,7 @@ class OnboardTrainingController extends Controller
     {
         $_student_details = new StudentDetails();
         $_shipboard_application = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')->join('deployment_assesments', 'student_details.id', 'deployment_assesments.student_id')->whereNull('staff_id')->orderby('deployment_assesments.id', 'desc')->paginate(10);
-        $_documents = Documents::where('is_removed', 1)->where('document_propose', 'PRE-DEPLOYMENT')->orderByRaw('CHAR_LENGTH("document_name")')->get();
+        $_documents = Documents::where('is_removed', false)->where('document_propose', 'PRE-DEPLOYMENT')->orderByRaw('CHAR_LENGTH("document_name")')->get();
 
         $_certificates = TrainingCertificates::where('is_removed', 1)->orderByRaw('CHAR_LENGTH("training_name")')->get();
         $_students = $_request->_cadet ? $_student_details->student_search($_request->_cadet) : $_shipboard_application;
