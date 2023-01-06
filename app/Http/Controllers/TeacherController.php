@@ -100,7 +100,7 @@ class TeacherController extends Controller
         // Viewing for Report and Grading Sheet
         $_columns = [['QUIZZES', 'Q', 10], ['ORAL EXAM', 'O', 5], ['R W - OUTPUT', 'R', 10], [request()->input('_period'),  strtoupper(request()->input('_period')[0]) . 'E', 1]];
         $_subject_code = $_subject->curriculum_subject->subject->subject_code;
-        if ($_subject->curriculum_subject->subject->laboratory_hours > 0 && $_subject_code !=  str_contains($_subject_code, 'P.E.')) {
+        if ($_subject->curriculum_subject->subject->laboratory_hours > 0 /* && $_subject_code !=  str_contains($_subject_code, 'P.E.') */) {
             $_columns[] =  ['Scientific and Technical Experiments Demonstrations of Competencies Acquired', 'A', 10];
         }
         if ($_request->_preview) {
