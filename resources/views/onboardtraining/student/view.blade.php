@@ -43,6 +43,291 @@
             @if ($_midshipman)
                 <div class="mt-6">
 
+                    @if ($_document_requirement->count() == $_document_status->count())
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="card-title text-primary"><b>SHIPBOARD TRAINING</b></p>
+                            </div>
+                            <div class="card-body">
+                                @if ($_midshipman->shipboard_training)
+                                    @if (request()->input('edit') == true)
+                                        <form action="{{ route('onboard.onboard-info-update') }}" method="post">
+                                            @csrf
+                                            <input type="hidden" name="_student_id" value="{{ $_midshipman->id }}">
+                                            <div class="row">
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>COMPANY NAME</small></label>
+                                                    <input type="text" class="form-control" name="company_name"
+                                                        value="{{ old('company_name') ?: $_midshipman->shipboard_training->company_name }}">
+                                                    @error('company_name')
+                                                        <span class="invalid-feedback text-danger" role="alert">
+                                                            <small> <b>{{ $message }}</b> </small>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>VESSEL NAME</small></label>
+                                                    <input type="text" class="form-control" name="_ship_name"
+                                                        value="{{ old('_ship_name') ?: $_midshipman->shipboard_training->vessel_name }}">
+                                                    @error('_ship_name')
+                                                        <span class="invalid-feedback text-danger" role="alert">
+                                                            <small> <b>{{ $message }}</b> </small>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group col-md-5">
+                                                    <label class="form-label-sm"><small>VESSEL TYPE</small></label>
+                                                    @php
+                                                        $_select = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER'];
+                                                    @endphp
+                                                    <select name="_type_vessel" class="form-select"
+                                                        value="{{ old('_type_vessel') }}">
+                                                        @foreach ($_select as $item)
+                                                            <option value="{{ $item }}"
+                                                                {{ old('_type_vessel') ? (old('_type_vessel') == $item ? 'selected' : '') : ($_midshipman->shipboard_training->vessel_type == $item ? 'selected' : '') }}>
+                                                                {{ $item }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('_type_vessel')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>SEA EXPERIENCE</small></label>
+                                                    <select name="_ship" id="" class="form-select">
+                                                        <option value="foreign"
+                                                            {{ old('_ship') ? (old('_ship') == 'foreign' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_company == 'foreign' ? 'selected' : '') }}>
+                                                            Foreign Ship</option>
+                                                        <option value="domestic"
+                                                            {{ old('_ship') ? (old('_ship') == 'domestic' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_company == 'domestic' ? 'selected' : '') }}>
+                                                            Domestic Ship</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>ONBOARD STATUS</small></label>
+                                                    {{ $_midshipman->shipboard_training->shipping_status }}
+                                                    <select name="_shipboard_status" id="" class="form-select">
+                                                        <option value="complete"
+                                                            {{ old('_shipboard_status') ? (old('_shipboard_status') == 'complete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipboard_status == 'complete' ? 'selected' : '') }}>
+                                                            COMPLETE</option>
+                                                        <option value="incomplete"
+                                                            {{ old('_shipboard_status') ? (old('_shipboard_status') == 'incomplete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipboard_status == 'incomplete' ? 'selected' : '') }}>
+                                                            INCOMPLETE</option>
+                                                        <option value="on going"
+                                                            {{ old('_shipboard_status') ? (old('_shipboard_status') == 'on going' ? 'selected' : '') : ($_midshipman->shipboard_training->shipboard_status == 'on going' ? 'selected' : '') }}>
+                                                            ON GOING</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>OBT BATCH</small></label>
+                                                    <input type="text" class="form-control" name="_sbt_batch"
+                                                        value="{{ old('_sbt_batch') ? old('_sbt_batch') : $_midshipman->shipboard_training->sbt_batch }}">
+                                                    @error('_sbt_batch')
+                                                        <span class="invalid-feedback text-danger" role="alert">
+                                                            <small> <b>{{ $message }}</b> </small>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
+                                                    <input class="form-control" type="date" name="_embarked"
+                                                        max="2029-12-31" min="2000-12-21"
+                                                        value="{{ $_midshipman->shipboard_training->embarked }}">
+                                                    @error('_embarked')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>DATE OF DISEMBARKED</small></label>
+                                                    <input class="form-control" type="date" name="_disemabarke"
+                                                        value="{{ old('_disemabarke') ? old('_disemabarke') : $_midshipman->shipboard_training->disembarked }}"
+                                                        max="2029-12-31" min="2000-12-21">
+                                                    @error('_disemabarke')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <button class="btn btn-primary w-100">SUBMIT</button>
+                                        </form>
+                                    @else
+                                        <form>
+                                            <div class="row">
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>OBT BATCH</small></label>
+                                                    <br>
+                                                    <label
+                                                        class=" text-primary"><b>{{ $_midshipman->shipboard_training->sbt_batch }}</b></label>
+                                                </div>
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>SEA EXPERIENCE</small></label>
+                                                    <br>
+                                                    <label
+                                                        class="text-primary"><b>{{ strtoupper($_midshipman->shipboard_training->shipping_company) }}</b></label>
+                                                </div>
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>STATUS</small></label>
+                                                    <br>
+                                                    <label class="text-primary">
+                                                        <b> {{ strtoupper($_midshipman->shipboard_training->shipboard_status) }}
+                                                        </b>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>COMPANY NAME</small></label>
+                                                    <br>
+                                                    <label
+                                                        class="text-primary"><b>{{ $_midshipman->shipboard_training->company_name }}</b></label>
+                                                </div>
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>VESSEL NAME</small></label>
+                                                    <br>
+                                                    <label class="text-primary">
+                                                        <b>{{ $_midshipman->shipboard_training->vessel_name }}</b>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>VESSEL TYPE</small></label>
+                                                    <br>
+                                                    <label
+                                                        class="text-primary"><b>{{ $_midshipman->shipboard_training->vessel_type }}</b></label>
+                                                </div>
+                                                <div class="form-group col-md">
+                                                    <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
+                                                    <br>
+                                                    <label
+                                                        class="text-primary"><b>{{ $_midshipman->shipboard_training->embarked }}</b></label>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                @if ($_midshipman->shipboard_training->shipboard_status != 'on going')
+                                                    <div class="form-group col-md">
+                                                        <label class="form-label-sm"><small>DATE OF
+                                                                DISEMBARKED</small></label>
+                                                        <br>
+                                                        <label
+                                                            class="text-primary"><b>{{ $_midshipman->shipboard_training->disembarked }}</b></label>
+                                                    </div>
+                                                @endif
+
+                                            </div>
+                                            <a href="{{ route('onboard.midshipman') }}?_midshipman={{ request()->input('_midshipman') }}&edit=true"
+                                                class="btn btn-info text-white w-100">UPDATE DETAILS</a>
+                                        </form>
+                                    @endif
+                                @else
+                                    <form action="{{ route('onboard.onboard-info-store') }}" method="post">
+                                        @csrf
+                                        <input type="hidden" name="_student_id" value="{{ $_midshipman->id }}">
+                                        <div class="row">
+                                            <div class="form-group col-md">
+                                                <label class="form-label-sm"><small>COMPANY NAME</small></label>
+                                                <input type="text" class="form-control" name="company_name"
+                                                    value="{{ old('company_name') }}">
+                                                @error('company_name')
+                                                    <span class="invalid-feedback text-danger" role="alert">
+                                                        <small> <b>{{ $message }}</b> </small>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md">
+                                                <label class="form-label-sm"><small>VESSEL NAME</small></label>
+                                                <input type="text" class="form-control" name="_ship_name"
+                                                    value="{{ old('_ship_name') }}">
+                                                @error('_ship_name')
+                                                    <span class="invalid-feedback text-danger" role="alert">
+                                                        <small> <b>{{ $message }}</b> </small>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-5">
+                                                <label class="form-label-sm"><small>VESSEL TYPE</small></label>
+                                                @php
+                                                    $_select = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER'];
+                                                @endphp
+                                                <select name="_type_vessel" class="form-select"
+                                                    value="{{ old('_type_vessel') }}">
+                                                    @foreach ($_select as $item)
+                                                        <option value="{{ $item }}"
+                                                            {{ old('_type_vessel') ? (old('_type_vessel') == $item ? 'selected' : '') : '' }}>
+                                                            {{ $item }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('_type_vessel')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md">
+                                                <label class="form-label-sm"><small>SEA EXPERIENCE</small></label>
+                                                <select name="_ship" id="" class="form-select">
+                                                    <option value="foreign"
+                                                        {{ old('_ship') ? (old('_ship') == 'foreign' ? 'selected' : '') : '' }}>
+                                                        Foreign Ship</option>
+                                                    <option value="domestic"
+                                                        {{ old('_ship') ? (old('_ship') == 'domestic' ? 'selected' : '') : '' }}>
+                                                        Domestic Ship</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-md">
+                                                <label class="form-label-sm"><small>ONBOARD STATUS</small></label>
+                                                <select name="_shipboard_status" id="" class="form-select">
+                                                    <option value="complete">
+                                                        COMPLETE</option>
+                                                    <option value="incomplete">
+                                                        INCOMPLETE</option>
+                                                    <option value="on going">
+                                                        ON GOING</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md">
+                                                <label class="form-label-sm"><small>OBT BATCH</small></label>
+                                                <input type="text" class="form-control" name="_sbt_batch"
+                                                    value="SBT" value="{{ old('_sbt_batch') }}">
+                                                @error('_sbt_batch')
+                                                    <span class="invalid-feedback text-danger" role="alert">
+                                                        <small> <b>{{ $message }}</b> </small>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md">
+                                                <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
+                                                <input class="form-control" type="date" name="_embarked"
+                                                    max="2029-12-31" min="2000-12-21" value="{{ old('_embarked') }}">
+                                                @error('_embarked')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md">
+                                                <label class="form-label-sm"><small>DATE OF DISEMBARKED</small></label>
+                                                <input class="form-control" type="date" name="_disemabarke"
+                                                    value="{{ old('_disemabarke') }}" max="2029-12-31" min="2000-12-21">
+                                                @error('_disemabarke')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <button class="btn btn-primary w-100">SUBMIT</button>
+                                    </form>
+                                @endif
+
+                            </div>
+                        </div>
+                    @endif
                     <div class="card">
                         <div class="card-header">
                             <p class="card-title text-primary"><b>SHIPBOARD APPLICATION</b></p>
@@ -53,7 +338,8 @@
                                 <label for=""
                                     class="form-control">{{ $_midshipman->shipboard_application->shipboard_companies->agency_name }}</label>
                             </div>
-                            <label for="" class="form-label h5 text-primary fw-bolder ">DOCUMENT REQUIRMENTS</label>
+                            <label for="" class="form-label h5 text-primary fw-bolder ">DOCUMENT
+                                REQUIRMENTS</label>
                             @foreach ($_documents as $document)
                                 <div class="form-group">
                                     <label for=""
@@ -156,289 +442,7 @@
                         </div>
                     </div>
 
-                    <div class="card">
-                        <div class="card-header">
-                            <p class="card-title text-primary"><b>SHIPBOARD TRAINING</b></p>
-                        </div>
-                        <div class="card-body">
-                            @if ($_midshipman->shipboard_training)
-                                @if (request()->input('edit') == true)
-                                    <form action="{{ route('onboard.onboard-info-update') }}" method="post">
-                                        @csrf
-                                        <input type="hidden" name="_student_id" value="{{ $_midshipman->id }}">
-                                        <div class="row">
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>COMPANY NAME</small></label>
-                                                <input type="text" class="form-control" name="company_name"
-                                                    value="{{ old('company_name') ?: $_midshipman->shipboard_training->company_name }}">
-                                                @error('company_name')
-                                                    <span class="invalid-feedback text-danger" role="alert">
-                                                        <small> <b>{{ $message }}</b> </small>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>VESSEL NAME</small></label>
-                                                <input type="text" class="form-control" name="_ship_name"
-                                                    value="{{ old('_ship_name') ?: $_midshipman->shipboard_training->vessel_name }}">
-                                                @error('_ship_name')
-                                                    <span class="invalid-feedback text-danger" role="alert">
-                                                        <small> <b>{{ $message }}</b> </small>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md-5">
-                                                <label class="form-label-sm"><small>VESSEL TYPE</small></label>
-                                                @php
-                                                    $_select = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER'];
-                                                @endphp
-                                                <select name="_type_vessel" class="form-select"
-                                                    value="{{ old('_type_vessel') }}">
-                                                    @foreach ($_select as $item)
-                                                        <option value="{{ $item }}"
-                                                            {{ old('_type_vessel') ? (old('_type_vessel') == $item ? 'selected' : '') : ($_midshipman->shipboard_training->vessel_type == $item ? 'selected' : '') }}>
-                                                            {{ $item }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('_type_vessel')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>SEA EXPERIENCE</small></label>
-                                                <select name="_ship" id="" class="form-select">
-                                                    <option value="foreign"
-                                                        {{ old('_ship') ? (old('_ship') == 'foreign' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_company == 'foreign' ? 'selected' : '') }}>
-                                                        Foreign Ship</option>
-                                                    <option value="domestic"
-                                                        {{ old('_ship') ? (old('_ship') == 'domestic' ? 'selected' : '') : ($_midshipman->shipboard_training->shipping_company == 'domestic' ? 'selected' : '') }}>
-                                                        Domestic Ship</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>ONBOARD STATUS</small></label>
-                                                {{ $_midshipman->shipboard_training->shipping_status }}
-                                                <select name="_shipboard_status" id="" class="form-select">
-                                                    <option value="complete"
-                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'complete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipboard_status == 'complete' ? 'selected' : '') }}>
-                                                        COMPLETE</option>
-                                                    <option value="incomplete"
-                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'incomplete' ? 'selected' : '') : ($_midshipman->shipboard_training->shipboard_status == 'incomplete' ? 'selected' : '') }}>
-                                                        INCOMPLETE</option>
-                                                    <option value="on going"
-                                                        {{ old('_shipboard_status') ? (old('_shipboard_status') == 'on going' ? 'selected' : '') : ($_midshipman->shipboard_training->shipboard_status == 'on going' ? 'selected' : '') }}>
-                                                        ON GOING</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>OBT BATCH</small></label>
-                                                <input type="text" class="form-control" name="_sbt_batch"
-                                                    value="{{ old('_sbt_batch') ? old('_sbt_batch') : $_midshipman->shipboard_training->sbt_batch }}">
-                                                @error('_sbt_batch')
-                                                    <span class="invalid-feedback text-danger" role="alert">
-                                                        <small> <b>{{ $message }}</b> </small>
-                                                    </span>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
-                                                <input class="form-control" type="date" name="_embarked"
-                                                    max="2029-12-31" min="2000-12-21"
-                                                    value="{{ $_midshipman->shipboard_training->embarked }}">
-                                                @error('_embarked')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>DATE OF DISEMBARKED</small></label>
-                                                <input class="form-control" type="date" name="_disemabarke"
-                                                    value="{{ old('_disemabarke') ? old('_disemabarke') : $_midshipman->shipboard_training->disembarked }}"
-                                                    max="2029-12-31" min="2000-12-21">
-                                                @error('_disemabarke')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
 
-                                        <button class="btn btn-primary w-100">SUBMIT</button>
-                                    </form>
-                                @else
-                                    <form>
-                                        <div class="row">
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>OBT BATCH</small></label>
-                                                <br>
-                                                <label
-                                                    class=" text-primary"><b>{{ $_midshipman->shipboard_training->sbt_batch }}</b></label>
-                                            </div>
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>SEA EXPERIENCE</small></label>
-                                                <br>
-                                                <label
-                                                    class="text-primary"><b>{{ strtoupper($_midshipman->shipboard_training->shipping_company) }}</b></label>
-                                            </div>
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>STATUS</small></label>
-                                                <br>
-                                                <label class="text-primary">
-                                                    <b> {{ strtoupper($_midshipman->shipboard_training->shipboard_status) }}
-                                                    </b>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>COMPANY NAME</small></label>
-                                                <br>
-                                                <label
-                                                    class="text-primary"><b>{{ $_midshipman->shipboard_training->company_name }}</b></label>
-                                            </div>
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>VESSEL NAME</small></label>
-                                                <br>
-                                                <label class="text-primary">
-                                                    <b>{{ $_midshipman->shipboard_training->vessel_name }}</b>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>VESSEL TYPE</small></label>
-                                                <br>
-                                                <label
-                                                    class="text-primary"><b>{{ $_midshipman->shipboard_training->vessel_type }}</b></label>
-                                            </div>
-                                            <div class="form-group col-md">
-                                                <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
-                                                <br>
-                                                <label
-                                                    class="text-primary"><b>{{ $_midshipman->shipboard_training->embarked }}</b></label>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            @if ($_midshipman->shipboard_training->shipboard_status != 'on going')
-                                                <div class="form-group col-md">
-                                                    <label class="form-label-sm"><small>DATE OF
-                                                            DISEMBARKED</small></label>
-                                                    <br>
-                                                    <label
-                                                        class="text-primary"><b>{{ $_midshipman->shipboard_training->disembarked }}</b></label>
-                                                </div>
-                                            @endif
-
-                                        </div>
-                                        <a href="{{ route('onboard.midshipman') }}?_midshipman={{ request()->input('_midshipman') }}&edit=true"
-                                            class="btn btn-info text-white w-100">UPDATE DETAILS</a>
-                                    </form>
-                                @endif
-                            @else
-                                <form action="{{ route('onboard.onboard-info-store') }}" method="post">
-                                    @csrf
-                                    <input type="hidden" name="_student_id" value="{{ $_midshipman->id }}">
-                                    <div class="row">
-                                        <div class="form-group col-md">
-                                            <label class="form-label-sm"><small>COMPANY NAME</small></label>
-                                            <input type="text" class="form-control" name="company_name"
-                                                value="{{ old('company_name') }}">
-                                            @error('company_name')
-                                                <span class="invalid-feedback text-danger" role="alert">
-                                                    <small> <b>{{ $message }}</b> </small>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md">
-                                            <label class="form-label-sm"><small>VESSEL NAME</small></label>
-                                            <input type="text" class="form-control" name="_ship_name"
-                                                value="{{ old('_ship_name') }}">
-                                            @error('_ship_name')
-                                                <span class="invalid-feedback text-danger" role="alert">
-                                                    <small> <b>{{ $message }}</b> </small>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-md-5">
-                                            <label class="form-label-sm"><small>VESSEL TYPE</small></label>
-                                            @php
-                                                $_select = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER'];
-                                            @endphp
-                                            <select name="_type_vessel" class="form-select"
-                                                value="{{ old('_type_vessel') }}">
-                                                @foreach ($_select as $item)
-                                                    <option value="{{ $item }}"
-                                                        {{ old('_type_vessel') ? (old('_type_vessel') == $item ? 'selected' : '') : '' }}>
-                                                        {{ $item }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('_type_vessel')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md">
-                                            <label class="form-label-sm"><small>SEA EXPERIENCE</small></label>
-                                            <select name="_ship" id="" class="form-select">
-                                                <option value="foreign"
-                                                    {{ old('_ship') ? (old('_ship') == 'foreign' ? 'selected' : '') : '' }}>
-                                                    Foreign Ship</option>
-                                                <option value="domestic"
-                                                    {{ old('_ship') ? (old('_ship') == 'domestic' ? 'selected' : '') : '' }}>
-                                                    Domestic Ship</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-md">
-                                            <label class="form-label-sm"><small>ONBOARD STATUS</small></label>
-                                            <select name="_shipboard_status" id="" class="form-select">
-                                                <option value="complete">
-                                                    COMPLETE</option>
-                                                <option value="incomplete">
-                                                    INCOMPLETE</option>
-                                                <option value="on going">
-                                                    ON GOING</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-md">
-                                            <label class="form-label-sm"><small>OBT BATCH</small></label>
-                                            <input type="text" class="form-control" name="_sbt_batch" value="SBT"
-                                                value="{{ old('_sbt_batch') }}">
-                                            @error('_sbt_batch')
-                                                <span class="invalid-feedback text-danger" role="alert">
-                                                    <small> <b>{{ $message }}</b> </small>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md">
-                                            <label class="form-label-sm"><small>DATE OF EMBARKED</small></label>
-                                            <input class="form-control" type="date" name="_embarked" max="2029-12-31"
-                                                min="2000-12-21" value="{{ old('_embarked') }}">
-                                            @error('_embarked')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md">
-                                            <label class="form-label-sm"><small>DATE OF DISEMBARKED</small></label>
-                                            <input class="form-control" type="date" name="_disemabarke"
-                                                value="{{ old('_disemabarke') }}" max="2029-12-31" min="2000-12-21">
-                                            @error('_disemabarke')
-                                                <div class="text-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <button class="btn btn-primary w-100">SUBMIT</button>
-                                </form>
-                            @endif
-
-                        </div>
-                    </div>
                 </div>
 
             @endif

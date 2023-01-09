@@ -54,9 +54,12 @@ class OnboardTrainingController extends Controller
         $_documents = Documents::where('is_removed', false)->where('document_propose', 'PRE-DEPLOYMENT')->orderByRaw('CHAR_LENGTH("document_name")')->get();
 
         $_certificates = TrainingCertificates::where('is_removed', 1)->orderByRaw('CHAR_LENGTH("training_name")')->get();
+        $_document_requirement = DocumentRequirements::where('student_id', Auth::user()->student_id)->where('is_removed', 0)->get();
+        // Document Status
+        $_document_status = DocumentRequirements::where('student_id', Auth::user()->student_id)->where('is_removed', false)->where('document_status', true)->get();
         $_students = $_request->_cadet ? $_student_details->student_search($_request->_cadet) : $_shipboard_application;
         $_midshipman = $_request->_midshipman ? $_student_details->find(base64_decode($_request->_midshipman)) : [];
-        return view('onboardtraining.student.view', compact('_midshipman', '_students', '_certificates', '_documents'));
+        return view('onboardtraining.student.view', compact('_midshipman', '_students', '_certificates', '_documents', '_document_requirement', '_document_status'));
     }
 
     public function shipboard_application_verification(Request $_request)
@@ -75,7 +78,7 @@ class OnboardTrainingController extends Controller
             $_document_status = DocumentRequirements::where('student_id', $_document_verification->student_id)->where('document_status', 1)->where('is_removed', false)->count();
             if (count($_documents) == $_document_status) {
                 $_deployment = DeploymentAssesment::where('student_id', $_document_verification->student_id)->where('is_removed', false)->last();
-                $_deployment->staff = Auth::user()->id;
+                $_deployment->staff_id= Auth::user()->id;
                 $_deployment->save();
             }
             return back()->with('message', 'Successfully Verified!');
