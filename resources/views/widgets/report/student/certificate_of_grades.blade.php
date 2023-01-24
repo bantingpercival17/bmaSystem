@@ -1,8 +1,8 @@
 @extends('widgets.report.grade.report_layout_1')
 @php
-$_form_number = 'AD-02a';
-$_average = 0;
-$_total_percentage = 0;
+    $_form_number = 'AD-02a';
+    $_average = 0;
+    $_total_percentage = 0;
 @endphp
 @section('title-report', $_form_number . ' - STUDENT REGISTRATION : ' . strtoupper($_student->last_name . ', ' .
     $_student->first_name . ' ' . $_student->middle_name))
@@ -79,7 +79,10 @@ $_total_percentage = 0;
                             @php
                                 $_percentage = 0;
                                 $_status = $_student->enrollment_status->bridging_program == 'with' || $item->curriculum_subject->subject->subject_code != 'BRDGE';
-                                $_final_grade = number_format($_student->final_grade_v2($item->id, 'finals'), 2); // Grade
+                                
+                                // TODO: Need to delete this Code
+                                $term = $_section->academic_id = 5 ? 'midterm' : 'finals';
+                                $_final_grade = number_format($_student->final_grade_v2($item->id, $term), 2); // Grade
                                 $_point = $_student->percentage_grade($_final_grade); // Points
                                 $_average = $_status ? $_average + $_final_grade : $_average;
                                 $_subject_count = $_status ? $_subject_count + 1 : $_subject_count; // Count the Subjects
@@ -182,5 +185,9 @@ $_total_percentage = 0;
                 </table>
             </div>
         </div>
+        @if ($_section->academic_id = 5)
+            <p><small>NOTE:PLEASE REMOVE THIS CODE..</small></p>
+        @endif
+
     </main>
 @endsection

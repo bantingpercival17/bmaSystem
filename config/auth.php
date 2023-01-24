@@ -41,8 +41,10 @@ return [
             'provider' => 'users',
         ],
         'applicant' => [
-            'driver' => 'sanctum',
-            'provider' => 'applicant',
+            //'driver' => 'sanctum',
+            'driver' => 'session',
+            //'driver' => 'passport',
+            'provider' => 'applicants',
             'hash' => false,
         ],
         'student' => [
@@ -74,7 +76,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-        'applicant' => [
+        'applicants' => [
             'driver' => 'eloquent',
             'model' => App\Models\ApplicantAccount::class,
         ],

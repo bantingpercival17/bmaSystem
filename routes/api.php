@@ -29,8 +29,8 @@ use Illuminate\Support\Facades\Route;
 /* Route::middleware('auth:applicant')->group(function () {
     Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
 }); */
-
-Route::post('/student/login', [AuthController::class, 'student_login']);
+require __DIR__ . '/additional-api/applicant-api.php';
+Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
     //Route::post('/logout', [ApplicantController::class, 'logout']);

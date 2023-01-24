@@ -104,8 +104,8 @@
       ),
       'applicant' => 
       array (
-        'driver' => 'sanctum',
-        'provider' => 'applicant',
+        'driver' => 'session',
+        'provider' => 'applicants',
         'hash' => false,
       ),
       'student' => 
@@ -127,7 +127,7 @@
         'driver' => 'eloquent',
         'model' => 'App\\Models\\User',
       ),
-      'applicant' => 
+      'applicants' => 
       array (
         'driver' => 'eloquent',
         'model' => 'App\\Models\\ApplicantAccount',

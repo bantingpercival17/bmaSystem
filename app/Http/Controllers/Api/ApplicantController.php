@@ -3,11 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicYear;
+use App\Models\ApplicantAccount;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ApplicantController extends Controller
 {
+    public function applicant_information()
+    {
+        $data = auth()->user();
+        return response(['data' => $data], 200);
+    }
     public function create_applicant_details(Request $_request)
     {
         $_inputs = $_request->validate([
@@ -42,7 +51,7 @@ class ApplicantController extends Controller
     {
         //auth()->user()->tokens()->delete();
         return [
-            'message' => 'Logget out'
+            'message' => 'Logget out',
         ];
     }
 }
