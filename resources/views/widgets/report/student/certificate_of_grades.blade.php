@@ -185,7 +185,7 @@
                 </table>
             </div>
         </div>
-        @if ($_section->academic_id = 5)
+        @if ($_section->academic_id == 5)
             <p><small>NOTE:PLEASE REMOVE THIS CODE..</small></p>
         @endif
 
