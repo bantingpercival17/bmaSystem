@@ -33,13 +33,20 @@ class Row implements ArrayAccess
     protected $rowCache;
 
     /**
+     * @var bool|null
+     */
+    protected $rowCacheFormatData;
+
+    /**
      * @param  SpreadsheetRow  $row
      * @param  array  $headingRow
+     * @param  array  $headerIsGrouped
      */
-    public function __construct(SpreadsheetRow $row, array $headingRow = [])
+    public function __construct(SpreadsheetRow $row, array $headingRow = [], array $headerIsGrouped = [])
     {
-        $this->row        = $row;
-        $this->headingRow = $headingRow;
+        $this->row             = $row;
+        $this->headingRow      = $headingRow;
+        $this->headerIsGrouped = $headerIsGrouped;
     }
 
     /**
@@ -71,7 +78,7 @@ class Row implements ArrayAccess
      */
     public function toArray($nullValue = null, $calculateFormulas = false, $formatData = true, ?string $endColumn = null)
     {
-        if (is_array($this->rowCache)) {
+        if (is_array($this->rowCache) && ($this->rowCacheFormatData === $formatData)) {
             return $this->rowCache;
         }
 
@@ -82,7 +89,11 @@ class Row implements ArrayAccess
             $value = (new Cell($cell))->getValue($nullValue, $calculateFormulas, $formatData);
 
             if (isset($this->headingRow[$i])) {
-                $cells[$this->headingRow[$i]] = $value;
+                if (!$this->headerIsGrouped[$i]) {
+                    $cells[$this->headingRow[$i]] = $value;
+                } else {
+                    $cells[$this->headingRow[$i]][] = $value;
+                }
             } else {
                 $cells[] = $value;
             }
@@ -94,7 +105,8 @@ class Row implements ArrayAccess
             $cells = ($this->preparationCallback)($cells, $this->row->getRowIndex());
         }
 
-        $this->rowCache = $cells;
+        $this->rowCache           = $cells;
+        $this->rowCacheFormatData = $formatData;
 
         return $cells;
     }
