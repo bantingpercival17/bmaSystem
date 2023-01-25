@@ -41,9 +41,7 @@ return [
             'provider' => 'users',
         ],
         'applicant' => [
-            //'driver' => 'sanctum',
-            'driver' => 'session',
-            //'driver' => 'passport',
+            'driver' => 'sanctum',
             'provider' => 'applicants',
             'hash' => false,
         ],

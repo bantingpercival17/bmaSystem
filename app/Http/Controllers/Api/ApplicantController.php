@@ -14,7 +14,9 @@ class ApplicantController extends Controller
 {
     public function applicant_information()
     {
-        $data = auth()->user();
+        $auth = auth()->user();
+        return $auth;
+        $data = Auth::guard('applicant')->user();
         return response(['data' => $data], 200);
     }
     public function create_applicant_details(Request $_request)
@@ -47,9 +49,11 @@ class ApplicantController extends Controller
         return response($_data);
     }
 
-    public function logout(Request $_request)
+    public function applicant_logout(Request $_request)
     {
+        Auth::guard('applicant')->user()->tokens()->delete();
         //auth()->user()->tokens()->delete();
+
         return [
             'message' => 'Logget out',
         ];

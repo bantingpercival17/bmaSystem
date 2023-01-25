@@ -136,13 +136,13 @@
 
                     <div class="d-flex" id="head-check">
                         <a class="nav-link {{ request()->input('view') == 'profile' || !request()->input('view') ? 'active' : 'text-muted' }}"
-                            href="/administrator/students/view?student={{ base64_encode($_student->id) }}&view=profile">PROFILE</a>
+                            href="{{route('registrar.student-profile')}}?student={{ base64_encode($_student->id) }}&view=profile">PROFILE</a>
                         <a class="nav-link  {{ request()->input('view') == 'enrollment' ? 'active' : 'text-muted' }}"
-                            href="/administrator/students/view?student={{ base64_encode($_student->id) }}&view=enrollment">ENROLLMENT</a>
+                            href="{{route('registrar.student-profile')}}?student={{ base64_encode($_student->id) }}&view=enrollment">ENROLLMENT</a>
                         <a class="nav-link   {{ request()->input('view') == 'account' ? 'active' : 'text-muted' }}"
-                            href="/administrator/students/view?student={{ base64_encode($_student->id) }}&view=account">ACCOUNT</a>
+                            href="{{route('registrar.student-profile')}}?student={{ base64_encode($_student->id) }}&view=account">ACCOUNT</a>
                         <a class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                            href="/administrator/students/view?student={{ base64_encode($_student->id) }}&view=grades">CERTIFICATE
+                            href="{{route('registrar.student-profile')}}?student={{ base64_encode($_student->id) }}&view=grades">CERTIFICATE
                             OF GRADE</a>
 
                         {{-- <a class="nav-link  " href="http://bma.edu.ph/bma/about-us">SETTING</a> --}}

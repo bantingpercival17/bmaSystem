@@ -9,4 +9,5 @@ Route::post('/applicant/register', [AuthController::class, 'applicant_registrati
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/applicant/information', [ApplicantController::class, 'applicant_information']);
+    Route::post('/applicant/logout', [ApplicantController::class, 'applicant_logout']);
 });

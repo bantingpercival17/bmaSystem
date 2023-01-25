@@ -22,22 +22,29 @@ class AuthController extends Controller
 
         ]);
         try {
-            if (!Auth::guard('applicant')->attempt($_fields)) {
+
+             // Check Email
+            $account = ApplicantAccount::where('email', $_fields['email'])->first();
+            // Check Password
+            if (!$account || !Hash::check($_fields['password'], $account->password)) {
+                return response(['message' => 'Invalid Creadials'], 401);
+            }
+            /* if (!Auth::guard('applicant')->attempt($_fields)) {
                 return response([
                     'message' => 'Invalide Credentials.'
                 ], 401);
             }
             $_data = Auth::guard('applicant')->user(); // Get the Applicant Account Details
-            $account = ApplicantAccount::find($_data->id);
+            $account = ApplicantAccount::find($_data->id); */
             $_token = $account->createToken('secretToken')->plainTextToken; // Get the secure Token
-            return response(['data' => $_data, 'token' => $_token], 200); // Then return Response to the Front End
+            return response(['data' => $account, 'token' => $_token], 200); // Then return Response to the Front End
         } catch (Expression $error) {
             return response([
                 'message' => $error
             ], 402);
         }
         #R22J300A1CW    R22J3009WFL
-    
+
     }
 
     public function applicant_registration(Request $_request)
@@ -114,12 +121,11 @@ class AuthController extends Controller
             }
             $_data = Auth::guard('student')->user();
             $_student = StudentAccount::find($_data->id);
-            $account = auth()->user();
             $student = StudentAccount::where('id', $_data->id)->with('student')->first();
             return response(
                 [
                     'account' => $student,
-                    'token' => $_student->createToken('secretToken')->plainTextToken
+                    'token' => $_student->createToken('studentToken')->plainTextToken
                 ],
                 200
             );

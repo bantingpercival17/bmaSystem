@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Route;
 /* Route::middleware('auth:applicant')->group(function () {
     Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
 }); */
+
 require __DIR__ . '/additional-api/applicant-api.php';
 Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -46,6 +47,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_view']);
     Route::post('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_store']);
+
+    Route::post('/student/logout', [StudentController::class, 'student_logout']);
 });
 Route::post('/paymongo-sources', [PaymongoApi::class, 'paymongo_sources']);
 Route::get('/paymongo', [PaymongoApi::class, 'paymongo_view']);

@@ -11,6 +11,7 @@ use App\Models\ShippingAgencies;
 use App\Models\StudentAccount;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
@@ -40,5 +41,11 @@ class StudentController extends Controller
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
         }
+    }
+
+    public function student_logout()
+    {
+        auth()->user()->tokens()->delete();
+        return response(['message' => ' Logout Success..'], 200);
     }
 }
