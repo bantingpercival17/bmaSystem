@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
+use App\Models\ApplicantDetials;
 use App\Models\StudentAccount;
 use Exception;
 use Illuminate\Database\Query\Expression;
@@ -23,7 +24,7 @@ class AuthController extends Controller
         ]);
         try {
 
-             // Check Email
+            // Check Email
             $account = ApplicantAccount::where('email', $_fields['email'])->first();
             // Check Password
             if (!$account || !Hash::check($_fields['password'], $account->password)) {
@@ -43,8 +44,6 @@ class AuthController extends Controller
                 'message' => $error
             ], 402);
         }
-        #R22J300A1CW    R22J3009WFL
-
     }
 
     public function applicant_registration(Request $_request)
@@ -55,10 +54,20 @@ class AuthController extends Controller
             'lastName' => 'required',
             'email' => 'required|string|unique:mysql2.applicant_accounts,email',
             'contactNumber' => 'required',
-            'password' => 'required|string',
-            'course' => 'required'
+            'password' => 'required|min:6|max:20|confirmed',
+            'course' => 'required',
+            'birthday' => 'required|string'
         ]);
         try {
+            // Applicant Validation
+            $_applicant = ApplicantDetials::where('first_name', $_fields['firstName'])
+                ->where('last_name', $_fields['lastName'])
+                ->where('birthday', $_fields['birthday'])
+                ->first();
+
+            if ($_applicant) {
+                return response(['message' => 'This Applicant is already existing'], 422);
+            }
             // Get the Academic School Year
             $_academic = AcademicYear::where('is_active', 1)->first();
             // Get the number of Applicant Per School Year 
@@ -73,7 +82,8 @@ class AuthController extends Controller
                 'academic_id' => $_academic->id,
                 'is_removed' => 0,
             ];
-            return response(['data' => $_details], 200);
+            ApplicantAccount::create($_details);
+            return response(['data' => 'Registration Successfully'], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
             $_request->header('User-Agent');
