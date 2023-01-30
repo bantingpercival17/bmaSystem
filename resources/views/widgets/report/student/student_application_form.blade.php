@@ -1,7 +1,7 @@
 @extends('widgets.report.grade.report_layout_1')
 @php
-$_form_number = $_enrollment_assessment->course_id == 3 ? ' RG-02' : ' RG-01';
-$_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLGE';
+    $_form_number = $_enrollment_assessment->course_id == 3 ? ' RG-02' : ' RG-01';
+    $_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLGE';
 @endphp
 @section('title-report', $_form_number . ' - STUDENT REGISTRATION : ' . strtoupper($_student->last_name . ', ' .
     $_student->first_name . ' ' . $_student->middle_name))
@@ -11,14 +11,16 @@ $_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 
         <h3 class="text-center">STUDENT'S APPLICATION FORM</h3>
         <small></small>
         <h5 class="text-center">
-            {{ $_department . ' - ' . $_enrollment_assessment->course->course_name }}</h5>
+            {{ $_department . ' - ' . $_enrollment_assessment->course->course_name }}
+        </h5>
         <br>
         <p class="title-header"><b>| PERSONAL INFORMATION</b></p>
         <table class="table">
             <tbody>
                 <tr>
-                    <td colspan="2"><small>APPLICANT NO:</small> <b>-{{ $_student->account_number }}</b> </td>
-                    <td> <small>APPLICATION DATE:</small>
+                    <td colspan="2"><small>APPLICANT NO:</small>
+                        <b>{{ $_student->applicant ? $_student->applicant->applicant_number : '-' }}</b> </td>
+                    <td colspan="2"> <small>APPLICATION DATE:</small>
                         <b>{{-- {{ strtoupper(date('F j, Y', strtotime($_student->created_at))) }} --}}-</b>
                     </td>
                 </tr>
@@ -27,7 +29,8 @@ $_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 
                         <small>APPLICANT NAME: </small>
                         <b>{{ strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name) }}</b>
                     </td>
-                    <td><small>BIRTH DATE:</small> <b>{{ Str::upper(date('F j, Y', strtotime($_student->birthday))) }}</b>
+                    <td colspan="2"><small>BIRTH DATE:</small>
+                        <b>{{ Str::upper(date('F j, Y', strtotime($_student->birthday))) }}</b>
                     </td>
                 </tr>
                 <tr>
@@ -38,6 +41,16 @@ $_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 
                     <td><small>GENDER: </small><b>{{ $_student->sex }}</td>
                     <td><small>HEIGHT: </small><b> -{{ $_student->height }} Ft/In</td>
                     <td><small>WEIGHT: </small><b> -{{ $_student->weight }} Kg</td>
+                    <td><small>BMI: </small><b> -</td>
+                    {{--  <td>
+                        @php
+                            $bmi = '-';
+                            if ($_student->weight > 0 && $_student->height) {
+                                $bmi = 0;
+                            }
+                        @endphp
+                        <small>BMI: </small><b> {{ $bmi }}</b>
+                    </td> --}}
                 </tr>
                 <tr>
                     <td colspan="2"><small>RELIGION: </small><b>{{ strtoupper($_student->religion) }}</td>
@@ -83,14 +96,14 @@ $_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 
                 <tr>
                     <td colspan="2">
                         <small>FATHER NAME:</small>
-                        <b>{{ strtoupper($_student->parent_details->father_last_name .', ' .$_student->parent_details->father_first_name .' ' .$_student->parent_details->father_middle_name) }}</b>
+                        <b>{{ strtoupper($_student->parent_details->father_last_name . ', ' . $_student->parent_details->father_first_name . ' ' . $_student->parent_details->father_middle_name) }}</b>
                     </td>
                     <td><small>CONTACT NUMBER:</small> <b>{{ $_student->parent_details->father_contact_number }}</td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <small>MOTHER'S MAIDEN NAME:</small>
-                        <b>{{ strtoupper($_student->parent_details->mother_last_name .', ' .$_student->parent_details->mother_first_name .' ' .$_student->parent_details->mother_middle_name) }}</b>
+                        <b>{{ strtoupper($_student->parent_details->mother_last_name . ', ' . $_student->parent_details->mother_first_name . ' ' . $_student->parent_details->mother_middle_name) }}</b>
                     </td>
                     <td><small>CONTACT NUMBER:</small> <b>{{ $_student->parent_details->mother_contact_number }}</td>
                 </tr>
@@ -124,7 +137,6 @@ $_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 
 
 
                 </tbody>
-
             @else
                 <tbody>
                     @foreach ($_student->educational_background as $_data)

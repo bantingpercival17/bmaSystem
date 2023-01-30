@@ -1,7 +1,7 @@
 @extends('widgets.report.app_report_template')
 @php
-$_form_number = $_account->course_id == 3 ? ' RG-02' : ' RG-01';
-$_department = $_account->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLEGE';
+    $_form_number = $_account->course_id == 3 ? ' RG-02' : ' RG-01';
+    $_department = $_account->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLEGE';
 @endphp
 @section('title-report',
     $_form_number .
@@ -13,7 +13,7 @@ $_department = $_account->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLEGE';
     $_account->applicant->first_name .
     ' ' .
     $_account->applicant->middle_name,
-    ),)
+    ))
 @section('form-code', $_form_number)
 @section('content')
     <main class="content">
@@ -60,6 +60,16 @@ $_department = $_account->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLEGE';
                     <td>
                         <small>WEIGHT: </small> <br>
                         <b> -{{ $_account->applicant->weight }} Kg</b>
+                    </td>
+                    <td>
+                        @php
+                            $bmi = 0;
+                            if ($_account->applicant->weight > 0 && $_account->applicant->height) {
+                                $bmi = 0;
+                            }
+                        @endphp
+                        <small>BMI: </small> <br>
+                        <b> {{ $bmi }}</b>
                     </td>
                 </tr>
                 <tr class="m-0 p-0">
@@ -267,8 +277,8 @@ $_department = $_account->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLEGE';
                     <div class="col-md-12">
                         <h5 class="fw-boldersss">{{ $docu->document_name }}</h5>
                         @if ($item)
-                            <img src="{{ json_decode($item->file_links)[0] }}" alt="" width="100%"
-                                srcset="" class="mb-3 mt-2">
+                            <img src="{{ json_decode($item->file_links)[0] }}" alt="" width="100%" srcset=""
+                                class="mb-3 mt-2">
                         @else
                         @endif
 
