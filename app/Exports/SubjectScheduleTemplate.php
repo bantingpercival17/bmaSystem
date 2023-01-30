@@ -38,12 +38,16 @@ class SubjectScheduleTemplate implements FromCollection, WithHeadings, WithMappi
     }
     public function map($_data): array
     {
+        $_subject_handle = $this->section->subject_handle($_data->id);
         return  [
             base64_encode($this->section->academic->id),
             base64_encode($_data->id),
             base64_encode($this->section->id),
             $_data->subject_code,
             $_data->subject_name,
+            $_subject_handle ? $_subject_handle->staff->user->email : '',
+            $_subject_handle ? $_subject_handle->staff->first_name . ' ' . $_subject_handle->staff->last_name : '',
+            //$this->section->subject_handle($_data->id),
         ];
     }
     public function title(): string

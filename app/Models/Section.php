@@ -65,4 +65,8 @@ class Section extends Model
     {
         return $this->hasMany('curriculum_id');
     }
+    public function subject_handle($_data)
+    {
+        return $this->hasOne(SubjectClass::class, 'section_id')->where('curriculum_subject_id', $_data)->where('is_removed', false)->first();
+    }
 }
