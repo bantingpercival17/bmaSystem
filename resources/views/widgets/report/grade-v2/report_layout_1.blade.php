@@ -74,11 +74,15 @@
         .table-content td,
         .table-content th {
             /* padding-top: 5px; */
-           /*  padding-bottom: 5px; */
+            /*  padding-bottom: 5px; */
             padding-left: 10px;
             /*  border: 1px solid rgb(126, 126, 126); */
             font-size: 14px;
 
+        }
+
+        .tr-incomplete {
+            color: #f53c3c;
         }
 
         .form-code {
@@ -92,8 +96,7 @@
             text-align: center;
         }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 
 <body>
@@ -113,8 +116,8 @@
                     <td>
                         <small>
                             GENERATED DATE: @php
-                                date_default_timezone_set('Asia/Manila');
-                                echo date('m/d/Y h:m:s');
+                            date_default_timezone_set('Asia/Manila');
+                            echo date('m/d/Y h:m:s');
                             @endphp
                         </small>
                     </td>

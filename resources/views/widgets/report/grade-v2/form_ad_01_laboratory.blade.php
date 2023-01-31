@@ -115,7 +115,59 @@
                                 $count = 0;
                             @endphp
                             @foreach ($_students as $_key => $_student)
-                                <tr class="text-center">
+                                @php
+                                    $_terms = request()->input('_period');
+                                    // Quiz
+                                    $_quiz_avg = $_student->student->subject_average_score([$_subject->id, $_terms, 'Q']);
+                                    $_quiz_percent = $_student->student->subject_score([$_subject->id, $_terms, 'Q1']) !== null ? ($_quiz_avg >= 0 ? number_format($_quiz_avg, 2) : null) : null;
+                                    // Oral
+                                    $_oral_avg = $_student->student->subject_average_score([$_subject->id, $_terms, 'O']);
+                                    $_oral_percent = $_student->student->subject_score([$_subject->id, $_terms, 'O1']) !== null ? ($_oral_avg >= 0 ? number_format($_oral_avg, 2) : null) : null;
+                                    // Output
+                                    $_output_avg = $_student->student->subject_average_score([$_subject->id, $_terms, 'R']);
+                                    $_output_percent = $_student->student->subject_score([$_subject->id, $_terms, 'R1']) !== null ? ($_output_avg >= 0 ? number_format($_output_avg, 2) : null) : null;
+                                    // Examination
+                                    $_exam_avg = $_student->student->subject_average_score([$_subject->id, $_terms, strtoupper($_terms)[0] . 'E']);
+                                    $_exam_percent = $_student->student->subject_score([$_subject->id, $_terms, strtoupper($_terms)[0] . 'E1']) !== null ? number_format($_exam_avg, 2) : null;
+                                    //$_exam_percent = $_exam_avg;
+                                    // Lecture Grade
+                                    $_lec_grade = $_student->student->lecture_grade([$_subject->id, $_terms]);
+                                    $_lecture_grade = $_quiz_percent !== null && $_oral_percent !== null && $_output_percent !== null && $_exam_percent !== null ? number_format($_lec_grade, 2) : '';
+                                    // Laboratory Grade
+                                    $_lab_grade = $_student->student->laboratory_grade([$_subject->id, $_terms]);
+                                    $_lab_grade = $_student->student->subject_score([$_subject->id, $_terms, 'A1']) !== null ? ($_lab_grade >= 0 ? number_format($_lab_grade, 2) : '') : '';
+                                    // Course Outcome
+                                    $_course_outcome_grade = $_student->student->subject_score([$_subject->id, $_terms, 'CO1']) !== null ? number_format($_student->student->subject_average_score([$_subject->id, $_terms, 'CO'], 2)) : '';
+                                    //Total Final Grade
+                                    $_period_final_grade = $_student->student->final_grade_v2($_subject->id, $_terms); // GET THE FINAL GRADE BASE THE TERMS
+                                    $_point_grade = '';
+                                    $_total_final_grade = '';
+
+                                    // CHECK IF THE SUBJECT HAVE A LABORATORY GRADES
+                                    if ($_subject->curriculum_subject->subject->laboratory_hours > 0) {
+                                        $_period_final_grade = number_format($_period_final_grade, 2);
+                                    } else {
+                                        $_period_final_grade = $_lecture_grade !== '' ? number_format($_period_final_grade, 2) : '';
+                                    }
+                                    if ($_period_final_grade !== '') {
+                                        $_point_grade = number_format($_student->student->percentage_grade(number_format($_period_final_grade, 2)), 2);
+                                    } else {
+                                        $_point_grade = $_quiz_percent !== null || $_oral_percent !== null || $_output_percent !== null || $_exam_percent !== null ? 'INC' : '';
+                                    }
+                                    // Computation of Total Final Grade for the Semester
+                                    if ($_terms == 'finals' && $_subject->academic->id > 4) {
+                                        if ($_period_final_grade !== '') {
+                                            $midtermGrade = $_student->student->final_grade_v2($_subject->id, 'midterm') * 0.32;
+                                            $finalsGrade = $_period_final_grade * 0.33;
+                                            $coa = $_student->student->subject_average_score([$_subject->id, $_terms, 'CO']) * 0.35;
+                                            $_total_final_grade = $midtermGrade + $finalsGrade + $coa;
+                                            $_total_final_grade = number_format($_total_final_grade, 2);
+                                        }
+                                    }
+                                    $_style = $_point_grade === 'INC' ? 'tr-incomplete' : '';
+                                    $count += 1;
+                                @endphp
+                                <tr class="text-center {{ $_style }}">
                                     <td>
                                         {{ $_key + 1 }}
                                     </td>
@@ -130,7 +182,7 @@
                                     @endfor
                                     <th>
                                         {{-- Quiz Average --}}
-                                        {{ $_student->student->quizzes_average() }}
+                                        {{ $_quiz_percent }}
                                     </th>
                                     @for ($i = 1; $i <= 5; $i++)
                                         <td>
@@ -139,7 +191,7 @@
                                     @endfor
                                     <th>
                                         {{-- Oral Average --}}
-                                        {{ $_student->student->oral_average() }}
+                                        {{ $_oral_percent }}
                                     </th>
                                     @for ($i = 1; $i <= 10; $i++)
                                         <td>
@@ -148,16 +200,17 @@
                                     @endfor
                                     <th>
                                         {{-- Research Word Output Average --}}
-                                        {{ $_student->student->research_work_average() }}
+                                        {{ $_output_percent }}
                                     </th>
                                     <td>
                                         {{ $_student->student->subject_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E1']) }}
                                     </td>
                                     <th>
-                                        {{ $_student->student->examination_average() }}
+                                        {{-- Examination Average --}}
+                                        {{ $_exam_percent }}
                                     </th>
                                     <th>
-                                        {{ $_student->student->lecture_grade_v2() }}
+                                        {{ $_lecture_grade }}
                                     </th>
                                     @for ($i = 1; $i <= 10; $i++)
                                         <td>
@@ -165,19 +218,20 @@
                                         </td>
                                     @endfor
                                     <th>
-                                        {{ $_student->student->laboratory_grade_v2() }}
+                                        {{ $_lab_grade }}
                                     </th>
                                     <th>
-                                        {{ $_student->student->period_final_grade() }}
+                                        {{ $_period_final_grade }}
                                     </th>
-                                    @if (request()->input('_period') == 'finals')
-                                        @if ($_subject->academic->id > 4)
-                                            <th>{{ $_student->student->course_outcome_avarage() }}</th>
-                                            <th></th>
+                                    @if ($_subject->academic->id > 4)
+                                        @if (request()->input('_period') == 'finals')
+                                            <th>{{ $_course_outcome_grade }}
+                                            </th>
+                                            <th>{{ $_total_final_grade }}</th>
                                         @endif
                                     @endif
                                     <th>
-                                        {{ $_student->student->point_grade() }}
+                                        {{ $_point_grade }}
                                     </th>
                                 </tr>
                             @endforeach
