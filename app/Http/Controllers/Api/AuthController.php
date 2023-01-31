@@ -7,6 +7,7 @@ use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDetials;
 use App\Models\StudentAccount;
+use App\Models\StudentDetails;
 use Exception;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
@@ -131,10 +132,13 @@ class AuthController extends Controller
             }
             $_data = Auth::guard('student')->user();
             $_student = StudentAccount::find($_data->id);
-            $student = StudentAccount::where('id', $_data->id)->with('student')->first();
+            $account = StudentAccount::where('id', $_data->id)->with('student')->first();
+            $student = StudentDetails::find($_data->student_id);
+            $profile_picture =  $student->profile_picture();
+            $student = compact('account', 'profile_picture');
             return response(
                 [
-                    'account' => $student,
+                    'student' => $student,
                     'token' => $_student->createToken('studentToken')->plainTextToken
                 ],
                 200

@@ -31,7 +31,7 @@ class StudentDetails extends Model
         "zip_code",
         "is_removed"
     ];
-
+    /* This portal the Back-end Side */
     public function profile_pic($_data)
     {
         $_formats = ['.jpeg', '.jpg', '.png'];
@@ -40,6 +40,17 @@ class StudentDetails extends Model
         $_image = "http://20.0.0.120/img/student-picture/midship-man.jpg";
         foreach ($_formats as $format) {
             $_image = @fopen($_path . $_data->student_number . $format, 'r') ? $_path . $_data->student_number . $format : $_image;
+        }
+        return $_image;
+    }
+    /* This for the Front-end Side */
+    public function profile_picture()
+    {
+        $_formats = ['.jpeg', '.jpg', '.png'];
+        $_path = 'http://20.0.0.120/img/student-picture/';
+        $_image = "http://20.0.0.120/img/student-picture/midship-man.jpg";
+        foreach ($_formats as $format) {
+            $_image = @fopen($_path . $this->account->student_number . $format, 'r') ? $_path . $this->account->student_number . $format : $_image;
         }
         return $_image;
     }

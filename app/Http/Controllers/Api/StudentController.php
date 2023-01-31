@@ -20,7 +20,8 @@ class StudentController extends Controller
     {
         $account = auth()->user();
         $student = StudentAccount::where('id', $account->id)->with('student')->first();
-        return response(['account' => $student], 200);
+        $profilePic = $student->profile_pic($account);
+        return response(['account' => $student, 'profile_picture' => $profilePic], 200);
     }
 
 
