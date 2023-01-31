@@ -11,6 +11,7 @@ class GradingSheetReport
         $this->student = $_student;
         $this->subject = $_subject;
         $this->legal = [0, 0, 612.00, 1008.00];
+        $this->super_legal = [0, 0, 612.00, 1085.538];
     }
 
     public function build()
@@ -27,7 +28,7 @@ class GradingSheetReport
         $_students = $this->student;
         $pdf = PDF::loadView("widgets.report.grade-v2.form_ad_01", compact('_students', '_subject'));
         $file_name = strtoupper($this->subject->curriculum_subject->subject->subject_code) . " - FORM AD 01";
-        return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
+        return $pdf->setPaper($this->super_legal, 'landscape')->stream($file_name . '.pdf');
     }
     public function form_ad_01_v1($_columns)
     {

@@ -73,8 +73,8 @@
 
         .table-content td,
         .table-content th {
-            padding-top: 5px;
-            padding-bottom: 5px;
+            /* padding-top: 5px; */
+           /*  padding-bottom: 5px; */
             padding-left: 10px;
             /*  border: 1px solid rgb(126, 126, 126); */
             font-size: 14px;

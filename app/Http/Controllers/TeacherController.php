@@ -103,6 +103,9 @@ class TeacherController extends Controller
         if ($_subject->curriculum_subject->subject->laboratory_hours > 0 /* && $_subject_code !=  str_contains($_subject_code, 'P.E.') */) {
             $_columns[] =  ['Scientific and Technical Experiments Demonstrations of Competencies Acquired', 'A', 10];
         }
+        if (request()->input('_period') == 'finals') {
+            $_columns[] = ['Course Outcome Grade','CO',10];
+        }
         if ($_request->_preview) {
             // Report View
             $_report = new GradingSheetReport($_students, $_subject);

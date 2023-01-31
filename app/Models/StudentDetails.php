@@ -132,7 +132,7 @@ class StudentDetails extends Model
     {
         $_student = explode(',', $_data);
         $_count = count($_student);
-        //$_students = 
+        //$_students =
         if (is_numeric($_data) == 1) {
             $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
                 ->where('student_accounts.student_number', $_data)->get();
@@ -197,11 +197,14 @@ class StudentDetails extends Model
             $_percent = $_data['2'] == 'Q' || $_data['2'] == 'O' || $_data['2'] == 'R'  ? .15 : .55;
         }
         // $_percent = $_data['2'] == 'Q' || $_data['2'] == 'O' || $_data['2'] == 'R'  ? .15 : .55;
-        return $this->hasMany(GradeEncode::class, 'student_id')
+        //Compute the total Average
+        $computetion =  $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $_data[0])
             ->where('period', $_data[1])
             ->where('is_removed', false)
-            ->where('type', 'like',  $_data[2] . "%")->average('score') * $_percent;
+            ->where('type', 'like',  $_data[2] . "%")->average('score');
+        // Convert into Percentage
+        return $_data['2'] == 'CO' ? $computetion : ($computetion  * $_percent);
     }
     public function lecture_grade($_data)
     {
@@ -574,7 +577,7 @@ class StudentDetails extends Model
         $_data_to_log[] =  $_SERVER['REMOTE_ADDR']; //IP address
         $_data_to_log[] =  $_campus_email; // Student Email
         $_data_to_log[] .= PHP_EOL;
-        // Checking the Student Details 
+        // Checking the Student Details
         if ($_student->student_details->first_name != '' && $_student->student_details->last_name != '') {
             if (!$_data_student) {
                 // If the Student is not exist to the it will be Created on the database

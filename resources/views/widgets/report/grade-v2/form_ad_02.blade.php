@@ -75,7 +75,7 @@
                                 <b>
                                     {{ $_final !== null ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
-                            <td class="text-center">
+                            <td class="text-center fw-bolder">
                                 <b>
                                     {{ $_final !== null ? ($_student->student->percentage_grade($_final) >= 5 ? 'FAILED' : 'PASSED') : '' }}
                                 </b>

@@ -60,8 +60,8 @@
                             <th>{{ strtoupper(request()->input('_period')) }} GRADE</th>
                             @if (request()->input('_period') == 'finals')
                                 @if ($_subject->academic->id > 4)
-                                    <th>CO GRADE</th>
-                                    <th>TOTAL FINAL GRADE</th>
+                                    <th>CO Grade</th>
+                                    <th>Total Final Grade</th>
                                 @endif
                             @endif
                             <th>POINT GRADE</th>
@@ -116,38 +116,25 @@
                             @endphp
                             @foreach ($_students as $_key => $_student)
                                 @php
-                                    $_terms = request()->input('_period');
                                     // Quiz
-                                    $_quiz_avg = $_student->student->subject_average_score([$_subject->id, $_terms, 'Q']);
-                                    $_quiz_percent = $_student->student->subject_score([$_subject->id, $_terms, 'Q1']) !== null ? ($_quiz_avg >= 0 ? number_format($_quiz_avg, 2) : null) : null;
+                                    $_quiz_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), 'Q']);
+                                    $_quiz_percent = $_student->student->subject_score([$_subject->id, request()->input('_period'), 'Q1']) !== null ? ($_quiz_avg >= 0 ? number_format($_quiz_avg, 2) : null) : null;
                                     // Oral
-                                    $_oral_avg = $_student->student->subject_average_score([$_subject->id, $_terms, 'O']);
-                                    $_oral_percent = $_student->student->subject_score([$_subject->id, $_terms, 'O1']) !== null ? ($_oral_avg >= 0 ? number_format($_oral_avg, 2) : null) : null;
+                                    $_oral_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), 'O']);
+                                    $_oral_percent = $_student->student->subject_score([$_subject->id, request()->input('_period'), 'O1']) !== null ? ($_oral_avg >= 0 ? number_format($_oral_avg, 2) : null) : null;
                                     // Output
-                                    $_output_avg = $_student->student->subject_average_score([$_subject->id, $_terms, 'R']);
-                                    $_output_percent = $_student->student->subject_score([$_subject->id, $_terms, 'R1']) !== null ? ($_output_avg >= 0 ? number_format($_output_avg, 2) : null) : null;
+                                    $_output_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), 'R']);
+                                    $_output_percent = $_student->student->subject_score([$_subject->id, request()->input('_period'), 'R1']) !== null ? ($_output_avg >= 0 ? number_format($_output_avg, 2) : null) : null;
                                     // Examination
-                                    $_exam_avg = $_student->student->subject_average_score([$_subject->id, $_terms, strtoupper($_terms)[0] . 'E']);
-                                    $_exam_percent = $_student->student->subject_score([$_subject->id, $_terms, strtoupper($_terms)[0] . 'E1']) !== null ? number_format($_exam_avg, 2) : null;
+                                    $_exam_avg = $_student->student->subject_average_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E']);
+                                    $_exam_percent = $_student->student->subject_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E1']) !== null ? number_format($_exam_avg, 2) : null;
                                     //$_exam_percent = $_exam_avg;
                                     // Lecture Grade
-                                    $_lec_grade = $_student->student->lecture_grade([$_subject->id, $_terms]);
+                                    $_lec_grade = $_student->student->lecture_grade([$_subject->id, request()->input('_period')]);
                                     $_lecture_grade = $_quiz_percent !== null && $_oral_percent !== null && $_output_percent !== null && $_exam_percent !== null ? number_format($_lec_grade, 2) : '';
                                     // Laboratory Grade
-                                    $_lab_grade = $_student->student->laboratory_grade([$_subject->id, $_terms]);
-                                    $_lab_grade = $_student->student->subject_score([$_subject->id, $_terms, 'A1']) !== null ? ($_lab_grade >= 0 ? number_format($_lab_grade, 2) : '') : '';
-                                    // Course Outcome
-                                    $_course_outcome_grade = $_student->student->subject_average_score([$_subject->id, $_terms, 'CO']);
-                                    //Total Final Grade
-                                    $_period_final_grade = $_student->student->final_grade_v2($_subject->id, $_terms); // GET THE FINAL GRADE BASE THE TERMS
-                                    $_point_grade = '';
-                                    // CHECK IF THE SUBJECT HAVE A LABORATORY GRADES
-                                    if ($_subject->curriculum_subject->subject->laboratory_hours > 0) {
-                                        $_period_final_grade = number_format($_period_final_grade, 2);
-                                    } else {
-                                        $_period_final_grade = $_lecture_grade !== '' ? number_format($_period_final_grade, 2) : '';
-                                    }
-                                    //$_final_grade = $_final !== '' ? ($_final >= 0 && $_exam_avg >= 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : 'INC') : '';
+                                    $_lab_grade = $_student->student->laboratory_grade([$_subject->id, request()->input('_period')]);
+                                    $_lab_grade = $_student->student->subject_score([$_subject->id, request()->input('_period'), 'A1']) !== null ? ($_lab_grade >= 0 ? number_format($_lab_grade, 2) : '') : '';
 
                                     $count += 1;
                                 @endphp
@@ -163,7 +150,6 @@
                                         </td>
                                     @endfor
                                     <th>
-                                        {{-- Quiz Average --}}
                                         {{ $_quiz_percent }}
                                     </th>
                                     @for ($i = 1; $i <= 5; $i++)
@@ -172,7 +158,6 @@
                                         </td>
                                     @endfor
                                     <th>
-                                        {{-- Oral Average --}}
                                         {{ $_oral_percent }}
                                     </th>
                                     @for ($i = 1; $i <= 10; $i++)
@@ -181,14 +166,12 @@
                                         </td>
                                     @endfor
                                     <th>
-                                        {{-- Research Word Output Average --}}
                                         {{ $_output_percent }}
                                     </th>
                                     <td>
                                         {{ $_student->student->subject_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E1']) }}
                                     </td>
                                     <th>
-                                        {{-- Examination Average --}}
                                         {{ $_exam_percent }}
                                     </th>
                                     <th>
@@ -202,17 +185,29 @@
                                     <th>
                                         {{ $_lab_grade }}
                                     </th>
+                                    @php
+                                        $_final = $_student->student->final_grade_v2($_subject->id, request()->input('_period'));
+                                        if ($_subject->curriculum_subject->subject->laboratory_hours > 0) {
+                                            $_final = number_format($_final, 2);
+                                        } else {
+                                            $_final = $_lecture_grade !== '' ? number_format($_final, 2) : '';
+                                        }
+                                    @endphp
                                     <th>
-                                        {{ $_period_final_grade }}
+                                        {{ $_final }}
                                     </th>
                                     @if (request()->input('_period') == 'finals')
                                         @if ($_subject->academic->id > 4)
-                                            <th>{{ $_course_outcome_grade }}</th>
+                                            <th></th>
                                             <th></th>
                                         @endif
                                     @endif
                                     <th>
-                                        {{-- {{ $_final_grade }} --}}
+
+                                        @php
+                                            $_final_grade = $_final !== '' ? ($_final >= 0 && $_exam_avg >= 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : 'INC') : '';
+                                        @endphp
+                                        {{ $_final_grade }}
                                     </th>
                                 </tr>
                             @endforeach
