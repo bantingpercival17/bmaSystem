@@ -99,7 +99,7 @@ class StudentInformationImport implements ToCollection
                     EnrollmentAssessment::create($_enrollment);
                     $_details = array(
                         'student_id' => $_student->id,
-                        'campus_email' => $_data[2] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[3]))) . "@bma.edu.ph",
+                        'email' => $_data[2] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[3]))) . "@bma.edu.ph",
                         'personal_email' => $_data[1],
                         'student_number' => $_data[2],
                         'password' => Hash::make($_data[2]),
@@ -109,11 +109,11 @@ class StudentInformationImport implements ToCollection
                     StudentAccount::create($_details);
                     echo var_dump($_details) . "<br>";
                 } else {
-                    echo "Email: :" . ($_student->account ? $_student->account->campus_email : " Not Saved") . "<br>";
+                    echo "Email: :" . ($_student->account ? $_student->account->email : " Not Saved") . "<br>";
                     if (!$_student->account) {
                         $_details = array(
                             'student_id' => $_student->id,
-                            'campus_email' => $_data[2] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[3]))) . "@bma.edu.ph",
+                            'email' => $_data[2] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[3]))) . "@bma.edu.ph",
                             'personal_email' => $_data[1],
                             'student_number' => $_data[2],
                             'password' => Hash::make($_data[2]),
@@ -133,12 +133,12 @@ class StudentInformationImport implements ToCollection
             if ($key > 0 && !empty($_data[0])) {
                 $_account = StudentAccount::where('student_number', $_data[0])->first();
                 if ($_account) {
-                    // Existing 
+                    // Existing
                     echo  ucwords(mb_strtolower(trim($_data[1] . ', ' . $_data[2]))) . ": Saved.<br>";
-                    echo $_account->campus_email . "<br>";
+                    echo $_account->email . "<br>";
                     // What next's?
                 } else {
-                    // Missing Email 
+                    // Missing Email
                     echo  ucwords(mb_strtolower(trim($_data[1] . ', ' . $_data[2]))) . "<br>";
                     // Find Student Name
                     $_student = StudentDetails::where([
@@ -198,7 +198,7 @@ class StudentInformationImport implements ToCollection
         try {
             $_details = array(
                 'student_id' => $_student->id,
-                'campus_email' => $_data[0] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[2]))) . "@bma.edu.ph",
+                'email' => $_data[0] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[2]))) . "@bma.edu.ph",
                 'personal_email' => $_data[0] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[2]))) . "@bma.edu.ph",
                 'student_number' => $_data[0],
                 'password' => Hash::make($_data[0]),
@@ -214,7 +214,7 @@ class StudentInformationImport implements ToCollection
     {
         $_account->student_number = $_data[0];
         $_account->student_id = $_student->id;
-        $_account->campus_email = $_data[0] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[2]))) . "@bma.edu.ph";
+        $_account->email = $_data[0] . "." . mb_strtolower(trim(str_replace(' ', '', $_data[2]))) . "@bma.edu.ph";
         $_account->save();
     }
     public function create_enrollment($_student, $_data)

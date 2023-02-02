@@ -199,7 +199,7 @@ $_title = 'Payment Assessment';
                                         </div>
 
                                     </a>
-                                    <span>{{ $_data->student->account ? $_data->student->account->campus_email : '-' }}</span>
+                                    <span>{{ $_data->student->account ? $_data->student->account->email : '-' }}</span>
                                     <br>
                                     <span
                                         class="badge bg-primary">{{ $_data->student->enrollment_assessment->course->course_name }}</span>

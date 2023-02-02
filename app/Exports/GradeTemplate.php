@@ -28,7 +28,7 @@ class GradeTemplate implements FromCollection, /* ShouldAutoSize,  */ WithEvents
     {
         $_count = 0;
         $_content = [];
-        $_column_content = [$_data->last_name, $_data->first_name, $_data->middle_name, $_data->account->student_number, $_data->enrollment_assessment->course->course_name, $_data->account->campus_email];
+        $_column_content = [$_data->last_name, $_data->first_name, $_data->middle_name, $_data->account->student_number, $_data->enrollment_assessment->course->course_name, $_data->account->email];
         foreach ($_column_content as $key => $value) {
             $_content += [$_count => $value];
             $_count += 1;

@@ -104,7 +104,7 @@ $_title = 'Shipboard Monitoring';
                                                             $myFile = pathinfo($links);
                                                             $_ext = $myFile['extension'];
                                                             $_file = $myFile['basename'];
-                                                            $_file = str_replace('[' . str_replace('@bma.edu.ph', '', $_midshipman->account->campus_email) . ']', '', $_file);
+                                                            $_file = str_replace('[' . str_replace('@bma.edu.ph', '', $_midshipman->account->email) . ']', '', $_file);
                                                         @endphp
                                                         <i>
                                                             @if ($_ext == 'docx' || $_ext == 'doc')

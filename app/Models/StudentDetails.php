@@ -603,7 +603,7 @@ class StudentDetails extends Model
         echo "Student Details Saved <br>";
         $_account = array(
             'student_id' => $_save_student->id,
-            'campus_email' => $_student->student_details->student_number . "." . mb_strtolower(str_replace(' ', '', $_student->student_details->last_name)) . "@bma.edu.ph",
+            'email' => $_student->student_details->student_number . "." . mb_strtolower(str_replace(' ', '', $_student->student_details->last_name)) . "@bma.edu.ph",
             'personal_email' => $_student->student_details->email,
             'student_number' => $_student->student_details->student_number,
             'password' => Hash::make($_student->student_details->student_number),
@@ -682,11 +682,11 @@ class StudentDetails extends Model
     {
 
         //return dd($_student);
-        $_campus_email = $_student->student_details->student_number . "." . mb_strtolower(str_replace(' ', '', $_student->student_details->last_name)) . "@bma.edu.ph";
+        $_email = $_student->student_details->student_number . "." . mb_strtolower(str_replace(' ', '', $_student->student_details->last_name)) . "@bma.edu.ph";
         $_data_student = StudentDetails::where(['first_name' => $_student->student_details->first_name, 'last_name' => $_student->student_details->last_name])->first();
         $_data_to_log[] =  date("Y-m-d H:i:s"); //Date and time
         $_data_to_log[] =  $_SERVER['REMOTE_ADDR']; //IP address
-        $_data_to_log[] =  $_campus_email; // Student Email
+        $_data_to_log[] =  $_email; // Student Email
         $_data_to_log[] .= PHP_EOL;
         // Checking the Student Details
         if ($_student->student_details->first_name != '' && $_student->student_details->last_name != '') {
@@ -711,7 +711,7 @@ class StudentDetails extends Model
                 $_data_to_log[] .= PHP_EOL;
                 $_create_account = array(
                     'student_id' => $_store_student->id,
-                    'campus_email' => $_student->student_details->student_number . "." . mb_strtolower(str_replace(' ', '', $_student->student_details->last_name)) . "@bma.edu.ph",
+                    'email' => $_student->student_details->student_number . "." . mb_strtolower(str_replace(' ', '', $_student->student_details->last_name)) . "@bma.edu.ph",
                     'personal_email' => $_student->student_details->email,
                     'student_number' => $_student->student_details->student_number,
                     'password' => Hash::make($_student->student_details->student_number),
@@ -845,7 +845,7 @@ class StudentDetails extends Model
             } else {
                 // Then if Student exist all the data Updates
                 if ($_data_student->account) {
-                    $_data_student->account->campus_email = trim(str_replace('-', '', $_data_student->account->campus_email));
+                    $_data_student->account->email = trim(str_replace('-', '', $_data_student->account->email));
                     $_data_student->account->personal_email = trim(str_replace(' ', '', $_data_student->account->personal_email));
                     $_data_student->account->save();
                     $_data_to_log[] = ':: Updating Emails';

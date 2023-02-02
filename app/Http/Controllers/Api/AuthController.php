@@ -65,16 +65,17 @@ class AuthController extends Controller
                 ->where('last_name', $_fields['lastName'])
                 ->where('birthday', $_fields['birthday'])
                 ->first();
-
-            if ($_applicant) {
+            return $_account = ApplicantAccount::where('name', trim($_fields['firstName']) . ' ' . trim($_fields['lastName']))->first();
+            if ($_applicant || $_account) {
+                return $_applicant->account;
                 return response(['message' => 'This Applicant is already existing'], 422);
             }
             // Get the Academic School Year
             $_academic = AcademicYear::where('is_active', 1)->first();
-            // Get the number of Applicant Per School Year 
+            // Get the number of Applicant Per School Year
             $_transaction_number = ApplicantAccount::where('academic_id', $_academic->id)->count();
             $_details = [
-                'name' => $_request->firstName . ' ' . $_request->lastName,
+                'name' => trim($_request->firstName) . ' ' . trim($_request->lastName),
                 'email' => $_request->email,
                 'course_id' => $_request->course,
                 'contact_number' => $_request->contactNumber,
@@ -83,7 +84,7 @@ class AuthController extends Controller
                 'academic_id' => $_academic->id,
                 'is_removed' => 0,
             ];
-            ApplicantAccount::create($_details);
+            /*   ApplicantAccount::create($_details); */
             return response(['data' => 'Registration Successfully'], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);

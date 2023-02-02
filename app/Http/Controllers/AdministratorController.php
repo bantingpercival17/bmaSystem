@@ -144,7 +144,7 @@ class AdministratorController extends Controller
             $_account_content = array(
                 'student_id' => $_student->id,
                 'student_number' => $_request->student_number,
-                'campus_email' => $_request->student_number . '.' . str_replace(' ', ' ', strtolower($_student->last_name)) . '@bma.edu.ph',
+                'email' => $_request->student_number . '.' . str_replace(' ', ' ', strtolower($_student->last_name)) . '@bma.edu.ph',
                 'personal_email' => $_request->personal_email ?: '',
                 'is_actived' => true,
                 'is_removed' => false
@@ -531,7 +531,7 @@ class AdministratorController extends Controller
         $_documents = Documents::where('is_removed', false)->get();
         return view('pages.administrator.setting.view', compact('_roles', '_academic', '_department', '_documents'));
     }
-    // Academic 
+    // Academic
     public function store_academic(Request $_request)
     {
         $_current_academic = AcademicYear::where('is_active', true)->first();
@@ -679,8 +679,8 @@ class AdministratorController extends Controller
         $_student = StudentDetails::find(90);
         $_email_model = new StudentEnrollmentMail($_student);
         //return $_applicant->email;
-        //Student Email 
-        $_email = $_student->account->campus_email;
+        //Student Email
+        $_email = $_student->account->email;
         $_cc = $_student->account->personal_email;
         $_email = 'p.banting@bma.edu.ph';
         $_cc = 'p.banting@bma.edu.ph';

@@ -122,7 +122,7 @@ class ExecutiveOfficeController extends Controller
                     $_respond = $_time_out_content_respond;
                 }
             } else {
-                $_attendance = EmployeeAttendance::create($_staff_content); // Save Time in 
+                $_attendance = EmployeeAttendance::create($_staff_content); // Save Time in
                 $_respond = $_time_in_content_respond;
             }
             //$_attendance = $_attendance ? $_attendance->update(['time_out' => now()]) : EmployeeAttendance::create($_staff_content); // Save Time in and Update the time Out
@@ -180,7 +180,7 @@ class ExecutiveOfficeController extends Controller
                 if ($_attendance) {
                     $_attendance->update(['time_out' => now()]); // Update the time Out
                 } else {
-                    $_attendance = EmployeeAttendance::create($_staff_content); // Save Time in 
+                    $_attendance = EmployeeAttendance::create($_staff_content); // Save Time in
                 }
                 //$_attendance = $_attendance ? $_attendance->update(['time_out' => now()]) : EmployeeAttendance::create($_staff_content); // Save Time in and Update the time Out
                 $_attendance = EmployeeAttendance::find($_attendance->id);
@@ -254,9 +254,9 @@ class ExecutiveOfficeController extends Controller
     }
     public function student_qrcode_data_v2($_data, $_date)
     {
-        $_email = $_data[0]; // Get Email 
+        $_email = $_data[0]; // Get Email
         $_time_in =   date_format(date_create($_data[2]), "Y-m-d"); // Get Date and Convert
-        $_account = StudentAccount::where('campus_email', $_email)->first();
+        $_account = StudentAccount::where('email', $_email)->first();
         if ($_account) {
             $_attendance = StudentAttendance::where('student_id', $_account->student_id)
                 ->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->first();

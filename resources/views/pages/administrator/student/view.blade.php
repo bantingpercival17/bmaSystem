@@ -76,7 +76,7 @@ $_title = 'Students';
                                     </div>
                                     <div class="d-flex justify-content-between mt-2">
                                         <div>
-                                            <span>{{ $_student->account ? $_student->account->campus_email : '-' }}</span>
+                                            <span>{{ $_student->account ? $_student->account->email : '-' }}</span>
                                             <br>
                                             <span
                                                 class="badge bg-primary">{{ $_student->enrollment_assessment ? $_student->enrollment_assessment->course->course_name : '-' }}</span>

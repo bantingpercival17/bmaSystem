@@ -241,7 +241,7 @@ $_title = 'Student';
                                                     CAMPUS EMAIL
                                                 </small> <br>
                                                 <label for="" class="text-primary fw-bolder">
-                                                    {{ $item->campus_email }}
+                                                    {{ $item->email }}
                                                 </label>
                                             </div>
                                             <div class="col-md">

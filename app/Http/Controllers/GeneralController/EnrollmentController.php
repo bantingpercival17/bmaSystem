@@ -53,12 +53,12 @@ class EnrollmentController extends Controller
             $_file_export = new CourseStudentEnrolled($_course);
             // Excell Report
             if ($_request->_report == 'excel-report') {
-                $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+                $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
                 ob_end_clean();
                 return $_respond;
             }
             if ($_request->_report == 'pdf-report') {
-                return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File 
+                return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File
             }
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
@@ -131,7 +131,7 @@ class EnrollmentController extends Controller
             $_email =  $_student_number . '.' . str_replace(' ', '', str_replace('.', '', mb_strtolower($value->student->last_name))) . '@bma.edu.ph';
             $_account_details = array(
                 'student_id' => $value->student_id,
-                'campus_email' => $_email,
+                'email' => $_email,
                 'student_number' => $_student_number,
                 'password' => Hash::make($_student_number),
                 'is_actived' => true,

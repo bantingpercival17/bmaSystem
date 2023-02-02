@@ -33,7 +33,7 @@ class GradeImport implements ToCollection
         $_file_name = 'log/' . str_replace(' ', '_', $_section->section->section_name)  . "/" . str_replace(' ', '_', $_section->curriculum_subject->subject->subject_code) . date('d_m_y') . '.log';
         foreach ($collection as $key => $_data) {
             if ($key > 0 && $_data[0]) {
-                $_account = StudentAccount::where('campus_email',  $_data[5])->first(); // Find Student Id
+                $_account = StudentAccount::where('email',  $_data[5])->first(); // Find Student Id
                 // Chech if the Student is Exist
                 if ($_account) {
                     $_student_subject = StudentSection::where('student_id', $_account->student_id)->where('section_id', $_section->section->id)->first();
@@ -154,7 +154,7 @@ class GradeImport implements ToCollection
             $_data_to_log[] =  $_SERVER['REMOTE_ADDR'];
             $_data_to_log[]  = date("Y-m-d H:i:s");
             if ($key > 0 && $_data[0]) {
-                $_account = StudentAccount::where('campus_email',  $_data[5])->first(); // Find Student Id
+                $_account = StudentAccount::where('email',  $_data[5])->first(); // Find Student Id
                 if ($_account) {
                     $_student_subject = StudentSection::where('student_id', $_account->student_id)->where('section_id', $_section->section->id)->first();
                     if ($_student_subject) {
@@ -220,12 +220,12 @@ class GradeImport implements ToCollection
         $_data = explode(":", $_value); // Separates the Header Categories
         if (count($_data) > 2) {
             $_index_zero = trim($_data[0]); // First Value
-            $_index_one = trim($_data[1]); // Second Value  
+            $_index_one = trim($_data[1]); // Second Value
             $_index_two = trim($_data[2]); // Three Value
             $_period = isset($_index_one) ? $_index_one : null; // get the Period of terms
             $_number = count($_data) > 2 ? (int)filter_var($_index_two, FILTER_SANITIZE_NUMBER_INT) : ''; // Get the Number of Item of Category
             $_error = null;
-            // Check the index 0 for Category 
+            // Check the index 0 for Category
             switch ($_index_zero) {
                 case 'QUIZ':
                     switch ($_index_two) {

@@ -79,9 +79,9 @@
                                                 } else {
                                                     $_course_color = 'text-muted';
                                                 }
-                                                
+
                                                 //echo $_student->enrollment_assessment->course_id;
-                                                
+
                                             @endphp
                                             <small
                                                 class="badge {{ $_course_color }}">{{ $item->enrollment_assessment ? $item->enrollment_assessment->course->course_code : '-' }}</small>
@@ -465,7 +465,7 @@
                                                             CAMPUS EMAIL
                                                         </small> <br>
                                                         <label for="" class="text-primary fw-bolder">
-                                                            {{ $item->campus_email }}
+                                                            {{ $item->email }}
                                                         </label>
                                                     </div>
                                                     <div class="col-md">

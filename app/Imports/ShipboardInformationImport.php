@@ -26,7 +26,7 @@ class ShipboardInformationImport implements ToCollection
                         $_account = $_student->account;
                         $_shipboard = ShipBoardInformation::where('student_id', $_student->id)->first();
                         echo  ucwords(mb_strtolower(trim($_data[1] . ', ' . $_data[2]))) . ": " . $_data[0] . ".<br>";
-                        //echo $_account->campus_email . "<br>";
+                        //echo $_account->email . "<br>";
                         if ($_shipboard) {
                             $this->update_information($_shipboard, $_data);
                             echo "Shipboard Information : Update <br>";

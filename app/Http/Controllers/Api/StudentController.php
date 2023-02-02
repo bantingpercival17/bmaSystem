@@ -24,7 +24,10 @@ class StudentController extends Controller
         return response(['account' => $student, 'profile_picture' => $profilePic], 200);
     }
 
-
+    public function student_update_information(Request $_request)
+    {
+        # code...
+    }
 
     /* Onboarding Performance Report */
     public function student_onboarding()
@@ -35,7 +38,7 @@ class StudentController extends Controller
             //$journal = $_journal = ShipboardJournal::select('month', DB::raw('count(*) as total'))->where('student_id', $account->student_id)->where('is_removed', false)->groupBy('month')->get();
             // Get the Shipping Componies
             $shipboard_company = ShippingAgencies::select('id', 'agency_name')->where('is_removed', false)->get();
-            // Get the Document Requierment for Shipboard Application 
+            // Get the Document Requierment for Shipboard Application
             $documents = Documents::where('is_removed', 1)->where('document_propose', 'PRE-DEPLOYMENT')->orderByRaw('CHAR_LENGTH("document_name")')->get();
 
             return response(['shipboard_information' => $onboard_assessment, 'companies' => $shipboard_company, 'documents' => $documents], 200);

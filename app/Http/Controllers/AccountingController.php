@@ -76,8 +76,8 @@ class AccountingController extends Controller
         $_course = CourseOffer::find(base64_decode($_request->_course));
         $_students = $_request->_year_level ?  $_course->enrollment_list_by_year_level($_request->_year_level)->get() : $_course->enrollment_list;
         $_file_name = $_course->course_name . "-" . Auth::user()->staff->current_academic()->school_year . '-' . strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester)) . '.csv';
-        //return Excel::download(new EnrolledStudentList($_course), $_file_name); // Download the File 
-        $_respond =  Excel::download(new EnrolledStudentList($_course), $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+        //return Excel::download(new EnrolledStudentList($_course), $_file_name); // Download the File
+        $_respond =  Excel::download(new EnrolledStudentList($_course), $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
         ob_end_clean();
         return $_respond;
     }
@@ -195,7 +195,7 @@ class AccountingController extends Controller
                     // Verify the Particular Fee is already Save
                     $_particular_fees = ParticularFees::where('particular_id', $value['particular'])->where('particular_amount', $value['fee'])->where('academic_id', $_request->_academic)->first();
                     // If the Particular Fees get the Details, if not the Content will Save to database
-                    // Get the Particular Details 
+                    // Get the Particular Details
                     $_particulars = $_particular_fees ?: ParticularFees::create([
                         'particular_id' => $value['particular'],
                         'particular_amount' => $value['fee'],
@@ -439,7 +439,7 @@ class AccountingController extends Controller
                 $_online_payment->or_number = $_request->or_number;
                 $_online_payment->save();
             }
-            // Sectioning & Student number for new student 
+            // Sectioning & Student number for new student
             if ($_request->remarks == 'Upon Enrollment') {
                 // Get the Assessment Detials
                 $_payment_assessment = PaymentAssessment::find($_request->_assessment);
@@ -460,7 +460,7 @@ class AccountingController extends Controller
                         $_student_number = date("y") . $_student_number;
                         $_account_details = array(
                             'student_id' => $_payment_assessment->enrollment_assessment->student_id,
-                            'campus_email' => $_email,
+                            'email' => $_email,
                             'personal_email' => $_email,
                             'student_number' => $_student_number,
                             'password' => Hash::make($_student_number),
@@ -489,7 +489,7 @@ class AccountingController extends Controller
                         $_student_number = date("y") . $_student_number;
                         $_account_details = array(
                             'student_id' => $_payment_assessment->enrollment_assessment->student_id,
-                            'campus_email' => $_email,
+                            'email' => $_email,
                             'personal_email' => $_email,
                             'student_number' => $_student_number,
                             'password' => Hash::make($_student_number),
@@ -585,11 +585,11 @@ class AccountingController extends Controller
                 $_online_payment->or_number = $_request->or_number;
                 $_online_payment->save();
             }
-            // Sectioning & Student number for new student 
+            // Sectioning & Student number for new student
             if ($_request->remarks == 'Upon Enrollment') {
                 // Get the Assessment Detials
                 $_payment_assessment = PaymentAssessment::find($_request->_assessment);
-                // 
+                //
                 // Year Level
                 $_year_level = $_payment_assessment->enrollment_assessment->course_id == 3 ? 'GRADE ' . $_payment_assessment->enrollment_assessment->year_level :
                     $_payment_assessment->enrollment_assessment->year_level . '/C';
@@ -711,7 +711,7 @@ class AccountingController extends Controller
     }
     public function staff_salary_details_template(Request $_request)
     {
-        $_respond =  Excel::download(new SalaryDetailsTemplate, 'Employee-Salary-Detials' . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+        $_respond =  Excel::download(new SalaryDetailsTemplate, 'Employee-Salary-Detials' . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
         ob_end_clean();
         return $_respond;
     }
@@ -776,7 +776,7 @@ class AccountingController extends Controller
             $_file = Excel::download($_class, $_file_name); // Download the File
             ob_end_clean();
             return $_file;
-            /*   $_respond =  Excel::download(new SalaryDetailsTemplate, 'Employee-Salary-Detials' . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+            /*   $_respond =  Excel::download(new SalaryDetailsTemplate, 'Employee-Salary-Detials' . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
             ob_end_clean();
             return $_respond; */
         } catch (Expression $er) {
