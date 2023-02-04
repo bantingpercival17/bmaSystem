@@ -9,6 +9,7 @@ use App\Models\ShipBoardInformation;
 use App\Models\ShipboardJournal;
 use App\Models\ShippingAgencies;
 use App\Models\StudentAccount;
+use App\Models\StudentDetails;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +21,9 @@ class StudentController extends Controller
     {
         $account = auth()->user();
         $student = StudentAccount::where('id', $account->id)->with('student')->first();
-        $profilePic = $student->profile_pic($account);
-        return response(['account' => $student, 'profile_picture' => $profilePic], 200);
+        $student = StudentDetails::find($student->student_id);
+        $profile_picture =  $student->profile_picture();
+        return response(['account' => $student, 'profile_picture' => $profile_picture], 200);
     }
 
     public function student_update_information(Request $_request)

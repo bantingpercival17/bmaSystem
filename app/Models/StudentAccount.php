@@ -20,7 +20,7 @@ class StudentAccount extends Authenticatable
         'is_removed',
     ];
     protected $hidden = [
-        'password',
+        'password','remember_token'
     ];
     public function student()
     {
