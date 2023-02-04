@@ -26,7 +26,23 @@ class StudentController extends Controller
 
     public function student_update_information(Request $_request)
     {
-        # code...
+        $_fields = $_request->validate([
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'middleName' => 'required | min:3',
+            'extensionName' => 'required | min:2',
+            'birthday' => 'required',
+            'birthPlace' => 'required',
+            'civilStatus' => 'required',
+            'religion' => 'required',
+            'nationality' => 'required',
+            'street' => 'required',
+            'barangay' => 'required',
+            'municipality' => 'required',
+            'province' => 'required',
+            'zipCode' => 'required',
+            'contactNumber' => 'required | numeric| min:12',
+        ]);
     }
 
     /* Onboarding Performance Report */

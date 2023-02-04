@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Enrollment';
+    $_title = 'Enrollment';
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -42,7 +42,7 @@ $_title = 'Enrollment';
             <div class="search-container">
                 @include('pages.registrar.enrollment.widgets.enrollment-card')
                 @if (count($_students) > 0)
-                    @yield('student-enrollment-card')
+                      @yield('student-enrollment-card')
                 @else
                     <div class="card">
                         <div class="row no-gutters">

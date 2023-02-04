@@ -14,7 +14,7 @@
                     $_course_color = $_student->enrollment_assessment->course_id == 3 ? 'bg-warning text-white' : $_course_color;
                 }
             }
-            
+
         @endphp
         @if (Auth::user()->staff->current_academic()->semester == 'First Semester')
             <div class="mb-5">
@@ -302,58 +302,61 @@
                                         </div>
                                     @endif
                                 </div>
-                                @if ($_student->enrollment_application->enrollment_category == 'SBT ENROLLMENT')
-                                    <div class="sbt-enrollment">
-                                        <small class="text-muted fw-bolder">SHIPBOARD ENROLLMENT</small><br>
-                                        <span class="badge bg-primary">
-                                            CLEARED ON OBT OFFICE</span>
-                                    </div>
-                                @else
-                                    @if ($_student->enrollment_assessment)
-                                        <div class="clearance-status mt-2">
-                                            <div class="row">
-                                                {{--  <div class="col-md">
-                                                    <small class="fw-bolder">CLEARANCE STATUS</small> <br>
-                                                    @if ($_student->student_medical_appointment)
-                                                        @if ($_student->student_medical_result)
-                                                            @if ($_student->student_medical_result->is_fit !== null)
-                                                                @if ($_student->student_medical_result->is_fit === 1)
-                                                                    <span class="badge bg-primary mb-4">FIT TO
-                                                                        ENROLL</span>
-                                                                @else
-                                                                    <span class="badge bg-danger mb-4">FAILED</span>
-                                                                @endif
-                                                            @else
-                                                                <span class="badge bg-info mb-4">PENDING RESULT</span>
-                                                            @endif
-                                                            <span
-                                                                class="badge bg-secondary">{{ $_student->student_medical_result->created_at->format('F d,Y') }}</span>
+                                @if ($_student->enrollment_application)
+                                    @if ($_student->enrollment_application->enrollment_category == 'SBT ENROLLMENT')
+                                        <div class="sbt-enrollment">
+                                            <small class="text-muted fw-bolder">SHIPBOARD ENROLLMENT</small><br>
+                                            <span class="badge bg-primary">
+                                                CLEARED ON OBT OFFICE</span>
+                                        </div>
+                                    @else
+                                        @if ($_student->enrollment_assessment)
+                                            <div class="clearance-status mt-2">
+                                                <div class="row">
+                                                    {{--  <div class="col-md">
+                                            <small class="fw-bolder">CLEARANCE STATUS</small> <br>
+                                            @if ($_student->student_medical_appointment)
+                                                @if ($_student->student_medical_result)
+                                                    @if ($_student->student_medical_result->is_fit !== null)
+                                                        @if ($_student->student_medical_result->is_fit === 1)
+                                                            <span class="badge bg-primary mb-4">FIT TO
+                                                                ENROLL</span>
                                                         @else
-                                                            <label for="" class="fw-bolder text-muted">WAIT FOR
-                                                                MEDICAL
-                                                                RESULT</label>
+                                                            <span class="badge bg-danger mb-4">FAILED</span>
                                                         @endif
                                                     @else
-                                                        <label for="" class="fw-bolder text-muted">NO MEDICAL
-                                                            SCHEDULED</label>
+                                                        <span class="badge bg-info mb-4">PENDING RESULT</span>
                                                     @endif
+                                                    <span
+                                                        class="badge bg-secondary">{{ $_student->student_medical_result->created_at->format('F d,Y') }}</span>
+                                                @else
+                                                    <label for="" class="fw-bolder text-muted">WAIT FOR
+                                                        MEDICAL
+                                                        RESULT</label>
+                                                @endif
+                                            @else
+                                                <label for="" class="fw-bolder text-muted">NO MEDICAL
+                                                    SCHEDULED</label>
+                                            @endif
 
 
-                                                </div> --}}
-                                                {{-- <div class="col-md">
-                                                    <small class="fw-bolder">ACADEMIC CLEARANCE</small>
-                                                    <label for=""
-                                                        class="h5 {{ $_student ? ($_student->academic_clearance_status() != 'NO SECTION' ? ($_student->academic_clearance_status() == 'NOT CLEARED' ? 'text-danger' : 'text-primary') : 'text-muted') : 'text-muted' }} fw-bolder">{{ $_student ? $_student->academic_clearance_status() : '' }}</label>
-                                                </div>
-                                                <div class="col-md ps-0">
-                                                    <small class="fw-bolder">NON-ACADEMIC CLEARANCE</small>
-                                                    <label for=""
-                                                        class="h5 {{ $_student ? ($_student->non_academic_clearance_status() != 'NO SECTION' ? ($_student->non_academic_clearance_status() == 'NOT CLEARED' ? 'text-danger' : 'text-primary') : 'text-muted') : 'text-muted' }} fw-bolder">{{ $_student ? $_student->non_academic_clearance_status() : '' }}</label>
-                                                </div> --}}
-                                            </div>
+                                        </div> --}}
+                                                    {{-- <div class="col-md">
+                                            <small class="fw-bolder">ACADEMIC CLEARANCE</small>
+                                            <label for=""
+                                                class="h5 {{ $_student ? ($_student->academic_clearance_status() != 'NO SECTION' ? ($_student->academic_clearance_status() == 'NOT CLEARED' ? 'text-danger' : 'text-primary') : 'text-muted') : 'text-muted' }} fw-bolder">{{ $_student ? $_student->academic_clearance_status() : '' }}</label>
                                         </div>
+                                        <div class="col-md ps-0">
+                                            <small class="fw-bolder">NON-ACADEMIC CLEARANCE</small>
+                                            <label for=""
+                                                class="h5 {{ $_student ? ($_student->non_academic_clearance_status() != 'NO SECTION' ? ($_student->non_academic_clearance_status() == 'NOT CLEARED' ? 'text-danger' : 'text-primary') : 'text-muted') : 'text-muted' }} fw-bolder">{{ $_student ? $_student->non_academic_clearance_status() : '' }}</label>
+                                        </div> --}}
+                                                </div>
+                                            </div>
+                                        @endif
                                     @endif
                                 @endif
+
 
                             </div>
                         </div>
@@ -448,32 +451,36 @@
                                             <div class="form-group">
                                                 <small class="fw-bolder">COURSE : </small>
                                                 <label for="form-control"
-                                                    class="form-control form-control-sm">{{ $_student->enrollment_application->course->course_name }}</label>
+                                                    class="form-control form-control-sm">{{ $_student->enrollment_applicantion ? $_student->enrollment_application->course->course_name : $_student->enrollment_assessment->course->course_name }}</label>
 
                                             </div>
                                         </div>
                                         <div class="col-md">
-                                            @if ($_student->enrollment_application->course_id == 3)
-                                                <div class="form-group">
-                                                    <small class="fw-bolder">GRADE LEVEL : </small>
-                                                    <label for="" class="form-control form-control-sm">
-                                                        {{ strtoupper(Auth::user()->staff->convert_year_level($_student->enrollment_assessment->year_level)) }}
-                                                    </label>
+                                            @if ($_student->enrollment_application)
+                                                @if ($_student->enrollment_application->course_id == 3)
+                                                    <div class="form-group">
+                                                        <small class="fw-bolder">GRADE LEVEL : </small>
+                                                        <label for="" class="form-control form-control-sm">
+                                                            {{ strtoupper(Auth::user()->staff->convert_year_level($_student->enrollment_assessment->year_level)) }}
+                                                        </label>
 
-                                                </div>
+                                                    </div>
+                                                @else
+                                                    <div class="form-group">
+                                                        <small class="fw-bolder">CLASS LEVEL : </small>
+                                                        @php
+                                                            $_year_level = $_student->enrollment_assessment->year_level;
+                                                            $_year_level = $_student->enrollment_application->enrollment_category == 'SBT ENROLLMENT' ? $_year_level - 1 : $_year_level;
+                                                        @endphp
+                                                        <label for="" class="form-control form-control-sm">
+                                                            {{ strtoupper(Auth::user()->staff->convert_year_level($_year_level)) }}
+                                                        </label>
+
+                                                    </div>
+                                                @endif
                                             @else
-                                                <div class="form-group">
-                                                    <small class="fw-bolder">CLASS LEVEL : </small>
-                                                    @php
-                                                        $_year_level = $_student->enrollment_assessment->year_level;
-                                                        $_year_level = $_student->enrollment_application->enrollment_category == 'SBT ENROLLMENT' ? $_year_level - 1 : $_year_level;
-                                                    @endphp
-                                                    <label for="" class="form-control form-control-sm">
-                                                        {{ strtoupper(Auth::user()->staff->convert_year_level($_year_level)) }}
-                                                    </label>
-
-                                                </div>
                                             @endif
+
 
                                         </div>
                                         @if (!$_student->account)

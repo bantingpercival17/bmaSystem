@@ -71,7 +71,7 @@ class RegistrarController extends Controller
         $_courses = CourseOffer::where('is_removed', false)->get();
         $_curriculums = Curriculum::where('is_removed', false)->get();
         $_student_detials = new StudentDetails();
-        $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application_list();
+         $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application_list();
         $_students = $_request->_course ? $_student_detials->enrollment_application_list_view_course($_request->_course) : $_students;
         //return $_students;
         return view('pages.registrar.enrollment.view', compact('_courses', '_students', '_curriculums'));
@@ -87,8 +87,8 @@ class RegistrarController extends Controller
                 // Set the Year Level of Old Student
                 $_year_level = Auth::user()->staff->current_academic()->semester == 'First Semester' ? intval($_current_assessment->year_level) +  $_value : intval($_current_assessment->year_level);
                 $_year_level = $_student->enrollment_application->enrollment_category == 'SBT ENROLLMENT' ? $_year_level - 1 : $_year_level;
-                // Old Student 
-                // If the Student is Incoming 4th class and have a previous Enrollment Assessment 
+                // Old Student
+                // If the Student is Incoming 4th class and have a previous Enrollment Assessment
                 //first check the Year level if the year level is Equal to 13 the Student will equvalet into 4th class
                 if ($_year_level == 13) {
                     // This Will be incoming 4th Class
@@ -290,7 +290,7 @@ class RegistrarController extends Controller
             //return  $_subject = $_course->course_subject(json_decode(base64_decode($_request->data)));
 
             $_file_export = new SubjectScheduleWorkbook($_course, $_request);
-            $_respond =  Excel::download($_file_export, $_course->course_code . '-subject-schedule-' . base64_decode($_request->data) . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+            $_respond =  Excel::download($_file_export, $_course->course_code . '-subject-schedule-' . base64_decode($_request->data) . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
             ob_end_clean();
             return $_respond;
         } catch (Exception $err) {
@@ -352,7 +352,7 @@ class RegistrarController extends Controller
             'is_removed' => 0,
         ];
         // Verify if the Subject is Existing
-        //$_verify = Subject::where('subject_code', strtoupper(trim($_request->course_code)))->where('subject_name', strtoupper(trim($_request->_subject_name)))->first(); 
+        //$_verify = Subject::where('subject_code', strtoupper(trim($_request->course_code)))->where('subject_name', strtoupper(trim($_request->_subject_name)))->first();
         /* Revise this Code for Double Checking of the Existing Subjects*/
         $_verify = Subject::where($_content_verification)->first();
         $_subject = $_verify ?: Subject::create($_subject); // Save Subject or Get Subject
@@ -393,7 +393,7 @@ class RegistrarController extends Controller
                 'units' => trim($_request->_units),
                 'is_removed' => 0,
             ];
-            // Set the Content of Subject 
+            // Set the Content of Subject
             $_subject_content = [
                 'subject_code' => strtoupper(trim($_request->course_code)),
                 'subject_name' => strtoupper(trim($_request->_subject_name)),
@@ -469,7 +469,7 @@ class RegistrarController extends Controller
         return $_student_report->application_form(base64_decode($_request->_student));
     }
 
-    // Section Panel 
+    // Section Panel
     public function section_view(Request $_request)
     {
         $_courses = CourseOffer::where('is_removed', false)->get();
@@ -548,12 +548,12 @@ class RegistrarController extends Controller
         // Excell Report
 
         if ($_request->_report_type == 'excel-file') {
-            $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+            $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
             ob_end_clean();
             return $_respond;
         }
         if ($_request->_report_type == 'pdf-report') {
-            return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File 
+            return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File
         }
     }
     public function section_import_files(Request $_request)

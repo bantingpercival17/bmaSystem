@@ -135,7 +135,7 @@ class StudentDetails extends Model
         //$_students =
         if (is_numeric($_data) == 1) {
             $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
-                ->where('student_accounts.student_number', $_data)->get();
+                ->where('student_accounts.student_number', 'like', "%" . $_data . "%")->orderBy('student_details.last_name', 'asc')->get();
         } else {
             if ($_count > 1) {
                 $_students = StudentDetails::where('is_removed', false)
@@ -155,7 +155,7 @@ class StudentDetails extends Model
     public function enrollment_application_list()
     {
         $_academic = Auth::user()->staff->current_academic();
-        $_students = StudentDetails::select('student_details.*')
+        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
             ->leftJoin('enrollment_applications as ea', 'ea.student_id', 'student_details.id')
             ->where('ea.academic_id', $_academic->id)
             ->whereNull('ea.is_approved')
