@@ -19,7 +19,8 @@
             <tbody>
                 <tr>
                     <td colspan="2"><small>APPLICANT NO:</small>
-                        <b>{{ $_student->applicant ? $_student->applicant->applicant_number : '-' }}</b> </td>
+                        <b>{{ $_student->applicant ? $_student->applicant->applicant_number : '-' }}</b>
+                    </td>
                     <td colspan="2"> <small>APPLICATION DATE:</small>
                         <b>{{-- {{ strtoupper(date('F j, Y', strtotime($_student->created_at))) }} --}}-</b>
                     </td>
@@ -39,9 +40,21 @@
                 </tr>
                 <tr>
                     <td><small>GENDER: </small><b>{{ $_student->sex }}</td>
-                    <td><small>HEIGHT: </small><b> -{{ $_student->height }} Ft/In</td>
-                    <td><small>WEIGHT: </small><b> -{{ $_student->weight }} Kg</td>
-                    <td><small>BMI: </small><b> -</td>
+                    <td><small>HEIGHT: </small><b> {{ $_student->height ?: '-' }} CM</td>
+                    <td><small>WEIGHT: </small><b> {{ $_student->weight ?: '-' }} POUND/S</td>
+                    @php
+                        $_cm = $_student->height;
+                        $_kg = $_student->weight;
+                        $_bmi = '';
+                        if ($_cm > 0 && $_kg > 0) {
+                            $_cm *= 0.01;
+                            $_kg *= 0.453592;
+                            $_height = $_cm * $_cm;
+                            $_bmi = number_format($_kg / $_height, 2);
+                        }
+                        
+                    @endphp
+                    <td><small>BMI: </small><b>{{ $_bmi }}</td>
                     {{--  <td>
                         @php
                             $bmi = '-';

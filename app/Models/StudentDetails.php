@@ -106,7 +106,7 @@ class StudentDetails extends Model
     }
     public function educational_background()
     {
-        return $this->hasMany(EducationalDetails::class, 'student_id');
+        return $this->hasMany(EducationalDetails::class, 'student_id')->where('is_removed',false);
     }
     public function parent_details()
     {
