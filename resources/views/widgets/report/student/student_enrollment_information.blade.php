@@ -218,7 +218,7 @@
                                             <td colspan="2"><small>{{ strtoupper($_data->school_level) }}:</small>
                                                 <b>{{ strtoupper($_data->school_name) }}</b>
                                             </td>
-                                            <td><small>AY:</small> </td>
+                                            <td><small>DATE GRADUATED:</small> </td>
                                             @php
                                                 $orgDate = $_data->graduated_year;
                                                 $newDate = date('F d,Y', strtotime($orgDate));
@@ -259,9 +259,9 @@
                             <th><b>GUARIAN</b></th>
                         </tr>
                         <tr>
-                            <td> <small>B1. FULL NAME (Last name, First name, Middle name)</small></td>
-                            <td> <small>B6. FULL MAIDEN (Last name, First name, Middle name)</small></td>
-                            <td> <small>B11. FULL NAME (Last name, First name, Middle name)</small></td>
+                            <td> <small>B1. (Last name, First name, Middle name)</small></td>
+                            <td> <small>B6. (Last name, First name, Middle name)</small></td>
+                            <td> <small>B11. (Last name, First name, Middle name)</small></td>
                         </tr>
                         <tr>
                             <td class="text-fill-in">
@@ -553,6 +553,27 @@
                 Learner Information System and personal porfile. The information herein shall be treated as confidential in
                 compliance with the Data Privacy Act of 2012.
             </p>
+
+            <p class="note">
+                <label for=""><b>DATA PRIVACY NOTICE</b></label>
+                <br> <br>
+                BMA is committed to comply with all government requirement as RA No. 10173, otherwise known as the Data
+                Privacy Act. BMA will by way of contracts, requires to submit personal information of customers.
+                <br><br>
+                The above personal information will be used to facilitate your registration and admission in the Academy. We
+                ask for certain sensitive personal information that will
+                be processed in the school's information system to be used only to serve its educational activities as well
+                as to comply with legal obligation which includes periodic submission
+                of requirements to government agency/ies with jurisdiction over the school. Only authorized personnel have
+                access to these data which will
+                be stored for a limited time duration that is relevant to the purpose for which these were processed and for
+                as long as required be applicable law. Disposal
+                of stored data after the retention period shall be done using secure methods.
+                {{-- I hereby certify that the above information given are true and correct to the best of my knowledge and I
+                allow the Baliwag Maritime Academy Inc, to use the information provided herein for the purpose of the
+                Learner Information System and personal porfile. The information herein shall be treated as confidential in
+                compliance with the Data Privacy Act of 2012. --}}
+            </p>
             <div class="signature">
                 <br>
                 <table class="form-rg-table">
@@ -573,26 +594,6 @@
                     </tbody>
                 </table>
             </div>
-            <p class="note">
-                <label for=""><b>PRIVACY NOTICE</b></label>
-                <br> <br>
-                BMA is committed to comply with all government requirement as RA No. 10173, otherwise known as the Data
-                Privacy Act. BMA will by way of contracts, requires to submit personal information of customers.
-                <br><br>
-                The above personal information will be used to facilitate your registration and admission in the Academy. We
-                ask for certain sensitive personal information that will
-                be processed in the school's information system to be used only to serve its educational activities as well
-                as to comply with legal obligation which includes periodic submission
-                of requirements to government agency/ies with jurisdiction over the school. Only authorized personnel have
-                access to these data which will
-                be stored for a limited time duration that is relevant to the purpose for which these were processed and for
-                as long as required be applicable law. Disposal
-                of stored data after the retention period shall be done using secure methods.
-                {{-- I hereby certify that the above information given are true and correct to the best of my knowledge and I
-                allow the Baliwag Maritime Academy Inc, to use the information provided herein for the purpose of the
-                Learner Information System and personal porfile. The information herein shall be treated as confidential in
-                compliance with the Data Privacy Act of 2012. --}}
-            </p>
         </div>
         <div class="page-break"></div>
         <div class="form-rg-assessment">
@@ -615,7 +616,7 @@
                         <td><small>STUDENT NO:</small> <b>{{ $_student->account->student_number }}</b> </td>
                     </tr>
                     <tr>
-                        <td><small>COURSE: </small>
+                        <td><small>{{ $_enrollment_assessment->course_id != 3 ? 'COURSE:' : 'STRAND: ' }} </small>
                             <b>
                                 {{ $_enrollment_assessment->course->course_name }}
                             </b>
@@ -648,7 +649,7 @@
                 </tbody>
             </table>
             <div class="subject-detials">
-                <p class="title-header"><b>| ENROLLMENT DETAILS</b></p>
+                <p class="title-header"><b>ENROLLMENT DETAILS</b></p>
                 @php
                     $_units = 0;
                 @endphp
@@ -711,7 +712,7 @@
                     $_monthly_payment = 0;
                     $_total_fees = 0;
                 @endphp
-                <p class="title-header"><b>| ASSESSMENT SUMMARY</b></p>
+                <p class="title-header"><b>ASSESSMENT SUMMARY</b></p>
                 <table class="subject-list-table ">
                     <thead>
                         <tr>
