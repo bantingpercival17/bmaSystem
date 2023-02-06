@@ -127,7 +127,7 @@ foreach ($_url_role as $key => $_data) {
 <div class="card">
     <div class="card-header d-flex justify-content-between">
         <div class="header-title">
-            <h4 class="card-title">Summary Overview</h4>
+            <h4 class="card-title fw-bolder text-primary">SUMMARY OVERVIEW</h4>
         </div>
     </div>
     <div class="card-body p-0">

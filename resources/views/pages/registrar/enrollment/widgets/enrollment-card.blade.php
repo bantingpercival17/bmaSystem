@@ -28,7 +28,7 @@
                             <div class="card-body">
                                 <div class="card-information">
                                     <h4 class="card-title text-primary mb-0">
-                                        <b>{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name) : 'MIDSHIPMAN NAME' }}</b>
+                                        <b>{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name . " ".$_student->extenstion_name ) : 'MIDSHIPMAN NAME' }}</b>
                                     </h4>
                                     <div class="row">
                                         <div class="col-md">

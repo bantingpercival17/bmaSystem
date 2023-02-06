@@ -134,7 +134,7 @@ class StudentDetails extends Model
         $_count = count($_student);
         //$_students =
         if (is_numeric($_data) == 1) {
-            $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
+            $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'student_details.extention_name')->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
                 ->where('student_accounts.student_number', 'like', "%" . $_data . "%")->orderBy('student_details.last_name', 'asc')->get();
         } else {
             if ($_count > 1) {
