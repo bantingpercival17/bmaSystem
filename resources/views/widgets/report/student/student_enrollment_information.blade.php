@@ -143,15 +143,14 @@
                                     $_bmi = '';
                                     try {
                                         if ($_cm > 0 && $_kg > 0) {
-                                        $_cm *= 0.01;
-                                        $_kg *= 0.453592;
-                                        $_height = $_cm * $_cm;
-                                        $_bmi = number_format($_kg / $_height, 2);
-                                    }
+                                            $_cm *= 0.01;
+                                            $_kg *= 0.453592;
+                                            $_height = $_cm * $_cm;
+                                            $_bmi = number_format($_kg / $_height, 2);
+                                        }
                                     } catch (\Throwable $th) {
                                         $_bmi = '';
                                     }
-                                    
                                     
                                 @endphp
                                 <b>{{ $_bmi }}</b>
