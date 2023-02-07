@@ -48,6 +48,13 @@ class GradeTemplate implements FromCollection, /* ShouldAutoSize,  */ WithEvents
             $_content += array($_count => (float)$_content_value /* ? number_format($_content_value, 2, '.', '') : '' */);
             $_count += 1;
         }
+        if(request()->input('_period')=='finals'){
+            for ($i = 1; $i <= 10; $i++) {
+                $_content_value = $_data->subject_score([$this->subject->id, request()->input('_period'), "CO" . $i]);
+                $_content += array($_count => (float)$_content_value /* ? number_format($_content_value, 2, '.', '') : '' */);
+                $_count += 1;
+            }
+        }
         return $_content;
     }
     public function headings(): array
@@ -70,6 +77,12 @@ class GradeTemplate implements FromCollection, /* ShouldAutoSize,  */ WithEvents
         for ($i = 1; $i <= 10; $i++) {
             $_data += array($_count => 'Assignment :' . strtoupper(request()->input('_period')) . ": Activity No." . $i);
             $_count += 1;
+        }
+        if(request()->input('_period')=='finals'){
+            for ($i = 1; $i <= 10; $i++) {
+                $_data += array($_count => 'Assignment :' . strtoupper(request()->input('_period')) . ": Course-Outcome No." . $i);
+                $_count += 1;
+            }
         }
         $_data+=array($_count=>'Quiz:'. strtoupper(request()->input('_period')) . ":EXAMINATION");
         return $_data;
