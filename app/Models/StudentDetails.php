@@ -106,7 +106,7 @@ class StudentDetails extends Model
     }
     public function educational_background()
     {
-        return $this->hasMany(EducationalDetails::class, 'student_id')->where('is_removed',false);
+        return $this->hasMany(EducationalDetails::class, 'student_id')->where('is_removed', false);
     }
     public function parent_details()
     {
@@ -998,5 +998,9 @@ class StudentDetails extends Model
         $_week_end = $day->format('Y-m-d');
         $_week_dates = [$_week_start . '%', $_week_end . '%'];
         return $this->hasOne(StudentOnboardingAttendance::class, 'student_id')->whereBetween('created_at', $_week_dates);
+    }
+    public function id_verification()
+    {
+        return $this->hasOne(StudentIDDetails::class, 'student_id')->where('is_removed', false);
     }
 }

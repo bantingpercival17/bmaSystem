@@ -7,8 +7,10 @@ use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\CurriculumSubject;
+use App\Models\DebugReport;
 use App\Models\Subject;
 use App\Models\User;
+use App\Models\DubegReport;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -122,8 +124,28 @@ class Controller extends BaseController
         }
         return back()->with('message', "Successfully Setup the Curriculum Subjects");
     }
-    public function debugTracker()
+    public function debugTracker($error)
     {
+        $_current_url = sprintf(
+            '%s://%s/%s',
+            isset($_SERVER['HTTPS']) ? 'https' : 'http',
+            $_SERVER['HTTP_HOST'],
+            trim($_SERVER['REQUEST_URI'], '/\\')
+        );
+
+        $_data = array(
+            'type_of_user' => 'employee',
+            'user_name' => Auth::user()->name,
+            'user_ip_address' => $_SERVER['REMOTE_ADDR'] . ', ' . $_SERVER['HTTP_USER_AGENT'],
+            'error_message' => $error->getMessage(),
+            'url_error' => $_current_url,
+            'is_status' => 0
+        );
+        if (!DebugReport::where($_data)->first()) {
+            DebugReport::create($_data);
+        }
+
+
         // User
         // IP Address
         // Device

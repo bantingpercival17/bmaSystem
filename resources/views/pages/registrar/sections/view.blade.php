@@ -88,7 +88,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('registrar.section-export') }}?_course={{ base64_encode($_course->id) }}&_year_level={{ $level }}&_report_type=excel-file"
+                                        <a href="{{ route('registrar.section-export') }}?_course={{ base64_encode($_course->id) }}&_year_level={{ $level }}&_report_type=excel-file {{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
                                             class="btn btn-primary btn-sm">EXPORT SECTION</a>
                                         {{-- <a href="{{ route('registrar.section-export') }}?_course={{ base64_encode($_course->id) }}&_year_level={{ $level }}&_report_type=excel-file&subject='true"
                                             class="btn btn-primary btn-sm">EXPORT SECTION WITH SUBJECT</a> --}}
