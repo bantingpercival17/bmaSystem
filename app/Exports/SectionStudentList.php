@@ -39,12 +39,15 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             'FULL NAME',
             'GUARDIAN NAME',
             'GUARDIAN CONTACT NUMBER',
-            'GUARDIAN ADDRESS'
+            'GUARDIAN ADDRESS',
+            'ID VERIFICATION PICTURE',
+            'ID VERIFICATION SIGNATURE',
+
         ];
     }
     public function map($_data): array
     {
-        if ($_data->student->account) {
+        /*  if ($_data->student->account) {
             $_student_number = $_data->student->account->student_number;
             $image = QrCode::format('png')
                 // ->merge('img/t.jpg', 0.1, true)
@@ -52,8 +55,8 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
                 ->generate($_student_number . "." . mb_strtolower(str_replace(' ', '', $_data->student->last_name)));
             $output_file = '/student/qr-code/' . $this->section->section_name . '/' . $_student_number . '.png';
             Storage::disk('local')->put($output_file, $image);
-        }
-
+        } */
+        $_parents = $_data->student->parent_details;
         return [
             $_data->student->account ? $_data->student->account->student_number : '',
             $_data->student->account ?  $_data->student->account->email : "-",
@@ -63,9 +66,12 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             $_data->student->last_name . ", " .
                 $_data->student->first_name .
                 $_data->student->middle_name . ' ' . $_data->student->extetion,
-            $_data->student->parent_details ? $_data->student->parents_details->guardian_first_name . ' ' . $_data->student->parents_details->guardian_first_name : '',
-            $_data->student->parent_details ? $_data->student->parents_details->guardian_contact_number : '',
-            $_data->student->parent_details ? $_data->student->parents_details->guardian_address : '',
+            $_parents ? $_parents->guardian_first_name . ' ' . $_parents->guardian_last_name : '',
+            $_parents ? $_parents->guardian_contact_number : '',
+            strtoupper($_data->student->street . ' ' . $_data->student->barangay) . ' ' .
+                strtoupper($_data->student->municipality) . ' ' .
+                strtoupper($_data->student->province),
+            $_data->student->id_verification,
         ];
     }
     public function registerEvents(): array
