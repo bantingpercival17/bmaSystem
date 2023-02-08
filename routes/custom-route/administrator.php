@@ -104,4 +104,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/students/gadgets', [AdministratorController::class, 'student_gadgets_view'])->name('admin.student-gadget-view');
   Route::post('/student/gadgets', [AdministratorController::class, 'gadget_upload_file'])->name('admin.student-gadget-import');
   Route::get('/students/gadget-finder', [AdministratorController::class, 'gadget_finder'])->name('admin.student-gadget-finder');
+
+
+  Route::get('/task-request',[AdministratorController::class,'request_task_view'])->name('admin.request-task');
 });

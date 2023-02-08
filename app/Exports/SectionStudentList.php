@@ -36,6 +36,10 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             'LAST NAME',
             'FIRST NAME',
             'MIDDLE NAME',
+            'FULL NAME',
+            'GUARDIAN NAME',
+            'GUARDIAN CONTACT NUMBER',
+            'GUARDIAN ADDRESS'
         ];
     }
     public function map($_data): array
@@ -46,7 +50,7 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
                 // ->merge('img/t.jpg', 0.1, true)
                 ->size(200)->errorCorrection('H')
                 ->generate($_student_number . "." . mb_strtolower(str_replace(' ', '', $_data->student->last_name)));
-            $output_file = '/student/qr-code/' . $this->section->section_name . '/' . $_student_number. '.png';
+            $output_file = '/student/qr-code/' . $this->section->section_name . '/' . $_student_number . '.png';
             Storage::disk('local')->put($output_file, $image);
         }
 
@@ -56,6 +60,12 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             $_data->student->last_name,
             $_data->student->first_name,
             $_data->student->middle_name,
+            $_data->student->last_name . ", " .
+                $_data->student->first_name .
+                $_data->student->middle_name . ' ' . $_data->student->extetion,
+            $_data->student->parent_details ? $_data->student->parents_details->guardian_first_name . ' ' . $_data->student->parents_details->guardian_first_name : '',
+            $_data->student->parent_details ? $_data->student->parents_details->guardian_contact_number : '',
+            $_data->student->parent_details ? $_data->student->parents_details->guardian_address : '',
         ];
     }
     public function registerEvents(): array

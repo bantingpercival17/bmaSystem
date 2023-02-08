@@ -46,35 +46,55 @@ class RegistrarController extends Controller
     }
     public function index()
     {
-        $_academics = AcademicYear::where('is_removed', false)->get();
-        $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
-        $_total_population = Auth::user()->staff->enrollment_count();
-        $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
-        return view('pages.registrar.dashboard.view', compact('_academics', '_courses', '_total_population', '_total_applicants'));
+        try {
+            $_academics = AcademicYear::where('is_removed', false)->get();
+            $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
+            $_total_population = Auth::user()->staff->enrollment_count();
+            $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
+            return view('pages.registrar.dashboard.view', compact('_academics', '_courses', '_total_population', '_total_applicants'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function dashboard_payment_assessment(Request $_request)
     {
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        return view('pages.registrar.dashboard.payment-assessment', compact('_course'));
+        try {
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            return view('pages.registrar.dashboard.payment-assessment', compact('_course'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function dashboard_student_clearance_list(Request $_request)
     {
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        if ($_request->_clearance_status == 'not-cleared') {
-            return view('pages.registrar.dashboard.student-not-clearance-list', compact('_course'));
-        } else {
-            return view('pages.registrar.dashboard.student-clearance-list', compact('_course'));
+        try {
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            if ($_request->_clearance_status == 'not-cleared') {
+                return view('pages.registrar.dashboard.student-not-clearance-list', compact('_course'));
+            } else {
+                return view('pages.registrar.dashboard.student-clearance-list', compact('_course'));
+            }
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
         }
     }
     public function enrollment_view(Request $_request)
     {
-        $_courses = CourseOffer::where('is_removed', false)->get();
-        $_curriculums = Curriculum::where('is_removed', false)->get();
-        $_student_detials = new StudentDetails();
-         $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application_list();
-        $_students = $_request->_course ? $_student_detials->enrollment_application_list_view_course($_request->_course) : $_students;
-        //return $_students;
-        return view('pages.registrar.enrollment.view', compact('_courses', '_students', '_curriculums'));
+        try {
+            $_courses = CourseOffer::where('is_removed', false)->get();
+            $_curriculums = Curriculum::where('is_removed', false)->get();
+            $_student_detials = new StudentDetails();
+            $_students = $_request->_student ? $_student_detials->student_search($_request->_student) : $_student_detials->enrollment_application_list();
+            $_students = $_request->_course ? $_student_detials->enrollment_application_list_view_course($_request->_course) : $_students;
+            //return $_students;
+            return view('pages.registrar.enrollment.view', compact('_courses', '_students', '_curriculums'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function enrollment_assessment(Request $_request)
     {
@@ -174,87 +194,120 @@ class RegistrarController extends Controller
                 return back()->with('success', 'Transaction Successfully.');
             }
         } catch (Exception $err) {
+            $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
     }
-
     public function enrolled_list_view(Request $_request)
     {
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_students = $_request->_year_level ?  $_course->enrollment_list_by_year_level($_request->_year_level)->get() : $_course->enrollment_list;
-        return view('pages.registrar.enrollment.enrolled_list_view', compact('_course', '_students'));
+        try {
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            $_students = $_request->_year_level ?  $_course->enrollment_list_by_year_level($_request->_year_level)->get() : $_course->enrollment_list;
+            return view('pages.registrar.enrollment.enrolled_list_view', compact('_course', '_students'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
-
     public function student_clearance(Request $_request)
     {
-        $_student = StudentDetails::find(base64_decode($_request->_student));
-        $_academic = $_student->enrollment_assessment->academic_id;
-        $_section = $_student->section($_academic)->first();
-        $_subject_class = $_section ? SubjectClass::where('section_id', $_section->section_id)->where('is_removed', false)->get() : [];
-        return view('pages.registrar.enrollment.clearance', compact('_student', '_subject_class'));
+        try {
+            $_student = StudentDetails::find(base64_decode($_request->_student));
+            $_academic = $_student->enrollment_assessment->academic_id;
+            $_section = $_student->section($_academic)->first();
+            $_subject_class = $_section ? SubjectClass::where('section_id', $_section->section_id)->where('is_removed', false)->get() : [];
+            return view('pages.registrar.enrollment.clearance', compact('_student', '_subject_class'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function subject_view()
     {
-        $_curriculum = Curriculum::where('is_removed', false)->orderBy('curriculum_name', 'desc')->get();
-        $_courses = CourseOffer::all();
-        return view('pages.registrar.subjects.view', compact('_curriculum', '_courses'));
+        try {
+            $_curriculum = Curriculum::where('is_removed', false)->orderBy('curriculum_name', 'desc')->get();
+            $_courses = CourseOffer::all();
+            return view('pages.registrar.subjects.view', compact('_curriculum', '_courses'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     // Subject Panel
     public function classes_view(Request $_request)
     {
-        $_curriculums = Curriculum::where('is_removed', false)->orderBy('curriculum_name', 'desc')->get();
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_teachers = User::select('users.id', 'users.name')
-            ->join('role_user', 'users.id', 'role_user.user_id')
-            ->where('role_user.role_id', 6)
-            ->get();
-        return view('pages.registrar.subjects.course_subject_view', compact('_curriculums', '_teachers', '_course'));
+        try {
+            $_curriculums = Curriculum::where('is_removed', false)->orderBy('curriculum_name', 'desc')->get();
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            $_teachers = User::select('users.id', 'users.name')
+                ->join('role_user', 'users.id', 'role_user.user_id')
+                ->where('role_user.role_id', 6)
+                ->get();
+            return view('pages.registrar.subjects.course_subject_view', compact('_curriculums', '_teachers', '_course'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function classes_store(Request $_request)
     {
-        $_subject_class_detail = [
-            'staff_id' => $_request->_teacher,
-            'curriculum_subject_id' => $_request->_subject,
-            'academic_id' => $_request->_academic,
-            'section_id' => $_request->_section,
-            'created_by' => Auth::user()->name,
-            'is_removed' => 0,
-        ];
-        $_check = SubjectClass::where([
-            'staff_id' => $_request->_teacher,
-            'curriculum_subject_id' => $_request->_subject,
-            'academic_id' => $_request->_academic,
-            'section_id' => $_request->_section,
-        ])->first();
-        $_subject_class = $_check ?: SubjectClass::create($_subject_class_detail);
-        $_schedule = array(
-            'subject_class_id' => $_subject_class->id,
-            'day' => $_request->_week,
-            'start_time' => $_request->_start,
-            'end_time' => $_request->_end,
-            'created_by' => Auth::user()->name,
-            'is_removed' => false,
+        try {
+            $_subject_class_detail = [
+                'staff_id' => $_request->_teacher,
+                'curriculum_subject_id' => $_request->_subject,
+                'academic_id' => $_request->_academic,
+                'section_id' => $_request->_section,
+                'created_by' => Auth::user()->name,
+                'is_removed' => 0,
+            ];
+            $_check = SubjectClass::where([
+                'staff_id' => $_request->_teacher,
+                'curriculum_subject_id' => $_request->_subject,
+                'academic_id' => $_request->_academic,
+                'section_id' => $_request->_section,
+            ])->first();
+            $_subject_class = $_check ?: SubjectClass::create($_subject_class_detail);
+            $_schedule = array(
+                'subject_class_id' => $_subject_class->id,
+                'day' => $_request->_week,
+                'start_time' => $_request->_start,
+                'end_time' => $_request->_end,
+                'created_by' => Auth::user()->name,
+                'is_removed' => false,
 
-        );
-        SubjectClassSchedule::create($_schedule);
-
-        return back()->with('message', 'Successfully Created Subject Classes!');
+            );
+            SubjectClassSchedule::create($_schedule);
+            return back()->with('message', 'Successfully Created Subject Classes!');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function classes_removed(Request $_request)
     {
-        $_subject_class = SubjectClass::find(base64_decode($_request->_c));
-        $_subject_class->is_removed = 1;
-        $_subject_class->save();
-        return back()->with('message', 'Successfully Removed Subject Classes!');
+        try {
+            $_subject_class = SubjectClass::find(base64_decode($_request->_c));
+            $_subject_class->is_removed = 1;
+            $_subject_class->save();
+            return back()->with('message', 'Successfully Removed Subject Classes!');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function classes_subject_handle(Request $_request)
     {
-        $_subject = CurriculumSubject::find(base64_decode($_request->_subject));
-        $_teachers = User::select('users.id', 'users.name')
-            ->join('role_user', 'users.id', 'role_user.user_id')
-            ->where('role_user.role_id', 6)
-            ->get();
-        return view('pages.registrar.subjects.course_subject_handle_view', compact('_subject', '_teachers'));
+        try {
+            $_subject = CurriculumSubject::find(base64_decode($_request->_subject));
+            $_teachers = User::select('users.id', 'users.name')
+                ->join('role_user', 'users.id', 'role_user.user_id')
+                ->where('role_user.role_id', 6)
+                ->get();
+            return view('pages.registrar.subjects.course_subject_handle_view', compact('_subject', '_teachers'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function classes_schedule(Request $_request)
     {
@@ -263,24 +316,33 @@ class RegistrarController extends Controller
             '_start' => 'required',
             '_end' => 'required'
         ]);
-        $_schedule = array(
-            'subject_class_id' => $_request->_subject_class,
-            'day' => $_request->_week,
-            'start_time' => $_request->_start,
-            'end_time' => $_request->_end,
-            'created_by' => Auth::user()->name,
-            'is_removed' => false,
-        );
-        SubjectClassSchedule::create($_schedule);
-
-        return back()->with('success', 'Successfully Add Scheduled!!');
+        try {
+            $_schedule = array(
+                'subject_class_id' => $_request->_subject_class,
+                'day' => $_request->_week,
+                'start_time' => $_request->_start,
+                'end_time' => $_request->_end,
+                'created_by' => Auth::user()->name,
+                'is_removed' => false,
+            );
+            SubjectClassSchedule::create($_schedule);
+            return back()->with('success', 'Successfully Add Scheduled!!');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function classes_schedule_removed(Request $_request)
     {
-        $_schedule = SubjectClassSchedule::find(base64_decode($_request->_schedule));
-        $_schedule->is_removed = 1;
-        $_schedule->save();
-        return back()->with('success', 'Successfully Removed Schedule');
+        try {
+            $_schedule = SubjectClassSchedule::find(base64_decode($_request->_schedule));
+            $_schedule->is_removed = 1;
+            $_schedule->save();
+            return back()->with('success', 'Successfully Removed Schedule');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function class_schedule_template(Request $_request)
     {
@@ -294,6 +356,7 @@ class RegistrarController extends Controller
             ob_end_clean();
             return $_respond;
         } catch (Exception $err) {
+            $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
     }
@@ -312,18 +375,23 @@ class RegistrarController extends Controller
                 return back()->with('success', 'Successfully Upload the Class Scheduled');
             }
         } catch (Exception $err) {
-            return $err;
+            $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
     }
     public function curriculum_view(Request $_request)
     {
-        $_course = $_request->d ? base64_decode($_request->d) : '';
-        $_curriculum = Curriculum::find(base64_decode($_request->view)); // Get the Curriculum
-        $_course_view = CourseOffer::where('is_removed', false)->get();
-        $_course = $_request->d ? CourseOffer::find($_course) : $_course_view;
-        //$_course_subject = $_request->d ? CurriculumSubject::where('course_id', $_course->id)->where('is_removed', false)->get() : '';
-        return view('pages.registrar.subjects.curriculum_view', compact('_curriculum', '_course_view', '_course'));
+        try {
+            $_course = $_request->d ? base64_decode($_request->d) : '';
+            $_curriculum = Curriculum::find(base64_decode($_request->view)); // Get the Curriculum
+            $_course_view = CourseOffer::where('is_removed', false)->get();
+            $_course = $_request->d ? CourseOffer::find($_course) : $_course_view;
+            //$_course_subject = $_request->d ? CurriculumSubject::where('course_id', $_course->id)->where('is_removed', false)->get() : '';
+            return view('pages.registrar.subjects.curriculum_view', compact('_curriculum', '_course_view', '_course'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function curriculum_subject_store(Request $_request)
     {
@@ -334,39 +402,44 @@ class RegistrarController extends Controller
             '_lab_hour' => 'required',
             '_units' => 'required'
         ]);
-        $_subject = [
-            'subject_code' => strtoupper(trim($_request->course_code)),
-            'subject_name' => strtoupper(trim($_request->_subject_name)),
-            'lecture_hours' => trim($_request->_hours),
-            'laboratory_hours' => trim($_request->_lab_hour),
-            'units' => trim($_request->_units),
-            'created_by' => Auth::user()->name,
-            'is_removed' => 0,
-        ]; // Set all the input need to the Subject Details
-        $_content_verification = [
-            'subject_code' => strtoupper(trim($_request->course_code)),
-            'subject_name' => strtoupper(trim($_request->_subject_name)),
-            'lecture_hours' => trim($_request->_hours),
-            'laboratory_hours' => trim($_request->_lab_hour),
-            'units' => trim($_request->_units),
-            'is_removed' => 0,
-        ];
-        // Verify if the Subject is Existing
-        //$_verify = Subject::where('subject_code', strtoupper(trim($_request->course_code)))->where('subject_name', strtoupper(trim($_request->_subject_name)))->first();
-        /* Revise this Code for Double Checking of the Existing Subjects*/
-        $_verify = Subject::where($_content_verification)->first();
-        $_subject = $_verify ?: Subject::create($_subject); // Save Subject or Get Subject
-        $_course_subject_details = [
-            'curriculum_id' => base64_decode($_request->curriculum),
-            'subject_id' => $_subject->id,
-            'course_id' => $_request->course,
-            'year_level' => $_request->_input_7,
-            'semester' => $_request->_input_8,
-            'created_by' => Auth::user()->name,
-            'is_removed' => 0,
-        ]; // Subject Course Details
-        CurriculumSubject::create($_course_subject_details); // Create a Subject Course
-        return $_request->course ?  redirect('/registrar/subjects/curriculum?view=' . $_request->curriculum . '&d=' . base64_encode($_request->course))->with('success', 'Successfully Created Subject') : back()->with('success', 'Successfully Created Subject');
+        try {
+            $_subject = [
+                'subject_code' => strtoupper(trim($_request->course_code)),
+                'subject_name' => strtoupper(trim($_request->_subject_name)),
+                'lecture_hours' => trim($_request->_hours),
+                'laboratory_hours' => trim($_request->_lab_hour),
+                'units' => trim($_request->_units),
+                'created_by' => Auth::user()->name,
+                'is_removed' => 0,
+            ]; // Set all the input need to the Subject Details
+            $_content_verification = [
+                'subject_code' => strtoupper(trim($_request->course_code)),
+                'subject_name' => strtoupper(trim($_request->_subject_name)),
+                'lecture_hours' => trim($_request->_hours),
+                'laboratory_hours' => trim($_request->_lab_hour),
+                'units' => trim($_request->_units),
+                'is_removed' => 0,
+            ];
+            // Verify if the Subject is Existing
+            //$_verify = Subject::where('subject_code', strtoupper(trim($_request->course_code)))->where('subject_name', strtoupper(trim($_request->_subject_name)))->first();
+            /* Revise this Code for Double Checking of the Existing Subjects*/
+            $_verify = Subject::where($_content_verification)->first();
+            $_subject = $_verify ?: Subject::create($_subject); // Save Subject or Get Subject
+            $_course_subject_details = [
+                'curriculum_id' => base64_decode($_request->curriculum),
+                'subject_id' => $_subject->id,
+                'course_id' => $_request->course,
+                'year_level' => $_request->_input_7,
+                'semester' => $_request->_input_8,
+                'created_by' => Auth::user()->name,
+                'is_removed' => 0,
+            ]; // Subject Course Details
+            CurriculumSubject::create($_course_subject_details); // Create a Subject Course
+            return $_request->course ?  redirect('/registrar/subjects/curriculum?view=' . $_request->curriculum . '&d=' . base64_encode($_request->course))->with('success', 'Successfully Created Subject') : back()->with('success', 'Successfully Created Subject');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function curriculum_subject_view(Request $_request)
     {
@@ -376,6 +449,7 @@ class RegistrarController extends Controller
             $_subject = $_curriculum_subject->subject;
             return compact('_curriculum_subject', '_subject');
         } catch (Exception $err) {
+            $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
     }
@@ -415,6 +489,7 @@ class RegistrarController extends Controller
                 return back()->with('success', 'Successfuly Update the Subject Curriculum');
             }
         } catch (Exception $err) {
+            $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
     }
@@ -427,53 +502,74 @@ class RegistrarController extends Controller
             $_subject->save();
             return back()->with('success', 'Successfuly Removed');
         } catch (Exception $err) {
+            $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
-            // TODO:: Audit Error
         }
     }
 
     // Student
     public function student_list_view(Request $_request)
     {
-        $_academics = AcademicYear::where('is_removed', false)->get();
-        $_course = CourseOffer::where('is_removed', false)->get();
-        $_student_detials = new StudentDetails();
-        $_students = $_request->_student ? $_student_detials->student_search($_request->_student) :  StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
-        return view('pages.registrar.student.view', compact('_academics', '_course', '_students'));
+        try {
+            $_academics = AcademicYear::where('is_removed', false)->get();
+            $_course = CourseOffer::where('is_removed', false)->get();
+            $_student_detials = new StudentDetails();
+            $_students = $_request->_student ? $_student_detials->student_search($_request->_student) :  StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
+            return view('pages.registrar.student.view', compact('_academics', '_course', '_students'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function student_profile_view(Request $_request)
     {
-        /*  $_student = StudentDetails::find(base64_decode($_request->_student));
-        $_course = CourseOffer::where('is_removed', false)->get();
-        return view('pages.registrar.student.student_profile', compact('_student', '_course')); */
-        $_student = StudentDetails::find(base64_decode($_request->student));
-        if ($_request->_course  || $_request->_academic || $_request->search_student) {
-            $_student_detials = new StudentDetails();
-            $_students = $_request->search_student ? $_student_detials->student_search($_request->search_student) : [];
-            //return $_students;
-        } else {
-            $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
+        try {
+            $_student = StudentDetails::find(base64_decode($_request->student));
+            if ($_request->_course  || $_request->_academic || $_request->search_student) {
+                $_student_detials = new StudentDetails();
+                $_students = $_request->search_student ? $_student_detials->student_search($_request->search_student) : [];
+                //return $_students;
+            } else {
+                $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
+            }
+            return view('pages.administrator.student.profile', compact('_student', '_students'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
         }
-        return view('pages.administrator.student.profile', compact('_student', '_students'));
     }
     public function student_information_report(Request $_request)
     {
-        // $_data = EnrollmentAssessment::find(base64_decode($_request->_assessment));
-        $_student_report = new StudentReport();;
-        return $_student_report->enrollment_information(base64_decode($_request->_assessment));
+        try {
+            $_student_report = new StudentReport();;
+            return $_student_report->enrollment_information(base64_decode($_request->_assessment));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
 
     public function student_application_report(Request $_request)
     {
-        $_student_report = new StudentReport();;
-        return $_student_report->application_form(base64_decode($_request->_student));
+        try {
+            $_student_report = new StudentReport();;
+            return $_student_report->application_form(base64_decode($_request->_student));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
 
     // Section Panel
     public function section_view(Request $_request)
     {
-        $_courses = CourseOffer::where('is_removed', false)->get();
-        return view('pages.registrar.sections.view', compact('_courses'));
+        try {
+            $_courses = CourseOffer::where('is_removed', false)->get();
+            return view('pages.registrar.sections.view', compact('_courses'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function section_store(Request $_request)
     {
@@ -481,53 +577,72 @@ class RegistrarController extends Controller
             '_section' => 'required',
             '_level' => 'required',
         ]);
-        $_section_details = [
-            'section_name' => $_request->_level . ' ' . $_request->_section,
-            'academic_id' => $_request->_academic,
-            'course_id' => $_request->_course,
-            'year_level' => $_request->_level,
-            'created_by' => Auth::user()->name,
-            'is_removed' => 0,
-        ];
-        //return dd($_section_details);
-        Section::create($_section_details);
-        return back()->with('success', 'Successfully Created Section');
+        try {
+            $_section_details = [
+                'section_name' => $_request->_level . ' ' . $_request->_section,
+                'academic_id' => $_request->_academic,
+                'course_id' => $_request->_course,
+                'year_level' => $_request->_level,
+                'created_by' => Auth::user()->name,
+                'is_removed' => 0,
+            ];
+            Section::create($_section_details);
+            return back()->with('success', 'Successfully Created Section');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function section_add_student_view(Request $_request)
     {
-        $_section = Section::find(base64_decode($_request->_section));
-        $_student_list = $_section->student_sections;
-        return view('pages.registrar.sections.section_view', compact('_section', '_student_list'));
+        try {
+            $_section = Section::find(base64_decode($_request->_section));
+            $_student_list = $_section->student_sections;
+            return view('pages.registrar.sections.section_view', compact('_section', '_student_list'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function section_add_student(Request $_request)
     {
-        $_section = Section::find(base64_decode($_request->_section));
-        $_student_list = $_section->student_section;
-        $_year_level = str_replace('GRADE', '', $_section->year_level);
-        $_year_level = str_replace('/C', '', $_year_level);
-        $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
-            ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
-            ->where('ea.year_level', trim($_year_level))
-            ->where('ea.course_id', $_section->course_id)
-            ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
-            ->where('ea.is_removed', false)
-            ->orderBy('student_details.last_name')
-            ->orderBy('student_details.first_name')
-            //->toSql();
-            ->get();
-        //return compact('_students');
-        return view('pages.registrar.sections.section_add_view', compact('_section', '_students'));
+        try {
+            $_section = Section::find(base64_decode($_request->_section));
+            $_student_list = $_section->student_section;
+            $_year_level = str_replace('GRADE', '', $_section->year_level);
+            $_year_level = str_replace('/C', '', $_year_level);
+            $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+                ->join('enrollment_assessments as ea', 'ea.student_id', 'student_details.id')
+                ->where('ea.year_level', trim($_year_level))
+                ->where('ea.course_id', $_section->course_id)
+                ->where('ea.academic_id', Auth::user()->staff->current_academic()->id)
+                ->where('ea.is_removed', false)
+                ->orderBy('student_details.last_name')
+                ->orderBy('student_details.first_name')
+                //->toSql();
+                ->get();
+            //return compact('_students');
+            return view('pages.registrar.sections.section_add_view', compact('_section', '_students'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function section_store_student(Request $_request)
     {
-        StudentSection::create([
-            'student_id' => base64_decode($_request->_student),
-            'section_id' => base64_decode($_request->_section),
-            'created_by' => Auth::user()->name,
-            'is_removed' => 0,
-        ]);
-        $_section = Section::find(base64_decode($_request->_section));
-        return back()->with('success', 'Successfully Added to ' . $_section->section_name);
+        try {
+            StudentSection::create([
+                'student_id' => base64_decode($_request->_student),
+                'section_id' => base64_decode($_request->_section),
+                'created_by' => Auth::user()->name,
+                'is_removed' => 0,
+            ]);
+            $_section = Section::find(base64_decode($_request->_section));
+            return back()->with('success', 'Successfully Added to ' . $_section->section_name);
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function section_remove_student(Request $_request)
     {
@@ -537,23 +652,29 @@ class RegistrarController extends Controller
             $_student_section->save();
             return back()->with('success', 'Successfuly Removed the Student in Section');
         } catch (Exception $err) {
+            $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
     }
     public function section_export_file(Request $_request)
     {
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
-        $_file_export = new CourseSectionStudentList($_course, $_request->_year_level);
-        // Excell Report
+        try {
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+            $_file_export = new CourseSectionStudentList($_course, $_request->_year_level);
+            // Excell Report
 
-        if ($_request->_report_type == 'excel-file') {
-            $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
-            ob_end_clean();
-            return $_respond;
-        }
-        if ($_request->_report_type == 'pdf-report') {
-            return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File
+            if ($_request->_report_type == 'excel-file') {
+                $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
+                ob_end_clean();
+                return $_respond;
+            }
+            if ($_request->_report_type == 'pdf-report') {
+                return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File
+            }
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
         }
     }
     public function section_import_files(Request $_request)
@@ -569,7 +690,7 @@ class RegistrarController extends Controller
                 return back()->with('success', 'Successfully Uploaded');
             }
         } catch (Exception $err) {
-            //return $err;
+            $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
     }
@@ -595,60 +716,70 @@ class RegistrarController extends Controller
     }
     public function clearance_store(Request $_request)
     {
-        foreach ($_request->data as $key => $value) {
-            $_student_id = base64_decode($value['sId']);
-            $_clearance_data = $_request->_clearance_data;
-            // Check if the student is Store
-            $_check = count($value) > 2 ? 1 : 0;
-            $_clearance = array(
-                'student_id' => $_student_id,
-                'non_academic_type' => $_clearance_data,
-                'academic_id' => $_request->_academic,
-                'comments' => $value['comment'], // nullable
-                'staff_id' => Auth::user()->staff->id,
-                'is_approved' => $_check, // nullable
-                'is_removed' => 0
-            );
-            $_check_clearance = StudentNonAcademicClearance::where('student_id', $_student_id)->where('non_academic_type', $_clearance_data)->where('is_removed', false)->first();
-            if ($_check_clearance) {
-                // If the Data is existing and the approved status id TRUE and the Input Tag is TRUE : They will remain
+        try {
+            foreach ($_request->data as $key => $value) {
+                $_student_id = base64_decode($value['sId']);
+                $_clearance_data = $_request->_clearance_data;
+                // Check if the student is Store
+                $_check = count($value) > 2 ? 1 : 0;
+                $_clearance = array(
+                    'student_id' => $_student_id,
+                    'non_academic_type' => $_clearance_data,
+                    'academic_id' => $_request->_academic,
+                    'comments' => $value['comment'], // nullable
+                    'staff_id' => Auth::user()->staff->id,
+                    'is_approved' => $_check, // nullable
+                    'is_removed' => 0
+                );
+                $_check_clearance = StudentNonAcademicClearance::where('student_id', $_student_id)->where('non_academic_type', $_clearance_data)->where('is_removed', false)->first();
+                if ($_check_clearance) {
+                    // If the Data is existing and the approved status id TRUE and the Input Tag is TRUE : They will remain
 
-                // If the Data is existing and the apprvod status is FALSE and the Input is FALSE : Nothing to Do, They will remain
-                // If comment is fillable
-                if ($_check_clearance->is_approved == 0 && $_check == 0) {
-                    if ($value['comment']) {
-                        $_check_clearance->comments = $value['comment'];
-                        $_check_clearance->save();
+                    // If the Data is existing and the apprvod status is FALSE and the Input is FALSE : Nothing to Do, They will remain
+                    // If comment is fillable
+                    if ($_check_clearance->is_approved == 0 && $_check == 0) {
+                        if ($value['comment']) {
+                            $_check_clearance->comments = $value['comment'];
+                            $_check_clearance->save();
+                        }
                     }
-                }
-                // If the Data is existing and the approved status is TRUE and the Input is FALSE : The Data will removed and create a new one
-                if ($_check_clearance->is_approved == 1 && $_check == 0) {
-                    $_check_clearance->is_removed = true;
-                    $_check_clearance->save();
+                    // If the Data is existing and the approved status is TRUE and the Input is FALSE : The Data will removed and create a new one
+                    if ($_check_clearance->is_approved == 1 && $_check == 0) {
+                        $_check_clearance->is_removed = true;
+                        $_check_clearance->save();
+                        StudentNonAcademicClearance::create($_clearance);
+                    }
+                    if ($_check_clearance->is_approved == 0 && $_check == 1) {
+                        $_check_clearance->is_removed = true;
+                        $_check_clearance->save();
+                        StudentNonAcademicClearance::create($_clearance);
+                    }
+                } else {
                     StudentNonAcademicClearance::create($_clearance);
                 }
-                if ($_check_clearance->is_approved == 0 && $_check == 1) {
-                    $_check_clearance->is_removed = true;
-                    $_check_clearance->save();
-                    StudentNonAcademicClearance::create($_clearance);
-                }
-            } else {
-                StudentNonAcademicClearance::create($_clearance);
+                //echo "Saved: " . $_student_id . "<br>";
+                $_student = StudentDetails::find($_student_id);
+                $_student->offical_clearance_cleared();
             }
-            //echo "Saved: " . $_student_id . "<br>";
-            $_student = StudentDetails::find($_student_id);
-            $_student->offical_clearance_cleared();
+            return back()->with('success', 'Successfully Submitted Clearance');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
         }
-        return back()->with('success', 'Successfully Submitted Clearance');
     }
 
     public function semestral_grade_view(Request $_request)
     {
-        $_courses = CourseOffer::all();
-        $_academic = $_request->_academic ? Auth::user()->staff->current_academic()->id : base64_decode($_request->_academic);
-        $_sections = Section::where('academic_id', $_academic)
-            ->where('course_id', base64_decode($_request->_course))->get();
-        return view('pages.registrar.grade.view', compact('_courses', '_sections'));
+        try {
+            $_courses = CourseOffer::all();
+            $_academic = $_request->_academic ? Auth::user()->staff->current_academic()->id : base64_decode($_request->_academic);
+            $_sections = Section::where('academic_id', $_academic)
+                ->where('course_id', base64_decode($_request->_course))->get();
+            return view('pages.registrar.grade.view', compact('_courses', '_sections'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function semestral_grade_section_view(Request $_request)
     {
@@ -665,15 +796,20 @@ class RegistrarController extends Controller
 
     public function semestral_grade_summary_report(Request $_request)
     {
-        $_enrollment_curriculum = EnrollmentAssessment::select('enrollment_assessments.curriculum_id')
-            ->groupBy('enrollment_assessments.curriculum_id')
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-            ->where('enrollment_assessments.course_id', base64_decode($_request->_course))
-            ->where('enrollment_assessments.year_level', $_request->_year_level)
-            ->where('enrollment_assessments.is_removed', false)
-            ->get();
-        $_report = new StudentListReport();
-        return $_report->summary_grade($_enrollment_curriculum, $_request);
+        try {
+            $_enrollment_curriculum = EnrollmentAssessment::select('enrollment_assessments.curriculum_id')
+                ->groupBy('enrollment_assessments.curriculum_id')
+                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                ->where('enrollment_assessments.course_id', base64_decode($_request->_course))
+                ->where('enrollment_assessments.year_level', $_request->_year_level)
+                ->where('enrollment_assessments.is_removed', false)
+                ->get();
+            $_report = new StudentListReport();
+            return $_report->summary_grade($_enrollment_curriculum, $_request);
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function summary_grade_report_excel(Request $_request)
     {
@@ -691,44 +827,60 @@ class RegistrarController extends Controller
             ob_end_clean();
             return $_file;
         } catch (Exception $err) {
+            $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
     }
     public function semestral_grade_publish(Request $_request)
     {
-        GradePublish::create([
-            'student_id' => base64_decode($_request->_student),
-            'academic_id' => base64_decode($_request->_academic),
-            'staff_id' => Auth::user()->staff->id,
-            'is_removed' => 0,
-        ]);
-        return back()->with('success', 'Grade Publish.');
-    }
-    public function semestral_grade_publish_all(Request $_request)
-    {
-        $_section = Section::find(base64_decode($_request->section));
-        $_student_section = StudentSection::where('section_id', base64_decode($_request->section))->where('is_removed', false)->get();
-        foreach ($_student_section as $key => $value) {
+        try {
             GradePublish::create([
-                'student_id' => $value->student_id,
-                'academic_id' => base64_decode($_request->academic),
+                'student_id' => base64_decode($_request->_student),
+                'academic_id' => base64_decode($_request->_academic),
                 'staff_id' => Auth::user()->staff->id,
                 'is_removed' => 0,
             ]);
+            return back()->with('success', 'Grade Publish.');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
         }
-        return back()->with('success', $_section->section_name . ' Successfully Published Grade.');
+    }
+    public function semestral_grade_publish_all(Request $_request)
+    {
+        try {
+            $_section = Section::find(base64_decode($_request->section));
+            $_student_section = StudentSection::where('section_id', base64_decode($_request->section))->where('is_removed', false)->get();
+            foreach ($_student_section as $key => $value) {
+                GradePublish::create([
+                    'student_id' => $value->student_id,
+                    'academic_id' => base64_decode($_request->academic),
+                    'staff_id' => Auth::user()->staff->id,
+                    'is_removed' => 0,
+                ]);
+            }
+            return back()->with('success', $_section->section_name . ' Successfully Published Grade.');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function semestral_subject_grade(Request $_request)
     {
-        $_subject = SubjectClass::find(base64_decode($_request->_subject));
-        $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
-        if ($_subject_code == 'BRDGE') {
-            $_students = $_subject->section->student_with_bdg_sections;
-        } else {
-            $_students = $_subject->section->student_sections;
+        try {
+            $_subject = SubjectClass::find(base64_decode($_request->_subject));
+            $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
+            if ($_subject_code == 'BRDGE') {
+                $_students = $_subject->section->student_with_bdg_sections;
+            } else {
+                $_students = $_subject->section->student_sections;
+            }
+            $_report = new GradingSheetReport($_students, $_subject);
+            return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
         }
-        $_report = new GradingSheetReport($_students, $_subject);
-        return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
     }
 
 
@@ -738,8 +890,9 @@ class RegistrarController extends Controller
             $_course = CourseOffer::find(base64_decode($_request->_course));
             $_students = $_course->student_bridging_program;
             return view('pages.registrar.enrollment.bridging-program', compact('_students', '_course'));
-        } catch (Exception $error) {
-            return back()->with('error', $error->getMessage());
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
         }
     }
 }

@@ -19,6 +19,7 @@ use App\Models\ApplicantDocuments;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\CurriculumSubject;
+use App\Models\DebugReport;
 use App\Models\Department;
 use App\Models\Documents;
 use App\Models\EducationalDetails;
@@ -126,7 +127,7 @@ class AdministratorController extends Controller
         $_student_accounts = StudentAccount::find(base64_decode($_request->_student));
         $length = 5;
         $_password = 'BMA-' . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
-        $_student_accounts->password = HasH::make($_password);
+        $_student_accounts->password = Hash::make($_password);
         $_student_accounts->save();
         StudentPasswordReset::create([
             'student_id' => $_student_accounts->student_id,
@@ -711,13 +712,21 @@ class AdministratorController extends Controller
     public function deactive_account(Request $_request)
     {
         $_staff = Staff::find(base64_decode($_request->staff));
-        if ($_request->status = 'deactive') {
-            $_staff->is_removed = true;
-        } else {
-            $_staff->is_removed = false;
-        }
+        $_staff->is_removed = ($_request->input('status') == 'deactive') ? true : false;
 
         $_staff->save();
         return back()->with('success', 'Successfully De-active');
+    }
+
+    public function request_task_view(Request $_request)
+    {
+        try {
+            $task = [];
+            $debug_tacker = DebugReport::where('is_removed', false)->get();
+            return view('pages.administrator.task.view', compact('task','debug_tacker'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
 }
