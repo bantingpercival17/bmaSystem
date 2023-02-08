@@ -71,7 +71,8 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             strtoupper($_data->student->street . ' ' . $_data->student->barangay) . ' ' .
                 strtoupper($_data->student->municipality) . ' ' .
                 strtoupper($_data->student->province),
-            $_data->student->id_verification,
+            $_data->student->id_verification ? $_data->student->id_verification->picture_approved === 1 ? 'VERIFIED' : 'INVALID' : '',
+            $_data->student->id_verification ? $_data->student->id_verification->signature_approved === 1 ? 'VERIFIED' : 'INVALID' : '',
         ];
     }
     public function registerEvents(): array
