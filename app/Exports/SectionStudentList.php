@@ -64,7 +64,7 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             $_data->student->first_name,
             $_data->student->middle_name,
             $_data->student->last_name . ", " .
-                $_data->student->first_name .
+                $_data->student->first_name . ' ' .
                 $_data->student->middle_name . ' ' . $_data->student->extetion,
             $_parents ? $_parents->guardian_first_name . ' ' . $_parents->guardian_last_name : '',
             $_parents ? $_parents->guardian_contact_number : '',

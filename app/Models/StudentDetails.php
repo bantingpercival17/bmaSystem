@@ -110,7 +110,7 @@ class StudentDetails extends Model
     }
     public function parent_details()
     {
-        return $this->hasOne(ParentDetails::class, 'student_id')->where('is_removed', false);
+        return $this->hasOne(ParentDetails::class, 'student_id')->latest()/* ->where('is_removed', false) */;
     }
     public function section($_academic)
     {
