@@ -19,7 +19,7 @@ class GradeImport implements ToCollection
      */
     public function __construct($_section)
     {
-        $this->section  = Crypt::decrypt($_section);
+        $this->section = Crypt::decrypt($_section);
     }
     public function collection(Collection $collection)
     {
@@ -30,41 +30,44 @@ class GradeImport implements ToCollection
     {
         $_section = SubjectClass::find($this->section);
         $_headers = $collection[0];
-        $_file_name = 'log/' . str_replace(' ', '_', $_section->section->section_name)  . "/" . str_replace(' ', '_', $_section->curriculum_subject->subject->subject_code) . date('d_m_y') . '.log';
+        $_file_name = 'log/' . str_replace(' ', '_', $_section->section->section_name) . '/' . str_replace(' ', '_', $_section->curriculum_subject->subject->subject_code) . date('d_m_y') . '.log';
         foreach ($collection as $key => $_data) {
             if ($key > 0 && $_data[0]) {
-                $_account = StudentAccount::where('email',  $_data[5])->first(); // Find Student Id
+                $_account = StudentAccount::where('email', $_data[5])->first(); // Find Student Id
                 // Chech if the Student is Exist
                 if ($_account) {
-                    $_student_subject = StudentSection::where('student_id', $_account->student_id)->where('section_id', $_section->section->id)->first();
+                    $_student_subject = StudentSection::where('student_id', $_account->student_id)
+                        ->where('section_id', $_section->section->id)
+                        ->first();
                     if ($_student_subject) {
                         // True
-                        $_data_to_log = array(
-                            date("Y-m-d H:i:s"), //Date and time
+                        $_data_to_log = [
+                            date('Y-m-d H:i:s'), //Date and time
                             $_SERVER['REMOTE_ADDR'], //IP address
                             'Email : ' . $_data[5],
-                        ); // Set the Logs
+                        ]; // Set the Logs
                         $_data_to_log[] .= PHP_EOL; // Next line in log file
                         foreach ($_headers as $_key => $value) {
                             // Fetch the Headeres
-                            if ($_key > 5) { // Start on 6 index
+                            if ($_key > 5) {
+                                // Start on 6 index
                                 $_header_data = $this->header_check($value); // Check Headers and Rename
-                                $_score_details = array(
+                                $_score_details = [
                                     'student_id' => $_account->student_id,
                                     'subject_class_id' => $this->section,
                                     'period' => strtolower(trim($_header_data['period'])),
                                     'type' => $_header_data['type'],
-                                ); // Score Data
-                                $_data_to_log[] = implode(" | ", $_score_details);
+                                ]; // Score Data
+                                $_data_to_log[] = implode(' | ', $_score_details);
                                 $_check_details = GradeEncode::where($_score_details)->first();
-                                if ($_header_data['type'] != "Q0" && $_header_data['type'] != "none0") {
+                                if ($_header_data['type'] != 'Q0' && $_header_data['type'] != 'none0') {
                                     if ($_check_details) {
                                         // Update Score
                                         $_save = GradeEncode::where($_score_details)->update(['score' => floatval($_data[$_key]), 'is_removed' => 0]);
                                         $_data_to_log[] = 'Updated Grades';
                                     } else {
                                         // Save Score
-                                        if ($_header_data['type'] != "none0") {
+                                        if ($_header_data['type'] != 'none0') {
                                             $_score_details['score'] = floatval($_data[$_key]);
                                             $_score_details['is_removed'] = 0;
                                             $_save = GradeEncode::create($_score_details);
@@ -77,23 +80,23 @@ class GradeImport implements ToCollection
                         }
                     } else {
                         // False
-                        $_data_to_log = array(
-                            date("Y-m-d H:i:s"), //Date and time
+                        $_data_to_log = [
+                            date('Y-m-d H:i:s'), //Date and time
                             $_SERVER['REMOTE_ADDR'], //IP address
-                            'Email : ' . $_data[5] . " | Missing Student",
-                        );
+                            'Email : ' . $_data[5] . ' | Missing Student',
+                        ];
                     }
                 } else {
                     // False
-                    $_data_to_log = array(
-                        date("Y-m-d H:i:s"), //Date and time
+                    $_data_to_log = [
+                        date('Y-m-d H:i:s'), //Date and time
                         $_SERVER['REMOTE_ADDR'], //IP address
-                        'Email : ' . $_data[5] . " | Missing Student",
-                    );
+                        'Email : ' . $_data[5] . ' | Missing Student',
+                    ];
                 }
                 //Turn array into a delimited string using
                 //the implode function
-                $_data_to_log = implode(" - ", $_data_to_log);
+                $_data_to_log = implode(' - ', $_data_to_log);
 
                 //Add a newline onto the end.
                 $_data_to_log .= PHP_EOL;
@@ -105,10 +108,10 @@ class GradeImport implements ToCollection
 
     public function header_check($_value)
     {
-        $_data = explode(":", $_value);
+        $_data = explode(':', $_value);
         $_number = 0;
         if (count($_data) > 2) {
-            $_number = (int)filter_var($_data[2], FILTER_SANITIZE_NUMBER_INT);
+            $_number = (int) filter_var($_data[2], FILTER_SANITIZE_NUMBER_INT);
         }
         switch ($_data[0]) {
             case 'Quiz':
@@ -136,45 +139,47 @@ class GradeImport implements ToCollection
                 break;
 
             default:
-                $_label = "none";
+                $_label = 'none';
         }
 
         $_period = isset($_data[1]) ? $_data[1] : null;
-        return array('type' => $_label, 'period' => $_period);
+        return ['type' => $_label, 'period' => $_period];
     }
 
     public function grade_upload_v2($collection)
     {
         $_section = SubjectClass::find($this->section); // Get the Subject Section
-        $_path = '/upload-logs/upload-grades/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . "/"; // Set the File Path
-        $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_code . date('dmyhis')) . '.log'; // Set the Filename
+        $_path = '/upload-logs/upload-grades/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . '/'; // Set the File Path
+        $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . ' ' . $_section->curriculum_subject->subject->subject_code . date('dmyhis')) . '.log'; // Set the Filename
         $_headers = $collection[0]; // The Headers
 
         foreach ($collection as $key => $_data) {
-            $_data_to_log[] =  $_SERVER['REMOTE_ADDR'];
-            $_data_to_log[]  = date("Y-m-d H:i:s");
+            $_data_to_log[] = $_SERVER['REMOTE_ADDR'];
+            $_data_to_log[] = date('Y-m-d H:i:s');
             if ($key > 0 && $_data[0]) {
-                $_account = StudentAccount::where('email',  $_data[5])->first(); // Find Student Id
+                $_account = StudentAccount::where('email', $_data[5])->first(); // Find Student Id
                 if ($_account) {
-                    $_student_subject = StudentSection::where('student_id', $_account->student_id)->where('section_id', $_section->section->id)->first();
+                    $_student_subject = StudentSection::where('student_id', $_account->student_id)
+                        ->where('section_id', $_section->section->id)
+                        ->first();
                     if ($_student_subject) {
                         $_data_to_log[] = 'Email : ' . $_data[5]; // Email Status for Logs
                         foreach ($_headers as $column => $header) {
                             if ($column > 5) {
                                 // Fetch the Headers
                                 $_data_to_log[] .= PHP_EOL; // Next line in log file
-                                $_data_to_log[] = "Header: "  . trim($header);
+                                $_data_to_log[] = 'Header: ' . trim($header);
                                 $_data_header = $this->header_checker_v2(strtoupper(strtolower($header)));
                                 $_data_to_log[] .= PHP_EOL; // Next line in log file
-                                $_data_to_log[] = "Section: " . $this->section;
-                                $_data_to_log[] = "Student: " . $_account->student_id;
+                                $_data_to_log[] = 'Section: ' . $this->section;
+                                $_data_to_log[] = 'Student: ' . $_account->student_id;
                                 if ($_data_header['type'] != null) {
-                                    $_score_details = array(
+                                    $_score_details = [
                                         'student_id' => $_account->student_id,
                                         'subject_class_id' => $this->section,
                                         'period' => strtolower(trim($_data_header['period'])),
                                         'type' => $_data_header['type'],
-                                    );
+                                    ];
                                     // Score Details
                                     $_data_to_log[] = 'Header status: ' . implode(':', $_data_header);
                                     $_check_details = GradeEncode::where($_score_details)->first();
@@ -190,40 +195,38 @@ class GradeImport implements ToCollection
                                         $_data_to_log[] = 'Saved Grades:' . floatval($_data[$column]);
                                     }
                                 } else {
-                                    $_data_to_log[] = "Header Status: Invalid ";
+                                    $_data_to_log[] = 'Header Status: Invalid ';
                                     $_data_to_log[] = 'Header Error: ' . $_data_header['error'];
                                 }
                                 // $_data_to_log[] .= PHP_EOL; // Next line in log file
-
-
                             }
                         }
                         $_data_to_log[] .= PHP_EOL; // Next line in log file
                     } else {
-                        $_data_to_log[] = 'Section : ' . $_data[5] . " | Invalid Section"; // Email Status
+                        $_data_to_log[] = 'Section : ' . $_data[5] . ' | Invalid Section'; // Email Status
                     }
-                    $_data_to_log[] = 'Email : ' . $_data[5] . " | Invalid Student"; // Email Status
+                    $_data_to_log[] = 'Email : ' . $_data[5] . ' | Invalid Student'; // Email Status
                 }
             } else {
-                $_data_to_log[] = 'Email : ' . $_data[5] . " | Missing Student"; // Email Status
+                $_data_to_log[] = 'Email : ' . $_data[5] . ' | Missing Student'; // Email Status
             }
 
             $_data_to_log[] .= PHP_EOL; // Next line in log file
         }
         // Config for the Log Activities
-        $_data_to_log = implode(" - ", $_data_to_log);
+        $_data_to_log = implode(' - ', $_data_to_log);
         Storage::disk('public')->append($_file_name, $_data_to_log, null);
     }
 
     public function header_checker_v2($_value)
     {
-        $_data = explode(":", $_value); // Separates the Header Categories
+        $_data = explode(':', $_value); // Separates the Header Categories
         if (count($_data) > 2) {
             $_index_zero = trim($_data[0]); // First Value
             $_index_one = trim($_data[1]); // Second Value
             $_index_two = trim($_data[2]); // Three Value
             $_period = isset($_index_one) ? $_index_one : null; // get the Period of terms
-            $_number = count($_data) > 2 ? (int)filter_var($_index_two, FILTER_SANITIZE_NUMBER_INT) : ''; // Get the Number of Item of Category
+            $_number = count($_data) > 2 ? (int) filter_var($_index_two, FILTER_SANITIZE_NUMBER_INT) : ''; // Get the Number of Item of Category
             $_error = null;
             // Check the index 0 for Category
             switch ($_index_zero) {
@@ -234,6 +237,9 @@ class GradeImport implements ToCollection
                             break;
                         case str_contains($_index_two, 'QUIZ'):
                             $_label = 'Q' . $_number;
+                            break;
+                        case str_contains($_index_two, 'COURSE-OUTCOME'):
+                            $_label = 'CO' . $_number;
                             break;
                         default:
                             $_label = null;
@@ -252,7 +258,7 @@ class GradeImport implements ToCollection
                         case str_contains($_index_two, 'ACTIVITY'):
                             $_label = 'R' . $_number;
                             break;
-                        case str_contains($_index_two, "COURSE-OUTCOME"):
+                        case str_contains($_index_two, 'COURSE-OUTCOME'):
                             $_label = 'CO' . $_number;
                             break;
                         default:
@@ -271,6 +277,6 @@ class GradeImport implements ToCollection
             $_period = null;
             $_error = null;
         }
-        return array('type' => $_label, 'period' => $_period, 'error' => $_error);
+        return ['type' => $_label, 'period' => $_period, 'error' => $_error];
     }
 }
