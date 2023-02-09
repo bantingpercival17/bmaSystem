@@ -63,16 +63,16 @@
                                     {{ $_student->student->point_grade('midterm') }}</b>
                             </td>
                             <td class="text-center">
-                                {{ $_student->student->period_final_grade('finals') }}
+                                {{ $_student->student->total_final_grade() }}
                             </td>
                             <td class="text-center">
                                 <b>
-                                    {{ $_student->student->period_final_grade('finals') !== '' ? $_student->student->point_grade('finals') : '' }}</b>
+                                    {{ $_student->student->total_final_grade() !== '' ? $_student->student->point_grade('finals') : '' }}</b>
                             </td>
 
                             <td class="text-center fw-bolder">
                                 <b>
-                                    {{ $_student->student->period_final_grade('finals') !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : '' }}
+                                    {{ $_student->student->total_final_grade() !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : '' }}
                                 </b>
 
                             </td>
