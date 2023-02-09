@@ -146,7 +146,7 @@ class GradeImport implements ToCollection
     public function grade_upload_v2($collection)
     {
         $_section = SubjectClass::find($this->section); // Get the Subject Section
-        $_path = 'upload-logs/upload-grades/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . "/"; // Set the File Path
+        $_path = '/upload-logs/upload-grades/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . "/"; // Set the File Path
         $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_code . date('dmyhis')) . '.log'; // Set the Filename
         $_headers = $collection[0]; // The Headers
 
@@ -252,7 +252,7 @@ class GradeImport implements ToCollection
                         case str_contains($_index_two, 'ACTIVITY'):
                             $_label = 'R' . $_number;
                             break;
-                        case str_contains($_index_two, 'COURSE-OUTCOME'):
+                        case str_contains($_index_two, 'CO'):
                             $_label = 'CO' . $_number;
                             break;
                         default:

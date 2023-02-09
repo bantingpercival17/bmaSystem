@@ -319,7 +319,7 @@ class StudentDetails extends Model
             ->where('is_removed', false)
             ->where('type', 'like', "Q%")->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'Q1']);
-        return $cellOne ? number_format($computetion, 2) : '';
+        return $cellOne >= 0 ? number_format($computetion, 2) : '';
     }
     public function oral_average($_period)
     {
@@ -332,7 +332,7 @@ class StudentDetails extends Model
             ->where('is_removed', false)
             ->where('type', 'like', "O%")->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'O1']);
-        return $cellOne ? number_format($computetion, 2) : '';
+        return $cellOne >= 0 ? number_format($computetion, 2) : '';
     }
     public function research_work_average($_period)
     {
@@ -345,7 +345,7 @@ class StudentDetails extends Model
             ->where('is_removed', false)
             ->where('type', 'like', "R%")->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'R1']);
-        return $cellOne ? number_format($computetion, 2) : '';
+        return $cellOne >= 0 ? number_format($computetion, 2) : '';
     }
     public function examination_average($_period)
     {
@@ -354,7 +354,7 @@ class StudentDetails extends Model
         $_percent = $_subject_class->academic->id > 4 ? .45 : .55;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, strtoupper($_period)[0] . 'E1']);
         $computetion = $cellOne * $_percent;
-        return $cellOne ? number_format($computetion, 2) : '';
+        return $cellOne >= 0 ? number_format($computetion, 2) : '';
     }
     public function lecture_grade_v2($_period)
     {
@@ -439,7 +439,7 @@ class StudentDetails extends Model
         $midterm_grade = $this->period_final_grade('midterm');
         $finals_grade = $this->period_final_grade('finals'); // Finals Grade
         $course_outcome_assessment = $this->course_outcome_avarage(); // Course Outcome
-        if ($finals_grade !== '' && $course_outcome_assessment !== '') {
+        if ($midterm_grade !== '' && $finals_grade !== '' && $course_outcome_assessment !== '') {
             $total_final_grade = ($midterm_grade * .32) + ($finals_grade * .33) + ($course_outcome_assessment * .35);
             $total_final_grade = number_format($total_final_grade, 2);
         }
