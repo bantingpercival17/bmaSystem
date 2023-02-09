@@ -255,7 +255,7 @@ class GradeImport implements ToCollection
                         case str_contains($_index_two, 'ACTIVITY'):
                             $_label = 'R' . $_number;
                             break;
-                        case str_contains($_index_two, 'COURSE OUTCOME'):
+                        case str_contains($_index_two, 'OUTCOME'):
                             $_label = 'CO' . $_number;
                             break;
                         default:
