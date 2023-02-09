@@ -238,9 +238,6 @@ class GradeImport implements ToCollection
                         case str_contains($_index_two, 'QUIZ'):
                             $_label = 'Q' . $_number;
                             break;
-                        case str_contains($_index_two, 'COURSE-OUTCOME'):
-                            $_label = 'CO' . $_number;
-                            break;
                         default:
                             $_label = null;
                             $_error = str_contains($_index_two, 'Oral');
@@ -258,7 +255,7 @@ class GradeImport implements ToCollection
                         case str_contains($_index_two, 'ACTIVITY'):
                             $_label = 'R' . $_number;
                             break;
-                        case str_contains($_index_two, 'COURSE-OUTCOME'):
+                        case str_contains($_index_two, 'COURSE OUTCOME'):
                             $_label = 'CO' . $_number;
                             break;
                         default:
