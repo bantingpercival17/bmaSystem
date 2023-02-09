@@ -1,12 +1,12 @@
 @php
-$_url_role = ['administrator/dashboard', 'accounting/dashboard', 'registrar/dashboard'];
-$_course_enrolled = ['admin.course-enrolled', 'accounting.course-enrolled', 'registrar.course-enrolled'];
-
-$_course_url = route($_course_enrolled[0]);
-foreach ($_url_role as $key => $_data) {
-    $_course_url = request()->is($_data . '*') ? route($_course_enrolled[$key]) : $_course_url;
-    //$_course_url = $value; //request()->is(route($value))
-}
+    $_url_role = ['administrator/dashboard', 'accounting/dashboard', 'registrar/dashboard'];
+    $_course_enrolled = ['admin.course-enrolled', 'accounting.course-enrolled', 'registrar.course-enrolled'];
+    
+    $_course_url = route($_course_enrolled[0]);
+    foreach ($_url_role as $key => $_data) {
+        $_course_url = request()->is($_data . '*') ? route($_course_enrolled[$key]) : $_course_url;
+        //$_course_url = $value; //request()->is(route($value))
+    }
 @endphp
 <section>
     <p class="display-6 fw-bolder text-primary">Enrollment Overview</p>
@@ -185,7 +185,7 @@ foreach ($_url_role as $key => $_data) {
 <div class="card">
     <div class="card-header d-flex justify-content-between">
         <div class="header-title">
-            <h4 class="card-title">Summary Overview</h4>
+            <h4 class="card-title fw-bolder text-primary">SUMMARY OVERVIEW</h4>
         </div>
     </div>
     <div class="card-body p-0">
