@@ -47,7 +47,7 @@
                                         @foreach ($tasks as $item)
                                             <tr>
                                                 <td>
-                                                    @if ($item->status)
+                                                    @if ($item->status == 1)
                                                         <span class="badge bg-primary">DONE</span>
                                                     @elseif ($item->status == 2)
                                                         <span class="badge bg-info">WORKING</span>

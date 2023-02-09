@@ -130,7 +130,7 @@
                                     @endfor
                                     <th>
                                         {{-- Quiz Average --}}
-                                        {{ $_student->student->quizzes_average() }}
+                                        {{ $_student->student->quizzes_average(request()->input('_period')) }}
                                     </th>
                                     @for ($i = 1; $i <= 5; $i++)
                                         <td>
@@ -139,7 +139,7 @@
                                     @endfor
                                     <th>
                                         {{-- Oral Average --}}
-                                        {{ $_student->student->oral_average() }}
+                                        {{ $_student->student->oral_average(request()->input('_period')) }}
                                     </th>
                                     @for ($i = 1; $i <= 10; $i++)
                                         <td>
@@ -148,16 +148,16 @@
                                     @endfor
                                     <th>
                                         {{-- Research Word Output Average --}}
-                                        {{ $_student->student->research_work_average() }}
+                                        {{ $_student->student->research_work_average(request()->input('_period')) }}
                                     </th>
                                     <td>
                                         {{ $_student->student->subject_score([$_subject->id, request()->input('_period'), strtoupper(request()->input('_period'))[0] . 'E1']) }}
                                     </td>
                                     <th>
-                                        {{ $_student->student->examination_average() }}
+                                        {{ $_student->student->examination_average(request()->input('_period')) }}
                                     </th>
                                     <th>
-                                        {{ $_student->student->lecture_grade_v2() }}
+                                        {{ $_student->student->lecture_grade_v2(request()->input('_period')) }}
                                     </th>
                                     @for ($i = 1; $i <= 10; $i++)
                                         <td>
@@ -165,19 +165,19 @@
                                         </td>
                                     @endfor
                                     <th>
-                                        {{ $_student->student->laboratory_grade_v2() }}
+                                        {{ $_student->student->laboratory_grade_v2(request()->input('_period')) }}
                                     </th>
                                     <th>
-                                        {{ $_student->student->period_final_grade() }}
+                                        {{ $_student->student->period_final_grade(request()->input('_period')) }}
                                     </th>
                                     @if (request()->input('_period') == 'finals')
                                         @if ($_subject->academic->id > 4)
                                             <th>{{ $_student->student->course_outcome_avarage() }}</th>
-                                            <th></th>
+                                            <th>{{ $_student->student->total_final_grade() }}</th>
                                         @endif
                                     @endif
                                     <th>
-                                        {{ $_student->student->point_grade() }}
+                                        {{ $_student->student->point_grade(request()->input('_period')) }}
                                     </th>
                                 </tr>
                             @endforeach
