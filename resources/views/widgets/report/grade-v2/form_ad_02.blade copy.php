@@ -56,23 +56,28 @@
                                 {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
                             </td>
                             <td class="text-center">
-                                {{ $_student->student->period_final_grade('midterm') }}
+                                @php
+                                    $_final = $_student->student->final_grade_v2($_subject->id, 'midterm');
+                                @endphp
+                                {{ $_final > 0 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
                                 <b>
-                                    {{ $_student->student->point_grade('midterm') }}</b>
+                                    {{ $_final > 0 ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
                             <td class="text-center">
-                                {{ $_student->student->period_final_grade('finals') }}
+                                @php
+                                    $_final = $_student->student->final_grade_v2($_subject->id, 'finals');
+                                @endphp
+                                {{ $_final !== 49 ? number_format($_final, 2) : '' }}
                             </td>
                             <td class="text-center">
                                 <b>
-                                    {{ $_student->student->period_final_grade('finals') !== '' ? $_student->student->point_grade('finals') : '' }}</b>
+                                    {{ $_final !== null ? number_format($_student->student->percentage_grade(number_format($_final, 2)), 2) : '' }}</b>
                             </td>
-
                             <td class="text-center fw-bolder">
                                 <b>
-                                    {{ $_student->student->period_final_grade('finals') !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : '' }}
+                                    {{ $_final !== null ? ($_student->student->percentage_grade($_final) >= 5 ? 'FAILED' : 'PASSED') : '' }}
                                 </b>
 
                             </td>
