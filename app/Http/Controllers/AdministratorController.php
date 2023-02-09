@@ -39,6 +39,7 @@ use App\Models\StudentPasswordReset;
 use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\UserPasswordReset;
 use App\Report\AttendanceSheetReport;
@@ -721,9 +722,39 @@ class AdministratorController extends Controller
     public function request_task_view(Request $_request)
     {
         try {
-            $task = [];
+            $tasks = Task::where('is_removed', false)->get();
             $debug_tacker = DebugReport::where('is_removed', false)->get();
-            return view('pages.administrator.task.view', compact('task','debug_tacker'));
+            return view('pages.administrator.task.view', compact('tasks', 'debug_tacker'));
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
+    }
+    public function request_task_store(Request $_request)
+    {
+        $_request->validate([
+            'task' => 'required',
+        ]);
+        try {
+            $_data = array(
+                'staff_id' => Auth::user()->staff->id,
+                'task' => $_request->task,
+                'status' => 0, // 0 mean Pending Task
+                'task_approved' => 0, // 0 mean on Pending Problem
+            );
+            Task::create($_data);
+            return back()->with('success', 'Successfully Created Task');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
+    }
+    public function request_task_approved(Request $_request)
+    {
+        try {
+            $task = Task::find(base64_decode($_request->task));
+            $task->update(['task_approved' => 1, 'status' => 2]);
+            return back()->with('success', 'Successfully Accept Task');
         } catch (Exception $err) {
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());

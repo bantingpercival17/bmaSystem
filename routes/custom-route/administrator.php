@@ -36,7 +36,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::post('/accounts', [AdministratorController::class, 'account_store']); // Store Account
   Route::post('/accounts/profile-picture', [AdministratorController::class, 'account_upload_profile']);
   Route::post('/accounts/role', [AdministratorController::class, 'account_roles_store']);
-  Route::get('/accounts/deactive',[AdministratorController::class,'deactive_account'])->name('admin.deactive-account');
+  Route::get('/accounts/deactive', [AdministratorController::class, 'deactive_account'])->name('admin.deactive-account');
   /* Subject and Curriculum Routes */
   Route::get('/subjects', [AdministratorController::class, 'subject_view'])->name('admin.subjects'); // Subject Curriculum
   Route::post('/curriculum', [AdministratorController::class, 'curriculum_store']); // Store a Curriculum
@@ -106,5 +106,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/students/gadget-finder', [AdministratorController::class, 'gadget_finder'])->name('admin.student-gadget-finder');
 
 
-  Route::get('/task-request',[AdministratorController::class,'request_task_view'])->name('admin.request-task');
+  Route::get('/task-request', [AdministratorController::class, 'request_task_view'])->name('admin.request-task');
+  Route::post('/task-request/add', [AdministratorController::class, 'request_task_store'])->name('admin.revision-task');
+  Route::get('/task-request/approved', [AdministratorController::class, 'request_task_approved'])->name('admin.revision-approved');
 });

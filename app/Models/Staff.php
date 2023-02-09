@@ -162,7 +162,7 @@ class Staff extends Model
                 'role_id' => 1,
                 'role_name' => 'Administrator',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination']],
+                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination'], ['Revision Task', 'admin.request-task']],
             ],
             [
                 'role_id' => 2,

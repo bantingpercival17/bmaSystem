@@ -6,6 +6,12 @@
             <div class="header-title">
                 <h4 class="card-title fw-bolder text-muted">Request Task & System Debug</h4>
             </div>
+            <div class="card-tools">
+                <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal"
+                    data-bs-target="#revision-request">
+                    Add Revision Request
+                </button>
+            </div>
         </div>
         <div class="card-body ">
             <ul class="nav nav-tabs nav-fill" id="myTab-three" role="tablist">
@@ -37,7 +43,34 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @if (count($tasks) > 0)
+                                        @foreach ($tasks as $item)
+                                            <tr>
+                                                <td>
+                                                    @if ($item->status)
+                                                        <span class="badge bg-primary">DONE</span>
+                                                    @elseif ($item->status == 2)
+                                                        <span class="badge bg-info">WORKING</span>
+                                                    @else
+                                                        <span class="badge bg-danger">PENDING</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $item->staff->first_name . ' ' . $item->staff->last_name }}</td>
+                                                <td>{{ $item->created_at->format('d F ,Y') }}</td>
+                                                <td>{{ $item->task }}</td>
+                                                <td>
+                                                    @if ($item->task_approved)
+                                                        <a href="{{ route('admin.revision-approved') }}?task={{ base64_encode($item->id) }}"
+                                                            class="btn btn-primary btn-sm">FOR REVIEW</a>
+                                                    @else
+                                                        <a href="{{ route('admin.revision-approved') }}?task={{ base64_encode($item->id) }}"
+                                                            class="btn btn-primary btn-sm">ACCEPT TASK</a>
+                                                    @endif
 
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -73,6 +106,35 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+    <div class="modal fade" id="revision-request">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="modal-title fw-bolder text-primary">CREATE REVISION REQUEST</p>
+                    <button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('admin.revision-task') }}" method="post">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col">
+                                <label for="" class="fw-bolder">TASKS</label>
+                                <textarea class="form-control" name="task" id="" cols="50" rows="10"></textarea>
+                                @error('task')
+                                    <p class="badge bg-danger">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                        <button class="btn btn-success fw-bolder text-white">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer justify-content-between">
+                </div>
+            </div>
         </div>
     </div>
 @endsection
