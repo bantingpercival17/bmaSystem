@@ -467,7 +467,7 @@ class StudentDetails extends Model
         $_subject_class = SubjectClass::find(base64_decode(request()->input('_subject')));
         // Period Grade
         $grade = $this->period_final_grade($_period);
-        if ($_subject_class->academic_id >= 5) {
+        if ($_subject_class->academic_id >= 5 && $_period == 'finals') {
             $grade = $this->total_final_grade();
         }
         // Final Grade
