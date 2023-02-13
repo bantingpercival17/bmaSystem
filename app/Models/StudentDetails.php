@@ -420,7 +420,38 @@ class StudentDetails extends Model
                 }
             }
         } else {
-            # code...
+            // Old Fornula
+
+            $midtermGradeLecture = $this->lecture_grade_v2('midterm');
+            $midtermGradeLaboratory = $this->laboratory_grade_v2('midterm');
+            $midtermLaboratoryItem = $this->laboratory_item('midterm');
+            $finalGradeLecture = $this->lecture_grade_v2('finals');
+            $finalGradeLaboratory = $this->laboratory_grade_v2('finals');
+            if ($_period == 'midterm') {
+                if ($midtermLaboratoryItem > 0) {
+                    $final_grade = $midtermGradeLecture + $midtermGradeLaboratory; // Midterm Grade Formula With Laboratory
+                } else {
+                    $final_grade = $midtermGradeLecture / 0.4; // Midterm Grade Formula without Laboratory
+                }
+            } else {
+                if ($finalGradeLaboratory > 0) {
+                    if ($midtermGradeLaboratory > 0) {
+                        $final_grade = ($midtermGradeLecture + $midtermGradeLaboratory) * 0.5 + ($finalGradeLecture + $finalGradeLaboratory) * 0.5;
+                    } else {
+                        $final_grade = ($midtermGradeLecture / 0.4) * 0.5 + ($finalGradeLecture + $finalGradeLaboratory) * 0.5;
+                    }
+                } else {
+                    if ($finalGradeLecture > 0) {
+                        if ($midtermGradeLaboratory > 0) {
+                            $final_grade = ($midtermGradeLecture + $midtermGradeLaboratory) * 0.5 + ($finalGradeLecture + $finalGradeLaboratory) * 0.5;
+                        } else {
+                            $final_grade = ($midtermGradeLecture / 0.4) * 0.5 + ($finalGradeLecture / 0.4) * 0.5;
+                        }
+                    } else {
+                        $final_grade = null;
+                    }
+                }
+            }
         }
         return $final_grade;
     }

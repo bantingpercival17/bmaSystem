@@ -63,7 +63,12 @@
                                     {{ $_student->student->point_grade('midterm') }}</b>
                             </td>
                             <td class="text-center">
-                                {{ $_student->student->total_final_grade() }}
+                                @if ($_subject->academic_id >= 5)
+                                    {{ $_student->student->total_final_grade() }}
+                                @else
+                                    {{ $_student->student->period_final_grade('finals') }}</b>
+                                @endif
+
                             </td>
                             <td class="text-center">
                                 <b>
