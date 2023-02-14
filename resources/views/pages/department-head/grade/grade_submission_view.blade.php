@@ -60,7 +60,7 @@ $_title = 'Grade Submission';
                                                     <img class=" avatar-rounded img-fluid avatar-45 me-3 bg-soft-primary"
                                                         src="{{ asset($_data->profile_pic($_data)) }}" alt="profile">
                                                     <a
-                                                        href="{{ route('department-head.grade-submission-view') . '?_staff=' . base64_encode($_data->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                                        href="{{ route('department-head.grade-submission-view') . '?_staff=' . base64_encode($_data->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&_period=finals">
                                                         {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}
                                                     </a>
                                                 </div>

@@ -64,7 +64,7 @@
                             </td>
                             <td class="text-center">
                                 @if ($_subject->academic_id >= 5)
-                                    {{ $_student->student->total_final_grade() }}
+                                    {{ $_student->student->total_final_grade() !== '' ? $_student->student->total_final_grade() : 'INC' }}
                                 @else
                                     {{ $_student->student->period_final_grade('finals') }}</b>
                                 @endif
@@ -77,7 +77,7 @@
 
                             <td class="text-center fw-bolder">
                                 <b>
-                                    {{ $_student->student->total_final_grade() !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : '' }}
+                                    {{ $_student->student->total_final_grade() !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : 'INC' }}
                                 </b>
 
                             </td>
