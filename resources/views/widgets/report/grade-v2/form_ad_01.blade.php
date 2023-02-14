@@ -171,7 +171,7 @@
                                         {{ $_student->student->period_final_grade(request()->input('_period')) }}
                                     </th>
                                     @if (request()->input('_period') == 'finals')
-                                        @if ($_subject->academic->id > 4)
+                                        @if ($_subject->academic->id >= 5)
                                             <th>{{ $_student->student->course_outcome_avarage() }}</th>
                                             <th>{{ $_student->student->total_final_grade() }}</th>
                                         @endif

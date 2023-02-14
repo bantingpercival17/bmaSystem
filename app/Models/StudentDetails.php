@@ -406,17 +406,18 @@ class StudentDetails extends Model
                 if ($this->lecture_grade_v2($_period) !== '' && $this->laboratory_grade_v2($_period) !== '') {
                     $final_grade = number_format($this->lecture_grade_v2($_period) + $this->laboratory_grade_v2($_period), 2);
                 }
-            }
-            // Laboratory
-            if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
-                if ($this->laboratory_grade_v2($_period) !== '') {
-                    $final_grade = number_format($this->laboratory_grade_v2($_period) / 0.5, 2);
+            } else {
+                // Laboratory
+                if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
+                    if ($this->laboratory_grade_v2($_period) !== '') {
+                        $final_grade = number_format($this->laboratory_grade_v2($_period) / 0.5, 2);
+                    }
                 }
-            }
-            // Lecture
-            if ($_subject_class->curriculum_subject->subject->lecture_hours > 0) {
-                if ($this->lecture_grade_v2($_period) !== '') {
-                    $final_grade = number_format($this->lecture_grade_v2($_period) / 0.5, 2);
+                // Lecture
+                if ($_subject_class->curriculum_subject->subject->lecture_hours > 0) {
+                    if ($this->lecture_grade_v2($_period) !== '') {
+                        $final_grade = number_format($this->lecture_grade_v2($_period) / 0.5, 2);
+                    }
                 }
             }
         } else {
@@ -1128,11 +1129,15 @@ class StudentDetails extends Model
     public function student_enrollment_application()
     {
         $_academic = AcademicYear::where('is_active', true)->first();
-        return $this->hasOne(EnrollmentApplication::class, 'student_id')->where('academic_id', $_academic->id)->where('is_removed', false);
+        return $this->hasOne(EnrollmentApplication::class, 'student_id')
+            ->where('academic_id', $_academic->id)
+            ->where('is_removed', false);
     }
     public function current_enrollment()
     {
         $_academic = AcademicYear::where('is_active', true)->first();
-        return $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('academic_id', $_academic->id)->where('is_removed', false);
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+            ->where('academic_id', $_academic->id)
+            ->where('is_removed', false);
     }
 }
