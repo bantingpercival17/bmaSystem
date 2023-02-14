@@ -96,7 +96,7 @@
                             </span>
                             <span type="button" class="badge bg-primary btn-form-grade mt-2" data-bs-toggle="modal"
                                 data-bs-target=".grade-view-modal"
-                                data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2">
+                                data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period=finals&_preview=pdf&_form=ad2">
                                 FORM AD-02
                             </span>
                         </div>

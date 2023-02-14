@@ -64,7 +64,7 @@
                             </td>
                             <td class="text-center">
                                 @if ($_subject->academic_id >= 5)
-                                    {{ $_student->student->total_final_grade() !== '' ? $_student->student->total_final_grade() : 'INC' }}
+                                    {{ $_student->student->total_final_grade() }}
                                 @else
                                     {{ $_student->student->period_final_grade('finals') }}</b>
                                 @endif
@@ -72,14 +72,22 @@
                             </td>
                             <td class="text-center">
                                 <b>
-                                    {{ $_student->student->total_final_grade() !== '' ? $_student->student->point_grade('finals') : '' }}</b>
+                                    @if ($_subject->academic_id >= 5)
+                                        {{ $_student->student->total_final_grade() !== '' ? $_student->student->point_grade('finals') : 'INC' }}
+                                    @else
+                                        {{ $_student->student->point_grade('finals') }}
+                                    @endif
+                                </b>
                             </td>
-
                             <td class="text-center fw-bolder">
                                 <b>
-                                    {{ $_student->student->total_final_grade() !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : 'INC' }}
-                                </b>
+                                    @if ($_subject->academic_id >= 5)
+                                        {{ $_student->student->total_final_grade() !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : '' }}
+                                    @else
+                                        {{ $_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED' }}
+                                    @endif
 
+                                </b>
                             </td>
                         </tr>
                     @endforeach
