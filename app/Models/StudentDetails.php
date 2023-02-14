@@ -503,29 +503,31 @@ class StudentDetails extends Model
             } else {
                 $final_grade = 'INC';
             }
-        }
-        // Laboratory
-        if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
-            if ($this->laboratory_grade_v2($_period) !== '') {
-                $final_grade = $grade !== '' ? number_format($this->percentage_grade($grade), 2) : 'INC';
-                if ($_period == 'finals' && $this->total_final_grade() === '') {
+        } else {
+            // Laboratory
+            if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
+                if ($this->laboratory_grade_v2($_period) !== '') {
+                    $final_grade = $grade !== '' ? number_format($this->percentage_grade($grade), 2) : 'INC';
+                    if ($_period == 'finals' && $this->total_final_grade() === '') {
+                        $final_grade = 'INC';
+                    }
+                } else {
                     $final_grade = 'INC';
                 }
-            } else {
-                $final_grade = 'INC';
             }
-        }
-        // Lecture
-        if ($_subject_class->curriculum_subject->subject->lecture_hours > 0) {
-            if ($this->lecture_grade_v2($_period) !== '') {
-                $final_grade = $grade !== '' ? number_format($this->percentage_grade($grade), 2) : 'INC';
-                if ($_period == 'finals' && $this->total_final_grade() === '') {
+            // Lecture
+            if ($_subject_class->curriculum_subject->subject->lecture_hours > 0) {
+                if ($this->lecture_grade_v2($_period) !== '') {
+                    $final_grade = $grade !== '' ? number_format($this->percentage_grade($grade), 2) : 'INC';
+                    if ($_period == 'finals' && $this->total_final_grade() === '') {
+                        $final_grade = 'INC';
+                    }
+                } else {
                     $final_grade = 'INC';
                 }
-            } else {
-                $final_grade = 'INC';
             }
         }
+
         return $final_grade;
     }
     public function grade_publish()
