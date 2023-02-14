@@ -187,9 +187,9 @@
                                 @if ($_subject_class)
                                     <button type="button" class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
                                         data-bs-toggle="modal" data-bs-target=".grade-view-modal"
-                                        data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2">
+                                        data-grade-url="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=finals&_preview=pdf&_form=ad2">
                                         View Form AD-02</button>
-                                    <a href="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2"
+                                    <a href="{{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=finals&_preview=pdf&_form=ad2"
                                         class="btn btn-secondary btn-sm">View Page</a>
                                 @endif
 
