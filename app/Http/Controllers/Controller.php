@@ -65,8 +65,8 @@ class Controller extends BaseController
             return $this->import_subject($_files);
         }
         if ($_request->_file_users) {
-            Excel::import(new StaffImport, $_request->file('_file_users'));
-            return back()->with('message', "Successfully Setup the Users");
+            Excel::import(new StaffImport(), $_request->file('_file_users'));
+            return back()->with('message', 'Successfully Setup the Users');
         }
     }
     public function import_course($_files)
@@ -75,76 +75,90 @@ class Controller extends BaseController
             CourseOffer::create(['course_name' => $_data->course_name, 'course_code' => $_data->course_code, 'school_level' => $_data->school_level, 'is_removed' => 0]);
         }
         //CourseOffer::create($_files);
-        return back()->with('message', "Successfully Setup the Course Offers");
+        return back()->with('message', 'Successfully Setup the Course Offers');
     }
     public function import_academic($_files)
     {
         foreach ($_files as $key => $file) {
             AcademicYear::create(['school_year' => $file->school_year, 'semester' => $file->semester, 'is_active' => $file->is_active, 'created_by' => 'Percival Banting', 'is_removed' => 0]);
         }
-        return back()->with('message', "Successfully Setup the Academic Year");
+        return back()->with('message', 'Successfully Setup the Academic Year');
     }
     public function import_curriculum($_files)
     {
         foreach ($_files as $key => $file) {
             Curriculum::create(['curriculum_name' => $file->curriculum_name, 'curriculum_year' => $file->curriculum_year, 'created_by' => 'Percival Banting', 'is_removed' => 0]);
         }
-        return back()->with('message', "Successfully Setup the Curriculum");
+        return back()->with('message', 'Successfully Setup the Curriculum');
     }
     public function import_subject($_files)
     {
-
         foreach ($_files as $_file) {
-            $_subject = array(
+            $_subject = [
                 'subject_code' => $_file->subject_code,
                 'subject_name' => $_file->subject_name,
-                'units' => $_file->units, 'lecture_hours' => $_file->lecture_hours, 'laboratory_hours' => $_file->laboratory_hours,
-                'created_by' => $_file->created_by, 'is_removed' => 0
-            );
+                'units' => $_file->units,
+                'lecture_hours' => $_file->lecture_hours,
+                'laboratory_hours' => $_file->laboratory_hours,
+                'created_by' => $_file->created_by,
+                'is_removed' => 0,
+            ];
             $_subject = Subject::create($_subject);
-            echo $_file->subject_code . "<br>";
+            echo $_file->subject_code . '<br>';
             $_cs = [];
             foreach ($_file->curriculum_subjects as $_curriculum_subject) {
-                $_cs = array(
+                $_cs = [
                     'curriculum_id' => $_curriculum_subject->curriculum_id,
                     'subject_id' => $_subject->id,
                     'course_id' => $_curriculum_subject->course_id,
                     'year_level' => $_curriculum_subject->year_level,
                     'semester' => $_curriculum_subject->semester,
-                    'created_by' => $_curriculum_subject->created_by, 'is_removed' => 0
-                );
+                    'created_by' => $_curriculum_subject->created_by,
+                    'is_removed' => 0,
+                ];
                 CurriculumSubject::create($_cs);
-                echo "      -   " . $_curriculum_subject->curriculum_id .
-                    'subject_id' . $_subject->id .
-                    'course_id' . $_curriculum_subject->course_id .
-                    'year_level' . $_curriculum_subject->year_level .
-                    'semester' . $_curriculum_subject->semester . "<br>";
+                echo '      -   ' . $_curriculum_subject->curriculum_id . 'subject_id' . $_subject->id . 'course_id' . $_curriculum_subject->course_id . 'year_level' . $_curriculum_subject->year_level . 'semester' . $_curriculum_subject->semester . '<br>';
             }
-            echo "<br>";
+            echo '<br>';
         }
-        return back()->with('message', "Successfully Setup the Curriculum Subjects");
+        return back()->with('message', 'Successfully Setup the Curriculum Subjects');
     }
     public function debugTracker($error)
     {
-        $_current_url = sprintf(
-            '%s://%s/%s',
-            isset($_SERVER['HTTPS']) ? 'https' : 'http',
-            $_SERVER['HTTP_HOST'],
-            trim($_SERVER['REQUEST_URI'], '/\\')
-        );
+        $_current_url = sprintf('%s://%s/%s', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'], trim($_SERVER['REQUEST_URI'], '/\\'));
 
-        $_data = array(
+        $_data = [
             'type_of_user' => 'employee',
             'user_name' => Auth::user()->name,
             'user_ip_address' => $_SERVER['REMOTE_ADDR'] . ', ' . $_SERVER['HTTP_USER_AGENT'],
             'error_message' => $error->getMessage(),
             'url_error' => $_current_url,
-            'is_status' => 0
-        );
+            'is_status' => 0,
+        ];
         if (!DebugReport::where($_data)->first()) {
             DebugReport::create($_data);
         }
 
+        // User
+        // IP Address
+        // Device
+        // Date / Time
+    }
+    public function debugTrackerStudent($error)
+    {
+        $_current_url = sprintf('%s://%s/%s', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'], trim($_SERVER['REQUEST_URI'], '/\\'));
+
+        $_data = [
+            'type_of_user' => 'student',
+            'user_name' => auth()->user()->name,
+            'user_ip_address' => $_SERVER['REMOTE_ADDR'] . ', ' . $_SERVER['HTTP_USER_AGENT'],
+            'error_message' => $error->getMessage(),
+            'url_error' => $_current_url,
+            'is_status' => 0,
+        ];
+        if (!DebugReport::where($_data)->first()) {
+            DebugReport::create($_data);
+        }
 
         // User
         // IP Address
@@ -159,7 +173,7 @@ class Controller extends BaseController
         // Get Student Number
         $_student_number = Auth::user() ? str_replace('@bma.edu.ph', '', trim(Auth::user()->email)) : str_replace('@gmail.com', '', trim(Auth::user()->personal_email));
         // Get the extention of files
-        $filename =  $_student_number . '/' . $_folder . '/' . time() . '.' . $_file->getClientOriginalExtension();
+        $filename = $_student_number . '/' . $_folder . '/' . time() . '.' . $_file->getClientOriginalExtension();
         // File Path Format : $_path.'/'.student-number.'/'.$_folder
         $_path = $_path;
         Storage::disk($_path)->put($filename, fopen($_file, 'r+'));

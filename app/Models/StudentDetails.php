@@ -1124,4 +1124,15 @@ class StudentDetails extends Model
     {
         return $this->hasOne(StudentIDDetails::class, 'student_id')->where('is_removed', false);
     }
+    /* Student Enrollment Api Model */
+    public function student_enrollment_application()
+    {
+        $_academic = AcademicYear::where('is_active', true)->first();
+        return $this->hasOne(EnrollmentApplication::class, 'student_id')->where('academic_id', $_academic->id)->where('is_removed', false);
+    }
+    public function current_enrollment()
+    {
+        $_academic = AcademicYear::where('is_active', true)->first();
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('academic_id', $_academic->id)->where('is_removed', false);
+    }
 }

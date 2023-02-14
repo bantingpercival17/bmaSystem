@@ -38,6 +38,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     // Student API
     Route::get('/student', [StudentController::class, 'student_details']);
+
+    Route::get('/student/enrollment',[StudentController::class,'enrollment_overview']);
+
+    // SBT
     Route::get('/student/onboard', [StudentController::class, 'student_onboarding']);
 
     Route::get('student/onboard/shipboard-application', [ShipboardTraining::class, 'student_shipboard_application']);
