@@ -113,7 +113,7 @@ $_title = 'Grade Verification';
                                                     <button type="button"
                                                         class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
                                                         data-bs-toggle="modal" data-bs-target=".grade-view-modal"
-                                                        data-grade-url="{{ route('dean.grading-sheet-view') }}?_subject={{ base64_encode($item->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad2">
+                                                        data-grade-url="{{ route('dean.grading-sheet-view') }}?_subject={{ base64_encode($item->id) }}&_period=finals&_preview=pdf&_form=ad2">
                                                         FORM AD-02</button>
                                                 @endif
                                             </div>
