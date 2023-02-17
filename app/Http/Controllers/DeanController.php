@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\CourseOffer;
+use App\Models\GradeComputed;
 use App\Models\GradeVerification;
 use App\Models\Section;
 use App\Models\StudentDetails;
@@ -11,6 +12,7 @@ use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentSection;
 use App\Models\SubjectClass;
 use App\Report\GradingSheetReport;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -78,16 +80,37 @@ class DeanController extends Controller
 
     public function verify_grade_submission(Request $_request)
     {
-        $_subject_class = SubjectClass::find(base64_decode($_request->subject_class));
-        $_data = array(
-            'subject_class_id' => $_subject_class->id,
-            'is_approved' => $_request->_status,
-            'comments' => $_request->_comments ?: null,
-            'approved_by' => Auth::user()->name,
-            'is_removed' => 0
-        );
-        //return  $_subject_class->student_sections->count();
-        GradeVerification::create($_data);
-        return back()->with('success', 'Successfully Approved');
+        try {
+            $_subject_class = SubjectClass::find(base64_decode($_request->subject_class));
+            $_data = array(
+                'subject_class_id' => $_subject_class->id,
+                'is_approved' => $_request->_status,
+                'comments' => $_request->_comments ?: null,
+                'approved_by' => Auth::user()->name,
+                'is_removed' => 0
+            );
+            $students = $_subject_class->section->student_sections;
+            foreach ($students as $key => $student) {
+                $midterm_grade = $student->student->period_final_grade('midterm');
+                $final_grade = $_subject_class->academic_id >= 5 ? $student->student->total_final_grade() : $student->student->period_final_grade('finals');
+                $data = array(
+                    'student_id' => $student->student->id,
+                    'subject_class_id' => $_subject_class->id,
+                    'midterm_grade' => base64_encode($midterm_grade),
+                    'final_grade' => base64_encode($final_grade),
+                );
+                $_computed =  $_subject_class->student_computed_grade($student->student_id)->first();
+                if (!$_computed) {
+                    GradeComputed::create($data);
+                } else {
+                    $_computed->update(['removed_at', true]);
+                }
+            }
+            GradeVerification::create($_data);
+            return back()->with('success', 'Successfully Approved');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
 }

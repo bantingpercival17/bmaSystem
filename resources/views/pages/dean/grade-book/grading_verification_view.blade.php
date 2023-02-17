@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Grade Verification';
+    $_title = 'Grade Verification';
 @endphp
 @section('page-title', $_title)
 @section('page-mode', 'dark-mode')
@@ -17,7 +17,7 @@ $_title = 'Grade Verification';
         <li class="breadcrumb-item active" aria-current="page">
             <a
                 href="{{ route('dean.grade-verification-view') }}?_academic={{ base64_encode(Auth::user()->staff->current_academic()->id) }}">
-                {{ Auth::user()->staff->current_academic()->semester .' | ' .Auth::user()->staff->current_academic()->school_year }}
+                {{ Auth::user()->staff->current_academic()->semester . ' | ' . Auth::user()->staff->current_academic()->school_year }}
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
@@ -126,13 +126,12 @@ $_title = 'Grade Verification';
                                                             <form action="{{ route('dean.grade-verification') }}"
                                                                 method="get">
                                                                 <div class="me-2">
-                                                                    <textarea name="_remarks" class="form-control mt-2"
-                                                                        cols="20" rows="2"></textarea>
+                                                                    <textarea name="_remarks" class="form-control mt-2" cols="20" rows="2"></textarea>
                                                                 </div>
                                                                 @csrf
                                                                 <div class="row">
                                                                     <div class="col-md">
-                                                                        <a href="{{ route('dean.grade-verification') }}?subject_class='{{ base64_encode($item->id) }}'&_status=1"
+                                                                        <a href="{{ route('dean.grade-verification') }}?subject_class='{{ base64_encode($item->id) }}'&_subject={{ base64_encode($item->id) }}&_status=1&_period=finals"
                                                                             class="btn btn-info btn-sm text-white w-100  mt-2">APPROVED</a>
                                                                     </div>
                                                                     <div class="col-md">

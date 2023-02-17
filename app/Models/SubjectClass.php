@@ -65,6 +65,10 @@ class SubjectClass extends Model
     {
         return $this->hasOne(GradeVerification::class, 'subject_class_id')/* ->where('is_approved',true) */->latest();
     }
+    public function student_computed_grade($student)
+    {
+        return $this->hasOne(GradeComputed::class, 'subject_class_id')->where('removed_at', false)->where('student_id', $student);
+    }
     public function e_clearance()
     {
         return $this->hasOne(StudentClearance::class, 'subject_class_id')->where('student_id', base64_decode(request()->input('_student')))->where('is_removed', false);
