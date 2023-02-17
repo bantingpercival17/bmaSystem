@@ -86,6 +86,7 @@ class DeanController extends Controller
             'approved_by' => Auth::user()->name,
             'is_removed' => 0
         );
+        //return  $_subject_class->student_sections->count();
         GradeVerification::create($_data);
         return back()->with('success', 'Successfully Approved');
     }

@@ -3,7 +3,7 @@
   array (
     'name' => 'Laravel',
     'env' => 'local',
-    'debug' => true,
+    'debug' => false,
     'url' => 'http://localhost',
     'asset_url' => NULL,
     'timezone' => 'Asia/Manila',

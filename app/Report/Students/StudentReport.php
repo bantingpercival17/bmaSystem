@@ -38,7 +38,8 @@ class StudentReport
     }
     public function certificate_of_grade($_student, $_section)
     {
-        $pdf = PDF::loadView("widgets.report.student.certificate_of_grades", compact('_student', '_section'));
+        $view = base64_decode(request()->input('_academic')) >= 5 ? 'widgets.report.student.certificate_of_grades_v2' : 'widgets.report.student.certificate_of_grades';
+        $pdf = PDF::loadView($view, compact('_student', '_section'));
         $file_name =   'FORM AD-02a  - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
@@ -53,6 +54,5 @@ class StudentReport
         $pdf = PDF::loadView($this->path . 'student-qr-code', compact('_student'));
         $file_name =   'BMA QR-CODE  - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
         return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
-    
     }
 }
