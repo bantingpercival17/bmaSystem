@@ -66,7 +66,7 @@ $_title = 'Grade Verification';
                                                 </a>
 
                                             </td>
-                                            <td>{{ $_data->student_section->count() }}</td>
+                                            <td>{{ $_data->student_sections->count() }}</td>
                                             <td></td>
                                         </tr>
                                     @endforeach
