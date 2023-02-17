@@ -51,8 +51,18 @@ class SummaryGradeSheet implements FromCollection, WithHeadings, WithTitle, With
             $_subject_class = $value->curriculum_subject_class($_data->section_id);
             if ($_subject_class) {
                 if ($_subject_class->grade_final_verification) {
-                    $_final_grade = number_format($_data->student->final_grade_v2($_subject_class->id, 'finals'), 2);
-                    $_final_grade = number_format($_data->student->percentage_grade($_final_grade),2);
+                    if (base64_decode(request()->input('_academic')) >= 5) {
+                        $final_grade = $_subject_class->student_computed_grade($_data->student_id)->first();
+                        if ($final_grade) {
+                            $_final_grade = number_format($_data->student->percentage_grade(base64_decode($final_grade->final_grade)), 2);
+                        } else {
+                            $_final_grade = '';
+                        }
+                    } else {
+                        $_final_grade = number_format($_data->student->final_grade_v2($_subject_class->id, 'finals'), 2);
+                        $_final_grade = number_format($_data->student->percentage_grade($_final_grade), 2);
+                    }
+
                     if ($value->subject->subject_code == 'BRDGE') {
                         $_final_grade = $_data->student->enrollment_status->bridging_program == 'with' ? $_final_grade : '';
                     } else {
@@ -64,7 +74,7 @@ class SummaryGradeSheet implements FromCollection, WithHeadings, WithTitle, With
             } else {
                 $_final_grade = '';
             }
-             $_cell_data += [$count += 1 =>$_final_grade];
+            $_cell_data += [$count += 1 => $_final_grade];
             $_cell_data += [$count += 1 => $value->subject->units];
             $_total_units += $value->subject->units;
         }

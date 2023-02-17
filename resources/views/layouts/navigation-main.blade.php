@@ -220,7 +220,7 @@
                                         @foreach ($_item['role_routes'] as $_route)
                                             <li class="nav-item">
                                                 <a class="nav-link {{ request()->is(str_replace('http://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . '/', '', strtolower(route($_route[1]))) . '*') ? 'active' : '' }}"
-                                                    href="{{ route($_route[1]) }}">
+                                                    href="{{ route($_route[1]) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
 
                                                     <i class="icon">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="10"

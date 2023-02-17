@@ -20,7 +20,9 @@ class CurriculumSummaryGradeSheet implements WithMultipleSheets
     {
         $_curriculum = Curriculum::where('is_removed', false)->get();
         foreach ($_curriculum as $key => $curriculum) {
-            $sheets[$key] = new SummaryGradeSheet($this->course, $this->request, $curriculum);
+            if (count($curriculum->student_enrolled) > 0) {
+                $sheets[$key] = new SummaryGradeSheet($this->course, $this->request, $curriculum);
+            }
         }
         return $sheets;
     }

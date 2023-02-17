@@ -6,7 +6,7 @@
 @section('beardcrumb-content')
     <li class="breadcrumb-item">
         <a
-            href="{{ route('registrar.semestral-clearance') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}">
+            href="{{ route('registrar.semestral-grades') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}">
             <svg width="14" height="14" class="me-2" viewBox="0 0 22 22" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -29,65 +29,166 @@
 @endsection
 @section('page-content')
     <div class=" mt-6 py-0">
-        <form action="{{ route('registrar.semestral-clearance-store') }}" method="post">
-            @csrf
-            <div class="card">
-                <div class="card-header d-flex justify-content-between">
-                    <div class="header-title">
-                        <h4 class="card-title">{{ $_section->section_name }}</h4>
-                        <h6 class="card-title">Semestral Grade</h6>
-                    </div>
-                    <div class="card-tool">
-                        <a href="{{ route('registrar.semestral-grade-publish-all') }}?section={{ request()->input('_section') }}&academic={{ request()->input('_academic') }}"
-                            class="btn btn-primary btn-sm">PUBLISH ALL GRADES</a>
-                        {{-- <div class="form-check d-block">
-                            <input class="form-check-input input-select" data-check="subject-clearance" type="checkbox"
-                                id="flexCheckChecked-4">
-                            <label class="form-check-label" for="flexCheckChecked-4">
-                                Select All
-                            </label>
-                        </div>
-                        <input type="hidden" name="_academic" value="{{ Auth::user()->staff->current_academic()->id }}">
-                        <input type="hidden" name="_clearance_data" value="registrar">
-                        <button type="submit" class="btn btn-primary">SUBMIT</button> --}}
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div class="header-title">
+                    <h4 class="card-title">{{ $_section->section_name }}</h4>
+                    <h6 class="card-title">Semestral Grade</h6>
+                </div>
+                <div class="card-tool">
+                    <a href="{{ route('registrar.semestral-grade-publish-all') }}?section={{ request()->input('_section') }}&academic={{ request()->input('_academic') }}"
+                        class="btn btn-primary btn-sm">PUBLISH ALL GRADES</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs justify-content-center nav-fill" id="myTab-2" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="student-tab-justify" data-bs-toggle="tab" href="#student-justify"
+                            role="tab" aria-controls="student" aria-selected="true">STUDENT LIST</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="subject-tab-justify" data-bs-toggle="tab" href="#subject-justify"
+                            role="tab" aria-controls="subject" aria-selected="false">SUBJECT LIST</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent-3">
+                    <div class="tab-pane fade show active" id="student-justify" role="tabpanel"
+                        aria-labelledby="student-tab-justify">
+                        <<div class="table-responsive">
+                            <table class="table table-striped" id="datatable" data-toggle="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Number</th>
+                                        <th>Midshipman Name</th>
+
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (count($_section->student_sections) > 0)
+                                        @foreach ($_section->student_sections as $_key => $_data)
+                                            <tr>
+                                                <td>{{ $_data->student->account ? $_data->student->account->student_number : '-' }}
+                                                </td>
+                                                <td>{{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('registrar.semestral-grade-form-ad2') }}?student={{ base64_encode($_data->student->id) }}&_section={{ request()->input('_section') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                                                        class="btn btn-sm btn-primary" target="_blank">FORM AD-02-A</a>
+                                                    @if ($_data->student->grade_publish)
+                                                        <span class="badge bg-secondary">GRADE PUBLISHED <br>
+                                                            {{ $_data->student->grade_publish->staff->user->name . ' - ' . $_data->student->grade_publish->created_at->format('F d, Y') }}</span>
+                                                    @else
+                                                        <a href="{{ route('registrar.semestral-grade-publish') }}? student={{ base64_encode($_data->student->id) }}&_academic={{ request()->input('_academic') }}"
+                                                            class="btn btn-sm btn-info text-white">PUBLISH GRADE</a>
+                                                    @endif
+
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <th colspan="3">No Data</th>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="tab-pane fade" id="subject-justify" role="tabpanel" aria-labelledby="subject-tab-justify">
                     <div class="table-responsive">
-                        <table class="table table-striped" id="datatable" data-toggle="data-table">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Student Number</th>
-                                    <th>Midshipman Name</th>
-
-                                    <th>Action</th>
+                                    <th>SUBJECT NAME / TEACHER NAME</th>
+                                    <th>FORM </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (count($_section->student_sections) > 0)
-                                    @foreach ($_section->student_sections as $_key => $_data)
+                                @if (count($_section->subject_class) > 0)
+                                    @foreach ($_section->subject_class as $item)
                                         <tr>
-                                            <td>{{ $_data->student->account ? $_data->student->account->student_number : '-' }}
-                                            </td>
-                                            <td>{{ strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) }}
-                                            </td>
                                             <td>
-                                                <a href="{{ route('registrar.semestral-grade-form-ad2') }}?student={{ base64_encode($_data->student->id) }}&_section={{ request()->input('_section') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
-                                                    class="btn btn-sm btn-primary" target="_blank">FORM AD-02-A</a>
-                                                @if ($_data->student->grade_publish)
-                                                    <span class="badge bg-secondary">GRADE PUBLISHED <br>
-                                                        {{ $_data->student->grade_publish->staff->user->name . ' - ' . $_data->student->grade_publish->created_at->format('F d, Y') }}</span>
-                                                @else
-                                                    <a href="{{ route('registrar.semestral-grade-publish') }}? student={{ base64_encode($_data->student->id) }}&_academic={{ request()->input('_academic') }}"
-                                                        class="btn btn-sm btn-info text-white">PUBLISH GRADE</a>
-                                                @endif
+                                                <span
+                                                    class="text-primary fw-bolder">{{ $item->curriculum_subject->subject->subject_name }}</span>
+                                                <br>
+                                                <small class="fw-bolder text-muted">
+                                                    {{ strtoupper($item->staff->first_name . ' ' . $item->staff->last_name) }}
+                                                </small>
+                                            </td>
+                                            <td class="d-flex justify-content-between">
+                                                <div class="row">
+                                                    <div class="col-md">
+                                                        @if ($item->midterm_grade_submission)
+                                                            @if ($item->midterm_grade_submission->is_approved === 1)
+                                                                <button type="button"
+                                                                    class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target=".grade-view-modal"
+                                                                    data-grade-url="{{ route('dean.grading-sheet-view') }}?_subject={{ base64_encode($item->id) }}&_period=midterm&_preview=pdf&_form=ad1">
+                                                                    MIDTERM</button>
+                                                            @else
+                                                                <span class="badge bg-secondary fw-bolder">
+                                                                    MIDTERM GRADE <br> ONGOING CHECKING
+                                                                </span>
+                                                            @endif
+                                                        @else
+                                                            <span class="badge bg-secondary fw-bolder">
+                                                                MIDTERM GRADE <br> NOT YET SUBMMITED
+                                                            </span>
+                                                        @endif
+                                                    </div>
 
+                                                    <div class="col-md">
+                                                        @if ($item->finals_grade_submission)
+                                                            @if ($item->finals_grade_submission->is_approved === 1)
+                                                                <button type="button"
+                                                                    class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target=".grade-view-modal"
+                                                                    data-grade-url="{{ route('dean.grading-sheet-view') }}?_subject={{ base64_encode($item->id) }}&_period=midterm&_preview=pdf&_form=ad1">
+                                                                    FINALS</button>
+                                                            @else
+                                                                <span class="badge bg-secondary fw-bolder mt-2">
+                                                                    FINALS GRADE <br> ONGOING CHECKING
+                                                                </span>
+                                                            @endif
+                                                        @else
+                                                            <span class="badge bg-secondary fw-bolder mt-2">
+                                                                FINALS GRADE <br> NOT YET SUBMMITED
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="col-md">
+                                                        @if ($item->finals_grade_submission || $item->midterm_grade_submission)
+                                                            <button type="button"
+                                                                class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
+                                                                data-bs-toggle="modal" data-bs-target=".grade-view-modal"
+                                                                data-grade-url="{{ route('dean.grading-sheet-view') }}?_subject={{ base64_encode($item->id) }}&_period=finals&_preview=pdf&_form=ad2">
+                                                                FORM AD-02</button>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="ms-2">
+                                                    @if ($item->finals_grade_submission && $item->midterm_grade_submission)
+                                                        @if ($item->finals_grade_submission->is_approved === 1 && $item->midterm_grade_submission->is_approved === 1)
+                                                            @if ($item->grade_final_verification)
+                                                                <span class="badge bg-primary float-start">Grade
+                                                                    Verified</span>
+                                                            @else
+                                                                <span class="badge bg-info float-start">FOR
+                                                                    APPROVAL</span>
+                                                            @endif
+                                                        @endif
+                                                    @endif
+
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <th colspan="3">No Data</th>
+                                        <th class="4">No Subject Class</th>
                                     </tr>
                                 @endif
                             </tbody>
@@ -95,8 +196,23 @@
                     </div>
                 </div>
             </div>
-        </form>
 
+        </div>
     </div>
-
+    <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
+                </iframe>
+            </div>
+        </div>
+    </div>
+@section('js')
+    <script>
+        $(document).on('click', '.btn-form-grade', function(evt) {
+            // $(".form-view").contents().find("body").html("");
+            $('.form-view').attr('src', $(this).data('grade-url'))
+        });
+    </script>
+@endsection
 @endsection
