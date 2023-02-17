@@ -61,7 +61,7 @@ class StudentController extends Controller
             $academic = AcademicYear::where('is_active', 1)->first(); // Get active Academic Year
             $student = StudentDetails::find(auth()->user()->student_id);
             $registration = auth()->user()->student->student_enrollment_application;
-            $enrollment_assessment = auth()->user()->current_enrollment;
+            $enrollment_assessment = auth()->user()->student->current_enrollment;
             $data = compact('academic', 'registration','enrollment_assessment');
             return response(['data' => $data], 200);
         } catch (Exception $error) {

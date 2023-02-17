@@ -1140,6 +1140,6 @@ class StudentDetails extends Model
         $_academic = AcademicYear::where('is_active', true)->first();
         return $this->hasOne(EnrollmentAssessment::class, 'student_id')
             ->where('academic_id', $_academic->id)
-            ->where('is_removed', false);
+            ->where('is_removed', false)->with('course');
     }
 }

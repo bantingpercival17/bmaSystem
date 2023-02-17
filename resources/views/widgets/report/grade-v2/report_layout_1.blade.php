@@ -109,7 +109,7 @@
 
     </header>
     @yield('content')
-    <footer>
+    <!--  <footer>
         <table class="table-content text-center">
             <tbody>
                 <tr>
@@ -127,6 +127,6 @@
             </tbody>
         </table>
     </footer>
-</body>
+</body> -->
 
 </html>
