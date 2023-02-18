@@ -30,8 +30,8 @@ class StudentDetails extends Model
     public function profile_picture()
     {
         $_formats = ['.jpeg', '.jpg', '.png'];
-        $_path = 'http://20.0.0.120/img/student-picture/';
-        $_image = 'http://20.0.0.120/img/student-picture/midship-man.jpg';
+        $_path = 'http://bma.edu.ph/img/student-picture/';
+        $_image = 'http://bma.edu.ph/img/student-picture/midship-man.jpg';
         foreach ($_formats as $format) {
             $_image = @fopen($_path . $this->account->student_number . $format, 'r') ? $_path . $this->account->student_number . $format : $_image;
         }

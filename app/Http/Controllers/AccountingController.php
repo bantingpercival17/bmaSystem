@@ -440,6 +440,21 @@ class AccountingController extends Controller
                 $_online_payment->save();
             }
             // Sectioning & Student number for new student
+            if ($_payment) {
+                $_payment_assessment = PaymentAssessment::find($_request->_assessment);
+                $_section = $_payment_assessment->enrollment_assessment->find_section; // Find the Sections 
+                if ($_section) {
+                    $_validate_student_section = StudentSection::where('section_id', $_section->id)->where('student_id', $_payment_assessment->enrollment_assessment->student_id); // Verify if the Student will save on Section
+                    if (!$_validate_student_section) {
+                        StudentSection::create([
+                            'student_id' => $_payment_assessment->enrollment_assessment->student_id,
+                            'section_id' => $_section->id,
+                            'created_by' => 'Auto Section',
+                            'is_removed' => 0,
+                        ]);
+                    }
+                }
+            }
             if ($_request->remarks == 'Upon Enrollment') {
                 // Get the Assessment Detials
                 $_payment_assessment = PaymentAssessment::find($_request->_assessment);

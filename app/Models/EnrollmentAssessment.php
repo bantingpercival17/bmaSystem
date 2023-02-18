@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class EnrollmentAssessment extends Model
 {
@@ -88,5 +89,21 @@ class EnrollmentAssessment extends Model
     public function bridging_payment()
     {
         return $this->hasOne(PaymentAdditionalTransaction::class, 'enrollment_id')->where('is_removed', false);
+    }
+    public function find_section()
+    {
+        $level = $this->course_id == 4 ? 'Grade ' . $this->year_level : $this->year_level . '/C';
+        return $this->hasOne(Section::class, 'academic_id')->where('course_id', $this->course_id)->where('year_level', $level)->where('curriculum_id', $this->curriculum_id)->where(function ($_sub_query) {
+            $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
+                ->whereColumn('student_sections.section_id', 'sections.id')
+                ->where('student_sections.is_removed', false);
+        }, '<', 40)->first();
+    }
+    public function color_course()
+    {
+        $_course_color = $this->course_id == 1 ? 'bg-info' : '';
+        $_course_color = $this->course_id == 2 ? 'bg-primary' : $_course_color;
+        $_course_color = $this->course_id == 3 ? 'bg-warning text-white' : $_course_color;
+        return $_course_color;
     }
 }

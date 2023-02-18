@@ -14,21 +14,20 @@
                     $_course_color = $_student->enrollment_assessment->course_id == 3 ? 'bg-warning text-white' : $_course_color;
                 }
             }
-
+            
         @endphp
         @if (Auth::user()->staff->current_academic()->semester == 'First Semester')
             <div class="mb-5">
                 <div class="row no-gutters">
                     <div class="col-lg-4">
-                        <img src="{{ $_student ? $_student->profile_pic($_student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                            class="card-img" alt="student-profile">
+                        <img src="{{ $_student->profile_picture() }}" class="card-img" alt="student-profile">
                     </div>
                     <div class="col-lg-8 ps-0">
                         <div class="card mb-0">
                             <div class="card-body">
                                 <div class="card-information">
                                     <h4 class="card-title text-primary mb-0">
-                                        <b>{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name . " ".$_student->extenstion_name ) : 'MIDSHIPMAN NAME' }}</b>
+                                        <b>{{ $_student ? strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->extenstion_name) : 'MIDSHIPMAN NAME' }}</b>
                                     </h4>
                                     <div class="row">
                                         <div class="col-md">
@@ -256,9 +255,11 @@
         @else
             <div class="mb-5">
                 <div class="row no-gutters">
-                    <div class="col-lg-4">
-                        <img src="{{ $_student ? $_student->profile_pic($_student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                            class="card-img" alt="student-profile">
+                    <div class="col-lg-4 col-md-4">
+                        @if ($_student->profile_picture())
+                            <img src="{{ $_student->profile_picture() }}" class="card-img" alt="student-profile">
+                        @endif
+
                     </div>
                     <div class="col-lg-8 ps-0">
                         <div class="card mb-0">

@@ -525,13 +525,17 @@ class RegistrarController extends Controller
     {
         try {
             $_student = StudentDetails::find(base64_decode($_request->student));
-            if ($_request->_course  || $_request->_academic || $_request->search_student) {
-                $_student_detials = new StudentDetails();
+            /* if ($_request->student) {
+                $picture =  $_student->profile_picture();
+                $_student = compact('_student', 'picture');
+            } */
+            $_student_detials = new StudentDetails();
+            if ($_request->search_student) {
                 $_students = $_request->search_student ? $_student_detials->student_search($_request->search_student) : [];
-                //return $_students;
             } else {
-                $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
+                $_students = StudentDetails::select('id', 'first_name', 'last_name', 'middle_name')->where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
             }
+            //return compact('_student', '_students');
             return view('pages.administrator.student.profile', compact('_student', '_students'));
         } catch (Exception $err) {
             $this->debugTracker($err);
