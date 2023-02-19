@@ -569,8 +569,8 @@ class RegistrarController extends Controller
     {
         try {
             $_courses = CourseOffer::where('is_removed', false)->get();
-             $_curriculum = Curriculum::select('id', 'curriculum_name')->orderBy('curriculum_name', 'asc')->get();
-            return view('pages.registrar.sections.view', compact('_courses','_curriculum'));
+            $_curriculum = Curriculum::select('id', 'curriculum_name')->orderBy('curriculum_name', 'asc')->get();
+            return view('pages.registrar.sections.view', compact('_courses', '_curriculum'));
         } catch (Exception $err) {
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
@@ -667,7 +667,8 @@ class RegistrarController extends Controller
     {
         try {
             $_course = CourseOffer::find(base64_decode($_request->_course));
-            $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+            $_year = Auth::user()->staff->convert_year_level($_request->_year_level);
+            $_file_name = $_course->course_code . "_" . strtoupper($_year) . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
             $_file_export = new CourseSectionStudentList($_course, $_request->_year_level);
             // Excell Report
 
