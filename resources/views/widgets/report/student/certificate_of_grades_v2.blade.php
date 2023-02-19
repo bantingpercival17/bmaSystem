@@ -75,50 +75,36 @@
                             $_subject_count = 0;
                             $_total_units = 0;
                         @endphp
+
                         @foreach ($_section->subject_class as $item)
                             @php
                                 $_percentage = 0;
-                                $_status = $_student->enrollment_status->bridging_program == 'with' || $item->curriculum_subject->subject->subject_code != 'BRDGE';
-                                
-                                // TODO: Need to delete this Code
-                                $term = $_section->academic_id = 5 ? 'midterm' : 'finals';
-                                $_final_grade = number_format($_student->final_grade_v2($item->id, $term), 2); // Grade
-                                $_point = $_student->percentage_grade($_final_grade); // Points
-                                $_average = $_status ? $_average + $_final_grade : $_average;
-                                $_subject_count = $_status ? $_subject_count + 1 : $_subject_count; // Count the Subjects
-                                
+                                $grade = $item->student_computed_grade($_student->id)->first();
+                                if ($grade) {
+                                    $_final_grade = number_format($_student->percentage_grade(base64_decode($grade->final_grade)), 2); // Get the Final Grade on Grade Computed Model
+                                    $_point = base64_decode($grade->final_grade);
+                                    $_point = $_student->percentage_grade($_point);
+                                } else {
+                                    $_point = '0.00';
+                                }
                                 if (!in_array($item->curriculum_subject->subject->subject_code, ['BRDGE', 'P.E. 1', 'P.E. 2', 'P.E. 3', 'P.E. 4'])) {
                                     $_total_units += $item->curriculum_subject->subject->units; // Units
                                     $_percentage = $item->curriculum_subject->subject->units * $_point; // Get the Percentage of Unit and Points
                                     $_total_percentage += $_percentage; // Sum the Total Percentage
                                 }
-                                
                             @endphp
-                            @if ($_status)
-                                <tr class="text-center">
-                                    <td><b>{{ $item->curriculum_subject->subject->subject_code }}</b></td>
-                                    <td><b>{{ $item->curriculum_subject->subject->subject_name }}</b></td>
-                                    <td>
-                                        {{ number_format($_point, 2) }}
-
-                                    </td>
-                                    <td>{{ $item->curriculum_subject->subject->units }}</td>
-                                    {{-- <td> {{ number_format($_student->final_grade($item->id, 'finals'), 2) }}</td> --}}
-
-
-                                    <td>
-                                        {{ $_point >= 5 ? 'FAILED' : 'PASSED' }}
-                                    </td>
-                                </tr>
-                            @endif
+                            <tr class="text-center">
+                                <td><b>{{ $item->curriculum_subject->subject->subject_code }}</b></td>
+                                <td><b>{{ $item->curriculum_subject->subject->subject_name }}</b></td>
+                                <td>
+                                    {{ number_format($_point, 2) }}
+                                </td>
+                                <td>{{ $item->curriculum_subject->subject->units }}</td>
+                                <td>
+                                    {{ $_point >= 5 ? 'FAILED' : 'PASSED' }}
+                                </td>
+                            </tr>
                         @endforeach
-                        {{-- <tr class="text-center">
-                            <td><b>NROTC 1</b></td>
-                            <td><b>NAVAL RESERVE 1</b></td>
-                            <td>95.21</td>
-                            <td>1.50</td>
-                            <td>PASSED</td>
-                        </tr> --}}
                     </tbody>
                     <tfoot>
                         <tr class="text-center">
