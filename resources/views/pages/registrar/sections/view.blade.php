@@ -55,6 +55,17 @@
                                     <span class="badge bg-danger">{{ $message }}</span>
                                 @enderror
                             </div>
+                            <div class="col-md">
+                                <select name="_curriculum" id="" class="form-select">
+                                    <option value="" selected disabled>Select Curriculum</option>
+                                    @foreach ($_curriculum as $curriculum)
+                                        <option value="{{ $curriculum->id }}">{{ $curriculum->curriculum_name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('_level')
+                                    <span class="badge bg-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
                             <div class="col-md-2">
                                 <button type="submit" class="btn btn-primary w-100">Create</button>
                             </div>

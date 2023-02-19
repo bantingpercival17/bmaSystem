@@ -569,7 +569,8 @@ class RegistrarController extends Controller
     {
         try {
             $_courses = CourseOffer::where('is_removed', false)->get();
-            return view('pages.registrar.sections.view', compact('_courses'));
+             $_curriculum = Curriculum::select('id', 'curriculum_name')->orderBy('curriculum_name', 'asc')->get();
+            return view('pages.registrar.sections.view', compact('_courses','_curriculum'));
         } catch (Exception $err) {
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
@@ -580,6 +581,7 @@ class RegistrarController extends Controller
         $_request->validate([
             '_section' => 'required',
             '_level' => 'required',
+            '_curriculum' => 'required'
         ]);
         try {
             $_section_details = [
@@ -587,6 +589,7 @@ class RegistrarController extends Controller
                 'academic_id' => $_request->_academic,
                 'course_id' => $_request->_course,
                 'year_level' => $_request->_level,
+                'curriculum_id' => $_request->_curriculum,
                 'created_by' => Auth::user()->name,
                 'is_removed' => 0,
             ];
