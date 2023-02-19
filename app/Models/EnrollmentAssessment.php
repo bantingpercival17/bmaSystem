@@ -93,11 +93,11 @@ class EnrollmentAssessment extends Model
     public function find_section()
     {
         $level = $this->course_id == 4 ? 'Grade ' . $this->year_level : $this->year_level . '/C';
-        return $this->hasOne(Section::class, 'academic_id')->where('course_id', $this->course_id)->where('year_level', $level)->where('curriculum_id', $this->curriculum_id)->where(function ($_sub_query) {
+        return Section::where('academic_id', $this->academic_id)->where('course_id', $this->course_id)->where('year_level', $level)->where('curriculum_id', $this->curriculum_id)->where(function ($_sub_query) {
             $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
                 ->whereColumn('student_sections.section_id', 'sections.id')
                 ->where('student_sections.is_removed', false);
-        }, '<', 40)->first();
+        }, '<=', 40)->first();
     }
     public function color_course()
     {

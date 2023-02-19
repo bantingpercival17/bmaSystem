@@ -390,7 +390,7 @@ class AccountingController extends Controller
         try {
 
 
-            $_amount = str_replace(",", "", $_request->amount);
+             $_amount = str_replace(",", "", $_request->amount);
             $_tuition_fee_remarks = ['Tuition Fee', 'Upon Enrollment', '1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
             $_payment_transaction =  in_array($_request->remarks, $_tuition_fee_remarks) ? 'TUITION FEE' : 'ADDITIONAL FEE';
             if (!$_request->voucher) {
@@ -440,11 +440,11 @@ class AccountingController extends Controller
                 $_online_payment->save();
             }
             // Sectioning & Student number for new student
-            if ($_payment) {
+            if ($_request->remarks == 'Upon Enrollment' && $_payment) {
                 $_payment_assessment = PaymentAssessment::find($_request->_assessment);
-                $_section = $_payment_assessment->enrollment_assessment->find_section; // Find the Sections 
+                $_section = $_payment_assessment->enrollment_assessment->find_section(); // Find the Sections 
                 if ($_section) {
-                    $_validate_student_section = StudentSection::where('section_id', $_section->id)->where('student_id', $_payment_assessment->enrollment_assessment->student_id); // Verify if the Student will save on Section
+                    $_validate_student_section = StudentSection::where('section_id', $_section->id)->where('student_id', $_payment_assessment->enrollment_assessment->student_id)->where('is_removed', false)->first(); // Verify if the Student will save on Section
                     if (!$_validate_student_section) {
                         StudentSection::create([
                             'student_id' => $_payment_assessment->enrollment_assessment->student_id,
@@ -455,7 +455,8 @@ class AccountingController extends Controller
                     }
                 }
             }
-            if ($_request->remarks == 'Upon Enrollment') {
+
+            /*  if ($_request->remarks == 'Upon Enrollment') {
                 // Get the Assessment Detials
                 $_payment_assessment = PaymentAssessment::find($_request->_assessment);
                 // HOW TO IDENTIFY THE COUNT NUMBER OF THE STUDENT
@@ -544,10 +545,11 @@ class AccountingController extends Controller
                     );
                     StudentSection::create($_content); // Store Student Section
                 }
-            }
+            } */
             return back()->with('success', 'Payment Transaction Complete!');
         } catch (Exception $error) {
-            return back()->with('error', $error->getMessage());
+            return $error->getMessage();
+            // return back()->with('error', $error->getMessage());
         }
     }
     public function payment_store_v1(Request $_request)
