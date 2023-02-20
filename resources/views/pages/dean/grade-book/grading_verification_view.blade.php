@@ -123,7 +123,7 @@
                                                         @if ($item->grade_final_verification)
                                                             <span class="badge bg-primary float-start">Grade Verified</span>
                                                             @if (count($item->grade_publish()) <= 0)
-                                                                <a href="{{ route('dean.grade-publish') }}?subject_class='{{ base64_encode($item->id) }}"
+                                                                <a href="{{ route('dean.grade-publish') }}?subject_class='{{ base64_encode($item->id) }}'&_subject={{ base64_encode($item->id) }}&_status=1&_period=finals"
                                                                     class="btn btn-info btn-sm text-white w-100  mt-2">PUBLISH</a>
                                                             @endif
                                                         @else
