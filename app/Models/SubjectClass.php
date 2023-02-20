@@ -81,4 +81,9 @@ class SubjectClass extends Model
     {
         return $this->hasOne(SubjectClassCourseSyllabus::class, 'subject_id')->where('is_removed', false);
     }
+
+    public function grade_publish()
+    {
+        return GradeComputed::where('subject_class_id', $this->id)->get();
+    }
 }

@@ -113,4 +113,32 @@ class DeanController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
+    public function publish_grade_submission(Request $_request)
+    {
+        try {
+            $_subject_class = SubjectClass::find(base64_decode($_request->subject_class));
+
+            $students = $_subject_class->section->student_sections;
+            foreach ($students as $key => $student) {
+                $midterm_grade = $student->student->period_final_grade('midterm');
+                $final_grade = $_subject_class->academic_id >= 5 ? $student->student->total_final_grade() : $student->student->period_final_grade('finals');
+                $data = array(
+                    'student_id' => $student->student->id,
+                    'subject_class_id' => $_subject_class->id,
+                    'midterm_grade' => base64_encode($midterm_grade),
+                    'final_grade' => base64_encode($final_grade),
+                );
+                $_computed =  $_subject_class->student_computed_grade($student->student_id)->first();
+                if (!$_computed) {
+                    GradeComputed::create($data);
+                } else {
+                    $_computed->update(['removed_at', true]);
+                }
+            }
+            return back()->with('success', 'Successfully Approved');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
+    }
 }
