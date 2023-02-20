@@ -122,8 +122,7 @@
                                                     @if ($item->finals_grade_submission->is_approved === 1 && $item->midterm_grade_submission->is_approved === 1)
                                                         @if ($item->grade_final_verification)
                                                             <span class="badge bg-primary float-start">Grade Verified</span>
-                                                            {{ $item->grade_publish()->count() }}
-                                                            @if (count($item->grade_publish()) < 0)
+                                                            @if (count($item->grade_publish()) <= 0)
                                                                 <a href="{{ route('dean.grade-publish') }}?subject_class='{{ base64_encode($item->id) }}"
                                                                     class="btn btn-info btn-sm text-white w-100  mt-2">PUBLISH</a>
                                                             @endif
