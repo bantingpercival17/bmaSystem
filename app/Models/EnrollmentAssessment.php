@@ -97,7 +97,7 @@ class EnrollmentAssessment extends Model
             $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
                 ->whereColumn('student_sections.section_id', 'sections.id')
                 ->where('student_sections.is_removed', false);
-        }, '<=', 40)->first();
+        }, '<', 40)->first();
     }
     public function color_course()
     {
