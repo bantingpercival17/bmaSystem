@@ -106,4 +106,14 @@ class EnrollmentAssessment extends Model
         $_course_color = $this->course_id == 3 ? 'bg-warning text-white' : $_course_color;
         return $_course_color;
     }
+    public function course_level_tuition_fee()
+    {
+        return CourseSemestralFees::where([
+            'course_id' => $this->course_id,
+            'curriculum_id' => $this->curriculum_id,
+            'academic_id' => $this->academic_id,
+            'year_level' => $this->year_level,
+            'is_removed' => false
+        ])->first();
+    }
 }

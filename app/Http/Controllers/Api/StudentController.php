@@ -62,7 +62,20 @@ class StudentController extends Controller
             $student = StudentDetails::find(auth()->user()->student_id);
             $registration = auth()->user()->student->student_enrollment_application;
             $enrollment_assessment = auth()->user()->student->current_enrollment;
-            $data = compact('academic', 'registration','enrollment_assessment');
+            $fees = [];
+            $tuition_assessment = [];
+            $units = [];
+            if ($enrollment_assessment) {
+
+                $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
+                if ($tuition_fees) {
+                    $fees = $tuition_fees->semestral_fees();
+                }
+                $tuition_assessment = $enrollment_assessment->payment_assessment;
+                $units = $enrollment_assessment->course->units($enrollment_assessment)->units;
+            }
+            $tuition = compact('tuition_assessment', 'fees', 'units');
+            $data = compact('academic', 'registration', 'enrollment_assessment', 'tuition');
             return response(['data' => $data], 200);
         } catch (Exception $error) {
             $this->debugTrackerStudent($error);
