@@ -289,7 +289,7 @@
                                     <div class="col-md-12">
                                         <small class="fw-bolder">YEAR AND SECTION : </small><br>
                                         <span class="badge {{ $_course_color }}">
-                                            {{ $_student ? $_student->enrollment_assessment? $student->enrollment_assessment->year_and_section($_student->enrollment_assessment):'' : '- | -' }}
+                                            {{ $_student ? ($_student->enrollment_assessment ? $_student->enrollment_assessment->year_and_section($_student->enrollment_assessment) : '') : '- | -' }}
                                         </span>
                                     </div>
                                     @if (!$_student->account)
