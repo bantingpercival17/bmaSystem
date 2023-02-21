@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subject->subject->subject_code;
+    $_title = $_subject->section->section_name . ' | ' . $_subject->curriculum_subject->subject->subject_code;
 @endphp
 @section('page-title', $_title)
 @section('page-mode', 'dark-mode')

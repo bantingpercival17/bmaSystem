@@ -313,11 +313,11 @@ class StudentDetails extends Model
         $_percent = 0.15;
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
-                ->where('subject_class_id', $_subject_class->id)
-                ->where('period', $_period)
-                ->where('is_removed', false)
-                ->where('type', 'like', 'Q%')
-                ->average('score') * $_percent;
+            ->where('subject_class_id', $_subject_class->id)
+            ->where('period', $_period)
+            ->where('is_removed', false)
+            ->where('type', 'like', 'Q%')
+            ->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'Q1']);
         return $cellOne >= 0 ? number_format($computetion, 2) : '';
     }
@@ -328,11 +328,11 @@ class StudentDetails extends Model
         $_percent = $_subject_class->academic->id > 4 ? 0.2 : 0.15;
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
-                ->where('subject_class_id', $_subject_class->id)
-                ->where('period', $_period)
-                ->where('is_removed', false)
-                ->where('type', 'like', 'O%')
-                ->average('score') * $_percent;
+            ->where('subject_class_id', $_subject_class->id)
+            ->where('period', $_period)
+            ->where('is_removed', false)
+            ->where('type', 'like', 'O%')
+            ->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'O1']);
         return $cellOne >= 0 ? number_format($computetion, 2) : '';
     }
@@ -343,11 +343,11 @@ class StudentDetails extends Model
         $_percent = $_subject_class->academic->id > 4 ? 0.2 : 0.15;
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
-                ->where('subject_class_id', $_subject_class->id)
-                ->where('period', $_period)
-                ->where('is_removed', false)
-                ->where('type', 'like', 'R%')
-                ->average('score') * $_percent;
+            ->where('subject_class_id', $_subject_class->id)
+            ->where('period', $_period)
+            ->where('is_removed', false)
+            ->where('type', 'like', 'R%')
+            ->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'R1']);
         return $cellOne >= 0 ? number_format($computetion, 2) : '';
     }
@@ -385,11 +385,11 @@ class StudentDetails extends Model
         // Compute Laboratory Grades
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
-                ->where('subject_class_id', $_subject_class->id)
-                ->where('period', $_period)
-                ->where('type', 'like', 'A%')
-                ->where('is_removed', false)
-                ->average('score') * $_percent;
+            ->where('subject_class_id', $_subject_class->id)
+            ->where('period', $_period)
+            ->where('type', 'like', 'A%')
+            ->where('is_removed', false)
+            ->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'A1']);
         return $cellOne ? number_format($computetion, 2) : '';
     }
@@ -530,11 +530,15 @@ class StudentDetails extends Model
 
         return $final_grade;
     }
+    public function grade_computed($subject)
+    {
+        return $this->hasOne(GradeComputed::class, 'student_id')->where('subject_class_id', $subject)->first();
+    }
     public function grade_publish()
     {
         return $this->hasOne(GradePublish::class, 'student_id')
-                ->where('academic_id', Auth::user()->staff->current_academic()->id)
-                ->where('is_removed', false) /* ->where('is_removed', false) */;
+            ->where('academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('is_removed', false) /* ->where('is_removed', false) */;
     }
     /* Shipboard Model */
 

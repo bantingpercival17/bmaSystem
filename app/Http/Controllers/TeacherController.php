@@ -8,6 +8,7 @@ use App\Mail\GradeSubmissionMail;
 use App\Mail\GradeVerificationMail;
 use App\Models\AcademicYear;
 use App\Models\CourseSyllabus;
+use App\Models\GradeComputed;
 use App\Models\GradeEncode;
 use App\Models\GradeSubmission;
 use App\Models\Section;
@@ -104,7 +105,7 @@ class TeacherController extends Controller
             $_columns[] =  ['Scientific and Technical Experiments Demonstrations of Competencies Acquired', 'A', 10];
         }
         if (request()->input('_period') == 'finals') {
-            $_columns[] = ['Course Outcome Grade','CO',10];
+            $_columns[] = ['Course Outcome Grade', 'CO', 10];
         }
         if ($_request->_preview) {
             // Report View
@@ -114,6 +115,61 @@ class TeacherController extends Controller
             // Grading Sheet
             return view('pages.teacher.grading-sheet.view', compact('_subject', '_students', '_columns'));
         }
+    }
+    public function subject_grading_sheet_nstp(Request $_request)
+    {
+        $_subject = SubjectClass::find(base64_decode($_request->_subject));
+        $_subject_code =  $_subject->curriculum_subject->subject->subject_code;
+        $_students = $_subject->section->student_sections;
+        return view('pages.teacher.grading-sheet.special-sheet', compact('_subject', '_students'));
+    }
+    public function store_nstp_grade(Request $_request)
+    {
+        $_score_details = array(
+            'student_id' => $_request->student,
+            'subject_class_id' => $_request->class,
+            'final_grade' => base64_encode($_request->score),
+            'midterm_grade' => base64_encode(0),
+        );
+        $grade = GradeComputed::where('student_id', $_request->student)->where('subject_class_id', $_request->class)->first();
+        if ($grade) {
+            // Update Grade
+            if ($_request->score == '') {
+                // Removed the Grade
+                $_return = $grade->update(['final_grade' => base64_encode('')]);
+                # code...
+            } else {
+                $_return = $grade->update(['final_grade' => base64_encode($_request->score)]);
+            }
+            $_respond = array('success' => 'Score Updated', 'status' => 'success');
+        } else {
+            $_return = GradeComputed::create($_score_details);
+            $_respond = array('success' => 'Score Saved', 'status' => 'success');
+        }
+        if ($_return) {
+            return compact('_respond');
+        }
+        /*  if ($_check_details) {
+            // Update Score
+            if ($_request->_score == '') {
+                $_return = GradeEncode::where($_score_details)->update(['is_removed' => 1]);
+            } else {
+                if ($_check_details->is_removed == 1) {
+                    GradeEncode::where($_score_details)->update(['is_removed' => 0]);
+                }
+                $_return = GradeEncode::where($_score_details)->update(['score' => doubleval($_request->_score)]);
+            }
+            $_respond = array('success' => 'Score Updated', 'status' => 'success');
+        } else {
+            // Save Score
+            $_score_details['score'] = doubleval($_request->_score);
+            $_score_details['is_removed'] = 0;
+            $_return = GradeEncode::create($_score_details);
+            $_respond = array('success' => 'Score Saved', 'status' => 'success');
+        }
+        if ($_return) {
+            return compact('_respond');
+        } */
     }
     public function subject_view()
     {

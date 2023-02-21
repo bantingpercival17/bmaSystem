@@ -34,7 +34,8 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     Route::post('/subject-grade/bulk-upload', [TeacherController::class, 'subject_grade_bulk_upload'])->name('teacher.bulk-upload-grades'); // Bulk Upload of Grades
     Route::get('/subject-grade/download-grade-template', [TeacherController::class, 'subject_grade_template'])->name('teacher.grade-template');
     Route::get('/subject-grade/download-grade-export', [TeacherController::class, 'subject_grade_export'])->name('teacher.export-grade');
-
+    Route::get('/subject/grading-sheet-nstp', [TeacherController::class, 'subject_grading_sheet_nstp'])->name('teacher.grade-sheet-special');
+    Route::get('/grading-sheet-nstp/store', [TeacherController::class, 'store_nstp_grade']);
 
     Route::get('/semestral-clearance', [TeacherController::class, 'e_clearance_view'])->name('department.e-clearance'); // List of Clearance
     Route::get('/semestral-clearance/view', [TeacherController::class, 'section_view_e_clearance'])->name('department.e-clearance-view'); // List of Clearance
