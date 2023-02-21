@@ -272,7 +272,7 @@
                                         <div class="col-md">
                                             <small class="fw-bolder">COURSE : </small><br>
                                             <span class="badge {{ $_course_color }}">
-                                                {{ ($_student->enrollment_applicantion ? $_student->enrollment_application->course->course_name : $_student->enrollment_assessment) ? $_student->enrollment_assessment->course->course_name : '' }}
+                                                {{ ($_student->enrollment_application ? $_student->enrollment_application->course->course_name : $_student->enrollment_assessment) ? $_student->enrollment_assessment->course->course_name : '' }}
                                             </span>
                                         </div>
                                         <div class="col-md">
@@ -452,7 +452,7 @@
                                             <div class="form-group">
                                                 <small class="fw-bolder">COURSE : </small>
                                                 <label for="form-control"
-                                                    class="form-control form-control-sm">{{ $_student->enrollment_applicantion ? $_student->enrollment_application->course->course_name : $_student->enrollment_assessment->course->course_name }}</label>
+                                                    class="form-control form-control-sm">{{ $_student->enrollment_application ? $_student->enrollment_application->course->course_name : $_student->enrollment_assessment->course->course_name }}</label>
 
                                             </div>
                                         </div>
