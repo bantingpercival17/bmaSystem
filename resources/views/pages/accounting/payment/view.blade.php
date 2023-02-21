@@ -16,8 +16,8 @@
             <div class="card mb-2">
                 <div class="row no-gutters">
                     <div class="col-md-3">
-                        <img src="{{ $_student ? $_student->profile_pic($_student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                            class="card-img" alt="#">
+                        <!-- <img src="{{ $_student ? $_student->profile_pic($_student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                            class="card-img" alt="#"> -->
                     </div>
                     <div class="col-md ps-0">
                         <div class="card-body p-3 me-2">
@@ -658,8 +658,8 @@
                             <div class="row no-gutters">
                                 <div class="col-md-4">
 
-                                    <img src="{{ $item ? $item->profile_pic($item->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                                        class="avatar-100 rounded card-img" alt="student-image">
+                                   <!--  <img src="{{ $item ? $item->profile_pic($item->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                                        class="avatar-100 rounded card-img" alt="student-image"> -->
                                 </div>
                                 <div class="col-md p-1">
                                     <div class="card-body p-2">

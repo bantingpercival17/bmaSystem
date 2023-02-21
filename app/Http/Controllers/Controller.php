@@ -135,9 +135,9 @@ class Controller extends BaseController
             'url_error' => $_current_url,
             'is_status' => 0,
         ];
-        if (!DebugReport::where($_data)->first()) {
+       /*  if (!DebugReport::where($_data)->first()) {
             DebugReport::create($_data);
-        }
+        } */
 
         // User
         // IP Address
@@ -156,9 +156,9 @@ class Controller extends BaseController
             'url_error' => $_current_url,
             'is_status' => 0,
         ];
-        if (!DebugReport::where($_data)->first()) {
+       /*  if (!DebugReport::where($_data)->first()) {
             DebugReport::create($_data);
-        }
+        } */
 
         // User
         // IP Address
