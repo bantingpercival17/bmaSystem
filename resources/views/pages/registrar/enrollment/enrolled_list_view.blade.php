@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Enrolled List';
+    $_title = 'Enrolled List';
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -29,7 +29,7 @@ $_title = 'Enrolled List';
                     @endphp
                     <div class="card mb-2">
                         <div class="row no-gutters">
-                           {{--  <div class="col-md-3">
+                            {{--  <div class="col-md-3">
                                 <img src="{{ $_data ? $_data->student->profile_pic($_data->student->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
                                     class="card-img" alt="#">
                             </div> --}}
@@ -42,7 +42,7 @@ $_title = 'Enrolled List';
                                     <a
                                         href="{{ route('registrar.student-profile') }}?_student={{ base64_encode($_data->student->id) }}">
                                         <label for=""
-                                            class="text-muted  fw-bolder h5">{{ $_data ? strtoupper($_data->student->last_name . ', ' . $_data->student->first_name) : 'MIDSHIPMAN NAME' }}</label>
+                                            class="text-muted  fw-bolder h5">{{ $_data ? strtoupper($_data->student->last_name . ', ' . $_data->student->first_name . ' ' . $_data->student->middle_name . ' ' . $_data->student->extection_name) : 'MIDSHIPMAN NAME' }}</label>
                                         -
                                         <small class="fw-bolder text-muted h5">
                                             {{ $_data ? ($_data->student->account ? $_data->student->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
