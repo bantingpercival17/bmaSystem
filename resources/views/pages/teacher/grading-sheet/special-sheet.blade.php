@@ -29,7 +29,26 @@
                 <div class="header-title">
                     <h4 class="card-title">STUDENT LIST</h4>
                 </div>
+                <div class="card-tool">
+                    <form action="/teacher/subjects/grade-submission" method="post">
+                        <input type="hidden" name="_subject" value="{{ Crypt::encrypt($_subject->id) }}">
+                        <input type="hidden" name="_period" value="finals">
+                        @csrf
+                        <div class="row">
+                            <div class="form-group col-md">
+                                <label for="" class="form-control">
+                                    Form AD-02 Finals
+                                </label>
+                                <input type="hidden" name="_form" value="ad1">
 
+                            </div>
+                            <div class="form-group col-md-4">
+                                <button type="submit" class="btn btn-primary ">SUBMIT </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
