@@ -63,24 +63,42 @@ class StudentController extends Controller
             $registration = auth()->user()->student->student_enrollment_application;
             $enrollment_assessment = auth()->user()->student->current_enrollment;
             $tags = [];
+            $total_fees = [];
             $tuition_assessment = [];
             $units = [];
             if ($enrollment_assessment) {
-
                 $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
                 if ($tuition_fees) {
                     $tags = $tuition_fees->semestral_fees();
+                    $total_tuition  = $tuition_fees->total_tuition_fees($enrollment_assessment);
+                    $total_tuition_with_interest  = $tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
+                    $upon_enrollment = 0;
+                    $upon_enrollment = $tuition_fees->upon_enrollment_v2($enrollment_assessment);
+                    $monthly = 0;
+                    $monthly = $tuition_fees->monthly_fees_v2($enrollment_assessment);
+
+                    $total_fees = compact('total_tuition', 'total_tuition_with_interest', 'upon_enrollment', 'monthly');
                 }
                 $tuition_assessment = $enrollment_assessment->payment_assessment;
                 $units = $enrollment_assessment->course->units($enrollment_assessment)->units;
+                // Payment transaction
+                $payment_transaction = [];
+                if ($tuition_assessment) {
+                    $payment_transaction = $tuition_assessment->online_payment;
+                }
             }
-            $tuition = compact('tuition_assessment', 'tags', 'units');
+            $tuition = compact('tuition_assessment', 'tags', 'units', 'total_fees');
             $data = compact('academic', 'registration', 'enrollment_assessment', 'tuition');
             return response(['data' => $data], 200);
         } catch (Exception $error) {
             $this->debugTrackerStudent($error);
             return response(['error' => $error->getMessage()], 505);
         }
+    }
+
+    public function enrollment_application(Request $_request)
+    {
+        # code...
     }
     /* Onboarding Performance Report */
     public function student_onboarding()

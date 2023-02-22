@@ -243,6 +243,116 @@ class CourseSemestralFees extends Model
         }
         return $_tuition_fee;
     }
+    public function tuition_fee()
+    {
+        $_data = $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', 'tuition_tags')
+            ->where('semestral_fees.is_removed', false)->get();
+        return $_data[0]->fees;
+    }
+    public function miscellaneous()
+    {
+        $_miscellaneous =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', '!=', 'addition_tags')
+            ->where('p.particular_tag', '!=', 'tuition_tags')
+            ->where('semestral_fees.is_removed', false)->get();
+        return $_miscellaneous[0]->fees;
+    }
+    public function additional()
+    {
+        $_additional_fees =   $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', '=', 'addition_tags')->get();
+        return $_additional_fees[0]->fees;
+    }
+    public function total_tuition_fees($enrollment_assessment)
+    {
+        // Get Unit First 
+        $_number_of_units = $enrollment_assessment->course->units($enrollment_assessment)->units;
+        if ($enrollment_assessment->course_id == 3) {
+            # Sum all Particulars   
+            $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+                ->selectRaw("sum(pf.particular_amount) as fees")
+                ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+                ->where('semestral_fees.is_removed', false)->get();
+            $_tuition_fee = $_tuition_fee[0]->fees;
+        } else {
+            $_miscellaneous = SemestralFee::select('p.particular_tag')
+                ->selectRaw("sum(pf.particular_amount) as fees")
+                ->join('particular_fees as pf', 'pf.id', 'semestral_fees.particular_fee_id')
+                ->join('particulars as p', 'p.id', 'pf.particular_id')
+                ->where('semestral_fees.course_semestral_fee_id', $this->id)
+                ->where('p.particular_tag', '!=', 'tuition_tags')
+                ->get();
+            $_tuition = $this->tuition_fee();
+            $_tuition_fee = ($_tuition * $_number_of_units) + $_miscellaneous[0]->fees;
+        }
+
+        return $_tuition_fee;
+    }
+    public function total_tuition_fees_with_interest($enrollment_assessment)
+    {
+        $_tuition_fees = $this->tuition_fee();
+        $_miscellaneous = $this->miscellaneous();
+        $_additional_fees = $this->additional();
+        $total = $this->total_tuition_fees($enrollment_assessment);
+        if ($enrollment_assessment->course_id == 3) {
+            return (($_tuition_fees + $_miscellaneous + 710) * 0.20) + $_additional_fees;
+        }
+        return $total + ($total * 0.035);
+    }
+    public function upon_enrollment_v2($enrollment_assessment)
+    {
+        $_number_of_units = $enrollment_assessment->course->units($enrollment_assessment)->units;
+        $_tuition_fees = $this->tuition_fee();
+        $_miscellaneous = $this->miscellaneous();
+        $_additional_fees = $this->additional();
+        if ($enrollment_assessment->course_id == 3) {
+            $_upon_enrollment =  (($_tuition_fees + $_miscellaneous + 710) * 0.20) + $_additional_fees;
+        } else {
+            // Total Tuition Fee
+            $_tuition = ($_tuition_fees * $_number_of_units) + $_miscellaneous;
+            // Get the Interest 
+            // interest = _tuition * .035;
+            // _total = _tuition + interest;
+            $_total_tuition = $_tuition + ($_tuition * 0.035); // Compute the total tuition fee plus the interest
+            $_upon_enrollment = $_tuition * 0.3; // On Total Tuition fee Get the 30 % for upon enrollment 
+            // Old Formula 
+            //$_old_upon_enrollment = $_total_tuition / 5;
+            // New Formulaz
+            //$_upon_enrollment = $_tuition * 0.2;
+            // $_upon_enrollment = $enrollment_assessment->academic_id >= 4 ? $_new_upon_enrollment : $_old_upon_enrollment;
+        }
+        return $_upon_enrollment;
+    }
+    public function monthly_fees_v2($enrollment_assessment)
+    {
+        $_number_of_units = $enrollment_assessment->course->units($enrollment_assessment)->units;
+        $_tuition_fees = $this->tuition_fee();
+        $_miscellaneous = $this->miscellaneous();
+        $_additional_fees = $this->additional();
+        $_monthly_fee = 0;
+        if ($enrollment_assessment->course_id == 3) {
+            $_total = ($_tuition_fees + $_miscellaneous + $_additional_fees + 710);
+            $_upon_enrollment = (($_tuition_fees + $_miscellaneous + 710) * 0.20) + $_additional_fees;
+            $_monthly_fee = ($_total - $_upon_enrollment) / 4;
+        } else {
+            $_tuition = ($_tuition_fees * $_number_of_units) + $_miscellaneous; // Total Tuition Fee
+            $_total_tuition = $_tuition + ($_tuition * 0.035); // Compute the total tuition fee plus the interest
+            $_upon_enrollment = $_tuition * 0.3; // On Total Tuition fee Get the 30 % for upon enrollment 
+            //Get the Monthly Payment 
+            $_monthly_fee = ($_total_tuition - $_upon_enrollment) / 4;
+        }
+        return $_monthly_fee;
+    }
     public function installment_fee($_course_fee, $_amount)
     {
         return $_course_fee->course_id == 3 ? ($_amount + 710) : ($_amount + ($_amount * 0.035));

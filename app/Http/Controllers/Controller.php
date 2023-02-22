@@ -150,7 +150,7 @@ class Controller extends BaseController
 
         $_data = [
             'type_of_user' => 'student',
-            'user_name' => auth()->user()->name,
+            'user_name' => auth()->user(),
             'user_ip_address' => $_SERVER['REMOTE_ADDR'] . ', ' . $_SERVER['HTTP_USER_AGENT'],
             'error_message' => $error->getMessage(),
             'url_error' => $_current_url,
