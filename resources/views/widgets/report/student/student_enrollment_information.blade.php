@@ -615,7 +615,7 @@
                     <tr>
                         <td colspan="{{ $_enrollment_assessment->bridging_program == 'with' ? 2 : 1 }}">
                             <small>STUDENT NAME: </small>
-                            <b>{{ strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name) }}</b>
+                            <b>{{ strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name . ' '. $_student->extention) }}</b>
                         </td>
                         <td><small>STUDENT NO:</small> <b>{{ $_student->account->student_number }}</b> </td>
                     </tr>
