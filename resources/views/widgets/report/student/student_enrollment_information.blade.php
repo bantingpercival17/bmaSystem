@@ -14,7 +14,7 @@ $_student->first_name . ' ' . $_student->middle_name))
             <table class="form-rg-table">
                 <tbody>
                     <tr>
-                        <td colspan="5"></td>
+                        <td colspan="6"></td>
                         <td width="60px"><small>DATE:</small></td>
                         <td class="text-fill-in">
                             <b>{{ strtoupper(date('F j, Y', strtotime($_enrollment_assessment->created_at))) }}</b>
