@@ -12,6 +12,7 @@ use App\Models\ShippingAgencies;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
 use Exception;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,15 +34,26 @@ class StudentController extends Controller
             return response(['error' => $error->getMessage()], 505);
         }
     }
-
+    public function student_information()
+    {
+        try {
+            $account = auth()->user();
+            $student = StudentDetails::with('educational_background')->with('parent_details')->find($account->student_id);
+            //$profile_picture = $student->profile_picture();
+            return response(['student' => $student], 200);
+        } catch (Exception $error) {
+            $this->debugTrackerStudent($error);
+            return response(['error' => $error->getMessage()], 505);
+        }
+    }
     public function student_update_information(Request $_request)
     {
         $_fields = $_request->validate([
-            'firstName' => 'required',
-            'lastName' => 'required',
-            'middleName' => 'required | min:3',
-            'extensionName' => 'required | min:2',
-            'birthday' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'middle_name' => 'required | min:3',
+            'extension_name' => 'required | min:2',
+            /* 'birthday' => 'required',
             'birthPlace' => 'required',
             'civilStatus' => 'required',
             'religion' => 'required',
@@ -51,7 +63,7 @@ class StudentController extends Controller
             'municipality' => 'required',
             'province' => 'required',
             'zipCode' => 'required',
-            'contactNumber' => 'required | numeric| min:12',
+            'contactNumber' => 'required | numeric| min:12', */
         ]);
     }
     /* Student Enrollment Procudure */
@@ -98,7 +110,44 @@ class StudentController extends Controller
 
     public function enrollment_application(Request $_request)
     {
-        # code...
+        $_fields = $_request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'middle_name' => 'required | min:3',
+            'extension_name' => 'required | min:2',
+            /* 'birthday' => 'required',
+            'birthPlace' => 'required',
+            'civilStatus' => 'required',
+            'religion' => 'required',
+            'nationality' => 'required',
+            'street' => 'required',
+            'barangay' => 'required',
+            'municipality' => 'required',
+            'province' => 'required',
+            'zipCode' => 'required',
+            'contactNumber' => 'required | numeric| min:12', */
+        ]);
+        try {
+
+            return response(['message' => 'Successfully Submitted.'], 200);
+        } catch (Expression $error) {
+            return response([
+                'message' => $error
+            ], 402);
+        }
+    }
+    public function enrollment_payment_mode(Request $_request)
+    {
+        try {
+            $student = auth()->user()->student->student_enrollment_application;
+            $student->payment_mode = $_request->paymentMode;
+            $student->save();
+            return response(['message' => 'Successfully Submitted.'], 200);
+        } catch (Expression $error) {
+            return response([
+                'message' => $error
+            ], 402);
+        }
     }
     /* Onboarding Performance Report */
     public function student_onboarding()

@@ -120,12 +120,12 @@ class AuthController extends Controller
 
     public function student_login(Request $_request)
     {
-        try {
-            $_fields = $_request->validate([
-                'email' => 'required|email',
-                'password' => 'required|string',
+        $_fields = $_request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
 
-            ]);
+        ]);
+        try {
             if (!Auth::guard('student')->attempt($_fields)) {
                 return response([
                     'message' => 'Invalide Credentials.'
