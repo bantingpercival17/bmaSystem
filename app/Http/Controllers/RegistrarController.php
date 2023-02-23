@@ -106,7 +106,11 @@ class RegistrarController extends Controller
             if (count($_student->enrollment_history) > 0) {
                 // Set the Year Level of Old Student
                 $_year_level = Auth::user()->staff->current_academic()->semester == 'First Semester' ? intval($_current_assessment->year_level) +  $_value : intval($_current_assessment->year_level);
-                $_year_level = $_student->enrollment_application->enrollment_category === 'SBT ENROLLMENT' ? $_year_level - 1 : $_year_level;
+
+                if ($_student->enrollment_application) {
+                    $_year_level = $_student->enrollment_application->enrollment_category === 'SBT ENROLLMENT' ? $_year_level - 1 : $_year_level;
+                } 
+
                 // Old Student
                 // If the Student is Incoming 4th class and have a previous Enrollment Assessment
                 //first check the Year level if the year level is Equal to 13 the Student will equvalet into 4th class
