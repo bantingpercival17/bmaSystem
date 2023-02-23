@@ -83,26 +83,21 @@
                                 if ($grade) {
                                     $_final_grade = number_format($_student->percentage_grade(base64_decode($grade->final_grade)), 2); // Get the Final Grade on Grade Computed Model
                                     $_point = base64_decode($grade->final_grade);
-                                    if (is_float($_point)) {
-                                        $_point = $_student->percentage_grade($_point);
-                                        $_point = number_format($_point, 2);
-                                    }
+                                    $_point = $_student->percentage_grade($_point);
                                 } else {
                                     $_point = '0.00';
                                 }
                                 if (!in_array($item->curriculum_subject->subject->subject_code, ['BRDGE', 'P.E. 1', 'P.E. 2', 'P.E. 3', 'P.E. 4'])) {
                                     $_total_units += $item->curriculum_subject->subject->units; // Units
-                                    if (is_float($_point)) {
-                                        $_percentage = $item->curriculum_subject->subject->units * $_point; // Get the Percentage of Unit and Points
-                                        $_total_percentage += $_percentage; // Sum the Total Percentage
-                                    }
+                                    $_percentage = $item->curriculum_subject->subject->units * $_point; // Get the Percentage of Unit and Points
+                                    $_total_percentage += $_percentage; // Sum the Total Percentage
                                 }
                             @endphp
                             <tr class="text-center">
                                 <td><b>{{ $item->curriculum_subject->subject->subject_code }}</b></td>
                                 <td><b>{{ $item->curriculum_subject->subject->subject_name }}</b></td>
                                 <td>
-                                    {{ $_point }}
+                                    {{ number_format($_point, 2) }}
                                 </td>
                                 <td>{{ $item->curriculum_subject->subject->units }}</td>
                                 <td>
