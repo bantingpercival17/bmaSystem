@@ -85,6 +85,7 @@
                                     $_point = base64_decode($grade->final_grade);
                                     if (is_float($_point)) {
                                         $_point = $_student->percentage_grade($_point);
+                                        $_point = number_format($_point, 2);
                                     }
                                 } else {
                                     $_point = '0.00';
@@ -101,7 +102,7 @@
                                 <td><b>{{ $item->curriculum_subject->subject->subject_code }}</b></td>
                                 <td><b>{{ $item->curriculum_subject->subject->subject_name }}</b></td>
                                 <td>
-                                    {{ number_format($_point, 2) }}
+                                    {{ $_point }}
                                 </td>
                                 <td>{{ $item->curriculum_subject->subject->units }}</td>
                                 <td>
