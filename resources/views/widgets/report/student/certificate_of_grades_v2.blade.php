@@ -83,7 +83,7 @@
                                 if ($grade) {
                                     $_final_grade = number_format($_student->percentage_grade(base64_decode($grade->final_grade)), 2); // Get the Final Grade on Grade Computed Model
                                     $_point = base64_decode($grade->final_grade);
-                                    if(is_float($_point)){
+                                    if (is_float($_point)) {
                                         $_point = $_student->percentage_grade($_point);
                                     }
                                 } else {
@@ -91,8 +91,10 @@
                                 }
                                 if (!in_array($item->curriculum_subject->subject->subject_code, ['BRDGE', 'P.E. 1', 'P.E. 2', 'P.E. 3', 'P.E. 4'])) {
                                     $_total_units += $item->curriculum_subject->subject->units; // Units
-                                    $_percentage = $item->curriculum_subject->subject->units * $_point; // Get the Percentage of Unit and Points
-                                    $_total_percentage += $_percentage; // Sum the Total Percentage
+                                    if (is_float($_point)) {
+                                        $_percentage = $item->curriculum_subject->subject->units * $_point; // Get the Percentage of Unit and Points
+                                        $_total_percentage += $_percentage; // Sum the Total Percentage
+                                    }
                                 }
                             @endphp
                             <tr class="text-center">
