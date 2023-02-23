@@ -83,7 +83,9 @@
                                 if ($grade) {
                                     $_final_grade = number_format($_student->percentage_grade(base64_decode($grade->final_grade)), 2); // Get the Final Grade on Grade Computed Model
                                     $_point = base64_decode($grade->final_grade);
-                                    $_point = $_student->percentage_grade($_point);
+                                    if(is_float($_point)){
+                                        $_point = $_student->percentage_grade($_point);
+                                    }
                                 } else {
                                     $_point = '0.00';
                                 }
