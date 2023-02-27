@@ -38,7 +38,7 @@ class StudentController extends Controller
     {
         try {
             $account = auth()->user();
-            $student = StudentDetails::with('educational_background')->with('parent_details')->find($account->student_id);
+            $student = StudentDetails::with('educational_background')->with('parent_details')->with('current_enrollment')->find($account->student_id);
             //$profile_picture = $student->profile_picture();
             return response(['student' => $student], 200);
         } catch (Exception $error) {
@@ -54,17 +54,11 @@ class StudentController extends Controller
             'middle_name' => 'required',
             'middle_initial' => 'required',
             'extension_name' => 'required | min:2',
-            /* 'birthday' => 'required',
-            'birthPlace' => 'required',
-            'civilStatus' => 'required',
-            'religion' => 'required',
-            'nationality' => 'required',
-            'street' => 'required',
-            'barangay' => 'required',
-            'municipality' => 'required',
-            'province' => 'required',
-            'zipCode' => 'required',
-            'contactNumber' => 'required | numeric| min:12', */
+            'birth_date' => 'required',
+            'birth_place' => 'required',
+            'gender' => 'required',
+            'weight' => 'required',
+            'height' => 'required'
         ]);
     }
     /* Student Enrollment Procudure */
@@ -114,19 +108,23 @@ class StudentController extends Controller
         $_fields = $_request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
-            'middle_name' => 'required | min:3',
+            'middle_name' => 'required',
+            'middle_initial' => 'required',
             'extension_name' => 'required | min:2',
-            /* 'birthday' => 'required',
-            'birthPlace' => 'required',
-            'civilStatus' => 'required',
+            'birth_date' => 'required',
+            'birth_place' => 'required',
+            'gender' => 'required',
+            'weight' => 'required',
+            'height' => 'required',
+            'civil_status' => 'required',
             'religion' => 'required',
             'nationality' => 'required',
             'street' => 'required',
             'barangay' => 'required',
             'municipality' => 'required',
             'province' => 'required',
-            'zipCode' => 'required',
-            'contactNumber' => 'required | numeric| min:12', */
+            'zip_code' => 'required',
+            'contactNumber' => 'required | numeric| min:12'
         ]);
         try {
 
