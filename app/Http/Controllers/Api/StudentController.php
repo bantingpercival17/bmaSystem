@@ -51,7 +51,8 @@ class StudentController extends Controller
         $_fields = $_request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
-            'middle_name' => 'required | min:3',
+            'middle_name' => 'required',
+            'middle_initial' => 'required',
             'extension_name' => 'required | min:2',
             /* 'birthday' => 'required',
             'birthPlace' => 'required',
