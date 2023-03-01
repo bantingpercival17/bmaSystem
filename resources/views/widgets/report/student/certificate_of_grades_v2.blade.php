@@ -144,7 +144,6 @@
                                 <img class="image-signature"
                                     src="{{ public_path() . '/assets/img/signature/' . Auth::user()->staff->department_head_signature('REGISTRAR') . '.png' }}"
                                     alt="department-head">
-                                <br>
                                 <b>{{ strtoupper(Auth::user()->staff->registrar()) }}</b>
                             </td>
                         </tr>
