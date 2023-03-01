@@ -63,7 +63,7 @@ class SubjectClass extends Model
     }
     public function grade_final_verification()
     {
-        return $this->hasOne(GradeVerification::class, 'subject_class_id')/* ->where('is_approved',true) */->latest();
+        return $this->hasOne(GradeVerification::class, 'subject_class_id')->where('is_removed',false)/* ->where('is_approved',true) */->latest();
     }
     public function student_computed_grade($student)
     {
