@@ -140,7 +140,7 @@ $_student->first_name . ' ' . $_student->middle_name))
                             <img class="image-signature" src="{{ public_path() . '/assets/img/signature/' . Auth::user()->staff->department_head_signature('REGISTRAR') . '.png' }}" alt="department-head">
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="text-center">
                         <td>
                             <b>{{ strtoupper(Auth::user()->staff->academic_head($_section->course_id)) }}</b>
                         </td>
