@@ -206,6 +206,11 @@ class DepartmentHeadController extends Controller
         $_grade_submission->comments = $_request->_comments;
         $_grade_submission->approved_by = Auth::user()->name;
         $_grade_submission->save();
+        if ($_request->_status === 0) {
+            if ($_grade_submission->subject_class->grade_final_verification) {
+                $_grade_submission->subject_class->grade_final_verification->update(['is_removed' => true]);
+            }
+        }
         return back()->with('success', $_subject . " " . $_section . " Verified..");
     }
 }

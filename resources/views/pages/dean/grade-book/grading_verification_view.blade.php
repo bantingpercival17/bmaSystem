@@ -55,15 +55,16 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>SUBJECT NAME / TEACHER NAME</th>
+                                <th style="width:20%">SUBJECT NAME / TEACHER NAME</th>
                                 <th>FORM </th>
+                                <th>ACTION</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (count($_section->subject_class) > 0)
                                 @foreach ($_section->subject_class as $item)
                                     <tr>
-                                        <td>
+                                        <td style="width:20%">
                                             <span
                                                 class="text-primary fw-bolder">{{ $item->curriculum_subject->subject->subject_name }}</span>
                                             <br>
@@ -117,6 +118,9 @@
                                                         FORM AD-02</button>
                                                 @endif
                                             </div>
+
+                                        </td>
+                                        <td>
                                             <div class="ms-2">
                                                 @if ($item->finals_grade_submission && $item->midterm_grade_submission)
                                                     @if ($item->finals_grade_submission->is_approved === 1 && $item->midterm_grade_submission->is_approved === 1)
@@ -126,8 +130,6 @@
                                                                 <a href="{{ route('dean.grade-publish') }}?subject_class='{{ base64_encode($item->id) }}'&_subject={{ base64_encode($item->id) }}&_status=1&_period=finals"
                                                                     class="btn btn-info btn-sm text-white w-100  mt-2">PUBLISH</a>
                                                             @endif
-                                                            <a href="{{ route('dean.grade-publish') }}?subject_class='{{ base64_encode($item->id) }}'&_subject={{ base64_encode($item->id) }}&_status=1&_period=finals"
-                                                                class="btn btn-info btn-sm text-white w-100  mt-2">PUBLISH</a>
                                                         @else
                                                             <form action="{{ route('dean.grade-verification') }}"
                                                                 method="get">

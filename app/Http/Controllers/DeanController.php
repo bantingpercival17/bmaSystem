@@ -100,11 +100,12 @@ class DeanController extends Controller
                     'final_grade' => base64_encode($final_grade),
                 );
                 $_computed =  $_subject_class->student_computed_grade($student->student_id)->first();
+
                 if (!$_computed) {
                     GradeComputed::create($data);
                 } else {
                     GradeComputed::create($data);
-                    $_computed->update(['removed_at', true]);
+                    $_computed->update(['removed_at' => true]);
                 }
             }
             GradeVerification::create($_data);
