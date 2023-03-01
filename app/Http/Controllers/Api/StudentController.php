@@ -124,7 +124,15 @@ class StudentController extends Controller
             'municipality' => 'required',
             'province' => 'required',
             'zip_code' => 'required',
-            'contactNumber' => 'required | numeric| min:12'
+            'contactNumber' => 'required | numeric| min:12',
+
+            'mother_last_name' => 'required | min:2 | max:50',
+            'mother_first_name' => 'required | min:2 | max:50',
+            'mother_middle_name' => 'required | min:2 | max:50',
+            'mother_educational_attainment' => 'required | min:2 | max:100',
+            'mother_employment_status' => 'required | min:2 | max:50',
+            'mother_working_arrangement' => 'required | min:2 | max:50',
+            'mother_contact_number' => 'required | min:2 | max:12',
         ]);
         try {
 
