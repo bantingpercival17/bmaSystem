@@ -141,10 +141,10 @@ $_student->first_name . ' ' . $_student->middle_name))
                         </td>
                     </tr>
                     <tr class="text-center">
-                        <td>
+                        <td class="text-center">
                             <b>{{ strtoupper(Auth::user()->staff->academic_head($_section->course_id)) }}</b>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <b>{{ strtoupper(Auth::user()->staff->registrar()) }}</b>
                         </td>
                     </tr>
