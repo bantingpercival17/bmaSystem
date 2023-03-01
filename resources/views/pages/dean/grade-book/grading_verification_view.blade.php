@@ -130,6 +130,8 @@
                                                                 <a href="{{ route('dean.grade-publish') }}?subject_class='{{ base64_encode($item->id) }}'&_subject={{ base64_encode($item->id) }}&_status=1&_period=finals"
                                                                     class="btn btn-info btn-sm text-white w-100  mt-2">PUBLISH</a>
                                                             @endif
+                                                            <a href="{{ route('dean.grade-publish') }}?subject_class='{{ base64_encode($item->id) }}'&_subject={{ base64_encode($item->id) }}&_status=1&_period=finals"
+                                                                class="btn btn-info btn-sm text-white w-100  mt-2">PUBLISH</a>
                                                         @else
                                                             <form action="{{ route('dean.grade-verification') }}"
                                                                 method="get">
