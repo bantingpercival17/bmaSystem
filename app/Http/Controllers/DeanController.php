@@ -135,7 +135,7 @@ class DeanController extends Controller
                     GradeComputed::create($data);
                 } else {
                     GradeComputed::create($data);
-                    $_computed->update(['removed_at', true]);
+                    $_computed->update(['removed_at' => true]);
                 }
             }
             return back()->with('success', 'Successfully Approved');
