@@ -57,21 +57,21 @@ class AuthController extends Controller
             'contactNumber' => 'required',
             'password' => 'required|min:6|max:20|confirmed',
             'course' => 'required',
-            'birthday' => 'required|string'
+            'birthday' => 'required|string',
+            'agreement' => 'required|boolean'
         ]);
         try {
+            // Current Academic
+            $_academic = AcademicYear::where('is_active', 1)->first();
             // Applicant Validation
             $_applicant = ApplicantDetials::where('first_name', $_fields['firstName'])
                 ->where('last_name', $_fields['lastName'])
                 ->where('birthday', $_fields['birthday'])
                 ->first();
-            return $_account = ApplicantAccount::where('name', trim($_fields['firstName']) . ' ' . trim($_fields['lastName']))->first();
+            $_account = ApplicantAccount::where('name', trim($_fields['firstName']) . ' ' . trim($_fields['lastName']))->where('academic_id', $_academic->id)->first();
             if ($_applicant || $_account) {
-                return $_applicant->account;
-                return response(['message' => 'This Applicant is already existing'], 422);
+                return response(['errors' => array('message' => 'This Applicant is already existing')], 422);
             }
-            // Get the Academic School Year
-            $_academic = AcademicYear::where('is_active', 1)->first();
             // Get the number of Applicant Per School Year
             $_transaction_number = ApplicantAccount::where('academic_id', $_academic->id)->count();
             $_details = [
@@ -84,7 +84,7 @@ class AuthController extends Controller
                 'academic_id' => $_academic->id,
                 'is_removed' => 0,
             ];
-            /*   ApplicantAccount::create($_details); */
+            ApplicantAccount::create($_details);
             return response(['data' => 'Registration Successfully'], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);

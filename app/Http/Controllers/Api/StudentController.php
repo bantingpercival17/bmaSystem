@@ -124,8 +124,17 @@ class StudentController extends Controller
             'municipality' => 'required',
             'province' => 'required',
             'zip_code' => 'required',
-            'contactNumber' => 'required | numeric| min:12',
-
+            'personal_email' => 'required',
+            'contact_number' => 'required | numeric| min:12',
+            // FATHER INFORMATION
+            'father_last_name' => 'required | min:2 | max:50',
+            'father_first_name' => 'required | min:2 | max:50',
+            'father_middle_name' => 'required | min:2 | max:50',
+            'father_educational_attainment' => 'required | min:2 | max:100',
+            'father_employment_status' => 'required | min:2 | max:50',
+            'father_working_arrangement' => 'required | min:2 | max:50',
+            'father_contact_number' => 'required | min:2 | max:12',
+            // MOTHER INFORMATION
             'mother_last_name' => 'required | min:2 | max:50',
             'mother_first_name' => 'required | min:2 | max:50',
             'mother_middle_name' => 'required | min:2 | max:50',
@@ -133,6 +142,20 @@ class StudentController extends Controller
             'mother_employment_status' => 'required | min:2 | max:50',
             'mother_working_arrangement' => 'required | min:2 | max:50',
             'mother_contact_number' => 'required | min:2 | max:12',
+            // GUARDIAN  INFORMATION
+            'guardian_last_name' => 'required | min:2 | max:50',
+            'guardian_first_name' => 'required | min:2 | max:50',
+            'guardian_middle_name' => 'required | min:2 | max:50',
+            'guardian_educational_attainment' => 'required | min:2 | max:50',
+            'guardian_employment_status' => 'required | min:2 | max:50',
+            'guardian_working_arrangement' => 'required | min:2 | max:50',
+            'guardian_contact_number' => 'required| min:2 | max:12',
+            'guardian_address' => 'required',
+            // OTHER DETIALS
+            'household_income' => 'required',
+            'dswd_listahan' => 'required',
+            'homeownership' => 'required',
+            'car_ownership' => 'required',
         ]);
         try {
 
