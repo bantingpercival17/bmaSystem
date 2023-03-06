@@ -29,13 +29,13 @@
                             <td class="text-fill-in"><b>{{ strtoupper($_student->last_name) }},</b> </td>
                             <td class="text-fill-in"> <b>{{ strtoupper($_student->first_name) }}</b></td>
                             <td class="text-fill-in">
-                                <b>{{ $_student->middle_initial !== 'NA' ? strtoupper($_student->middle_initial) : '' }}</b>
+                                <b>{{ strtoupper($_student->middle_initial) !== 'NA' ? strtoupper($_student->middle_initial) : '' }}</b>
                             </td>
                             <td class="text-fill-in">
-                                <b>{{ $_student->middle_name !== 'N/A' ? strtoupper($_student->middle_name) : '' }}</b>
+                                <b>{{ strtoupper($_student->middle_name) !== 'N/A' ? strtoupper($_student->middle_name) : '' }}</b>
                             </td>
                             <td class="text-fill-in">
-                                <b>{{ $_student->extention_name !== 'N/A' ? strtoupper($_student->extention_name) : '' }}</b>
+                                <b>{{ strtoupper($_student->extention_name) !== 'N/A' ? strtoupper($_student->extention_name) : '' }}</b>
                             </td>
 
                             <td>
@@ -625,8 +625,8 @@
                         <td colspan="{{ $_enrollment_assessment->bridging_program == 'with' ? 2 : 1 }}">
                             <small>STUDENT NAME: </small>
                             @php
-                                $middleName = $_student->middle_name !== 'N/A' ? $_student->middle_name : '';
-                                $extensionName = $_student->extention_name !== 'N/A' ? $_student->extention_name : '';
+                                $middleName = strtoupper($_student->middle_name) !== 'N/A' ? $_student->middle_name : '';
+                                $extensionName = strtoupper($_student->extention_name) !== 'N/A' ? $_student->extention_name : '';
                             @endphp
                             <b>{{ strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $middleName . ' ' . $extensionName) }}</b>
                         </td>
