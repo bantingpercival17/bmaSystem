@@ -72,7 +72,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/attendance/report', [AdministratorController::class, 'attendance_report']); // Attendance Report
 
   // Employee
-  Route::get('/accounts/view', [AdministratorController::class, 'employee_profile']);
+  Route::get('/accounts/view', [AdministratorController::class, 'employee_profile'])->name('admin.employee-view');
   Route::post('/accounts/reset-password', [AdministratorController::class, 'employee_reset_password'])->name('admin.reset-password');
 
   /* Setting */

@@ -478,7 +478,7 @@ class AdministratorController extends Controller
     // Employee
     public function employee_profile(Request $_request)
     {
-        $_staff = Staff::find(Crypt::decrypt($_request->_e));
+        $_staff = Staff::find(base64_decode($_request->employee));
         $_roles = Role::all();
         return view('pages.administrator.employee.view', compact('_staff', '_roles'));
     }
