@@ -114,7 +114,7 @@
                                                 <small>REMARKS: </small>
                                                 <span role="button" data-bs-toggle="popover" data-trigger="focus"
                                                     class="fw-bolder" title="APPROVED DETAILS"
-                                                    data-bs-content="Approved By: {{ $item->staff ? $item->staff->user->name : '-' }} Approved Date: {{ $item->created_at->format('F d,Y') }}">{{ $item->feedback }}</span>
+                                                    data-bs-content="Approved By: {{ $item->staff ? $item->staff->user->name : '-' }} Approved Date: {{ $item->updated_at->format('F d,Y') }}">{{ $item->feedback }}</span>
                                             </span>
                                         </div>
                                         <div class="col-md">
