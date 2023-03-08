@@ -74,7 +74,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   // Employee
   Route::get('/accounts/view', [AdministratorController::class, 'employee_profile'])->name('admin.employee-view');
   Route::post('/accounts/reset-password', [AdministratorController::class, 'employee_reset_password'])->name('admin.reset-password');
-
+  Route::get('/accounts/generate-qrcode',[AdministratorController::class,'employee_generate_qrcode'])->name('admin.staff-qrcode');
   /* Setting */
   Route::get('/setting', [AdministratorController::class, 'setting_view'])->name('admin.setting');
   Route::post('/setting/store-role', [AdministratorController::class, 'store_role'])->name('setting.store-role');

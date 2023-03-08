@@ -125,7 +125,7 @@ class AdministratorController extends Controller
     }
     public function student_reset_password(Request $_request)
     {
-        $_student_accounts = StudentAccount::where('is_removed',false)->find(base64_decode($_request->_student));
+        $_student_accounts = StudentAccount::where('is_removed', false)->find(base64_decode($_request->_student));
         $length = 5;
         $_password = 'BMA-' . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
         $_student_accounts->password = Hash::make($_password);
@@ -759,5 +759,13 @@ class AdministratorController extends Controller
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
+    }
+    public function employee_generate_qrcode(Request $_request)
+    {
+        $_employee = Staff::find(base64_decode($_request->employee));
+        $_data = strtolower(str_replace(' ', '-', trim($_employee->first_name . ' ' . $_employee->last_name)));
+        $pdf = PDF::loadView("widgets.report.employee.employee-qr-code", compact('_employee'));
+        $file_name = strtoupper('Qr code generate: ' . $_data);
+        return $pdf->setPaper([0, 0, 612, 396], 'portrait')->stream($file_name . '.pdf');
     }
 }
