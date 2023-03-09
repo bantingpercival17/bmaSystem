@@ -116,26 +116,30 @@ class ApplicantController extends Controller
     # Document Review Function
     public function applicant_document_review(Request $_request)
     {
-        $_document = ApplicantDocuments::find(base64_decode($_request->_document));
-        $_email_model = new ApplicantEmail();
-        if ($_request->_verification_status) {
-            $_document->is_approved = 1;
-            $_document->staff_id = Auth::user()->staff->id;
-            $_document->save();
-            if (count($_document->account->applicant_documents) == count($_document->account->document_status)) {
-                if (!$_document->account->is_alumnia) {
-                    Mail::to($_document->account->email)->send($_email_model->document_verified($_document));
+        try {
+            $_document = ApplicantDocuments::find(base64_decode($_request->_document));
+            $_email_model = new ApplicantEmail();
+            if ($_request->_verification_status) {
+                $_document->is_approved = 1;
+                $_document->staff_id = Auth::user()->staff->id;
+                $_document->save();
+                if (count($_document->account->applicant_documents) == count($_document->account->document_status)) {
+                    if (!$_document->account->is_alumnia) {
+                        Mail::to($_document->account->email)->send($_email_model->document_verified($_document));
+                    }
                 }
+                return back()->with('success', 'Successfully Transact.');
+            } else {
+                $_document->is_approved = 2;
+                $_document->staff_id = Auth::user()->staff->id;
+                $_document->feedback = $_request->_comment;
+                $_document->save();
+                Mail::to($_document->account->email)->send($_email_model->document_disapproved($_document));
+                return back()->with('success', 'Successfully Transact.');
+                //echo "Disapproved";
             }
-            return back()->with('success', 'Successfully Transact.');
-        } else {
-            $_document->is_approved = 2;
-            $_document->staff_id = Auth::user()->staff->id;
-            $_document->feedback = $_request->_comment;
-            $_document->save();
-            Mail::to($_document->account->email)->send($_email_model->document_disapproved($_document));
-            return back()->with('success', 'Successfully Transact.');
-            //echo "Disapproved";
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
         }
     }
     # Removed Applicant Function
@@ -160,35 +164,43 @@ class ApplicantController extends Controller
     }
     public function send_email_notification(Request $_request)
     {
-        $_applicant = ApplicantAccount::find($_request->_applicant);
-        $_email_model = new ApplicantEmail();
-        $data = array('respond' => '404', 'message' => '');
-        if (!$_applicant->applicant) {
-            Mail::to($_applicant->email)->send($_email_model->pre_registration_notificaiton($_applicant));
-            $data['respond'] = '200';
-            $data['message'] = 'Sent Pre Registration Notification ' . $_applicant->applicant_number;
-        } else {
-            if (!$_applicant->applicant_documents) {
-                Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant));
+        try {
+            $_applicant = ApplicantAccount::find($_request->_applicant);
+            $_email_model = new ApplicantEmail();
+            $data = array('respond' => '404', 'message' => '');
+            if (!$_applicant->applicant) {
+                Mail::to($_applicant->email)->send($_email_model->pre_registration_notificaiton($_applicant));
                 $data['respond'] = '200';
-                $data['message'] = 'Sent Document Attachment Notification ' . $_applicant->applicant_number;
+                $data['message'] = 'Sent Pre Registration Notification ' . $_applicant->applicant_number;
             } else {
-                $data['respond'] = '200';
-                $data['message'] = 'Done all Step' . $_applicant->applicant_number;
+                if (!$_applicant->applicant_documents) {
+                    Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant));
+                    $data['respond'] = '200';
+                    $data['message'] = 'Sent Document Attachment Notification ' . $_applicant->applicant_number;
+                } else {
+                    $data['respond'] = '200';
+                    $data['message'] = 'Done all Step' . $_applicant->applicant_number;
+                }
             }
+            return compact('data');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
         }
-        return compact('data');
     }
     public function entrance_examination_notification(Request $_request)
     {
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_applicants =  $_course->applicant_payment_verified;
-        foreach ($_applicants as $key => $applicant) {
-            $_applicant = new ApplicantEmail();
-            Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
-            //Mail::to('percivalbanting@gmail.com')->send($_applicant->payment_approved($applicant));
+        try {
+            $_course = CourseOffer::find(base64_decode($_request->_course));
+            $_applicants =  $_course->applicant_payment_verified;
+            foreach ($_applicants as $key => $applicant) {
+                $_applicant = new ApplicantEmail();
+                Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
+                //Mail::to('percivalbanting@gmail.com')->send($_applicant->payment_approved($applicant));
+            }
+            return back()->with('success', 'Successfully Send');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
         }
-        return back()->with('success', 'Successfully Send');
     }
 
     public function applicant_entrance_examination(Request $_request)
