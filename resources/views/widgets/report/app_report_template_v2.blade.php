@@ -12,7 +12,7 @@
 <body>
 
     <header>
-        <label for="" class="form-code">BMA FORM</label>
+        <label for="" class="form-code">BMA: </label>
         <div class="text-center">
             <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
         </div>
