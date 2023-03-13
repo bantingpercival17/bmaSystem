@@ -58,7 +58,7 @@
                                                 <div class="form-group col-md">
                                                     <label class="form-label-sm"><small>COMPANY NAME</small></label>
                                                     <input type="text" class="form-control" name="company_name"
-                                                        value="{{ old('company_name') ?: $_midshipman->shipboard_training->company_name }}">
+                                                        value="{{ (old('company_name') ?: $_midshipman->shipboard_training) ? $_midshipman->shipboard_training->company_name : '' }}">
                                                     @error('company_name')
                                                         <span class="invalid-feedback text-danger" role="alert">
                                                             <small> <b>{{ $message }}</b> </small>
