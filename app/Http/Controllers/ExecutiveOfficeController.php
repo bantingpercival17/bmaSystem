@@ -372,7 +372,8 @@ class ExecutiveOfficeController extends Controller
     {
         $_course = CourseOffer::find($_request->course);
         $_sections = Section::where('course_id', $_course->id)
-            ->where('academic_id', base64_decode($_request->academic))
+            ->where('academic_id', Auth::user()->staff->current_academic()->id)
+            /* ->where('academic_id', base64_decode($_request->academic)) */
             ->where('is_removed', false);
         $_sections = $_request->level == 'all' ? $_sections : $_sections->where('year_level', 'like', '%' . $_request->level . '%');
         $_sections = $_sections->orderBy('year_level', 'desc')->get();
