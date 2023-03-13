@@ -119,13 +119,15 @@ class ApplicantController extends Controller
         try {
             $_document = ApplicantDocuments::find(base64_decode($_request->_document));
             $_email_model = new ApplicantEmail();
+            //$_applicant_email = 'p.banting@bma.edu.ph';
+            $_applicant_email = $_document->account->email;
             if ($_request->_verification_status) {
                 $_document->is_approved = 1;
                 $_document->staff_id = Auth::user()->staff->id;
                 $_document->save();
                 if (count($_document->account->applicant_documents) == count($_document->account->document_status)) {
                     if (!$_document->account->is_alumnia) {
-                        Mail::to($_document->account->email)->send($_email_model->document_verified($_document));
+                        Mail::to($_applicant_email)->send($_email_model->document_verified($_document));
                     }
                 }
                 return back()->with('success', 'Successfully Transact.');
@@ -134,7 +136,7 @@ class ApplicantController extends Controller
                 $_document->staff_id = Auth::user()->staff->id;
                 $_document->feedback = $_request->_comment;
                 $_document->save();
-                Mail::to($_document->account->email)->send($_email_model->document_disapproved($_document));
+                Mail::to($_applicant_email)->send($_email_model->document_disapproved($_document));
                 return back()->with('success', 'Successfully Transact.');
                 //echo "Disapproved";
             }

@@ -21,7 +21,7 @@ $_student->first_name . ' ' . $_student->middle_name))
                         </td>
                         <td class="text-fill-in" width="40%"><b>{{ strtoupper($_student->last_name) }},
                                 {{ strtoupper($_student->first_name) }}
-                                {{ strtoupper($_student->middle_name[0]) }}.</b></td>
+                                {{ strtoupper($_student->middle_initial) }} {{strtoupper($_student->extention_name) !== 'N/A' ? strtoupper($_student->extention_name) : '' }} </b></td>
                         <td colspan="2">
                             YEAR LEVEL / SECTION:
 
