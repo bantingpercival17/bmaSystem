@@ -37,7 +37,7 @@ class AttendanceSheetReport
             $_dates[] = date('Y-m-d', $current);
             $current = strtotime('+1 days', $current);
         }
-        $_employees = Staff::orderBy('staff.department', 'asc')
+        $_employees = Staff::orderBy('staff.department', 'asc')->where('is_removed', false)
             ->orderBy('staff.last_name', 'asc')->get();
         $pdf = PDF::loadView("widgets.report.employee.weekly_report_attendance", compact('_employees', '_dates'));
         $file_name = "Daily Attendance: "; // With Date now

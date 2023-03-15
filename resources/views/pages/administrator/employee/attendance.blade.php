@@ -1,4 +1,4 @@
-@extends('app')
+@extends('layouts.app-main')
 @section('page-title', 'Attendance - ' . now()->format('M d,Y'))
 @section('page-navigation')
     <ol class="breadcrumb ">

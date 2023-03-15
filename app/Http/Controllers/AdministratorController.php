@@ -510,7 +510,7 @@ class AdministratorController extends Controller
     // Attendance
     public function attendance_view()
     {
-        $_employees = Staff::orderBy('staff.department', 'asc')
+        $_employees = Staff::where('is_removed', false)->orderBy('staff.department', 'asc')
             ->orderBy('staff.last_name', 'asc')->get();
         return view('pages.administrator.employee.attendance', compact('_employees'));
     }
