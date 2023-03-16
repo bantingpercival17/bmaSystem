@@ -969,4 +969,14 @@ class AccountingController extends Controller
             //throw $th;
         }
     }
+    public function employee_view(Request $_request)
+    {
+        try {
+            $_employees = Staff::where('is_removed', false)->orderBy('staff.department', 'asc')
+                ->orderBy('staff.last_name', 'asc')->get();
+            return view('pages.accounting.employee.view', compact('_employees'));
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
 }
