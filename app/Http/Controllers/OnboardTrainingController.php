@@ -77,13 +77,14 @@ class OnboardTrainingController extends Controller
             $_documents = Documents::where('is_removed', 1)->where('document_propose', 'PRE-DEPLOYMENT')->orderByRaw('CHAR_LENGTH("document_name")')->get();
             $_document_status = DocumentRequirements::where('student_id', $_document_verification->student_id)->where('document_status', 1)->where('is_removed', false)->count();
             if (count($_documents) == $_document_status) {
-                $_deployment = DeploymentAssesment::where('student_id', $_document_verification->student_id)->where('is_removed', false)->last();
-                $_deployment->staff_id= Auth::user()->id;
+                $_deployment = DeploymentAssesment::where('student_id', $_document_verification->student_id)->where('is_removed', false)->first();
+                $_deployment->staff_id = Auth::user()->id;
                 $_deployment->save();
             }
             return back()->with('message', 'Successfully Verified!');
         } catch (Exception $error) {
-            return response(['error' => $error->getMessage()], 505);
+            return back()->with('error', $error->getMessage());
+            //return response(['error' => $error->getMessage()], 505);
         }
     }
     public function midshipman_certificate_store(Request $_request)

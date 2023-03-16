@@ -9,7 +9,6 @@ class AttendanceSheetReport
 {
     public function __construct()
     {
-
         $this->legal = [0, 0, 612.00, 1008.00];
         $this->crosswise_short = [0, 0, 612, 738];
     }
