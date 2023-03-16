@@ -39,6 +39,7 @@ use App\Models\Voucher;
 use App\Report\Accounting\PaymentReceipt as AccountingPaymentReceipt;
 use App\Report\Accounting\PaymentReport;
 use App\Report\Accounting\PaymentReports;
+use App\Report\AttendanceSheetReport;
 use App\Report\PayrollReport;
 use App\Report\Students\StudentReport;
 use Carbon\Carbon;
@@ -390,7 +391,7 @@ class AccountingController extends Controller
         try {
 
 
-             $_amount = str_replace(",", "", $_request->amount);
+            $_amount = str_replace(",", "", $_request->amount);
             $_tuition_fee_remarks = ['Tuition Fee', 'Upon Enrollment', '1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
             $_payment_transaction =  in_array($_request->remarks, $_tuition_fee_remarks) ? 'TUITION FEE' : 'ADDITIONAL FEE';
             if (!$_request->voucher) {
@@ -950,6 +951,22 @@ class AccountingController extends Controller
             return $_file;
         } catch (Expression $er) {
             return back()->with('error', $er);
+        }
+    }
+    public function employee_attendace_report(Request $_request)
+    {
+        $_request->validate([
+            'start_date' => 'required',
+            'end_date' => 'required'
+        ]);
+        try {
+            $_report = new AttendanceSheetReport();
+            $_report_pdf = $_request->r_view == 'daily' ? $_report->daily_report() : $_report->daily_time_record_report($_request->start_date, $_request->end_date);
+            $_report_pdf = $_request->r_view == 'health_check' ? $_report->health_check() : $_report_pdf;
+
+            return $_report_pdf;
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 }

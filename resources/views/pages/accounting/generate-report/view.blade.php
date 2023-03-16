@@ -39,7 +39,7 @@
                                             <div class="col-md">
                                                 <div class="form-group">
                                                     <label class="text-label">Category</label>
-                                                    <select name="collection_type" class="form-control">
+                                                    <select name="collection_type" class="form-select">
                                                         <option value="daily">Daily</option>
                                                         <option value="monthly">Monthly</option>
                                                     </select>
@@ -79,7 +79,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="">Academic Year</label>
-                                                    <select name="collection_academic" class="form-control">
+                                                    <select name="collection_academic" class="form-select">
                                                         @foreach ($_academic as $academic)
                                                             <option value="{{ base64_encode($academic->id) }}">
                                                                 {{ $academic->semester }} | {{ $academic->school_year }}
@@ -91,7 +91,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Course</label>
-                                                    <select name="balance_course" class="form-control">
+                                                    <select name="balance_course" class="form-select">
                                                         <option value="1">BSME</option>
                                                         <option value="2">BSMT</option>
                                                         <option value="3">PBM SPECIALIZATION</option>
@@ -101,7 +101,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Year Level</label>
-                                                    <select name="balance_level" id="" class="form-control">
+                                                    <select name="balance_level" id="" class="form-select">
                                                         <option value="all">All</option>
                                                         <option value="11">Grade 11</option>
                                                         <option value="12">Grade 12</option>
@@ -138,7 +138,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="">Academic Year</label>
-                                                    <select name="_academic" class="form-control">
+                                                    <select name="_academic" class="form-select">
                                                         @foreach ($_academic as $academic)
                                                             <option value="{{ base64_encode($academic->id) }}">
                                                                 {{ $academic->semester }} | {{ $academic->school_year }}
@@ -150,7 +150,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Course</label>
-                                                    <select name="balance_course" class="form-control">
+                                                    <select name="balance_course" class="form-select">
                                                         <option value="1">BSME</option>
                                                         <option value="2">BSMT</option>
                                                         <option value="3">PBM SPECIALIZATION</option>
@@ -168,6 +168,40 @@
 
                             </tr>
                             <tr>
+                                <td>
+                                    <b>EMPLOYEE ATTENANCE REPORT</b>
+                                    <ul>
+                                        <li>You can generate the Employee DTR</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <form action="{{ route('accounting.employee-attendance') }}" method="get">
+
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <small class="fw-bolder text-muted">START DATE</small>
+                                                <input type="date" class="form-control" name="start_date">
+                                                @error('start_date')
+                                                    <span class="badge bg-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <small class="fw-bolder text-muted">END DATE</small>
+                                                <input type="date" class="form-control" name="end_date">
+                                                @error('end_date')
+                                                    <span class="badge bg-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <input type="hidden" name="r_view" value="weekly">
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-outline-primary btn-sm w-100">
+                                                GENERATE</button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                            {{--  <tr>
                                 <td>Import Transaction</td>
                                 <td>
                                     <form action="{{ route('accounting.student-transacion-import') }}" method="post"
@@ -189,7 +223,7 @@
                                         </div>
                                     </form>
                                 </td>
-                            </tr>
+                            </tr> --}}
                         </tbody>
                     </table>
                 </div>
