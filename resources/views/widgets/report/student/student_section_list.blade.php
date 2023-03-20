@@ -48,8 +48,8 @@
                         </thead>
                         <tbody>
 
-                            @if ($_section->student_section)
-                                @foreach ($_section->student_section as $key => $_student)
+                            @if ($_section->student_sections)
+                                @foreach ($_section->student_sections as $key => $_student)
                                     <tr>
                                         <th>
                                             {{ $key + 1 }}
