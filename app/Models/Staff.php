@@ -366,4 +366,8 @@ class Staff extends Model
         if ($_decimal_number > 0)  $number_to_words .= " and " . $_decimal_number . " / 100 only";
         return $number_to_words;
     }
+    public function curriculum_list()
+    {
+        return Curriculum::where('is_removed',false)->get();
+    }
 }
