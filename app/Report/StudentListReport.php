@@ -30,13 +30,11 @@ class StudentListReport
         $_sections = Section::where($_data)->get();
         $_academic = AcademicYear::find($_data['academic_id']);
         $_course = CourseOffer::find($_data['course_id']);
-        /* foreach ($_sections as $key => $_section) {
-            $pdf = PDF::loadView("widgets.report.student.student_section_list", compact('_sections'));
-            $file_name = strtoupper($_course->course_code) . "-" . $_data['year_level'] . "-STUDENT-SECTION-LIST";
-            return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
-        } */
+        $_year = Auth::user()->staff->convert_year_level($_data['year_level']);
         $pdf = PDF::loadView("widgets.report.student.student_section_list", compact('_sections', '_academic'));
-        $file_name = strtoupper($_course->course_code) . " : " . $_data['year_level'] . "/C - FORM : STUDENT SECTION LIST " . $_academic->school_year . " - " . $_academic->semester;
+        $file_name = $_course->course_code . "_" .strtoupper(Auth::user()->staff->convert_year_level(str_replace('/C', '', $_data['year_level'])))  . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+        //$file_name = strtoupper($_course->course_code) . " : " . $_data['year_level'] . "/C - FORM : STUDENT SECTION LIST " . $_academic->school_year . " - " . $_academic->semester;
+
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
     public function summary_grade($_students, $_request)

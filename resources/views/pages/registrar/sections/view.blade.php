@@ -101,6 +101,7 @@
                                     <td>
                                         <a href="{{ route('registrar.section-export') }}?_course={{ base64_encode($_course->id) }}&_year_level={{ $level }}&_report_type=excel-file {{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
                                             class="btn btn-primary btn-sm">EXPORT SECTION</a>
+                                        <a target="_blank" href="{{ route('registrar.section-export') }}?_course={{ base64_encode($_course->id) }}&_year_level={{ $level }}&_report_type=pdf-report {{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="btn btn-danger btn-sm">EXPORT PDF</a>
                                         {{-- <a href="{{ route('registrar.section-export') }}?_course={{ base64_encode($_course->id) }}&_year_level={{ $level }}&_report_type=excel-file&subject='true"
                                             class="btn btn-primary btn-sm">EXPORT SECTION WITH SUBJECT</a> --}}
                                     </td>

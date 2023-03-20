@@ -109,7 +109,7 @@ class RegistrarController extends Controller
 
                 if ($_student->enrollment_application) {
                     $_year_level = $_student->enrollment_application->enrollment_category === 'SBT ENROLLMENT' ? $_year_level - 1 : $_year_level;
-                } 
+                }
 
                 // Old Student
                 // If the Student is Incoming 4th class and have a previous Enrollment Assessment
@@ -682,7 +682,14 @@ class RegistrarController extends Controller
                 return $_respond;
             }
             if ($_request->_report_type == 'pdf-report') {
-                return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File
+                $report = new StudentListReport();
+                return $report->student_section_list([
+                    'course_id' => $_course->id,
+                    'year_level' => $_request->_year_level,
+                    'academic_id' => Auth::user()->staff->current_academic()->id,
+                    'is_removed' => false
+                ]);
+                //return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File
             }
         } catch (Exception $err) {
             $this->debugTracker($err);

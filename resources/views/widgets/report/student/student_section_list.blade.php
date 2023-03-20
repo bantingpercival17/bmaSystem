@@ -1,57 +1,125 @@
-@extends('widgets.report.grade.report_layout_1')
+@extends('widgets.report.layout_report')
 @section('title-report', 'FORM : STUDENT SECTION LIST')
 @section('form-code', '')
 @section('content')
-    <div class="content">
-        @foreach ($_sections as $_section)
-            @if ($_section->count() > 0)
-                <h3 class="text-center"><b>STUDENT SECTION LIST</b></h3>
-                <h4 class="text-center"><b>{{ $_academic->semester . ' ' . $_academic->school_year }}</b></h4>
-                <h5 class="text-center"></h5>
-                <table class="table-content ">
-                    <thead>
-                        <tr>
-                            <th rowspan="2">STUDENT NUMBER</th>
-                            <th colspan="3">NAME OF MIDSHIPMAN</th>
-                        </tr>
-                        <tr>
-                            <th>LAST NAME</th>
-                            <th>FIRST NAME</th>
-                            <th>MIDDLE NAME</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+    @foreach ($_sections as $_section)
+        <header>
+            <label for="" class="form-code">BMA FORM </label>
+            <div class="text-center">
+                <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
+            </div>
 
-                        @if ($_section->student_section)
-                            @foreach ($_section->student_section as $_student)
+        </header>
+
+        <div class="page-content">
+            <div class="content">
+
+                @if ($_section->count() > 0)
+                    <br>
+                    <h3 class="text-center" style="margin:0px;"><b>OFFICAL LIST OF ENROLLED MIDSHIPMEN</b></h3>
+                    <h4 class="text-center" style="margin:0px;">
+                        <b>{{ strtoupper($_academic->semester . ', AY ' . $_academic->school_year) }}</b>
+                    </h4>
+                    <h5 class="text-center" style="margin:0px;">
+                        {{ strtoupper(Auth::user()->staff->convert_year_level(str_replace('/C', '', $_section->year_level))) }}
+                    </h5>
+                    <br>
+                    <table class="table ">
+                        <tbody>
+                            <tr>
+                                <td><b>{{ $_section->course->course_name }}</b></td>
+                            </tr>
+                            <tr>
+                                <td><b>{{ $_section->section_name }}</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table-student-content">
+                        <thead>
+                            <tr>
+                                <th width="10px">NO.</th>
+                                <th style="width: 90px;">STUDENT NUMBER</th>
+                                <th>LAST NAME</th>
+                                <th>FIRST NAME</th>
+                                <th>MIDDLE NAME</th>
+                                <th style="width: 90px;">EXTENSION NAME</th>
+                                <th style="width: 50px;">MIDDLE INITIAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @if ($_section->student_section)
+                                @foreach ($_section->student_section as $key => $_student)
+                                    <tr>
+                                        <th>
+                                            {{ $key + 1 }}
+                                        </th>
+                                        <td class="text-center">
+                                            {{ $_student->student->account->student_number }}
+                                        </td>
+                                        <td>{{ strtoupper($_student->student->last_name) }}</td>
+                                        <td>{{ strtoupper($_student->student->first_name) }}</td>
+                                        <td>
+                                            @if (trim(strtoupper($_student->student->middle_name)) !== 'N/A')
+                                                {{ strtoupper($_student->student->middle_name) }}
+                                            @endif
+
+                                        </td>
+                                        <td>
+                                            @if (trim(strtoupper($_student->student->extention_name)) !== 'N/A')
+                                                {{ strtoupper($_student->student->extention_name) }}
+                                            @endif
+
+                                        </td>
+                                        <td>
+                                            @if (trim(strtoupper($_student->student->middle_name)) !== 'N/A')
+                                                {{ strtoupper($_student->student->middle_initial) }}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class="signatories">
+                        <table class="table-content" style="font-size: 10px">
+                            <tbody>
+
                                 <tr>
-                                    <td class="text-center">
-                                        <img src="data:image/png;base64, {!! base64_encode(
-                                            QrCode::style('round', 0.5)->eye('square')->size(200)->generate(
-                                                    $_student->student->account->student_number .
-                                                        '.' .
-                                                        mb_strtolower(str_replace(' ', '', $_student->student->last_name)),
-                                                ),
-                                        ) !!} "> <br>
-                                        {{ $_student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $_student->student->last_name)) }}
+                                    <td>
+                                        PREPARED BY:
                                     </td>
-                                    <td>{{ strtoupper($_student->student->last_name) }}</td>
-                                    <td>{{ strtoupper($_student->student->first_name) }}</td>
-                                    <td>{{ strtoupper($_student->student->middle_name) }}</td>
+                                    <td>
+                                        CHECKED & VALIDATED BY:
+                                    </td>
                                 </tr>
-                            @endforeach
-                        @endif
-                    </tbody>
-                </table>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <td>TOTAL NUMBER OF CADETS : <b>{{ $_section->student_section->count() }}</b></td>
-                        </tr>
-                    </thead>
-                </table>
-                <div class="page-break"></div>
-            @endif
-        @endforeach
-    </div>
+
+                                <tr>
+                                    <td>
+                                        <u>
+                                            <b>{{ strtoupper(Auth::user()->name) }}</b>
+                                        </u>
+
+                                    </td>
+                                    <td>
+                                        <u>
+                                            <b>{{ strtoupper('marilen h. navarro') }}</b>
+                                        </u>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><small>Registrar's Staff</small> </td>
+                                    <td><small>Registrar Department Head</small> </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+        </div>
+        <div class="page-break"></div>
+    @endforeach
 @endsection

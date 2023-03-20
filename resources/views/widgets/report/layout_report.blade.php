@@ -91,6 +91,23 @@
 
         }
 
+        .table-student-content {
+            font-family: "Times New Roman", Times, serif;
+            border-collapse: collapse;
+            width: 100%;
+            /*  border: 1px solid #ddd;
+            border: 1px solid #ddd; */
+        }
+
+        .table-student-content td,
+        .table-student-content th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            /* border: 1px solid #ddd; */
+            font-size: 10px;
+
+        }
+
         .form-code {
             font-family: "Times New Roman", Times, serif;
             font-size: 12px;

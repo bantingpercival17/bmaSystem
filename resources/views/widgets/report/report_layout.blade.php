@@ -111,6 +111,7 @@
             padding-top: 5px;
             padding-bottom: 5px;
             padding-left: 10px;
+            padding-right: 10px;
             border: 1px solid #ddd;
             font-size: 12px;
 
@@ -119,37 +120,14 @@
         .table-2 th {
             padding-top: 5px;
             padding-bottom: 5px;
-
             text-align: center;
         }
+
 
         .note {
             font-size: 12px;
         }
 
-        .attendance-table {
-            font-family: "Times New Roman", Times, serif;
-            border-collapse: collapse;
-            width: 100%;
-            border: 1px solid rgb(0, 0, 0);
-            margin-top: 10px
-        }
-
-        .attendance-table td,
-        .attendance-table th {
-            padding-top: 5px;
-            padding-bottom: 5px;
-            padding-left: 10px;
-            border: 1px solid rgb(0, 0, 0);
-            font-size: 12px;
-
-        }
-
-        .attendance-table th {
-            padding-top: 5px;
-            padding-bottom: 5px;
-            text-align: center;
-        }
 
         .form-code {
             font-family: "Times New Roman", Times, serif;
@@ -196,8 +174,8 @@
                     <td>
                         <small>
                             GENERATED DATE: @php
-                                date_default_timezone_set('Asia/Manila');
-                                echo date('m/d/Y h:m:s');
+                            date_default_timezone_set('Asia/Manila');
+                            echo date('m/d/Y h:m:s');
                             @endphp
                         </small>
                     </td>
