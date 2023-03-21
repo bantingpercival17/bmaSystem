@@ -149,12 +149,12 @@
                         <tr class="text-center">
                             <td class="text-center">
                                 <b>{{ strtoupper(Auth::user()->staff->academic_head($_section->course_id)) }}</b>
-                               
+                               <br>
                                 <small>Department Head</small>
                             </td>
                             <td class="text-center">
                                 <b>{{ strtoupper(Auth::user()->staff->registrar()) }}</b>
-                              
+                              <br>
                                 <small>College Registrar</small>
                             </td>
                         </tr>
