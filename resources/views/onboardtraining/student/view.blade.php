@@ -255,7 +255,7 @@
                                             <div class="form-group col-md-5">
                                                 <label class="form-label-sm"><small>VESSEL TYPE</small></label>
                                                 @php
-                                                    $_select = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER'];
+                                                    $_select = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER','BULK CARIER'];
                                                 @endphp
                                                 <select name="_type_vessel" class="form-select"
                                                     value="{{ old('_type_vessel') }}">
