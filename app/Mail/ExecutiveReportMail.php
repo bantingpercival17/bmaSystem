@@ -52,10 +52,10 @@ class ExecutiveReportMail extends Mailable
             ->subject(
                 "Mishipman Attendance Monitoring Report " . date('Y-m-d')
             )
-            ->attachData($deckPdf->output(), 'BSMT-ONBOARDING MASTERLIST REPORT')
-            ->attachData($enginePdf->output(), 'BSME-ONBOARDING MASTERLIST REPORT')
-            ->attachData($deck_absent->output(), 'BSMT-LIST OF MIDSHIPMAN ABSENT')
-            //->attachData($engine_absent->output(), 'BSME-LIST OF MIDSHIPMAN ABSENT')
+            ->attachData($deckPdf->output(), 'BSMT-ONBOARDING MASTERLIST REPORT-' . date('Y-m-d') . '.pdf')
+            ->attachData($enginePdf->output(), 'BSME-ONBOARDING MASTERLIST REPORT' . date('Y-m-d') . '.pdf')
+            ->attachData($deck_absent->output(), 'BSMT-LIST OF MIDSHIPMAN ABSENT' . date('Y-m-d') . '.pdf')
+            ->attachData($engine_absent->output(), 'BSME-LIST OF MIDSHIPMAN ABSENT' . date('Y-m-d') . '.pdf')
             ->markdown('emails.executive.report');
     }
     /*   public function store_pdf($_sections, $filename)
