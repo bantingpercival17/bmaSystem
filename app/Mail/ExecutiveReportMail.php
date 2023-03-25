@@ -58,35 +58,12 @@ class ExecutiveReportMail extends Mailable
             ->attachData($engine_absent->output(), 'BSME-LIST OF MIDSHIPMAN ABSENT' . date('Y-m-d') . '.pdf')
             ->markdown('emails.executive.report');
     }
-    /*   public function store_pdf($_sections, $filename)
-    {
-        // Set the Layout for the report
-        $_layout =  'widgets.report.executive.onboarding-report';
-        $_time_arrival = $this->time;
-        $pdf = PDF::loadView($_layout, compact('_sections', '_time_arrival')); // Set the PDF View
-        $pdf->setPaper([0, 0, 612.00, 1008.00], 'portrait'); // Set the Paper sizw
-        $file_name = 'executive/report/' . $filename . ' - ' . date('Ymd') . '.pdf'; // File name
-        Storage::disk('public')->put($file_name, $pdf->output()); // Store to Local folder
-        return $pdf;
-    } */
     public function store_pdf($_sections, $filename, $_layout)
     {
         $_time_arrival = $this->time;
         $pdf = PDF::loadView($_layout, compact('_sections', '_time_arrival')); // Set the PDF View
         $pdf->setPaper([0, 0, 612.00, 1008.00], 'portrait'); // Set the Paper sizw
         $file_name = 'executive/report/' . $filename . ' - ' . date('Ymd') . '.pdf'; // File name
-        Storage::disk('public')->put($file_name, $pdf->output()); // Store to Local folder
-        return $pdf;
-    }
-    public function store_absent_pdf($_sections, $filename)
-    {
-        // Set the Layout for the report
-        $_layout =  'widgets.report.executive.onboarding-absent-report';
-        // Import PDF Class
-        $pdf = PDF::loadView($_layout, compact('_sections'));
-        // Set the Filename of report
-        $pdf->setPaper([0, 0, 612.00, 1008.00], 'portrait'); // Set the Paper sizw
-        $file_name = 'executive/report/absent/' . $filename . ' - ' . date('Ymd') . '.pdf'; // File name
         Storage::disk('public')->put($file_name, $pdf->output()); // Store to Local folder
         return $pdf;
     }

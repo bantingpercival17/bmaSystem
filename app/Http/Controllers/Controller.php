@@ -206,20 +206,10 @@ class Controller extends BaseController
         $_absent_on_engine = Section::where('course_id', 1)
             ->where('is_removed', false)
             ->where('academic_id', $_academic->id)->orderBy('year_level', 'desc')->get();
-        /*  $_sections = $_absent_on_deck; */
-        /*  $_layout =  'widgets.report.executive.onboarding-absent-report';
-        // Import PDF Class
-        $pdf = PDF::loadView($_layout, compact('_sections'));
-        // Set the Filename of report
-        $file_name =  ' - LIST OF MIDSHIPMAN ABSENT - ' . date('Ymd') . '.pdf';
-        $pdf->setPaper([0, 0, 612.00, 1008.00], 'portrait'); // Set the Paper sizw
-        $file_name = 'executive/report/absent/' . $file_name . ' - ' . date('Ymd') . '.pdf'; // File name
-        Storage::disk('public')->put($file_name, $pdf->output()); // Store to Local folder
-        return $pdf->stream(); */
         $mail = new ExecutiveReportMail($_deck, $_engine, $_time_arrival, $_absent_on_deck, $_absent_on_engine);
-        Mail::to('p.banting@bma.edu.ph')->send($mail); // Testing Email
-        /*   $other_email = ['qmr@bma.edu.ph', 'ict@bma.edu.ph', 'exo@bma.edu.ph'];
-        Mail::to('report@bma.edu.ph')->bcc($other_email)->send($mail); // Offical Emails */
+        //Mail::to('p.banting@bma.edu.ph')->send($mail); // Testing Email
+        $other_email = ['qmr@bma.edu.ph', 'ict@bma.edu.ph', 'exo@bma.edu.ph'];
+        Mail::to('report@bma.edu.ph')->bcc($other_email)->send($mail); // Offical Emails
         return "Sent";
     }
 }
