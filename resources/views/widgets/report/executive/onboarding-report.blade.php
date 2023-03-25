@@ -4,7 +4,7 @@
 @section('form-code', 'EX-O FORM NO.2')
 @section('content')
     @php
-        $now = request()->input('week');
+        $now = request()->input('week') ?: now();
         $day = new DateTime($now);
         $week = date('l', strtotime($now));
         $modify = $week == 'Sunday' ? 'Sunday' : 'Last Sunday';
@@ -38,7 +38,7 @@
                                     START DATE:
                                     <b>
                                         @php
-                                            $first_day = new DateTime(request()->input('week'));
+                                            $first_day = new DateTime(now());
                                             $first_day->modify($modify);
                                         @endphp
                                         {{ strtoupper($first_day->format('F d, Y')) }}
@@ -48,7 +48,7 @@
                                     END DATE:
                                     <b>
                                         @php
-                                            $last_day = new DateTime(request()->input('week'));
+                                            $last_day = new DateTime(now());
                                             $last_day->modify('Next Saturday');
                                         @endphp
                                         {{ strtoupper($last_day->format('F d, Y')) }}
@@ -130,54 +130,105 @@
                             @endif
                         </tbody>
                     </table>
-                    <div class="signatories">
-                        <table class="table-content">
-                            <tbody>
-                                <tr>
-                                    <td colspan="2">
-                                        TOTAL ABOARD : {{ $total_aboard }} CADET/S
-                                        <small> (as of {{ date('F d, y H:m:s') }})</small>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        PREPARED BY:
-                                    </td>
-                                    <td>
-                                        VALIDATED BY:
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2"></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2"></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <u>
-                                            <b>{{ strtoupper(Auth::user()->name) }}</b>
-                                        </u>
+                    @if (Auth::user())
+                        <div class="signatories">
+                            <table class="table-content">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2">
+                                            TOTAL ABOARD : {{ $total_aboard }} CADET/S
+                                            <small> (as of {{ date('F d, y H:m:s') }})</small>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            PREPARED BY:
+                                        </td>
+                                        <td>
+                                            VALIDATED BY:
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <u>
+                                                <b>{{ strtoupper(Auth::user()->name) }}</b>
+                                            </u>
 
-                                    </td>
-                                    <td>
-                                        <u>
-                                            <b>{{ strtoupper('severino bugarin') }}</b>
-                                        </u>
+                                        </td>
+                                        <td>
+                                            <u>
+                                                <b>{{ strtoupper('severino bugarin') }}</b>
+                                            </u>
 
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><small>Tactical Officer</small> </td>
-                                    <td><small>Executive Officer</small> </td>
-                                </tr>
-                                <tr>
-                                    <td><small>DATE:</small>_____________________</td>
-                                    <td><small>DATE:</small>_____________________</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><small>Tactical Officer</small> </td>
+                                        <td><small>Executive Officer</small> </td>
+                                    </tr>
+                                    <tr>
+                                        <td><small>DATE:</small>_____________________</td>
+                                        <td><small>DATE:</small>_____________________</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="signatories">
+                            <table class="table-content">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2">
+                                            TOTAL ABOARD : {{ $total_aboard }} CADET/S
+                                            <small> (as of {{ date('F d, y H:m:s') }})</small>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            PREPARED BY:
+                                        </td>
+                                        <td>
+                                            VALIDATED BY:
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <u>
+                                                <b>SYSTEM GENERATED AT {{ now() }}</b>
+                                            </u>
+
+                                        </td>
+                                        <td>
+                                            <u>
+                                                <b>{{ strtoupper('severino bugarin') }}</b>
+                                            </u>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><small></small> </td>
+                                        <td><small>Executive Officer</small> </td>
+                                    </tr>
+                                    <tr>
+                                        <td><small>DATE:</small>_____________________</td>
+                                        <td><small>DATE:</small>_____________________</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 @endif
             </div>
         </div>

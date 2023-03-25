@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\EmployeeController;
+use App\Mail\OnboardingScheduleEmail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -61,3 +63,5 @@ Route::get('/cache-clear', function () {
     Artisan::call('config:cache');
     redirect('/');
 });
+
+Route::get('/send-email', [Controller::class, 'send_email']);

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Imports\StaffImport;
+use App\Mail\ExecutiveReportMail;
+use App\Mail\OnboardingScheduleEmail;
 use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
@@ -11,15 +13,18 @@ use App\Models\DebugReport;
 use App\Models\Subject;
 use App\Models\User;
 use App\Models\DubegReport;
+use App\Models\Section;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class Controller extends BaseController
 {
@@ -178,5 +183,43 @@ class Controller extends BaseController
         $_path = $_path;
         Storage::disk($_path)->put($filename, fopen($_file, 'r+'));
         return URL::to('/') . '/storage/' . $_path . '/' . $filename;
+    }
+    public function send_email()
+    {
+        $_academic = AcademicYear::where('is_active', true)->first();
+        $_deck = Section::where('course_id', 2)
+            ->where('academic_id', $_academic->id)
+            ->where('is_removed', false)->get();
+        $_engine = Section::where('course_id', 1)
+            ->where('academic_id', $_academic->id)
+            ->where('is_removed', false)->get();
+        // Additional Data
+        $_time_arrival = array(
+            array('year_level' => 4, 'time_arrival' => 1730),
+            array('year_level' => 3, 'time_arrival' => 1800),
+            array('year_level' => 2, 'time_arrival' => 1830),
+            array('year_level' => 1, 'time_arrival' => 1900)
+        );
+        $_absent_on_deck = Section::where('course_id', 2)
+            ->where('is_removed', false)
+            ->where('academic_id', $_academic->id)->orderBy('year_level', 'desc')->get();
+        $_absent_on_engine = Section::where('course_id', 1)
+            ->where('is_removed', false)
+            ->where('academic_id', $_academic->id)->orderBy('year_level', 'desc')->get();
+        /*  $_sections = $_absent_on_deck; */
+        /*  $_layout =  'widgets.report.executive.onboarding-absent-report';
+        // Import PDF Class
+        $pdf = PDF::loadView($_layout, compact('_sections'));
+        // Set the Filename of report
+        $file_name =  ' - LIST OF MIDSHIPMAN ABSENT - ' . date('Ymd') . '.pdf';
+        $pdf->setPaper([0, 0, 612.00, 1008.00], 'portrait'); // Set the Paper sizw
+        $file_name = 'executive/report/absent/' . $file_name . ' - ' . date('Ymd') . '.pdf'; // File name
+        Storage::disk('public')->put($file_name, $pdf->output()); // Store to Local folder
+        return $pdf->stream(); */
+        $mail = new ExecutiveReportMail($_deck, $_engine, $_time_arrival, $_absent_on_deck, $_absent_on_engine);
+        Mail::to('p.banting@bma.edu.ph')->send($mail); // Testing Email
+        /*   $other_email = ['qmr@bma.edu.ph', 'ict@bma.edu.ph', 'exo@bma.edu.ph'];
+        Mail::to('report@bma.edu.ph')->bcc($other_email)->send($mail); // Offical Emails */
+        return "Sent";
     }
 }
