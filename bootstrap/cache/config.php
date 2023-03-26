@@ -860,11 +860,11 @@
       'smtp' => 
       array (
         'transport' => 'smtp',
-        'host' => 'mailhog',
-        'port' => '1025',
-        'encryption' => NULL,
-        'username' => NULL,
-        'password' => NULL,
+        'host' => 'smtp.gmail.com',
+        'port' => '587',
+        'encryption' => 'tls',
+        'username' => 'support@bma.edu.ph',
+        'password' => '@bma->support',
         'timeout' => NULL,
         'auth_mode' => NULL,
       ),
@@ -897,7 +897,7 @@
     ),
     'from' => 
     array (
-      'address' => NULL,
+      'address' => 'support@bma.edu.ph',
       'name' => 'Laravel',
     ),
     'markdown' => 
