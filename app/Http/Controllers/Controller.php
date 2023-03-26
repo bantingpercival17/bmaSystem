@@ -207,9 +207,9 @@ class Controller extends BaseController
             ->where('is_removed', false)
             ->where('academic_id', $_academic->id)->orderBy('year_level', 'desc')->get();
         $mail = new ExecutiveReportMail($_deck, $_engine, $_time_arrival, $_absent_on_deck, $_absent_on_engine);
-        //Mail::to('p.banting@bma.edu.ph')->send($mail); // Testing Email
-        $other_email = ['qmr@bma.edu.ph', 'ict@bma.edu.ph', 'exo@bma.edu.ph'];
-        Mail::to('report@bma.edu.ph')->bcc($other_email)->send($mail); // Offical Emails
+        Mail::to('p.banting@bma.edu.ph')->send($mail); // Testing Email
+        /*    $other_email = ['qmr@bma.edu.ph', 'ict@bma.edu.ph', 'exo@bma.edu.ph'];
+        Mail::to('report@bma.edu.ph')->bcc($other_email)->send($mail); // Offical Emails */
         return "Sent";
     }
 }
