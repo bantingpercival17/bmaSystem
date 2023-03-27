@@ -378,4 +378,13 @@ class ApplicantController extends Controller
             return back()->with('error', $error->getMessage());
         }
     }
+    public function applicant_change_course(Request $_request)
+    {
+        try {
+            ApplicantAccount::find(base64_decode($_request->applicant))->update(['course_id' => $_request->course]);
+            return back()->with('success', 'Update Course');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
 }

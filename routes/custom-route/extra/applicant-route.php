@@ -21,4 +21,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/applicant/examination-result', [ApplicantController::class, 'appllicant_examination_result'])->name('applicant-examination-result');
     ROute::get('/applicant/examination-remove', [ApplicantController::class, 'examination_remove'])->name('examination.remove');
     Route::get('/applicant/virtual-briefing', [ApplicantController::class, 'virtual_briefing_view'])->name('applicant-virtual-briefing');
+    Route::post('/applicant/change-course', [ApplicantController::class, 'applicant_change_course'])->name('applicant.applicant-change-course');
 });

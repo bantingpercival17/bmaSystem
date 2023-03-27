@@ -1,8 +1,8 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Profile View';
-$_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ? '_academic=' . request()->input('_academic') . '&' : '') . '_course=' . request()->input('_course') . '&view=' . request()->input('view');
-
+    $_title = 'Profile View';
+    $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ? '_academic=' . request()->input('_academic') . '&' : '') . '_course=' . request()->input('_course') . '&view=' . request()->input('view');
+    
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -29,15 +29,10 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
             <div class="card mb-2">
                 <div class="row no-gutters">
                     <div class="col-md-4 col-lg-2">
-
-                        {{-- <img src="http://bma.edu.ph/img/student-picture/midship-man.jpg" class="avatar-130 rounded"
-                            alt="applicant-profile"> --}}
                         @if ($_account->image)
                             <img src="{{ json_decode($_account->image->file_links)[0] }}" class="avatar-130 rounded"
                                 alt="applicant-profile">
-                        @else
                         @endif
-
                     </div>
                     <div class="col-md col-lg">
                         <div class="card-body">
@@ -52,6 +47,10 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                                         {{ $_account->applicant ? $_account->course->course_name : 'COURSE' }}
                                     </b>
                                 </span>
+                                <small class="badge bg-info" data-bs-toggle="modal" data-bs-target=".modal-change-course"
+                                    data-bs-toggle="change course" title="">
+                                    CHANGE COURSE
+                                </small>
                             </p>
                             @if ($_account->is_alumnia)
                                 <span class="badge bg-primary float-end">
@@ -77,7 +76,13 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                         </div>
                         <div>
                             <a href="{{ route('applicant-form') }}?_applicant={{ base64_encode($_account->id) }}"
-                                class="btn btn-sm btn-info mb-3 text-white">FORM RG-01</a>
+                                class="badge bg-info mb-3 text-white">
+                                @if ($_account->course_id == 3)
+                                    FORM RG-01
+                                @else
+                                    FORM RG-03
+                                @endif
+                            </a>
                         </div>
                     </div>
                     <div class="card-body">
@@ -184,6 +189,36 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
             </div>
         </div>
 
+    </div>
+    <div class="modal fade modal-change-course" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bolder" id="exampleModalLabel1">Change Course</h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('applicant.applicant-change-course') }}" method="post">
+                        @csrf
+                        <input type="hidden" value="{{ request()->input('_applicant') }}" name="applicant">
+                        <div class="form-group">
+                            <small class="fw-bolder">COURSE</small>
+                            <select name="course" id="" class="form-select">
+                                <option value="1" {{ $_account->course_id === 1 ? 'selected' : '' }}>BS MARINE
+                                    ENGINEERING </option>
+                                <option value="2" {{ $_account->course_id === 2 ? 'selected' : '' }}>BS MARINE
+                                    TRANSPORTATION </option>
+                                <option value="3" {{ $_account->course_id === 3 ? 'selected' : '' }}>PBM
+                                    SPECIALIZATION </option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Update Course</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="modal fade document-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xl">
