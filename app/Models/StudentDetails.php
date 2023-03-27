@@ -1116,7 +1116,7 @@ class StudentDetails extends Model
     }
     public function onboarding_attendance()
     {
-        $now = request()->input('week') ?: date('Y-m-d');
+        $now = request()->input('week') ? request()->input('week') : date('Y-m-d');
         $day = new DateTime($now);
         $week = date('l', strtotime($now));
         $modify = $week == 'Sunday' ? 'Sunday' : 'Last Sunday';

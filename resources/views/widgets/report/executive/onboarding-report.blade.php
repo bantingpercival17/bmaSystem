@@ -4,7 +4,7 @@
 @section('form-code', 'EX-O FORM NO.2')
 @section('content')
     @php
-        $now = request()->input('week') ?: now();
+        $now = request()->input('week') ? request()->input('week') : date('Y-m-d');
         $day = new DateTime($now);
         $week = date('l', strtotime($now));
         $modify = $week == 'Sunday' ? 'Sunday' : 'Last Sunday';
@@ -38,7 +38,7 @@
                                     START DATE:
                                     <b>
                                         @php
-                                            $first_day = new DateTime(now());
+                                            $first_day = new DateTime($now);
                                             $first_day->modify($modify);
                                         @endphp
                                         {{ strtoupper($first_day->format('F d, Y')) }}
@@ -48,22 +48,13 @@
                                     END DATE:
                                     <b>
                                         @php
-                                            $last_day = new DateTime(now());
+                                            $last_day = new DateTime($now);
                                             $last_day->modify('Next Saturday');
                                         @endphp
                                         {{ strtoupper($last_day->format('F d, Y')) }}
                                     </b>
                                 </td>
                             </tr>
-                            {{--  <tr>
-                                <td></td>
-                                <td>
-                                    TIME ABOARD:
-                                </td>
-                                <td>
-    
-                                </td>
-                            </tr> --}}
                         </tbody>
                     </table>
                     <table class="table-2 ">
@@ -87,7 +78,7 @@
                                         <td style="padding-left: 10px; width:40%">
                                             {{ strtoupper($section->student->last_name . ', ' . $section->student->first_name . ' ' . $section->student->middle_name) }}
                                         </td>
-                                        <td class="text-center"style="padding-left: 10px; width:45%">
+                                        <td class="text-center" style="padding-left: 10px; width:45%">
                                             {{ $section->student->municipality . ', ' . $section->student->province }}
                                             @php
                                                 $_year_level = intval(str_replace('/C', '', $_section->year_level));
@@ -96,7 +87,7 @@
                                                     $date = new DateTime($section->student->onboarding_attendance->time_in);
                                                     $_date = $date->format('Y-m-d');
                                                     $time = $date->format('Hi');
-                                                    //  echo $time;
+                                                    // echo $time;
                                                     //$time = intval(str_replace(':', '', $section->student->onboarding_attendance->time_in));
                                                     if ($_date != $first_day->format('Y-m-d')) {
                                                         $_style = 'color:red; font-weight:bold;';
