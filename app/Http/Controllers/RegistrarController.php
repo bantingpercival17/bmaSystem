@@ -19,6 +19,7 @@ use App\Models\EnrollmentApplication;
 use App\Models\EnrollmentAssessment;
 use App\Models\GradePublish;
 use App\Models\Section;
+use App\Models\StudentCancellation;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
 use App\Models\StudentSection;
@@ -212,6 +213,26 @@ class RegistrarController extends Controller
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
         }
+    }
+    public function enrollment_cancellation(Request $_request)
+    {
+        $_request->validate([
+            'type' => 'required',
+            'date' => 'required',
+            'file' => 'required'
+        ]);
+        $link = $this->office_file_save($_request->file, 'public', 'registrar', 'enrollment');
+        StudentCancellation::create([
+            'enrollment_id' => $_request->enrollment,
+            'type_of_cancellations' => $_request->type,
+            'date_of_cancellation' => $_request->date,
+            'cancellation_evidence' => $link,
+            'staff_id' => Auth::user()->staff->id,
+        ]);
+        // Remove to the Section
+
+        
+        return back()->with('success', 'Successfully Submitted.');
     }
     public function student_clearance(Request $_request)
     {

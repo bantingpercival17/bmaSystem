@@ -213,9 +213,6 @@
                 </h5>
             </li>
         @endif
-
-        {{-- Enrollment Assessment --}}
-        {{-- Tuition Fee Assessments --}}
-        {{-- Tuition Fee Payment --}}
     </ul>
+   
 @endsection

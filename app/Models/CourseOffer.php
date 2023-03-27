@@ -53,6 +53,8 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
+            ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
+            ->whereNull('student_cancellations.id')
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
         return $_query;
@@ -78,6 +80,8 @@ class CourseOffer extends Model
                 ->where('enrollment_assessments.curriculum_id', '!=', 7)
                 ->where('enrollment_assessments.is_removed', false)
                 ->where('payment_transactions.is_removed', false)
+                ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
+                ->whereNull('student_cancellations.id')
                 ->groupBy('enrollment_assessments.id')
                 ->orderBy('payment_transactions.created_at', 'DESC');
         }
@@ -91,6 +95,8 @@ class CourseOffer extends Model
                 ->where('enrollment_assessments.curriculum_id', '!=', 1)
                 ->where('enrollment_assessments.is_removed', false)
                 ->where('payment_transactions.is_removed', false)
+                ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
+                ->whereNull('student_cancellations.id')
                 ->groupBy('enrollment_assessments.id')
                 ->orderBy('payment_transactions.created_at', 'DESC');
         }
@@ -102,6 +108,8 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.year_level', $data)
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
+            ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
+            ->whereNull('student_cancellations.id')
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
     }
@@ -129,6 +137,8 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.year_level', $data)
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
+            ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
+            ->whereNull('student_cancellations.id')
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
     }
@@ -143,6 +153,8 @@ class CourseOffer extends Model
             ->groupBy('pt.assessment_id')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('pt.is_removed', false)
+            ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
+            ->whereNull('student_cancellations.id')
             ->where('enrollment_assessments.is_removed', false);
         //Get Year Level
         $_query = $_request->_year_level ? $_query->where('enrollment_assessments.year_level', $_request->_year_leve) : $_query;

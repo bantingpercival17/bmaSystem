@@ -116,4 +116,8 @@ class EnrollmentAssessment extends Model
             'is_removed' => false
         ])->first();
     }
+    public function enrollment_cancellation()
+    {
+        return $this->hasOne(StudentCancellation::class, 'enrollment_id');
+    }
 }

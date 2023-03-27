@@ -15,6 +15,13 @@ class CreateStudentCancellationsTable extends Migration
     {
         Schema::create('student_cancellations', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('enrollment_id');
+            $table->foreign('enrollment_id')->references('id')->on('enrollment_assessments');
+            $table->string('type_of_cancellations');
+            $table->date('date_of_cancellation');
+            $table->text('cancellation_evidence');
+            $table->unsignedBigInteger('staff_id');
+            $table->foreign('staff_id')->references('id')->on('staff');
             $table->timestamps();
         });
     }

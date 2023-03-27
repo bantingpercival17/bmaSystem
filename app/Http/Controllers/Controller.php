@@ -184,6 +184,17 @@ class Controller extends BaseController
         Storage::disk($_path)->put($filename, fopen($_file, 'r+'));
         return URL::to('/') . '/storage/' . $_path . '/' . $filename;
     }
+    public function office_file_save($_file, $_path = 'public', $_office, $_folder = 'extra')
+    {
+        if (!$_file) {
+            return null;
+        } // Get the extention of files
+        $filename = $_office . '/' . $_folder . '/' . time() . '.' . $_file->getClientOriginalExtension();
+        // File Path Format : $_path.'/'.student-number.'/'.$_folder
+        $_path = $_path;
+        Storage::disk($_path)->put($filename, fopen($_file, 'r+'));
+        return URL::to('/') . '/storage/' . $_path . '/' . $filename;
+    }
     public function send_email()
     {
         $_academic = AcademicYear::where('is_active', true)->first();
