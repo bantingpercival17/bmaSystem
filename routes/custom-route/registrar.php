@@ -1,7 +1,12 @@
 <?php
 
 use App\Http\Controllers\RegistrarController;
+use App\Models\CourseOffer;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 Route::prefix('registrar')->group(function () {
     // Dashboard
@@ -49,6 +54,27 @@ Route::prefix('registrar')->group(function () {
     Route::get('/section/view/remove', [RegistrarController::class, 'section_remove_student'])->name('registrar.student-section-remove');
     Route::get('/section/export-file', [RegistrarController::class, 'section_export_file'])->name('registrar.section-export');
     Route::post('/section/import-file', [RegistrarController::class, 'section_import_files'])->name('registrar.section-import');
+    Route::get('/section/export-qrcode', function (Request $_request) {
+        $_course = CourseOffer::find(base64_decode($_request->_course));
+        $_year = Auth::user()->staff->convert_year_level($_request->_year_level);
+        $_file_name = $_course->course_code . "_" . strtoupper($_year) . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+        // $_file_export = new CourseSectionStudentList($_course, $_request->_year_level);
+        $_data_sheet = $_course->section([Auth::user()->staff->current_academic()->id, $_year])->get();
+        foreach ($_data_sheet as $key => $section) {
+            $_datas = $section->student_sections;
+            foreach ($_datas as $key => $_data) {
+                if ($_data->student->account) {
+                    $_student_number = $_data->student->account->student_number;
+                    $image = QrCode::format('png')
+                        // ->merge('img/t.jpg', 0.1, true)
+                        ->size(200)->errorCorrection('H')
+                        ->generate($_student_number . "." . mb_strtolower(str_replace(' ', '', $_data->student->last_name)));
+                    $output_file = '/student/qr-code/' . $this->section->section_name . '/' . $_student_number . '.png';
+                    Storage::disk('local')->put($output_file, $image);
+                }
+            }
+        }
+    })->name('registrar.section-export-qrcode');
     // E-clearance
     Route::get('/semestral-clearance', [RegistrarController::class, 'clearance_view'])->name('registrar.semestral-clearance');
     Route::get('/semestral-clearance/view', [RegistrarController::class, 'semestral_student_list_view'])->name('registrar.semestral-student-list'); // Section view
