@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\DeploymentAssesment;
+use App\Models\DocumentRequirements;
 use App\Models\Documents;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardJournal;
@@ -180,6 +181,34 @@ class StudentController extends Controller
         }
     }
     /* Onboarding Performance Report */
+    public function student_onboard_enrollment()
+    {
+        try {
+            // Get the Document Requirments 
+            $document_requirements = Documents::where('is_removed', false)
+                ->where('document_propose', 'PRE-DEPLOYMENT')
+                ->orderByRaw('CHAR_LENGTH("document_name")')
+                ->get();
+            // Get the Shipping Agency
+            $shipping_company = ShippingAgencies::select('id', 'agency_name')
+                ->where('is_removed', false)
+                ->orderBy('agency_name')
+                ->get();
+            $deployment = DeploymentAssesment::where('student_id', auth()->user()->student_id)
+                ->where('is_removed', 0)
+                ->with('shipboard_companies')
+                ->first();
+            $document_attachments = DocumentRequirements::where('student_id', auth()->user()->student_id)
+                ->where('is_removed', 0)
+                ->with('staff')
+                ->get();
+            $enrollment = compact('shipping_company', 'document_requirements', 'deployment', 'document_attachments');
+            return response(['data' => $enrollment], 200);
+        } catch (Exception $error) {
+            $this->debugTrackerStudent($error);
+            return response(['error' => $error->getMessage()], 505);
+        }
+    }
     public function student_onboarding()
     {
         try {

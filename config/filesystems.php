@@ -41,7 +41,20 @@ return [
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
-
+        'bma-students' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/bma-students'),
+            //'root' => '../../student-portal/public/storage/bma-students',
+            'url' => env('APP_URL') . '/storage/bma-students',
+            'visibility' => 'public',
+        ],
+        'bma-applicants' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/bma-applicants'),
+            //'root' => '../../student-portal/public/storage/bma-applicants',
+            'url' => env('APP_URL') . '/storage/bma-applicants',
+            'visibility' => 'public',
+        ],
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

@@ -8,6 +8,7 @@ use App\Models\DocumentRequirements;
 use App\Models\Documents;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardPerformanceReport;
+use App\Models\ShippingAgencies;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -109,13 +110,68 @@ class ShipboardTraining extends Controller
             // Create a function to Controler file to save and store the details of bugs
         }
     }
+    public function onboard_enrollment(Request $_request)
+    {
+        $_validate['agency'] = 'required';
+        $_documents = Documents::where('is_removed', false)
+            ->where('document_propose', 'PRE-DEPLOYMENT')
+            ->get(); // Get the Document Requirements
+        // Check the Input agecy if empty and the validation to Shipping Agency
+        if ($_request->agency === 'NA') {
+            $_validate['shipping_company'] = 'required';
+            $_validate['company_address'] = 'required';
+        }
+        // Set validation for Documents
+        foreach ($_documents as $document) {
+            $_validate[strtolower(str_replace(' ', '_', $document->document_name))] = 'required';
+        }
+        $_request->validate($_validate);
+        try {
+            $_agency = $_request->agency;
+            if ($_request->agency === 'NA') {
+                $_agency = ShippingAgencies::create([
+                    'agency_name' => $_request->agency_name,
+                    'agency_address' => $_request->agency_address,
+                    'staff_id' => 7,
+                    'is_removed' => 0
+                ]); // Store Agencies
+                $_agency = $_agency->id; // Get Id
+            }
+            // Set the Shipboard Application
+            $_deployment_assessment = ['student_id' => auth()->user()->student_id, 'agency_id' => $_agency, 'is_removed' => false];
+            // Store the Shipboard Agecny
+            $_find = DeploymentAssesment::where('student_id', auth()->user()->student_id)
+                ->where('is_removed', false)
+                ->first();
+            if (!$_find) {
+                DeploymentAssesment::create($_deployment_assessment);
+            }
+            foreach ($_documents as $_docu) {
+                $name = strtolower(str_replace(' ', '_', $_docu->document_name)); // Get the input name
+                $_data_link = $this->saveFiles($_request->file($name), 'bma-students', 'onboard'); // store to the public folder
+                $_document_detials = [
+                    'document_id' => $_docu->id,
+                    'student_id' =>  auth()->user()->id,
+                    'document_path' => $_data_link,
+                    'file_path' => $_data_link,
+                    'document_status' => 0,
+                    'is_removed' => 0,
+                ];
+                DocumentRequirements::create($_document_detials);
+            }
+            return response(['data' => 'done', 'message' => 'Successfully Submitted.'], 200);
+        } catch (Exception $error) {
+            return response(['error' => $error->getMessage()], 505);
+            $_request->header('User-Agent');
+            // Create a function to Controler file to save and store the details of bugs
+        }
+    }
     public function upload_documents(Request $_request)
     {
         try {
             // return $_request;
             $_document = Documents::find(base64_decode($_request->document));
             $_data_link = $this->saveFiles($_request->_file, 'public', 'onboard');
-
             $_data_link =  $_data_link != null ?
                 $_data_link = $_request->document . "~" . $_data_link :
                 $_data_link = null;

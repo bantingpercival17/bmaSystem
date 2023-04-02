@@ -65,12 +65,13 @@ Route::prefix('registrar')->group(function () {
             foreach ($_datas as $key => $_data) {
                 if ($_data->student->account) {
                     $_student_number = $_data->student->account->student_number;
-                    $image = QrCode::format('png')
+                    /*  $image = QrCode::format('png')
                         // ->merge('img/t.jpg', 0.1, true)
                         ->size(200)->errorCorrection('H')
                         ->generate($_student_number . "." . mb_strtolower(str_replace(' ', '', $_data->student->last_name)));
-                    $output_file = '/student/qr-code/' . $this->section->section_name . '/' . $_student_number . '.png';
-                    Storage::disk('local')->put($output_file, $image);
+                    $output_file = '/student/qr-code/' . $this->section->section_name . '/' . $_student_number . '.png'; */
+                    //Storage::disk('local')->put($output_file, $image);
+                    echo "'" . $_student_number . "." . mb_strtolower(str_replace(' ', '', $_data->student->last_name)) . "',";
                 }
             }
         }
