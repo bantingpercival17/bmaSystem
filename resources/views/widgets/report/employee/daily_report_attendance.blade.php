@@ -3,80 +3,38 @@
 @section('form-code', 'ACC-14 ')
 @section('content')
     <div class="content">
-        {{--  <h3 class="text-center"><b>DAILY ATTENDANCE REPORT</b></h3>
+        <h3 class="text-center"><b>DAILY ATTENDANCE REPORT</b></h3>
         <p>Date:
             <b><u>{{ request()->input('_date') ? date_format(date_create(request()->input('_date')), 'M d,Y') : now()->format('M d,Y') }}</u></b>
-        </p> --}}
+        </p>
 
         <table class="table-2">
             <thead>
                 <tr>
-                    <th>QR CODE</th>
                     <th>NAME</th>
-
-
-                    {{--  <th>DEPARTMENT</th> --}}
-                    {{-- <th width="100">TIME-IN</th>
-                    <th width="100">TIME-OUT</th> --}}
+                    <th>DEPARTMENT</th>
+                    <th width="100">TIME-IN</th>
+                    <th width="100">TIME-OUT</th>
 
                 </tr>
             </thead>
             <tbody>
                 @foreach ($_employees as $_employee)
                     <tr>
-                        <td style="width: 25%; hiegth:100px; ">
-                            <table class="table-content" >
-                                <tbody>
-                                    <tr>
-                                        <td class="text-center" style=" border: 0px solid rgb(0, 0, 0);">
-                                            <img src="{{ public_path() . $_employee->profile_pic($_employee) }}"
-                                                width="100"alt="" >
-                                        </td>
-                                        <td style=" border: 0px solid rgb(0, 0, 0);">
-                                            <div class="text-center">
-                                                <img src="data:image/png;base64, {!! base64_encode(
-                                                    QrCode::style('round', 0.5)->eye('square')->size(170)->generate('employee:' . $_employee->user->email),
-                                                ) !!} ">
-                                                <br><br>
-                                                <label for="" style="font-size: 14px;font-weight:bolder">
-                                                    {{ ucwords($_employee->first_name . ' ' . $_employee->last_name) }}
-                                                </label>
-                                                <br>
-                                                <label for="" style="font-size: 9px">
-                                                    {{ ucwords($_employee->department) }}
-                                                </label>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div style="display: inline;">
-
-
-
-                            </div>
-
+                        <td style="width: 40%; hiegth:100px; ">
+                            <label for="" style="font-size: 14px;font-weight:bolder">
+                                {{ ucwords($_employee->first_name . ' ' . $_employee->last_name) }}
+                            </label>
                         </td>
-                        <td style="width: 25%;text-align:center;">
-                            <img src="{{ public_path() . '/assets/image/bma-logo-1.png' }}" alt="" width="150">
-                            <br> bma.edu.ph
-                        </td>
-
-                        {{--  <td style="width: 30%;text-align:center;">
-                            <img src="{{ public_path() . '/assets/image/bma-logo-1.png' }}" alt="" width="150">
-                            <br> bma.edu.ph
-                        </td> --}}
-                        {{-- <td>
-                            {{ strtoupper($_employee->first_name . ' ' . $_employee->last_name) }}
+                        <td>
                             <br>{{ strtoupper($_employee->department) }}
-                        </td> --}}
-                        {{-- <td>
+                        </td>
+                        <td>
                             @if ($_employee->daily_attendance_report)
                                 {{ date_format(date_create($_employee->daily_attendance_report->time_in), 'h:i:s a') }}
                             @else
                                 -
                             @endif
-
                         </td>
                         <td>
                             @if ($_employee->daily_attendance_report)
@@ -88,7 +46,7 @@
                             @else
                                 -
                             @endif
-                        </td> --}}
+                        </td>
                     </tr>
                 @endforeach
 

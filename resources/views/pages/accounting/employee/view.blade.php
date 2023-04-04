@@ -10,7 +10,7 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title"><span class="text-muted"><b>EMPLOYEE LIST</b></span></h3>
-            <form action="" method="get">
+            <form action="{{route('accounting.employee-attendance')}}" method="get">
 
                 <label for="" class="text-muted">Generate Attendane Report</label>
                 <div class="row">
