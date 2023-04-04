@@ -4,6 +4,7 @@ namespace App\Report;
 
 use App\Models\AcademicYear;
 use App\Models\CourseOffer;
+use App\Models\Curriculum;
 use App\Models\EnrollmentAssessment;
 use App\Models\Section;
 use App\Models\StudentSection;
@@ -32,29 +33,21 @@ class StudentListReport
         $_course = CourseOffer::find($_data['course_id']);
         $_year = Auth::user()->staff->convert_year_level($_data['year_level']);
         $pdf = PDF::loadView("widgets.report.student.student_section_list", compact('_sections', '_academic'));
-        $file_name = $_course->course_code . "_" .strtoupper(Auth::user()->staff->convert_year_level(str_replace('/C', '', $_data['year_level'])))  . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+        $file_name = $_course->course_code . "_" . strtoupper(Auth::user()->staff->convert_year_level(str_replace('/C', '', $_data['year_level'])))  . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
         //$file_name = strtoupper($_course->course_code) . " : " . $_data['year_level'] . "/C - FORM : STUDENT SECTION LIST " . $_academic->school_year . " - " . $_academic->semester;
 
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
-    public function summary_grade($_students, $_request)
+    public function summary_grade($course, $level)
     {
-        $_academic = AcademicYear::find(base64_decode($_request->_academic));
-        $_course = CourseOffer::find(base64_decode($_request->_course));
-        $_curriculum = EnrollmentAssessment::select('enrollment_assessments.curriculum_id', 'enrollment_assessments.course_id', 'enrollment_assessments.academic_id', 'enrollment_assessments.year_level')
-            ->groupBy('enrollment_assessments.curriculum_id')
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-            ->where('enrollment_assessments.course_id', base64_decode($_request->_course))
-            ->where('enrollment_assessments.year_level', $_request->_year_level)
-            ->where('enrollment_assessments.is_removed', false)
-            ->get();
-        $_level =  $_request->_year_level;
-        $pdf = PDF::loadView("widgets.report.grade-v2.summary_grade", compact('_course', '_curriculum', '_level'));
-        $_year_level = $_level == '4' ? 'First Year' : '';
-        $_year_level = $_level == '3' ? 'Second Year' : $_year_level;
-        $_year_level = $_level == '2' ? 'Third Year' : $_year_level;
-        $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
-        $file_name = strtoupper($_course->course_name . '-' . $_year_level . '_' . $_academic->school_year . "-" . $_academic->semester);
+        //return $_curriculum = $_course->enrollment_list_by_year_level($_request->_year_level)->get();
+        $curriculum = Curriculum::all();
+        $_year_level = $level == '4' ? 'First Year' : '';
+        $_year_level = $level == '3' ? 'Second Year' : $_year_level;
+        $_year_level = $level == '2' ? 'Third Year' : $_year_level;
+        $_year_level = $level == '1' ? 'Fourth Year' : $_year_level;
+        $pdf = PDF::loadView("widgets.report.grade-v2.semestral_summary_grade", compact('course', 'curriculum', 'level'));
+        $file_name = strtoupper($course->course_name . '-' . $_year_level . '_' . Auth::user()->staff->current_academic()->school_year . "-" . Auth::user()->staff->current_academic()->semester);
         return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
     }
 }

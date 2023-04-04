@@ -126,6 +126,16 @@ class StudentDetails extends Model
             ->where('is_removed', false)
             ->orderBy('id', 'desc');
     }
+    public function student_current_section()
+    {
+        return $this->hasOne(StudentSection::class, 'student_id')
+            ->select('student_sections.id', 'student_sections.student_id', 'student_sections.section_id')
+            ->join('sections', 'sections.id', 'student_sections.section_id')
+            ->where('sections.section_name', 'not like', '%BRIDGING%')
+            ->where('sections.is_removed', false)
+            ->where('sections.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('student_sections.is_removed', false);
+    }
     /* Student Search Query */
     public function student_search($_data)
     {
@@ -539,6 +549,32 @@ class StudentDetails extends Model
         return $this->hasOne(GradePublish::class, 'student_id')
             ->where('academic_id', Auth::user()->staff->current_academic()->id)
             ->where('is_removed', false) /* ->where('is_removed', false) */;
+    }
+
+    public function student_final_subject_grade($subject)
+    {
+        $student_section = $this->student_current_section()->first();
+        if ($student_section) {
+            $subject_class = $subject->curriculum_subject_class($student_section->section_id);
+            $grade = '';
+            if ($subject_class) {
+                if ($subject_class->grade_final_verification) {
+                    $student_grade = $subject_class->student_computed_grade($this->id)->first();
+                    if ($student_grade) {
+                        // $_final_grade = number_format($this->percentage_grade(base64_decode($student_grade->final_grade)), 2); // Get the Final Grade on Grade Computed Model
+                        $_point = base64_decode($student_grade->final_grade);
+                        if ($_point !== 'INC') {
+                            $_point = $this->percentage_grade($_point);
+                        }
+                        $grade = $_point;
+                    }
+                }
+            }
+            // Find the Subject Class
+            //return $subject_section;
+            return $grade;
+        }
+        return null;
     }
     /* Shipboard Model */
 

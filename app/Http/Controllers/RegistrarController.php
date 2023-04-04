@@ -231,7 +231,7 @@ class RegistrarController extends Controller
         ]);
         // Remove to the Section
 
-        
+
         return back()->with('success', 'Successfully Submitted.');
     }
     public function student_clearance(Request $_request)
@@ -837,18 +837,13 @@ class RegistrarController extends Controller
     public function semestral_grade_summary_report(Request $_request)
     {
         try {
-            $_enrollment_curriculum = EnrollmentAssessment::select('enrollment_assessments.curriculum_id')
-                ->groupBy('enrollment_assessments.curriculum_id')
-                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-                ->where('enrollment_assessments.course_id', base64_decode($_request->_course))
-                ->where('enrollment_assessments.year_level', $_request->_year_level)
-                ->where('enrollment_assessments.is_removed', false)
-                ->get();
+            $course = CourseOffer::find(base64_decode($_request->_course));
             $_report = new StudentListReport();
-            return $_report->summary_grade($_enrollment_curriculum, $_request);
+            return $_report->summary_grade($course, $_request->_year_level);
         } catch (Exception $err) {
             $this->debugTracker($err);
-            return back()->with('error', $err->getMessage());
+            return $err->getMessage();
+            //return back()->with('error', $err->getMessage());
         }
     }
     public function summary_grade_report_excel(Request $_request)
@@ -856,19 +851,19 @@ class RegistrarController extends Controller
         try {
             $_course = CourseOffer::find(base64_decode($_request->_course));
             $_level =  $_request->_year_level;
-            $_academic = AcademicYear::find(base64_decode($_request->_academic));
-            $_file = new CurriculumSummaryGradeSheet($_course, $_request);
+            $_file = new CurriculumSummaryGradeSheet($_course, $_level, $_request);
             $_year_level = $_level == '4' ? 'First Year' : '';
             $_year_level = $_level == '3' ? 'Second Year' : $_year_level;
             $_year_level = $_level == '2' ? 'Third Year' : $_year_level;
             $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
-            $_file_name = strtoupper($_course->course_name . '-' . $_year_level . '_' . $_academic->school_year . "-" . $_academic->semester) . '.xlsx';
+            $_file_name = strtoupper($_course->course_name . '-' . $_year_level . '_' . Auth::user()->staff->current_academic()->school_year . "-" . Auth::user()->staff->current_academic()->semester) . '.xlsx';
             $_file = Excel::download($_file, $_file_name); // Download the File
             ob_end_clean();
             return $_file;
         } catch (Exception $err) {
             $this->debugTracker($err);
-            return back()->with('error', $err->getMessage());
+            return $err->getMessage();
+            // return back()->with('error', $err->getMessage());
         }
     }
     public function semestral_grade_publish(Request $_request)

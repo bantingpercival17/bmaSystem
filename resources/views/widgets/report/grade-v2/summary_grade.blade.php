@@ -1,10 +1,10 @@
 @extends('widgets.report.grade-v2.report_layout_1')
-@section('title-report', ' SUMMARY GRADES : ' . $_course->course_name)
+@section('title-report', ' SUMMARY GRADES : ' . $course->course_name)
 @php
-    $_year_level = $_level == '4' ? 'First Year' : '';
-    $_year_level = $_level == '3' ? 'Second Year' : $_year_level;
-    $_year_level = $_level == '2' ? 'Third Year' : $_year_level;
-    $_year_level = $_level == '1' ? 'Fourth Year' : $_year_level;
+    $_year_level = $level == '4' ? 'First Year' : '';
+    $_year_level = $level == '3' ? 'Second Year' : $_year_level;
+    $_year_level = $level == '2' ? 'Third Year' : $_year_level;
+    $_year_level = $level == '1' ? 'Fourth Year' : $_year_level;
 @endphp
 @section('form-code', '')
 @section('content')
@@ -15,14 +15,18 @@
         <h5 class="text-center">A.Y.
             {{ strtoupper(Auth::user()->staff->current_academic()->school_year) }}</h5>
         <br>
-        @foreach ($_curriculum as $curriculum)
-            <small><b>{{ $_course->course_name }}</b></small>
-            <table class="table-2">
+        @foreach ($curriculum as $curriculum)
+            @if (count($curriculum->student_enrolled) > 0)
+                <small><b>{{ $course->course_name }}</b></small><br>
+                <small><b>{{ $curriculum->curriculum_name }}</b></small>
+            @endif
+
+            {{--    <table class="table-2">
                 <thead>
                     <tr>
                         <th></th>
                         <th width="15%">NAMES</th>
-                        @foreach ($curriculum->curriculum->subject([$_course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
+                        @foreach ($curriculum->curriculum->subject([$course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
                             <th>
                                 {{ $_subject->subject->subject_code }}
                             </th>
@@ -33,7 +37,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($_course->student_list as $_key => $_data)
+                    @foreach ($course->student_list as $_key => $_data)
                         <tr>
                             <td width="2%" class="text-center">{{ $_key + 1 }}
                             </td>
@@ -44,7 +48,7 @@
                                 $_total_units = 0;
                                 $_average = 0;
                             @endphp
-                            @foreach ($curriculum->curriculum->subject_lists([$_course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
+                            @foreach ($curriculum->curriculum->subject_lists([$course->id, $_level, Auth::user()->staff->current_academic()->semester])->get() as $_subject)
                                 @php
                                     $_subject_class = $_subject->curriculum_subject_class($_data->section_id);
                                     if ($_subject_class) {
@@ -77,9 +81,9 @@
                     @endforeach
 
                 </tbody>
-            </table>
+            </table> --}}
             <div class="page-break"></div>
         @endforeach
     </div>
-    {{-- {{ $_course->student_list}} --}}
+    {{-- {{ $course->student_list}} --}}
 @endsection
