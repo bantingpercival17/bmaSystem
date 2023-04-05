@@ -558,7 +558,16 @@ class StudentDetails extends Model
             $subject_class = $subject->curriculum_subject_class($student_section->section_id);
             $grade = '';
             if ($subject_class) {
-                if ($subject_class->grade_final_verification) {
+                $student_grade = $subject_class->student_computed_grade($this->id)->first();
+                if ($student_grade) {
+                    // $_final_grade = number_format($this->percentage_grade(base64_decode($student_grade->final_grade)), 2); // Get the Final Grade on Grade Computed Model
+                    $_point = base64_decode($student_grade->final_grade);
+                    if ($_point !== 'INC') {
+                        $_point = $this->percentage_grade($_point);
+                    }
+                    $grade = $_point;
+                }
+                /* if ($subject_class->grade_final_verification) {
                     $student_grade = $subject_class->student_computed_grade($this->id)->first();
                     if ($student_grade) {
                         // $_final_grade = number_format($this->percentage_grade(base64_decode($student_grade->final_grade)), 2); // Get the Final Grade on Grade Computed Model
@@ -568,7 +577,7 @@ class StudentDetails extends Model
                         }
                         $grade = $_point;
                     }
-                }
+                } */
             }
             // Find the Subject Class
             //return $subject_section;

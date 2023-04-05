@@ -210,4 +210,32 @@ class ShipboardTraining extends Controller
             // Create a function to Controler file to save and store the details of bugs
         }
     }
+    public function reupload_documents_v2(Request $_request)
+    {
+        try {
+            $_document = DocumentRequirements::find(base64_decode($_request->document)); // Get the Submitted File 
+            $_data_link = $this->saveFiles($_request->file, 'public', 'onboard'); // Store File on the Local Folder
+            $_details = array(
+                'student_id' => $_document->student_id,
+                'document_id' => $_document->document_id,
+                'file_path' => $_data_link,
+                'document_path' => $_data_link,
+            ); // Set the Data for Storing a new submitted Files
+            if ($_data_link != null) {
+                DocumentRequirements::create($_details);
+                $_document->is_removed = true;
+                $_document->save();
+            } // Removed the Exsiting Data 
+
+            $_data_link =  $_data_link != null ?
+                $_data_link = $_request->document . "~" . $_data_link :
+                $_data_link = null;
+            return response(['data' => 'done', 'message' => 'Successfully Re-Uploaded the Documents.'], 200);
+            //return response(['data' => $_data_link], 200);
+        } catch (Exception $error) {
+            return response(['error' => $error->getMessage()], 505);
+            $_request->header('User-Agent');
+            // Create a function to Controler file to save and store the details of bugs
+        }
+    }
 }
