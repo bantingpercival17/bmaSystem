@@ -339,7 +339,7 @@
                                     class="form-control">{{ $_midshipman->shipboard_application ? $_midshipman->shipboard_application->shipboard_companies->agency_name : '' }}</label>
                             </div>
                             <label for="" class="form-label h5 text-primary fw-bolder ">DOCUMENT
-                                REQUIRMENTS</label>
+                                REQUIREMENTS</label>
                             @foreach ($_documents as $document)
                                 <div class="form-group">
                                     <label for=""

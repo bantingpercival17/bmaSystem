@@ -61,22 +61,41 @@ class OnboardTrainingController extends Controller
         $_midshipman = $_request->_midshipman ? $_student_details->find(base64_decode($_request->_midshipman)) : [];
         return view('onboardtraining.student.view', compact('_midshipman', '_students', '_certificates', '_documents', '_document_requirement', '_document_status'));
     }
-
+    public function midshipman_view_v2(Request $_request)
+    {
+        $student_details = new StudentDetails();
+        $midshipman = $_request->midshipman ? $student_details->find(base64_decode($_request->midshipman)) : []; // Student View Porfile
+        $shipboard_application = $student_details->shipboard_application_list()->get(); // List of Shipboard Application
+        $students = $_request->students ? $student_details->student_search($_request->students) : $shipboard_application; // Student Search
+        return view('onboardtraining.student.view_v2', compact('midshipman', 'students'));
+    }
     public function shipboard_application_verification(Request $_request)
     {
         try {
-            $_document_verification = DocumentRequirements::find(base64_decode($_request->_document));
+            $_document_verification = DocumentRequirements::find(base64_decode($_request->_document)); // Get the Document 
+            // The the Shipboard Information
+            $shipboard_information = ShipBoardInformation::find($_document_verification->deployment_id);
             if ($_request->document_status == 1) {
-                $_document_verification->document_status = 1;
+                // Check the Input Document Status 
+                $_document_verification->document_status = 1; // Set the value for the update of the document
             } else {
+                // Set the Update for the following Columns
                 $_document_verification->document_status = 2;
                 $_document_verification->document_comment = $_request->_comment;
+                $shipboard_information->update(['is_approved' => false]);
             }
             $_document_verification->staff_id = Auth::user()->id;
-            $_document_verification->save();
-            $_documents = Documents::where('is_removed', 1)->where('document_propose', 'PRE-DEPLOYMENT')->orderByRaw('CHAR_LENGTH("document_name")')->get();
-            $_document_status = DocumentRequirements::where('student_id', $_document_verification->student_id)->where('document_status', 1)->where('is_removed', false)->count();
-            if (count($_documents) == $_document_status) {
+            $_document_verification->save(); // Update the values of Document Verification
+            // The total number of Document Requirements
+            $_documents = Documents::where('is_removed', false)
+                ->where('document_propose', 'PRE-DEPLOYMENT')
+                ->with('student_upload_documents')
+                ->orderByRaw('CHAR_LENGTH("document_name")')
+                ->count();
+            // Get the Approved Documents
+            $_document_status = $shipboard_information->document_requirements_approved->count();
+            if ($_documents == $_document_status) {
+                $shipboard_information->update(['is_approved' => true]);
                 $_deployment = DeploymentAssesment::where('student_id', $_document_verification->student_id)->where('is_removed', false)->first();
                 $_deployment->staff_id = Auth::user()->id;
                 $_deployment->save();

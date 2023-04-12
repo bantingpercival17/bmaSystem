@@ -12,7 +12,8 @@ class DocumentRequirements extends Model
         'student_id',
         'document_id',
         'file_path',
-        'document_path'
+        'document_path',
+        'deployment_id'
     ];
     public function student()
     {
@@ -24,6 +25,6 @@ class DocumentRequirements extends Model
     }
     public function staff()
     {
-        return $this->belongsTo(Staff::class, 'staff_id'); 
+        return $this->belongsTo(Staff::class, 'staff_id');
     }
 }

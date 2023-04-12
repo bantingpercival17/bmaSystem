@@ -560,6 +560,20 @@
         'url' => 'http://localhost/storage',
         'visibility' => 'public',
       ),
+      'bma-students' => 
+      array (
+        'driver' => 'local',
+        'root' => 'D:\\Users\\perci\\Documents\\BMA-WORKSPACE\\bmaSystem\\storage\\app/public/bma-students',
+        'url' => 'http://localhost/storage/bma-students',
+        'visibility' => 'public',
+      ),
+      'bma-applicants' => 
+      array (
+        'driver' => 'local',
+        'root' => 'D:\\Users\\perci\\Documents\\BMA-WORKSPACE\\bmaSystem\\storage\\app/public/bma-applicants',
+        'url' => 'http://localhost/storage/bma-applicants',
+        'visibility' => 'public',
+      ),
       's3' => 
       array (
         'driver' => 's3',

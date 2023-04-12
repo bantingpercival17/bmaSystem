@@ -270,14 +270,29 @@ class AccountingController extends Controller
     public function assessment_store(Request $_request)
     {
         try {
+            $enrollment_assessment = EnrollmentAssessment::find($_request->enrollment);
+            $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
+            if ($_request->mode == 1) {
+                // Installment
+                $total_tuitionfee =  $tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
+                $upon_enrollment = $tuition_fees->upon_enrollment_v2($enrollment_assessment);
+                $monthly_payment = $tuition_fees->monthly_fees_v2($enrollment_assessment);
+            } else {
+                //FullPayment
+                $total_tuitionfee = $tuition_fees->total_tuition_fees($enrollment_assessment);;
+                $upon_enrollment = $tuition_fees->total_tuition_fees($enrollment_assessment);;
+                $monthly_payment = 0;
+            }
             $_details = array(
                 'enrollment_id' => $_request->enrollment,
                 'course_semestral_fee_id' => $_request->semestral_fees,
                 'payment_mode' => $_request->mode,
                 'staff_id' => auth()->user()->staff->id,
-                'is_removed' => 0,
-                'total_payment' => 0,
-                'voucher_amount' => 0
+                'total_payment' => $total_tuitionfee,
+                'upon_enrollment' => $upon_enrollment,
+                'monthly_payment' => $monthly_payment,
+                'voucher_amount' => 0,
+                'is_removed' => 0
             );
             $_payment_assessment = PaymentAssessment::where('enrollment_id', $_request->enrollment)->first();
             if (!$_payment_assessment) {
@@ -286,6 +301,9 @@ class AccountingController extends Controller
             } else {
                 $_payment_assessment->course_semestral_fee_id =  $_request->semestral_fees;
                 $_payment_assessment->payment_mode =  $_request->mode;
+                $_payment_assessment->total_payment =  $total_tuitionfee;
+                $_payment_assessment->upon_enrollment =  $upon_enrollment;
+                $_payment_assessment->monthly_payment =  $monthly_payment;
                 $_payment_assessment->save();
                 return redirect(route('accounting.payment-transactions') . "?midshipman=" . $_request->_student)->with('success', 'Payment Assessment Updated');
             }

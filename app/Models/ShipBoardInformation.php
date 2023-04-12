@@ -18,7 +18,8 @@ class ShipBoardInformation extends Model
     'shipboard_status',
     'sbt_batch',
     'embarked',
-    'disembarked'
+    'disembarked',
+    'is_approved'
   ];
   public function student()
   {
@@ -26,6 +27,14 @@ class ShipBoardInformation extends Model
   }
   public function performance_report()
   {
-    return $this->hasMany(ShipboardPerformanceReport::class,'shipboard_id')->where('is_removed', false)->orderBy('date_covered', 'asc');
+    return $this->hasMany(ShipboardPerformanceReport::class, 'shipboard_id')->where('is_removed', false)->orderBy('date_covered', 'asc');
+  }
+  public function document_requirements()
+  {
+    return $this->hasMany(DocumentRequirements::class, 'deployment_id')->with('documents')->with('staff')->where('is_removed', false);
+  }
+  public function document_requirements_approved()
+  {
+    return $this->hasMany(DocumentRequirements::class, 'deployment_id')->where('document_status', 1)->where('is_removed', false);
   }
 }

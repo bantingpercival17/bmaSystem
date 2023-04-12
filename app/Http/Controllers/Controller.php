@@ -178,11 +178,11 @@ class Controller extends BaseController
         // Get Student Number
         $_student_number = Auth::user() ? str_replace('@bma.edu.ph', '', trim(Auth::user()->email)) : str_replace('@gmail.com', '', trim(Auth::user()->personal_email));
         // Get the extention of files
-       return $filename = $_student_number . '/' . $_folder . '/' . time() . '.' . $_file->getClientOriginalExtension();
-       /*  // File Path Format : $_path.'/'.student-number.'/'.$_folder
+        $filename = $_student_number . '/' . $_folder . '/' . time() . '.' . $_file->getClientOriginalExtension();
+        // File Path Format : $_path.'/'.student-number.'/'.$_folder
         $_path = $_path;
         Storage::disk($_path)->put($filename, fopen($_file, 'r+'));
-        return URL::to('/') . '/storage/' . $_path . '/' . $filename; */
+        return URL::to('/') . '/storage/' . $_path . '/' . $filename;
     }
     public function office_file_save($_file, $_path = 'public', $_office, $_folder = 'extra')
     {
@@ -218,9 +218,9 @@ class Controller extends BaseController
             ->where('is_removed', false)
             ->where('academic_id', $_academic->id)->orderBy('year_level', 'desc')->get();
         $mail = new ExecutiveReportMail($_deck, $_engine, $_time_arrival, $_absent_on_deck, $_absent_on_engine);
-        //Mail::to('p.banting@bma.edu.ph')->send($mail); // Testing Email
-        $other_email = ['qmr@bma.edu.ph', 'ict@bma.edu.ph', 'exo@bma.edu.ph', 'director@bma.edu.ph'];
-        Mail::to('report@bma.edu.ph')->bcc($other_email)->send($mail); // Offical Emails
+        Mail::to('p.banting@bma.edu.ph')->send($mail); // Testing Email
+        //$other_email = ['qmr@bma.edu.ph', 'ict@bma.edu.ph', 'exo@bma.edu.ph', 'director@bma.edu.ph'];
+        //Mail::to('report@bma.edu.ph')->bcc($other_email)->send($mail); // Offical Emails
         return "Sent";
     }
 }

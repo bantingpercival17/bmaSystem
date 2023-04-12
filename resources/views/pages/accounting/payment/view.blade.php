@@ -546,11 +546,6 @@
                                 @endif
 
                             @endif
-                            @if ($_payment_details)
-                            @else
-                            @endif
-
-
                         </div>
                         <hr>
                         <div class="payment-history">
@@ -620,7 +615,7 @@
             @endif
 
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4"> 
             <form action="" method="get">
 
                 <div class="form-group search-input">

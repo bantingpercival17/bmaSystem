@@ -113,6 +113,10 @@ class ShipboardTraining extends Controller
     public function onboard_enrollment(Request $_request)
     {
         $_validate['agency'] = 'required';
+        $_validate['vessel_name'] = 'required';
+        $_validate['vessel_type'] = 'required';
+        $_validate['sea_experience'] = 'required';
+        $_validate['embarked'] = 'date | required';
         $_documents = Documents::where('is_removed', false)
             ->where('document_propose', 'PRE-DEPLOYMENT')
             ->get(); // Get the Document Requirements
@@ -127,15 +131,18 @@ class ShipboardTraining extends Controller
         }
         $_request->validate($_validate);
         try {
-            $_agency = $_request->agency;
+            $_agency = $_request->agency; // Get the Input name Agency to check if it's NA
             if ($_request->agency === 'NA') {
                 $_agency = ShippingAgencies::create([
                     'agency_name' => $_request->agency_name,
                     'agency_address' => $_request->agency_address,
-                    'staff_id' => 7,
                     'is_removed' => 0
-                ]); // Store Agencies
+                ]); // Store Agencies 
                 $_agency = $_agency->id; // Get Id
+                $company_name = $_request->agency_name;
+            } else {
+                $agency = ShippingAgencies::find($_request->agency);
+                $company_name = $agency->agency_name;
             }
             // Set the Shipboard Application
             $_deployment_assessment = ['student_id' => auth()->user()->student_id, 'agency_id' => $_agency, 'is_removed' => false];
@@ -143,6 +150,21 @@ class ShipboardTraining extends Controller
             $_find = DeploymentAssesment::where('student_id', auth()->user()->student_id)
                 ->where('is_removed', false)
                 ->first();
+
+            $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->first();
+            if (!$shipboard_information) {
+                $shipboard_information =  ShipBoardInformation::create([
+                    'student_id' => auth()->user()->student_id,
+                    'company_name' => $company_name,
+                    'vessel_name' => $_request->vessel_name,
+                    'vessel_type' => $_request->vessel_type,
+                    'shipping_company' => $_request->sea_experience,
+                    'shipboard_status' => 'ON-GOING',
+                    'sbt_batch' => 'SBT',
+                    'embarked' => $_request->embarked,
+                    'disembarked' => null
+                ]);
+            }
             if (!$_find) {
                 DeploymentAssesment::create($_deployment_assessment);
             }
@@ -154,7 +176,8 @@ class ShipboardTraining extends Controller
                     'student_id' =>  auth()->user()->id,
                     'document_path' => $_data_link,
                     'file_path' => $_data_link,
-                    'document_status' => 0,
+                    'document_status' => null,
+                    'deployment_id' => $shipboard_information->id,
                     'is_removed' => 0,
                 ];
                 DocumentRequirements::create($_document_detials);
@@ -187,7 +210,7 @@ class ShipboardTraining extends Controller
         try {
             //return $_request;
             $_document = DocumentRequirements::find(base64_decode($_request->document));
-            $_data_link = $this->saveFiles($_request->file, 'public', 'onboard');
+            $_data_link = $this->saveFiles($_request->file, 'bma-students', 'onboard');
             $_details = array(
                 'student_id' => $_document->student_id,
                 'document_id' => $_document->document_id,
@@ -213,23 +236,24 @@ class ShipboardTraining extends Controller
     public function reupload_documents_v2(Request $_request)
     {
         try {
-            $_document = DocumentRequirements::find(base64_decode($_request->document)); // Get the Submitted File 
-            $_data_link = $this->saveFiles($_request->file, 'public', 'onboard'); // Store File on the Local Folder
+            $_document = DocumentRequirements::find($_request->document); // Get the Submitted File 
+            $_data_link = $this->saveFiles($_request->file, 'bma-students', 'onboard'); // Store File on the Local Folder
             $_details = array(
                 'student_id' => $_document->student_id,
                 'document_id' => $_document->document_id,
                 'file_path' => $_data_link,
                 'document_path' => $_data_link,
+                'deployment_id' => $_request->deployment
             ); // Set the Data for Storing a new submitted Files
             if ($_data_link != null) {
                 DocumentRequirements::create($_details);
                 $_document->is_removed = true;
                 $_document->save();
             } // Removed the Exsiting Data 
-
             $_data_link =  $_data_link != null ?
                 $_data_link = $_request->document . "~" . $_data_link :
                 $_data_link = null;
+            ShipBoardInformation::find($_document->deployment_id)->update(['is_approved' => null]);
             return response(['data' => 'done', 'message' => 'Successfully Re-Uploaded the Documents.'], 200);
             //return response(['data' => $_data_link], 200);
         } catch (Exception $error) {

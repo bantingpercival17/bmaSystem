@@ -16,6 +16,7 @@ class EnrollmentAssessment extends Model
         "year_level",
         "curriculum_id",
         "bridging_program",
+        "enrollment_category",
         "staff_id",
         "is_removed"
     ];
@@ -120,4 +121,5 @@ class EnrollmentAssessment extends Model
     {
         return $this->hasOne(StudentCancellation::class, 'enrollment_id');
     }
+   
 }

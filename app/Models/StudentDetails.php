@@ -1115,6 +1115,14 @@ class StudentDetails extends Model
             ->groupBy('shipboard_journals.student_id')
             ->where('shipboard_journals.is_removed', false);
     }
+    public function shipboard_application_list()
+    {
+        $student = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'student_details.extention_name')
+            ->join('ship_board_information', 'ship_board_information.student_id', 'student_details.id')
+            ->whereNull('ship_board_information.is_approved')
+            ->orderBy('ship_board_information.updated_at', 'desc');
+        return $student;
+    }
     public function shipboard_application()
     {
         return $this->hasOne(DeploymentAssesment::class, 'student_id') /* ->where('is_removed', false)->whereNull('staff_id') */;

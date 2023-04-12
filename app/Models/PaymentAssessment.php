@@ -14,6 +14,8 @@ class PaymentAssessment extends Model
         'course_semestral_fee_id',
         'voucher_amount',
         'total_payment',
+        'upon_enrollment',
+        'monthly_payment',
         'staff_id',
         'is_removed',
     ];
@@ -58,4 +60,5 @@ class PaymentAssessment extends Model
         $_data =  $this->hasOne(PaymentTransaction::class, 'assessment_id')->where('remarks', $data)->where('is_removed', false)->first();
         return $_data ?  $_data->payment_amount : '';
     }
+    
 }
