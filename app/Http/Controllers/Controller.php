@@ -178,7 +178,9 @@ class Controller extends BaseController
         // Get Student Number
         $_student_number = Auth::user() ? str_replace('@bma.edu.ph', '', trim(Auth::user()->email)) : str_replace('@gmail.com', '', trim(Auth::user()->personal_email));
         // Get the extention of files
-        $filename = $_student_number . '/' . $_folder . '/' . time() . '.' . $_file->getClientOriginalExtension();
+        $length = 12;
+        $name = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+        $filename = $_student_number . '/' . $_folder . '/' . $name . '.' . $_file->getClientOriginalExtension();
         // File Path Format : $_path.'/'.student-number.'/'.$_folder
         $_path = $_path;
         Storage::disk($_path)->put($filename, fopen($_file, 'r+'));
