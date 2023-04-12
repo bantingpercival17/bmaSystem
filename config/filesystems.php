@@ -44,14 +44,14 @@ return [
         'bma-students' => [
             'driver' => 'local',
             //'root' => storage_path('app/public/bma-students'),
-            'root' => '../../../bma-portal/public/storage/bma-students',
+            'root' => '../../bma-portal/public/storage/bma-students',
             'url' => env('APP_URL') . '/storage/bma-students',
             'visibility' => 'public',
         ],
         'bma-applicants' => [
             'driver' => 'local',
             //'root' => storage_path('app/public/bma-applicants'),
-            'root' => '../../../bma-portal/public/storage/bma-applicants',
+            'root' => '../../bma-portal/public/storage/bma-applicants',
             'url' => env('APP_URL') . '/storage/bma-applicants',
             'visibility' => 'public',
         ],
