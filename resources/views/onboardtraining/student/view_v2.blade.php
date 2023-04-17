@@ -209,7 +209,7 @@
                                         class="text-primary"><b>{{ $midshipman->shipboard_training->embarked }}</b></label>
                                 </div>
                             </div>
-                             <a href="{{ route('onboard.midshipman') }}?midshipman={{ request()->input('_midshipman') }}&edit=true"
+                             <a href="{{ route('onboard.midshipman') }}?midshipman={{ request()->input('midshipman') }}&edit=true"
                             class="btn btn-info text-white w-100">UPDATE DETAILS</a>
                         </form>
                                     @endif
