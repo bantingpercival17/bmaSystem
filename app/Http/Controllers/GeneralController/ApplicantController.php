@@ -270,13 +270,70 @@ class ApplicantController extends Controller
     }
     public function briefing_notification(Request $_request)
     {
-        $_course = CourseOffer::find($_request->_course);
-        foreach ($_course->applicant_examination_result('passed') as $key => $value) {
-            $_mail_notification = new ApplicantBriefingNotification($value);
-            //Mail::to('percivalbanting@gmail.com')->send($_mail_notification);
-            Mail::to($value->email)->send($_mail_notification);
+        $applicant_email = [
+            'charleskianespiritu79@gmail.com',
+            'elposjulius@gmail.com',
+            'Harolddiegovalderama@gmail.com',
+            'lizarondomj029@gmail.com',
+            'estrelajaywan@gmail.com',
+            'haroldtayao01@gmail.com',
+            'riverakenneth1919@gmail.com',
+            'gabrielbgonzales250@gmail.com',
+            'marcustrinidadnazar@gmail.com',
+            'triounkingleighsabado@gmail.com',
+            'kenarchiedcgroyon@gmail.com',
+            'williardvinas14@gmail.com',
+            'jimyrlace007@gmail.com',
+            'salvadorjohnlloyd961@gmail.com',
+            'yoursong111@gmail.com',
+            'jheddejesus@gmail.com',
+            'johnpaullopez635@gmail.com',
+            'jedgalapon27@gmail.com',
+            'neilcrisostomo0@gmail.com',
+            'deguzmanj140@gmail.com',
+            'ivannjosh12349@gmail.com',
+            'Kimlawrencemorelos11@gmail.com',
+            'rhoelramos24@gmail.com',
+            'villadarezmarklaurence4@gmail.com',
+            'cruzcarlo696@gmail.com',
+            'jmasuncion369@gmail.com',
+            'batejustinejay254@gmail.com',
+            'santiagonicus008@gmail.com',
+            'karltristancarillo867@gmail.com',
+            'cutedarcy123456789@gmail.com',
+            'tolentinokristan09@gmail.com',
+            'markuslumabao5@gmail.com',
+            'gelloizbugarin22@gmail.com',
+            'johnsarenofficial@gmail.com',
+            'rodlestergutierrez05@gmail.com',
+            'manigquebernard@gmail.com',
+            'valdezallen552@gmail.com',
+            'gutayaejay@gmail.com',
+            'njpioquinto@gmail.com',
+            'valmeokimjanuel@gmail.com',
+            'santosemjay31@gmail.com',
+            'charlesaaronco3@gmail.com',
+            'Vincentpauldelossantos0126@gmail.com',
+            'yatsamboat15@gmail.com',
+            'Aldrichsagala3@gmail.com',
+            'dave072504@gmail.com',
+            'redskysantiago@gmail.com',
+            'zidjhanmasculino424@gmail.com'
+        ];
+        foreach ($applicant_email as  $value) {
+            $applicant = ApplicantAccount::where('email', trim($value))->first();
+            echo json_encode($applicant) .'<br>';
+            if ($applicant) {
+                $_mail_notification = new ApplicantBriefingNotification($value);
+                Mail::to($applicant->email)->send($_mail_notification);
+                ///Mail::to('p.banting@bma.edu.ph')->send($_mail_notification);
+            } else {
+                echo '"' . $value . '", <br>';
+            }
+            // $_mail_notification = new ApplicantBriefingNotification($value);
+            //Mail::to('p.banting@bma.edu.ph')->send($_mail_notification);
+            //Mail::to($value->email)->send($_mail_notification);
         }
-        return back()->with('success', 'Sent');
     }
     public function virtual_briefing_view(Request $_request)
     {

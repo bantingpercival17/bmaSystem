@@ -29,7 +29,7 @@ class ApplicantBriefingNotification extends Mailable
     public function build()
     {
         return $this->from('support@bma.edu.ph', "BMA ENROLLMENT TEAM")
-            ->subject("VIRTUAL BRIEFING - APPLICANTS NUMBER: " . $this->applicant->applicant_number)
+            ->subject("BRIEFING PROGRAM FOR INCOMING 4TH CLASS MIDSHIPMEN - APPLICANTS NUMBER: " . $this->applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.briefing-notification')->with(['data' => $this->applicant]);
         // return $this->markdown('widgets.mail.applicant-mail.briefing-notification');
     }
