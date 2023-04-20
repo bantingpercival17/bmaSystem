@@ -323,9 +323,9 @@ class ApplicantController extends Controller
         foreach ($applicant_email as  $value) {
             $applicant = ApplicantAccount::where('email', trim($value))->first();
             if ($applicant) {
-                $_mail_notification = new ApplicantBriefingNotification($value);
+                $_mail_notification = new ApplicantBriefingNotification($applicant);
                 Mail::to($applicant->email)->send($_mail_notification);
-                ///Mail::to('p.banting@bma.edu.ph')->send($_mail_notification);
+                //Mail::to('p.banting@bma.edu.ph')->send($_mail_notification);
             } else {
                 echo '"' . $value . '", <br>';
             }
