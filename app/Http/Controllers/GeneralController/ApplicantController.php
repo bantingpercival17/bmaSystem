@@ -322,7 +322,6 @@ class ApplicantController extends Controller
         ];
         foreach ($applicant_email as  $value) {
             $applicant = ApplicantAccount::where('email', trim($value))->first();
-            echo json_encode($applicant) .'<br>';
             if ($applicant) {
                 $_mail_notification = new ApplicantBriefingNotification($value);
                 Mail::to($applicant->email)->send($_mail_notification);
