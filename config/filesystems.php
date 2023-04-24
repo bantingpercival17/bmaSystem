@@ -44,7 +44,7 @@ return [
         'bma-students' => [
             'driver' => 'local',
             //'root' => storage_path('app/public/bma-students'),
-            'root' => '../../bma-portal/storage/bma-students',
+            'root' => '../../bma-portal/public/storage/bma-students',
             'url' => env('APP_URL') . '/storage/bma-students',
             'visibility' => 'public',
         ],
