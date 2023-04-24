@@ -169,13 +169,50 @@
                             </tr>
                             <tr>
                                 <td>
+                                    <b>STUDENT TEST PERMIT</b>
+                                </td>
+                                <td>
+                                    <form action="{{ route('accounting.test-permit') }}" method="get" target="_blank">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="">Examination Term</label>
+                                                    <select name="term" class="form-select">
+                                                        <option value="midterm">Midterm Examination Permit</option>
+                                                        <option value="finals">Finals Examination Permit</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="">Course</label>
+                                                    <select name="course" class="form-select">
+                                                        <option value="1">BSME</option>
+                                                        <option value="2">BSMT</option>
+                                                        <option value="3">PBM SPECIALIZATION</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-outline-primary btn-sm w-100">GENERATE</button>
+                                        </div>
+                                    </form>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+                                <td>
                                     <b>EMPLOYEE ATTENANCE REPORT</b>
                                     <ul>
                                         <li>You can generate the Employee DTR</li>
                                     </ul>
                                 </td>
                                 <td>
-                                    <form action="{{ route('accounting.employee-attendance') }}" method="get">
+                                    <form action="{{ route('accounting.employee-attendance') }}" method="get"  target="_blank">
 
                                         <div class="row">
                                             <div class="form-group col-md-6">

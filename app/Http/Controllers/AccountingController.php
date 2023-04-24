@@ -41,7 +41,9 @@ use App\Report\Accounting\PaymentReport;
 use App\Report\Accounting\PaymentReports;
 use App\Report\AttendanceSheetReport;
 use App\Report\PayrollReport;
+use App\Report\StudentListReport;
 use App\Report\Students\StudentReport;
+use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Query\Expression;
@@ -983,6 +985,21 @@ class AccountingController extends Controller
             $_report_pdf = $_request->r_view == 'health_check' ? $_report->health_check() : $_report_pdf;
 
             return $_report_pdf;
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    public function examination_permit(Request $_request)
+    {
+        try {
+            $course = CourseOffer::find($_request->course);
+            $sections = $course->sections;
+            $view = "widgets.report.accounting.examination-permit";
+            $pdf = PDF::loadView($view, compact('sections'));
+            $file_name = 'Test Permit - ';
+            return $pdf->setPaper([0, 0, 612.00, 792.00], 'portrait')->stream($file_name . '.pdf');
+            /*  $report = new PaymentReports();
+            return $report->examination_permit($section); */
         } catch (\Throwable $th) {
             //throw $th;
         }

@@ -133,12 +133,11 @@
             text-align: center;
         }
     </style>
+    @yield('style')
 </head>
 
 <body>
     @yield('content')
-
-
 </body>
 
 </html>

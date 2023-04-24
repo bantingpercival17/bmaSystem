@@ -27,7 +27,7 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="attendance-table">
+            <table class="table-content">
                 <thead>
                     <tr>
                         <th>DATE</th>

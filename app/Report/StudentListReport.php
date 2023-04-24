@@ -17,6 +17,7 @@ class StudentListReport
     {
 
         $this->legal = [0, 0, 612.00, 1008.00];
+        $this->short = [0, 0, 612.00, 792.00];
     }
 
     public function build()
@@ -50,4 +51,5 @@ class StudentListReport
         $file_name = strtoupper($course->course_name . '-' . $_year_level . '_' . Auth::user()->staff->current_academic()->school_year . "-" . Auth::user()->staff->current_academic()->semester);
         return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
     }
+    
 }
