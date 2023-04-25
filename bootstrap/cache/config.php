@@ -563,7 +563,7 @@
       'bma-students' => 
       array (
         'driver' => 'local',
-        'root' => '../../bma-portal/storage/bma-students',
+        'root' => '../../bma-portal/public/storage/bma-students',
         'url' => 'http://localhost/storage/bma-students',
         'visibility' => 'public',
       ),
