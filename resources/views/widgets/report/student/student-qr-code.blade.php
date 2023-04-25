@@ -57,7 +57,7 @@
                 <tr>
                     <td class="text-center">
                         <img src="data:image/png;base64, {!! base64_encode(
-                            QrCode::style('round', 0.5)->eye('square')->size(200)->generate(
+                            QrCode::style('round', 0.5)->eye('square')->size(140)->generate(
                                     $_student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $_student->last_name)),
                                 ),
                         ) !!} "> <br>
