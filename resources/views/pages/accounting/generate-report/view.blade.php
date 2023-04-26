@@ -172,7 +172,8 @@
                                     <b>STUDENT TEST PERMIT</b>
                                 </td>
                                 <td>
-                                    <form action="{{ route('accounting.test-permit') }}" method="get" target="_blank">
+                                    <form action="{{ route('accounting.test-permit') }}" method="post">
+                                        @csrf
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">

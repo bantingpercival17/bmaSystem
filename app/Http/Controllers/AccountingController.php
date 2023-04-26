@@ -995,7 +995,9 @@ class AccountingController extends Controller
             $course = CourseOffer::find($_request->course);
             $sections = $course->sections;
             $view = "widgets.report.accounting.examination-permit";
-            $pdf = PDF::loadView($view, compact('sections'));
+            $academic =  strtoupper(Auth::user()->staff->current_academic()->semester) . ' / SY ' . Auth::user()->staff->current_academic()->school_year;
+            $term = $_request->term;
+            $pdf = PDF::loadView($view, compact('sections', 'academic','term','course'));
             $file_name = 'Test Permit - ';
             return $pdf->setPaper([0, 0, 612.00, 792.00], 'portrait')->stream($file_name . '.pdf');
             /*  $report = new PaymentReports();

@@ -92,7 +92,7 @@ class CourseOffer extends Model
                 ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
                 ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
                 ->where('enrollment_assessments.year_level', $data)
-                ->where('enrollment_assessments.curriculum_id', '!=', 1)
+                ->where('enrollment_assessments.curriculum_id', '!=', 1)->where('enrollment_assessments.curriculum_id', '!=', 2)
                 ->where('enrollment_assessments.is_removed', false)
                 ->where('payment_transactions.is_removed', false)
                 ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')

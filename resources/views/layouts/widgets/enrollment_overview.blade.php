@@ -114,6 +114,20 @@
                                                 </div>
                                             </div>
                                         @endif
+                                        @if ($curriculum->id === 2 && $item === 2)
+                                            <div class="d-flex justify-content-between mt-2">
+                                                <div>
+                                                    <span>
+                                                        {{ Auth::user()->staff->convert_year_level($item) }} SBT
+                                                        2-1-1</span>
+                                                </div>
+                                                <div>
+                                                    <span class="counter text-muted fw-bolder"
+                                                        style="visibility: visible;">
+                                                        {{ count($_course->enrollment_list_by_year_level_with_curriculum([$item, $curriculum->id])->get()) }}</span>
+                                                </div>
+                                            </div>
+                                        @endif
                                         @if ($curriculum->id === 7 && $item === 1)
                                             <div class="d-flex justify-content-between mt-2">
                                                 <div>

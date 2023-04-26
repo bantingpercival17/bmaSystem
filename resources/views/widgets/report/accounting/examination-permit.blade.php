@@ -115,22 +115,15 @@
                     @foreach ($section->student_sections as $student)
                         @php
                             $modValue = $count % 3;
-                            if ($modValue == 0) {
+                            if ($modValue === 0) {
                                 echo '<tr>';
                             }
-                            if ($modValue == 0) {
+                            if ($modValue === 3) {
                                 echo '</tr>';
                             }
+                            $ctrlNo = 0 . '' . $course->id . '-';
                             $count += 1;
-                            $ctrlNo = 0 . '' . request()->input('course') . '-';
-                            $count;
-                            if ($count < 10) {
-                                $ctrlNo = $ctrlNo . '00' . $count;
-                            } elseif ($count < 100) {
-                                $ctrlNo = $ctrlNo . '0' . $count;
-                            } else {
-                                $ctrlNo = $ctrlNo . $count;
-                            }
+                            $ctrlNo = $count < 10 ? $ctrlNo . '00' . $count : ($count < 100 ? $ctrlNo . '0' . $count : $ctrlNo . $count);
                         @endphp
                         <td style="width:100%">
                             <div class="permit-content">
@@ -138,42 +131,41 @@
                                 <div class="header-permit">
                                     <label for="" class="permit-header"><b>BALIWAG MARITIME ACADEMY,
                                             INC.</b></label> <br>
-                                    <p class="text-small"></p>
                                     <p class="text-small">
                                         NO {{ $ctrlNo }}
                                     </p>
                                     <p class="text-small">
-                                        {{ strtoupper(Auth::user()->staff->current_academic()->semester) . ' / SY ' . Auth::user()->staff->current_academic()->school_year }}
+                                        {{ $academic }}
                                     </p>
-                                    <table class="table-permit-header">
-                                        <thead>
-                                            <tr>
-                                                <td>NAME:</td>
-                                                <th style="text-align:center" class="text-fill-in">
-                                                    {{ strtoupper($student->student->last_name . ', ' . $student->student->first_name) }}
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                <td style="width:55px;">STDNT NO:</td>
-                                                <th class="text-fill-in">
-                                                    {{ $student->student->account->student_number }}
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                <td>COURSE:</td>
-                                                <th class="text-fill-in">
-                                                    {{ strtoupper($student->student->current_enrollment->course->course_name) }}
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                    </table>
                                 </div>
+                                <table class="table-permit-header">
+                                    <thead>
+                                        <tr>
+                                            <td>NAME:</td>
+                                            <th style="text-align:center" class="text-fill-in">
+                                                {{ strtoupper($student->last_name . ', ' . $student->first_name) }}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:55px;">STDNT NO:</td>
+                                            <th class="text-fill-in">
+                                                {{ $student->student->account->student_number }}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>COURSE:</td>
+                                            <th class="text-fill-in">
+                                                {{ strtoupper($student->student->current_enrollment->course->course_name) }}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                </table>
                                 <div class="content-permit">
-                                    <h4 style="text-align:center; padding:0px; margin: 0px; margin-top:10px;">
-                                        {{ strtoupper(request()->input('term')) }}
+                                    <h4 class="text-header-content">
+                                        {{ strtoupper($term) }}
                                         EXAM
                                     </h4>
-                                    <table class="table-2" style="text-align:center; padding:0px; margin: 0px;">
+                                    <table class="table-2">
                                         <thead>
                                             <tr>
                                                 <th>SUBJECT</th>
@@ -202,9 +194,10 @@
                     @endforeach
                 @endif
             @endforeach
-
         </tbody>
     </table>
+
+
 </body>
 
 </html>
