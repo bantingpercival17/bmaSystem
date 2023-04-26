@@ -930,4 +930,5 @@ class RegistrarController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
+   
 }

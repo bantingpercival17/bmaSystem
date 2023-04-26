@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\GeneralController;
 
 use App\Exports\CourseStudentEnrolled;
+use App\Exports\WorkSheet\SemesteralEnrollmentList;
 use App\Http\Controllers\Controller;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
@@ -162,5 +163,43 @@ class EnrollmentController extends Controller
         $_students = $_request->_year_level ?  $_course->enrollment_list_by_year_level($_request->_year_level)->get() : $_course->enrollment_list; // Year Level
         $_students = $_request->_sort ? $_course->sort_enrolled_list($_request)->get() : $_students; // Sorting
         return view('pages.general-view.enrollment.enrolled_list_view', compact('_course', '_students'));
+    }
+    public function enrollment_semestral_list(Request $_request)
+    {
+        try {
+            $index = array(
+                'student_details.id',
+                'student_details.last_name',
+                'student_details.first_name',
+                'student_details.middle_name',
+                'student_details.extention_name',
+                'student_details.middle_initial',
+                'student_details.sex',
+                'enrollment_assessments.year_level',
+                'enrollment_assessments.course_id',
+                'enrollment_assessments.curriculum_id',
+                'enrollment_assessments.course_id'
+            );
+            $students =  EnrollmentAssessment::select($index)
+                ->join('student_details', 'student_details.id', 'enrollment_assessments.student_id')
+                ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
+                ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
+                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                ->where('enrollment_assessments.is_removed', false)
+                ->where('payment_transactions.is_removed', false)
+                ->where('enrollment_assessments.course_id', '!=', 3)
+                ->groupBy('enrollment_assessments.id')
+                ->orderBy('student_details.last_name', 'asc')->orderBy('student_details.first_name', 'asc')->get();
+            $_date = now();
+            $academic =  strtoupper(Auth::user()->staff->current_academic()->semester) . '-' . Auth::user()->staff->current_academic()->school_year;
+            $_file_name = 'SEMESTRAL ENROLLMENT LIST-' . $academic . '-' . $_date . '.xlsx'; // Name of the File
+            $_excel = new SemesteralEnrollmentList($students); // Excel Function
+            $_file = Excel::download($_excel, $_file_name); // Download the File
+            ob_end_clean();
+            return $_file;
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
 }

@@ -42,7 +42,7 @@
             <div class="search-container">
                 @include('pages.registrar.enrollment.widgets.enrollment-card')
                 @if (count($_students) > 0)
-                      @yield('student-enrollment-card')
+                    @yield('student-enrollment-card')
                 @else
                     <div class="card">
                         <div class="row no-gutters">
@@ -75,6 +75,22 @@
             @endif
         </div>
         <div class="col-md-4">
+            <div class="d-flex justify-content-between mb-3">
+                <div>
+                    <span class="fw-bolder">
+                        Export File :
+                    </span>
+
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ route('enrollment.semestarl-enrollment-list') }}?{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&_report=excel-report"
+                            class="btn btn-primary btn-sm">Excel</a>
+                        <a href="{{ route('enrollment.enrolled-list-report') }}?{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&_report=pdf-report"
+                            class="btn btn-danger btn-sm ms-2">PDF</a>
+                    </div>
+                </div>
+            </div>
             @foreach ($_courses as $_course)
                 <div class="col-md">
                     <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
