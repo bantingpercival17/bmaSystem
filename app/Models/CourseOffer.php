@@ -16,7 +16,7 @@ class CourseOffer extends Model
     public function course_subject($_data)
     {
         return $this->hasMany(CurriculumSubject::class, 'course_id')
-            ->select('curriculum_subjects.id', 'subjects.subject_code', 'subjects.subject_name','subjects.units')
+            ->select('curriculum_subjects.id', 'subjects.subject_code', 'subjects.subject_name', 'subjects.units')
             ->join('subjects', 'subjects.id', 'curriculum_subjects.subject_id')
             ->where('curriculum_subjects.curriculum_id', $_data[0])
             ->where('curriculum_subjects.year_level', $_data[1])
@@ -70,37 +70,9 @@ class CourseOffer extends Model
      */
     public function enrollment_list_by_year_level($data)
     {
-        if ($data === 1) {
-            return $this->hasMany(EnrollmentAssessment::class, 'course_id')
-                ->select('enrollment_assessments.*')
-                ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
-                ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
-                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-                ->where('enrollment_assessments.year_level', $data)
-                ->where('enrollment_assessments.curriculum_id', '!=', 7)
-                ->where('enrollment_assessments.is_removed', false)
-                ->where('payment_transactions.is_removed', false)
-                ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
-                ->whereNull('student_cancellations.id')
-                ->groupBy('enrollment_assessments.id')
-                ->orderBy('payment_transactions.created_at', 'DESC');
-        }
-        if ($data === 2) {
-            return $this->hasMany(EnrollmentAssessment::class, 'course_id')
-                ->select('enrollment_assessments.*')
-                ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
-                ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
-                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-                ->where('enrollment_assessments.year_level', $data)
-                ->where('enrollment_assessments.curriculum_id', '!=', 1)->where('enrollment_assessments.curriculum_id', '!=', 2)
-                ->where('enrollment_assessments.is_removed', false)
-                ->where('payment_transactions.is_removed', false)
-                ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
-                ->whereNull('student_cancellations.id')
-                ->groupBy('enrollment_assessments.id')
-                ->orderBy('payment_transactions.created_at', 'DESC');
-        }
-        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+        // Index 0 is Year Level
+        // Index1 is Curriculum
+        $_query = $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->select('enrollment_assessments.*')
             ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
             ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
@@ -112,20 +84,33 @@ class CourseOffer extends Model
             ->whereNull('student_cancellations.id')
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
+        if ($data === 1) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '!=', 7);
+        }
+        if ($data === 2) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '>', 4);
+        }
+        return $_query;
     }
     public function enrollment_list_by_year_level_with_curriculum($data)
     {
-        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+        $_query =  $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->select('enrollment_assessments.*')
             ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
             ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('enrollment_assessments.year_level', $data[0])
-            ->where('enrollment_assessments.curriculum_id', $data[1])
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
+        if ($data[1] <= 4) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '<=', 4);
+        }
+        if ($data[1] >= 5) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '>=', 5);
+        }
+        return $_query;
     }
     public function student_enrollment_list($data)
     {
