@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\CourseApplicantMedicalList;
 use App\Exports\CourseStudentMedicalList;
 use App\Models\CourseOffer;
+use App\Models\MedicalAppointmentSchedule;
 use App\Models\StudentDetails;
 use App\Models\StudentMedicalAppointment;
 use App\Models\StudentMedicalResult;
@@ -35,8 +36,9 @@ class MedicalController extends Controller
                 }
             }
             return view('pages.medical.view', compact('_courses', '_applicants', '_table_content'));
-        } catch (Exception $err) {
-            return back()->with('error', $err->getMessage());
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+            $this->debugTracker($error);
         }
     }
 
@@ -51,8 +53,9 @@ class MedicalController extends Controller
             } catch (Exception $error) {
                 return back()->with('error', $error->getMessage());
             }
-        } catch (Exception $err) {
-            return back()->with('error', $err->getMessage());
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+            $this->debugTracker($error);
         }
     }
     public function student_medical_result(Request $_request)
@@ -75,6 +78,7 @@ class MedicalController extends Controller
             return back()->with('success', 'Successfully Transact');
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
+            $this->debugTracker($error);
         }
     }
 
@@ -95,5 +99,36 @@ class MedicalController extends Controller
         $_file = Excel::download($_report, $_file_name); // Download the File
         ob_end_clean();
         return $_file;
+    }
+    public function appointment_view(Request $request)
+    {
+        try {
+            $dates = MedicalAppointmentSchedule::orderBy('date','desc')->get();
+            return view('pages.medical.schedule', compact('dates'));
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+            $this->debugTracker($error);
+        }
+    }
+    public function appointment_store(Request $request)
+    {
+        $request->validate([
+            'date' => 'required',
+            'capacity' => 'required'
+        ]);
+        try {
+            $data = MedicalAppointmentSchedule::where('date', $request->date)->first();
+            if (!$data) {
+                MedicalAppointmentSchedule::create([
+                    'date' => $request->date,
+                    'capacity' => $request->capacity
+                ]);
+                return back()->with('success', 'Successfuly Created');
+            }
+            return back()->with('error', 'This Date is already Existing.');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+            $this->debugTracker($error);
+        }
     }
 }

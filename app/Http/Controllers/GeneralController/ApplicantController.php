@@ -16,6 +16,7 @@ use App\Models\ApplicantExaminationAnswer;
 use App\Models\ApplicantMedicalAppointment;
 use App\Models\ApplicantMedicalResult;
 use App\Models\CourseOffer;
+use App\Models\MedicalAppointmentSchedule;
 use App\Report\ApplicantReport;
 use Exception;
 use Illuminate\Http\Request;
@@ -365,7 +366,8 @@ class ApplicantController extends Controller
                 $_applicants = $_request->view == $content[0] ? $_course[$content[1]] : $_applicants;
             }
         }
-        return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_applicants',  '_table_content'));
+        $dates = MedicalAppointmentSchedule::orderBy('date','asc')->where('is_close',false)->get();
+        return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_applicants',  '_table_content','dates'));
     }
     public function medical_schedule_download(Request $_request)
     {
@@ -390,6 +392,22 @@ class ApplicantController extends Controller
             $_email = $_appointment->account->email;
             Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_appointment_schedule($_appointment->account));
             return back()->with('success', 'Appointment Approved');
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    public function medical_appointment(Request $_request)
+    {
+        try {
+            $data = array(
+                'applicant_id' => $_request->applicant,
+                'appointment_date' => $_request->date,
+                'approved_by' => Auth::user()->staff->id,
+                'is_approved' => 1,
+                'is_removed' => false
+            );
+            ApplicantMedicalAppointment::create($data);
+            return back()->with('success', 'Medical Schedule Success.');
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
         }

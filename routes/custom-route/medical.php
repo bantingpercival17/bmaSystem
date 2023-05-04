@@ -8,6 +8,7 @@ Route::prefix('medical')->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::get('/overview', [ApplicantController::class, 'medical_overview'])->name('medical.overview');
         Route::get('/appointment-approval', [ApplicantController::class, 'medical_appointment_approved'])->name('medical.applicant-appointment');
+        Route::post('/appointment-medical', [ApplicantController::class, 'medical_appointment'])->name('medical.applicant-schedule');
         Route::get('/appointment-download', [ApplicantController::class, 'medical_schedule_download'])->name('medical.download-appointment');
         Route::get('/applicant/medical-result', [ApplicantController::class, 'medical_result'])->name('medical.applicant-medical-result');
 
@@ -17,5 +18,7 @@ Route::prefix('medical')->group(function () {
 
         Route::get('/applicant/medical-appointment/report', [MedicalController::class, 'applicant_medical_list_report'])->name('medical.export-medical-applicant-list');
         Route::get('/student/medical-appointment/report', [MedicalController::class, 'student_medical_list_report'])->name('medical.export-medical-student-list');
+        Route::get('/appointment-schedule', [MedicalController::class, 'appointment_view'])->name('medical.appoitnment-schedule');
+        Route::post('/appointment-schedule', [MedicalController::class, 'appointment_store'])->name('medical.appoitnment-schedule-store');
     });
 });

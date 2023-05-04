@@ -229,7 +229,7 @@ class Staff extends Model
                 'role_id' => 12,
                 'role_name' => 'Medical',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Overview', 'medical.overview'], ['Student', 'medical.student-medical-appointment']],
+                'role_routes' => [['Overview', 'medical.overview'], ['Student', 'medical.student-medical-appointment'],['Medical Schedule','medical.appoitnment-schedule']],
             ],
         ];
     }
@@ -369,5 +369,9 @@ class Staff extends Model
     public function curriculum_list()
     {
         return Curriculum::where('is_removed',false)->get();
+    }
+    public function medical_appointment_slot($date)
+    {
+        return ApplicantMedicalAppointment::where('appointment_date', $date)->where('is_removed', false)->count();
     }
 }
