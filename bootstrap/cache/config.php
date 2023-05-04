@@ -878,7 +878,7 @@
         'port' => '587',
         'encryption' => 'tls',
         'username' => 'support@bma.edu.ph',
-        'password' => '@bma->support',
+        'password' => '@bma->support12',
         'timeout' => NULL,
         'auth_mode' => NULL,
       ),

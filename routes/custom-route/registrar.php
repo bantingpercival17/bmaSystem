@@ -23,6 +23,7 @@ Route::prefix('registrar')->group(function () {
     Route::post('/subjects/classes', [RegistrarController::class, 'classes_store'])->name('registrar.classes-handled'); // Store Subjects Classes Handled
     Route::get('/subjects/classes/subject-handle', [RegistrarController::class, 'classes_subject_handle'])->name('registrar.course-subject-handle-view');
     Route::post('/subjects.classes/subject-handle', [RegistrarController::class, 'classes_schedule'])->name('registrar.class-schedule');
+    Route::post('/subject-classes/subject-handle/edit',[RegistrarController::class,'classes_update'])->name('registrar.subject-class-update');
     Route::get('/subjects.classes/subject-handle', [RegistrarController::class, 'classes_schedule_removed'])->name('registrar.class-schedule-remove');
     Route::get('/subjects/classes/removed', [RegistrarController::class, 'classes_removed'])->name('registrar.subject-class-removed'); // Remove Subjects Clases Handled
     Route::get('/subjects/classes/schedule-template', [RegistrarController::class, 'class_schedule_template'])->name('registrar.subject-schedule-template');

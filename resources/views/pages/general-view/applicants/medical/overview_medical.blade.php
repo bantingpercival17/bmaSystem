@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Applicant Medical Overview';
+    $_title = 'Applicant Medical Overview';
 @endphp
 @section('page-title', $_title)
 @section('beardcrumb-content')
@@ -50,13 +50,11 @@ $_title = 'Applicant Medical Overview';
                                     <td>{{ $_course->course_name }}</td>
                                     @foreach ($_table_content as $key => $item)
                                         @php
-                                        $_route_link =
-                                        route('medical.overview')."?".(request()->input('_academic') ?
-                                        '_academic=' . request()->input('_academic') . '&' :
-                                        '')."view=".$item[0];
+                                            $_route_link = route('medical.overview') . '?' . (request()->input('_academic') ? '_academic=' . request()->input('_academic') . '&' : '') . 'view=' . $item[0];
                                         @endphp
 
-                                        <td> <a href="{{ $_route_link }}&_course={{base64_encode($_course->id)}}">{{ count($_course[$item[1]]) }}</a>
+                                        <td> <a
+                                                href="{{ $_route_link }}&_course={{ base64_encode($_course->id) }}">{{ count($_course[$item[1]]) }}</a>
                                         </td>
                                     @endforeach
                                     {{-- <td>{{ count($_course->scheduled) }}</td>
@@ -163,7 +161,8 @@ $_title = 'Applicant Medical Overview';
                                         </span>
 
                                     </div>
-                                    <div class="col-md">
+                                    <div class="col-md-3">
+
                                         @if (request()->input('view') == 'scheduled')
                                             <small class="text-muted fw-bolder">APPOINTMENT SCHEDULE</small>
                                             <div class="badge bg-primary w-100">
@@ -172,10 +171,11 @@ $_title = 'Applicant Medical Overview';
                                             <a href="{{ route('medical.applicant-appointment') }}?appointment={{ base64_encode($_data->medical_appointment->id) }}"
                                                 class="btn btn-sm btn-outline-info mt-2">APPROVED</a>
                                         @endif
+
                                         @if (request()->input('view') == 'waiting for Medical result' ||
-                                            request()->input('view') == 'passed' ||
-                                            request()->input('view') == 'pending' ||
-                                            request()->input('view') == 'failed')
+                                                request()->input('view') == 'passed' ||
+                                                request()->input('view') == 'pending' ||
+                                                request()->input('view') == 'failed')
                                             @if ($_data->medical_result)
                                                 @if ($_data->medical_result->is_fit !== null)
                                                     @if ($_data->medical_result->is_fit === 1)
@@ -197,8 +197,8 @@ $_title = 'Applicant Medical Overview';
                                                 <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->id) }}"
                                                     class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
                                                 <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                    data-applicant="{{ base64_encode($_data->id) }}"
-                                                    data-bs-toggle="modal" data-bs-target=".modal-medical-fail">FAIL</a>
+                                                    data-applicant="{{ base64_encode($_data->id) }}" data-bs-toggle="modal"
+                                                    data-bs-target=".modal-medical-fail">FAIL</a>
                                                 <a class="btn btn-info btn-sm w-100 text-white mb-2 btn-medical"
                                                     data-applicant="{{ base64_encode($_data->id) }}"
                                                     data-bs-toggle="modal"
@@ -206,6 +206,33 @@ $_title = 'Applicant Medical Overview';
                                             @endif
                                             {{-- {{ $_data->medical_result }} --}}
                                         @endif
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="fw-bolder text-info">MEDICAL SCHEDULE</label>
+                                    <div class="row">
+                                        @php
+                                            $dates = ['2023-05-15', '2023-05-17', '2023-05-19'];
+                                            $_format = 'D F d, Y';
+                                        @endphp
+                                        @foreach ($dates as $date)
+                                            <div class="col-md-4">
+                                                {{ Auth::user()->medical_appointment_slot($date) }}
+                                                @if (Auth::user()->medical_appointment_slot($date) >= 20)
+                                                    <span class="badge bg-secondary text-white">
+                                                        {{ date($_format, strtotime($date)) }} This schedule is
+                                                        full</span>
+                                                @else
+                                                    <a href="{{-- {{ route('applicant.medical-schedule') }} --}}?_date={{ $date }}"
+                                                        class="btn btn-sm btn-primary">
+                                                        {{ date($_format, strtotime($date)) }}</a>
+                                                    <span
+                                                        class="text-info fw-bolder">{{ Auth::user()->medical_appointment_slot($date) }}</span><small
+                                                        class="text-secondary">/20</small>
+                                                @endif
+
+                                            </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -230,7 +257,7 @@ $_title = 'Applicant Medical Overview';
                 @endif
             </div>
             <div class="col-md-4">
-               {{--  @foreach ($_results as $key => $item)
+                {{--  @foreach ($_results as $key => $item)
                     <div class="col-lg col-xl">
                         <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
                             data-iq-ease="power.out" data-iq-opacity="0">

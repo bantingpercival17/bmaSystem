@@ -592,7 +592,7 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                         <div class="col-md ps-0">
                             <small>APPOINTMENT DATE</small>
                             <small
-                                class="badge bg-info">{{ $_data->medical_appointment->updated_at->format('F d, Y') }}</small>
+                                class="badge bg-info">{{ $_data->medical_appointment->appointment_date }}</small>
                             <br>
 
                         </div>

@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Staff::class, 'user_id');
     }
+    public function medical_appointment_slot($_date)
+    {
+        return StudentMedicalAppointment::where('appointment_date', $_date)->where('is_removed', false)->count();
+        //return $this->hasHany(ApplicantMedicalAppointment::class, 'applicant_id')->where('is_removed', false);
+    }
 }

@@ -369,6 +369,19 @@ class RegistrarController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
+
+    public function classes_update(Request $request)
+    {
+        try {
+            $_schedule = SubjectClass::find(base64_decode($request->subject_class));
+            $_schedule->staff_id = $request->teacher;
+            $_schedule->save();
+            return redirect(route('registrar.course-subject-handle-view').'?_subject='.base64_encode($_schedule->curriculum_subject_id))->with('success', 'Successfully Removed Schedule');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
+    }
     public function class_schedule_template(Request $_request)
     {
         try {
@@ -930,5 +943,4 @@ class RegistrarController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
-   
 }
