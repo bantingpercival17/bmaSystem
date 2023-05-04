@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Crypt;
 
 class Controller extends BaseController
 {
@@ -184,6 +185,23 @@ class Controller extends BaseController
         // File Path Format : $_path.'/'.student-number.'/'.$_folder
         $_path = $_path;
         Storage::disk($_path)->put($filename, fopen($_file, 'r+'));
+        return URL::to('/') . '/storage/' . $_path . '/' . $filename;
+    }
+    public function fileEncryptionandDecryption($_file, $_path = 'public', $_folder = 'extra')
+    {
+        if (!$_file) {
+            return null;
+        }
+        // Get Student Number
+        $_student_number = Auth::user() ? str_replace('@bma.edu.ph', '', trim(Auth::user()->email)) : str_replace('@gmail.com', '', trim(Auth::user()->personal_email));
+        // Get the extention of files
+        $length = 25;
+        $name = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+        $filename = $_student_number . '/' . $_folder . '/' . $name . '.' . $_file->getClientOriginalExtension();
+        $storage = Storage::disk($_path);
+        $output_file =  $_student_number . '/' . $_folder . '/' . $name . ':' . $_file->getClientOriginalExtension() . '.enc'; // Set the Encryted Filename
+        $cipgertext = Crypt::encryptString($_file, $_student_number);
+        $storage->put($output_file, $cipgertext);
         return URL::to('/') . '/storage/' . $_path . '/' . $filename;
     }
     public function office_file_save($_file, $_path = 'public', $_office, $_folder = 'extra')

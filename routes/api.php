@@ -46,7 +46,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     //SBT ENROLLMENT
     Route::get('student/onboard/enrollment', [StudentController::class, 'student_onboard_enrollment']);
     Route::get('student/onboard/enrollment-application', [StudentController::class, 'student_enrollment_application_sbt']);
-    Route::post('student/onboard/enrollment-payment',[StudentController::class,'student_enrollment_payment_store']);
+    Route::post('student/onboard/enrollment-payment', [StudentController::class, 'student_enrollment_payment_store']);
     // SBT
     Route::get('/student/onboard', [StudentController::class, 'student_onboarding']);
     Route::post('/student/onboard/enrollment', [ShipboardTraining::class, 'onboard_enrollment']);
@@ -55,6 +55,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/student/onboard/document-reupload', [ShipboardTraining::class, 'reupload_documents_v2']);
     Route::get('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_view']);
     Route::post('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_store']);
+    Route::get('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_report_view']);
+    Route::post('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_file_attachment']);
 
     Route::post('/student/logout', [StudentController::class, 'student_logout']);
 });

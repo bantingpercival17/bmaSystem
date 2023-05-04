@@ -10,6 +10,7 @@ use App\Models\Documents;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardPerformanceReport;
 use App\Models\ShippingAgencies;
+use App\Models\ShipboardJournal;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -27,15 +28,29 @@ class ShipboardTraining extends Controller
     }
     public function shipboard_performance_store(Request $_request)
     {
+        $_request->validate([
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'date_preferred' => 'required',
+            'input' => 'required',
+            'trb_tasks' => 'required',
+            'trb_code' => 'required',
+            'signed' => 'required',
+            'remarks' => 'required',
+        ]);
         try {
             $_month = date_create($_request->start_date);
             $_month = date_format($_month, 'F-Y');
             $_data = array(
-                'shipboard_id' => base64_decode($_request->shipboardId),
+                'shipboard_id' => $_request->shipboard_id,
                 'month' => $_month,
                 'date_covered' => $_request->start_date . ":" . $_request->end_date,
-                'task_trb' => $_request->task,
+                'task_trb' => $_request->trb_tasks,
                 'trb_code' => $_request->trb_code,
+                'date_preferred' => $_request->date_preferred,
+                'daily_journal' => $_request->input,
+                'have_signature' => $_request->signed,
+                'remarks' => $_request->remarks
             );
             $data = ShipboardPerformanceReport::create($_data);
             return response(['data' => $data], 200);
@@ -70,12 +85,13 @@ class ShipboardTraining extends Controller
             $_agency = $_request->agency; // Get the Input name Agency to check if it's NA
             if ($_request->agency === 'NA') {
                 $_agency = ShippingAgencies::create([
-                    'agency_name' => $_request->agency_name,
-                    'agency_address' => $_request->agency_address,
+                    'agency_name' => strtoupper($_request->agency_name),
+                    'agency_address' => strtoupper($_request->agency_address),
+                    'staff_id' => 7,
                     'is_removed' => 0
-                ]); // Store Agencies 
+                ]); // Store Agencies
                 $_agency = $_agency->id; // Get Id
-                $company_name = $_request->agency_name;
+                $company_name = strtoupper($_request->agency_name);
             } else {
                 $agency = ShippingAgencies::find($_request->agency);
                 $company_name = $agency->agency_name;
@@ -172,7 +188,7 @@ class ShipboardTraining extends Controller
     public function reupload_documents_v2(Request $_request)
     {
         try {
-            $_document = DocumentRequirements::find($_request->document); // Get the Submitted File 
+            $_document = DocumentRequirements::find($_request->document); // Get the Submitted File
             $_data_link = $this->saveFiles($_request->file, 'bma-students', 'onboard'); // Store File on the Local Folder
             $_details = array(
                 'student_id' => $_document->student_id,
@@ -185,7 +201,7 @@ class ShipboardTraining extends Controller
                 DocumentRequirements::create($_details);
                 $_document->is_removed = true;
                 $_document->save();
-            } // Removed the Exsiting Data 
+            } // Removed the Exsiting Data
             $_data_link =  $_data_link != null ?
                 $_data_link = $_request->document . "~" . $_data_link :
                 $_data_link = null;
@@ -195,6 +211,62 @@ class ShipboardTraining extends Controller
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
             $_request->header('User-Agent');
+            // Create a function to Controler file to save and store the details of bugs
+        }
+    }
+
+    public function performance_report_view(Request $_request)
+    {
+        try {
+            $data = ShipboardPerformanceReport::with('document_attachments')->find(base64_decode($_request->id));
+            $documents = [
+                ['PAGE OF TRAINING RECORD BOOK', 'trb_documents', 'trb_remark'],
+                ['PAGE OF SHIPS LOGBOOK', 'journal_documents', 'journal_remark'],
+                ['ON THE JOB PHOTOS', 'crew_list'], ['CREWLIST OF MONTH', 'mdsd'],
+                ['MDSD FOR THE MONTH', 'while_at_work'],
+                ['COPY THE DAILY JOURNAL', 'while_at_work']
+            ];
+            return compact('data', 'documents');
+        } catch (Exception $error) {
+            return response(['error' => $error->getMessage()], 505);
+            $_request->header('User-Agent');
+            // Create a function to Controler file to save and store the details of bugs
+        }
+    }
+    public function performance_file_attachment(Request $request)
+    {
+        if ($request->document == 'PAGE OF TRAINING RECORD BOOK' || $request->document == 'PAGE OF SHIPS LOGBOOK') {
+            $fields = array(
+                'files' => 'required',
+                'remarks' => 'required'
+            );
+        } else {
+            $fields = array(
+                'files' => 'required',
+            );
+        }
+        $request->validate($fields);
+        try {
+            $file_link = [];
+            // Save & get the Link of the Attach File
+            foreach ($request->file('files') as $file) {
+                return $this->fileEncryptionandDecryption($file, 'public', 'onboard');
+            }
+            return $file_link;
+            // Store the Details of Report Document
+            $data = array(
+                'shipboard_id' => base64_decode($request->shipboard),
+                'student_id' => auth()->user()->student_id,
+                'file_links' => '',
+                'month' => '',
+                'journal_type' => $request->document,
+                'remarks' => $request->remarks ?: null,
+                'is_removed' => false
+            );
+            ShipboardJournal::create($data);
+        } catch (Exception $error) {
+            return response(['error' => $error->getMessage()], 505);
+            $request->header('User-Agent');
             // Create a function to Controler file to save and store the details of bugs
         }
     }

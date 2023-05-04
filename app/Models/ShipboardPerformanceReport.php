@@ -9,6 +9,11 @@ class ShipboardPerformanceReport extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'shipboard_id', 'month', 'date_covered', 'task_trb', 'trb_code', 'date_preferred', 'daily_journal', 'have_signature'
+        'shipboard_id', 'month', 'date_covered', 'task_trb', 'trb_code', 'date_preferred', 'daily_journal', 'have_signature', 'remarks'
     ];
+
+    public function document_attachments()
+    {
+        return $this->hasMany(ShipboardJournal::class, 'shipboard_id')->where('is_removed', false);
+    }
 }
