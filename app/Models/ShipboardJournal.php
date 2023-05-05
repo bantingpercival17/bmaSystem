@@ -8,7 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class ShipboardJournal extends Model
 {
     use HasFactory;
-
+    protected $fillable = [
+        'student_id',
+        'shipboard_id',
+        'month',
+        'remark',
+        'file_links',
+        'journal_type',
+        'is_removed',
+    ];
 
     public function student()
     {

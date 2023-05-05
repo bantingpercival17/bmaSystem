@@ -250,20 +250,20 @@ class ShipboardTraining extends Controller
             $file_link = [];
             // Save & get the Link of the Attach File
             foreach ($request->file('files') as $file) {
-                return $this->fileEncryptionandDecryption($file, 'public', 'onboard');
+                $file_link[] = $this->fileEncryptionandDecryption($file, 'bma-students', 'onboard/report');
             }
-            return $file_link;
             // Store the Details of Report Document
             $data = array(
                 'shipboard_id' => base64_decode($request->shipboard),
                 'student_id' => auth()->user()->student_id,
-                'file_links' => '',
+                'file_links' => json_encode($file_link),
                 'month' => '',
                 'journal_type' => $request->document,
                 'remarks' => $request->remarks ?: null,
                 'is_removed' => false
             );
             ShipboardJournal::create($data);
+            return response(['data' => 'done', 'message' => 'Successfully Upload the Documents.'], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
             $request->header('User-Agent');

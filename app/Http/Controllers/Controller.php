@@ -198,10 +198,11 @@ class Controller extends BaseController
         $length = 25;
         $name = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
         $filename = $_student_number . '/' . $_folder . '/' . $name . '.' . $_file->getClientOriginalExtension();
-        $storage = Storage::disk($_path);
-        $output_file =  $_student_number . '/' . $_folder . '/' . $name . ':' . $_file->getClientOriginalExtension() . '.enc'; // Set the Encryted Filename
+        //$storage = Storage::disk($_path);
+        $output_file =  $_student_number . '/' . $_folder . '/' . $name . '.' . $_file->getClientOriginalExtension() . '.enc'; // Set  the Encryted Filename
         $cipgertext = Crypt::encryptString($_file, $_student_number);
-        $storage->put($output_file, $cipgertext);
+        Storage::disk($_path)->put($filename, $cipgertext, ['visibility' => 'public', 'mimetype' => 'application/octet-stream']);
+        //$storage->put($output_file, $cipgertext);
         return URL::to('/') . '/storage/' . $_path . '/' . $filename;
     }
     public function office_file_save($_file, $_path = 'public', $_office, $_folder = 'extra')
