@@ -40,7 +40,7 @@ class ShipboardTraining extends Controller
         ]);
         try {
             $_month = date_create($_request->start_date);
-            $_month = date_format($_month, 'F-Y');
+            $_month = date_format($_month, 'F - Y');
             $_data = array(
                 'shipboard_id' => $_request->shipboard_id,
                 'month' => $_month,
@@ -248,9 +248,11 @@ class ShipboardTraining extends Controller
         $request->validate($fields);
         try {
             $file_link = [];
+            //Get the Shipboard Information
+            $shipboard = ShipboardPerformanceReport::find(base64_decode($request->shipboard));
             // Save & get the Link of the Attach File
             foreach ($request->file('files') as $file) {
-                $file_link[] = $this->fileEncryptionandDecryption($file, 'bma-students', 'onboard/report');
+                $file_link[] = $this->saveFiles($file, 'bma-students', 'onboard/report/' . $shipboard->month);
             }
             // Store the Details of Report Document
             $data = array(
