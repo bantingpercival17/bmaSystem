@@ -41,6 +41,8 @@ class ShipboardTraining extends Controller
         try {
             $_month = date_create($_request->start_date);
             $_month = date_format($_month, 'F - Y');
+            $sign = $_request->signed == 'Yes' ? 1 : 0;
+            $journal = $_request->input == 'Yes' ? 1 : 0;
             $_data = array(
                 'shipboard_id' => $_request->shipboard_id,
                 'month' => $_month,
@@ -48,8 +50,8 @@ class ShipboardTraining extends Controller
                 'task_trb' => $_request->trb_tasks,
                 'trb_code' => $_request->trb_code,
                 'date_preferred' => $_request->date_preferred,
-                'daily_journal' => $_request->input,
-                'have_signature' => $_request->signed,
+                'daily_journal' => $journal,
+                'have_signature' => $sign,
                 'remarks' => $_request->remarks
             );
             $data = ShipboardPerformanceReport::create($_data);
@@ -78,7 +80,7 @@ class ShipboardTraining extends Controller
         }
         // Set validation for Documents
         foreach ($_documents as $document) {
-            $_validate[strtolower(str_replace(' ', '_', $document->document_name))] = 'required';
+            $_validate[strtolower(str_replace(' ', '_', $document->document_name))] = 'required | mimes:jpg,bmp,png,pdf,docx';
         }
         $_request->validate($_validate);
         try {
@@ -237,12 +239,12 @@ class ShipboardTraining extends Controller
     {
         if ($request->document == 'PAGE OF TRAINING RECORD BOOK' || $request->document == 'PAGE OF SHIPS LOGBOOK') {
             $fields = array(
-                'files' => 'required',
+                'files.*' => 'required | mimes:jpg,bmp,png,pdf,docx',
                 'remarks' => 'required'
             );
         } else {
             $fields = array(
-                'files' => 'required',
+                'files.*' => 'required | mimes:jpg,bmp,png,pdf,docx',
             );
         }
         $request->validate($fields);
