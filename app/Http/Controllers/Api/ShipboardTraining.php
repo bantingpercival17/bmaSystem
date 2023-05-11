@@ -261,7 +261,7 @@ class ShipboardTraining extends Controller
                 'file_links' => json_encode($file_link),
                 'month' => '',
                 'journal_type' => $request->document,
-                'remarks' => $request->remarks ?: null,
+                'remark' => $request->remarks ?: null,
                 'is_removed' => false
             );
             ShipboardJournal::create($data);
