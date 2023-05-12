@@ -13,6 +13,7 @@ use App\Models\ShipboardExamination;
 use App\Models\ShipboardExaminationAnswer;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardJournal;
+use App\Models\ShipboardPerformanceReport;
 use App\Models\Staff;
 use App\Models\StudentDetails;
 use App\Models\StudentTraining;
@@ -303,6 +304,15 @@ class OnboardTrainingController extends Controller
             return $_generate_report->assessment_report($_data);
         } catch (Exception $error) {
             return $error->getMessage();
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    public function onboard_performance_report(Request $request)
+    {
+        try {
+            $performance_report = ShipboardPerformanceReport::find(base64_decode($request->report));
+        } catch (Exception $error) {
+            $this->debugTracker($error);
             return back()->with('error', $error->getMessage());
         }
     }

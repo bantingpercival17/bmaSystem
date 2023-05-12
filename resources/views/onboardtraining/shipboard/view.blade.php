@@ -116,7 +116,68 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
+                @if (count($_midshipman->shipboard_training->performance_report) > 0)
+                   <div class="card">
+                    <div class="card-body">
+                        <div class="header-title d-flex justify-content-between">
+                            <span class="h5 text-primary fw-bolder">MONTHLY OBT PERFORMANCE MONITORING REPORT (MOPM)</span>
+                            <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
+                                class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
+                        </div>
+                        <div class="table-responsive mt-4">
+                            <table id="basic-table" class="table table-striped mb-0" role="grid"
+                                data-toggle="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Narrative Report</th>
+                                        <th>Progress</th>
+                                        <th>Summary Report</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (count($_midshipman->shipboard_training->performance_report) > 0)
+                                        @foreach ($_midshipman->shipboard_training->performance_report as $_journal)
+                                            <tr>
+                                                <td>
+                                                    <a
+                                                        href=" {{ route('onboard.performance-report') }}?report={{ base64_encode($_journal->id) }}">
+                                                        {{ date('F - Y', strtotime($_journal->month)) }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <h6>{{ ($_journal->is_approved / 5) * 100 }}%</h6>
+                                                    </div>
+                                                    <div class="progress bg-soft-info shadow-none w-100"
+                                                        style="height: 6px">
+                                                        <div class="progress-bar bg-info" data-toggle="progress-bar"
+                                                            role="progressbar"
+                                                            aria-valuenow="{{ ($_journal->is_approved / 5) * 100 }}"
+                                                            aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @if ($_journal->is_approved == 5)
+                                                        <a href="{{ route('onboard.narative-report-monthly-summary') . '?_midshipman=' . base64_encode($_midshipman->id) . '&_month=' . $_journal->month }}"
+                                                            class="btn btn-primary btn-sm" target="_blank">VIEW</a>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="3">No Journal</td>
+                                        </tr>
+                                    @endif
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                @else
+                   <div class="card">
                     <div class="card-body">
                         <div class="header-title d-flex justify-content-between">
                             <span class="h5 text-primary fw-bolder">MONTHLY OBT PERFORMANCE MONITORING REPORT (MOPM)</span>
@@ -175,6 +236,8 @@
 
                     </div>
                 </div>
+                @endif
+             
                 <div class="card">
                     <div class="card-body">
                         <div class="header-title d-flex justify-content-between">
