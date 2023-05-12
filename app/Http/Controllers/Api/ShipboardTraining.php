@@ -87,13 +87,13 @@ class ShipboardTraining extends Controller
             $_agency = $_request->agency; // Get the Input name Agency to check if it's NA
             if ($_request->agency === 'NA') {
                 $_agency = ShippingAgencies::create([
-                    'agency_name' => strtoupper($_request->agency_name),
-                    'agency_address' => strtoupper($_request->agency_address),
+                    'agency_name' => strtoupper($_request->shipping_company),
+                    'agency_address' => strtoupper($_request->company_address),
                     'staff_id' => 7,
                     'is_removed' => 0
                 ]); // Store Agencies
                 $_agency = $_agency->id; // Get Id
-                $company_name = strtoupper($_request->agency_name);
+                $company_name = strtoupper($_request->shipping_company);
             } else {
                 $agency = ShippingAgencies::find($_request->agency);
                 $company_name = $agency->agency_name;
