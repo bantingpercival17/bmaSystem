@@ -26,8 +26,9 @@ Route::prefix('onboard')->group(function () {
     Route::post('/shipboard-monitoring/narative/disapproved', [OnboardTrainingController::class, 'onboard_narative_disapproved'])->name('onboard.narative-report-disapproved'); // Disapproved Narative Report;
     Route::get('/shipboard-monitoring/narative/generate-summay-report', [OnboardTrainingController::class, 'onboard_narative_summary_report'])->name('onboard.narative-summary-report');
     Route::get('/shipboard-monitoring/narative/monthly-summay-report', [OnboardTrainingController::class, 'onboard_monthly_summary_report'])->name('onboard.narative-report-monthly-summary');
-    Route::get('/shipboard-monitoring/performance-report',[OnboardTrainingController::class,'onboard_performance_report'])->name('onboard.performance-report');
-    
+    Route::get('/shipboard-monitoring/performance-report', [OnboardTrainingController::class, 'onboard_performance_report'])->name('onboard.performance-report');
+
     Route::get('/shipboard-monitoring/examination', [OnboardTrainingController::class, 'onboard_examination'])->name('onboard.examination');
     Route::post('/shipboard-monitoring/assessment-report', [OnboardTrainingController::class, 'onboard_assessment_report'])->name('onboard.assessment-report');
+    Route::get('/shipboard-monitoring/assessment-report-v2', [OnboardTrainingController::class, 'onboard_assessment_report_v2'])->name('onboard.assessment-report-v2');
 });

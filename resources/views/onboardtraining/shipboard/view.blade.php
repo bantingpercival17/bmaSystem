@@ -117,141 +117,136 @@
                     </div>
                 </div>
                 @if (count($_midshipman->shipboard_training->performance_report) > 0)
-                   <div class="card">
-                    <div class="card-body">
-                        <div class="header-title d-flex justify-content-between">
-                            <span class="h5 text-primary fw-bolder">MONTHLY OBT PERFORMANCE MONITORING REPORT (MOPM)</span>
-                            <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
-                                class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
-                        </div>
-                        <div class="table-responsive mt-4">
-                            <table id="basic-table" class="table table-striped mb-0" role="grid"
-                                data-toggle="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Narrative Report</th>
-                                        <th>Progress</th>
-                                        <th>Summary Report</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (count($_midshipman->shipboard_training->performance_report) > 0)
-                                        @foreach ($_midshipman->shipboard_training->performance_report as $_journal)
-                                            <tr>
-                                                <td>
-                                                    <a
-                                                        href=" {{ route('onboard.performance-report') }}?report={{ base64_encode($_journal->id) }}">
-                                                        {{ date('F - Y', strtotime($_journal->month)) }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <h6>{{ ($_journal->is_approved / 5) * 100 }}%</h6>
-                                                    </div>
-                                                    <div class="progress bg-soft-info shadow-none w-100"
-                                                        style="height: 6px">
-                                                        <div class="progress-bar bg-info" data-toggle="progress-bar"
-                                                            role="progressbar"
-                                                            aria-valuenow="{{ ($_journal->is_approved / 5) * 100 }}"
-                                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @if ($_journal->is_approved == 5)
-                                                        <a href="{{ route('onboard.narative-report-monthly-summary') . '?_midshipman=' . base64_encode($_midshipman->id) . '&_month=' . $_journal->month }}"
-                                                            class="btn btn-primary btn-sm" target="_blank">VIEW</a>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="header-title d-flex justify-content-between">
+                                <span class="h5 text-primary fw-bolder">MONTHLY OBT PERFORMANCE MONITORING REPORT
+                                    (MOPM)</span>
+                                <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
+                                    class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
+                            </div>
+                            <div class="table-responsive mt-4">
+                                <table id="basic-table" class="table table-striped mb-0" role="grid"
+                                    data-toggle="data-table">
+                                    <thead>
                                         <tr>
-                                            <td colspan="3">No Journal</td>
+                                            <th>Narrative Report</th>
+                                            <th>Progress</th>
+                                            <th>Summary Report</th>
                                         </tr>
-                                    @endif
+                                    </thead>
+                                    <tbody>
+                                        @if (count($_midshipman->shipboard_training->performance_report) > 0)
+                                            @foreach ($_midshipman->shipboard_training->performance_report as $_journal)
+                                                <tr>
+                                                    <td>
+                                                        <a
+                                                            href=" {{ route('onboard.performance-report') }}?report={{ base64_encode($_journal->id) }}&midshipman={{ base64_encode($_midshipman->id) }}">
+                                                            {{ date('F - Y', strtotime($_journal->month)) }}
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <h6>{{ ($_journal->is_approved / 5) * 100 }}%</h6>
+                                                        </div>
+                                                        <div class="progress bg-soft-info shadow-none w-100"
+                                                            style="height: 6px">
+                                                            <div class="progress-bar bg-info" data-toggle="progress-bar"
+                                                                role="progressbar"
+                                                                aria-valuenow="{{ ($_journal->is_approved / 5) * 100 }}"
+                                                                aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @if ($_journal->is_approved == 5)
+                                                            <a href="{{ route('onboard.narative-report-monthly-summary') . '?_midshipman=' . base64_encode($_midshipman->id) . '&_month=' . $_journal->month }}"
+                                                                class="btn btn-primary btn-sm" target="_blank">VIEW</a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="3">No Journal</td>
+                                            </tr>
+                                        @endif
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
-
                     </div>
-                </div>
                 @else
-                   <div class="card">
-                    <div class="card-body">
-                        <div class="header-title d-flex justify-content-between">
-                            <span class="h5 text-primary fw-bolder">MONTHLY OBT PERFORMANCE MONITORING REPORT (MOPM)</span>
-                            <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
-                                class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
-                        </div>
-                        <div class="table-responsive mt-4">
-                            <table id="basic-table" class="table table-striped mb-0" role="grid"
-                                data-toggle="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Narrative Report</th>
-                                        <th>Progress</th>
-                                        <th>Summary Report</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (count($_midshipman->narative_report) > 0)
-                                        @foreach ($_midshipman->narative_report as $_journal)
-                                            <tr>
-                                                <td>
-                                                    <a
-                                                        href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->month) }}&_midshipman={{ base64_encode($_midshipman->id) }}">
-                                                        {{ date('F - Y', strtotime($_journal->month)) }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex align-items-center mb-2">
-                                                        <h6>{{ ($_journal->is_approved / 5) * 100 }}%</h6>
-                                                    </div>
-                                                    <div class="progress bg-soft-info shadow-none w-100"
-                                                        style="height: 6px">
-                                                        <div class="progress-bar bg-info" data-toggle="progress-bar"
-                                                            role="progressbar"
-                                                            aria-valuenow="{{ ($_journal->is_approved / 5) * 100 }}"
-                                                            aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @if ($_journal->is_approved == 5)
-                                                        <a href="{{ route('onboard.narative-report-monthly-summary') . '?_midshipman=' . base64_encode($_midshipman->id) . '&_month=' . $_journal->month }}"
-                                                            class="btn btn-primary btn-sm" target="_blank">VIEW</a>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="header-title d-flex justify-content-between">
+                                <span class="h5 text-primary fw-bolder">MONTHLY OBT PERFORMANCE MONITORING REPORT
+                                    (MOPM)</span>
+                                <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
+                                    class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
+                            </div>
+                            <div class="table-responsive mt-4">
+                                <table id="basic-table" class="table table-striped mb-0" role="grid"
+                                    data-toggle="data-table">
+                                    <thead>
                                         <tr>
-                                            <td colspan="3">No Journal</td>
+                                            <th>Narrative Report</th>
+                                            <th>Progress</th>
+                                            <th>Summary Report</th>
                                         </tr>
-                                    @endif
+                                    </thead>
+                                    <tbody>
+                                        @if (count($_midshipman->narative_report) > 0)
+                                            @foreach ($_midshipman->narative_report as $_journal)
+                                                <tr>
+                                                    <td>
+                                                        <a
+                                                            href=" {{ route('onboard.journal') }}?_j={{ base64_encode($_journal->month) }}&_midshipman={{ base64_encode($_midshipman->id) }}">
+                                                            {{ date('F - Y', strtotime($_journal->month)) }}
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center mb-2">
+                                                            <h6>{{ ($_journal->is_approved / 5) * 100 }}%</h6>
+                                                        </div>
+                                                        <div class="progress bg-soft-info shadow-none w-100"
+                                                            style="height: 6px">
+                                                            <div class="progress-bar bg-info" data-toggle="progress-bar"
+                                                                role="progressbar"
+                                                                aria-valuenow="{{ ($_journal->is_approved / 5) * 100 }}"
+                                                                aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        @if ($_journal->is_approved == 5)
+                                                            <a href="{{ route('onboard.narative-report-monthly-summary') . '?_midshipman=' . base64_encode($_midshipman->id) . '&_month=' . $_journal->month }}"
+                                                                class="btn btn-primary btn-sm" target="_blank">VIEW</a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="3">No Journal</td>
+                                            </tr>
+                                        @endif
 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
-
                     </div>
-                </div>
                 @endif
-             
+
                 <div class="card">
                     <div class="card-body">
                         <div class="header-title d-flex justify-content-between">
                             <span class="h5 text-primary fw-bolder">ASSESSMENT</span>
                         </div>
                         <div class="mt-4">
-                            <form action="{{ route('onboard.assessment-report') }}"
-                                id="{{ base64_encode($_midshipman->id) }}" method="post">
-                                @csrf
-                                @if ($_midshipman->assessment_details)
-                                    <input type="hidden" name="_assessment_details"
-                                        value="{{ $_midshipman->assessment_details->id }}">
-                                @endif
-                                <input type="hidden" name="_midshipman" value="{{ base64_encode($_midshipman->id) }}">
+                            @if ($_midshipman->assessment_details)
                                 <div class="row">
                                     <div class="col-md">
                                         <div class="form-group">
@@ -282,14 +277,8 @@
                                     <div class="col-md">
                                         <div class="form-group">
                                             <small>ASSESSOR</small>
-                                            <select name="_assessor" class="form-select">
-                                                @foreach ($_assessors as $item)
-                                                    <option value="{{ $item->id }}">
-                                                        {{ strtoupper($item->first_name . ' ' . $item->last_name) }}
-                                                    </option>
-                                                @endforeach
-
-                                            </select>
+                                            <label for=""
+                                                class="form-control">{{ $_midshipman->assessment_details->staff->first_name . ' ' . $_midshipman->assessment_details->staff->last_name }}</label>
                                         </div>
                                     </div>
                                 </div>
@@ -328,16 +317,111 @@
                                         </div>
                                     </div>
                                 </div>
+                                <form action="{{ route('onboard.assessment-report-v2') }}"
+                                    id="{{ base64_encode($_midshipman->id) }}" method="get">
+                                    <input type="hidden" name="_midshipman"
+                                        value="{{ base64_encode($_midshipman->id) }}">
+                                </form>
+                                <button class="btn btn-primary btn-sm float-end generate-report-button"
+                                    data-url="{{ base64_encode($_midshipman->id) }}">GENERATE
+                                    REPORT
+                                    OBT-12</a>
+                                @else
+                                    <form action="{{ route('onboard.assessment-report') }}"
+                                        id="{{ base64_encode($_midshipman->id) }}" method="post">
+                                        @csrf
+                                        @if ($_midshipman->assessment_details)
+                                            <input type="hidden" name="_assessment_details"
+                                                value="{{ $_midshipman->assessment_details->id }}">
+                                        @endif
+                                        <input type="hidden" name="_midshipman"
+                                            value="{{ base64_encode($_midshipman->id) }}">
+                                        <div class="row">
+                                            <div class="col-md">
+                                                <div class="form-group">
+                                                    <small>ONLINE ASSESSMENT</small> <br>
+                                                    @if ($_midshipman->onboard_examination)
+                                                        @if ($_midshipman->onboard_examination->is_finish)
+                                                            <input type="text" class="form-control"
+                                                                value="{{ $_midshipman->onboard_examination->result->count() }}"
+                                                                disabled>
+                                                            <input type="hidden" name="_assessment_score"
+                                                                value="{{ $_midshipman->onboard_examination->result->count() }}">
+                                                        @else
+                                                            <div class="form-group">
+                                                                <small for=""
+                                                                    class="form-label fw-bolder">EXAMINATION
+                                                                    CODE</small> <br>
+                                                                <span
+                                                                    class="text-primary h6 fw-bolder">{{ $_midshipman->onboard_examination->examination_code }}</span>
+                                                            </div>
+                                                        @endif
+                                                    @else
+                                                        <button
+                                                            class="btn btn-primary btn-sm btn-onboard-examination w-100"
+                                                            data-url="{{ route('onboard.examination') . '?_midshipman=' . base64_encode($_midshipman->id) }}">APPROVE
+                                                            FOR
+                                                            EXAMINATION</button>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="col-md">
+                                                <div class="form-group">
+                                                    <small>ASSESSOR</small>
+                                                    <select name="_assessor" class="form-select">
+                                                        @foreach ($_assessors as $item)
+                                                            <option value="{{ $item->id }}">
+                                                                {{ strtoupper($item->first_name . ' ' . $item->last_name) }}
+                                                            </option>
+                                                        @endforeach
 
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md">
+                                                <div class="form-group">
+                                                    <small>PRACTICAL ASSESSMENT</small>
+                                                    @if ($_midshipman->assessment_details)
+                                                        <input type="text" class="form-control"
+                                                            name="_practical_score"
+                                                            value="{{ $_midshipman->assessment_details->practical_score }}">
+                                                    @else
+                                                        <input type="text" class="form-control"
+                                                            name="_practical_score"
+                                                            value="{{ old('_practical_score') }}">
+                                                        @error('_practical_score')
+                                                            <span class="badge bg-danger mt-2">{{ $message }}</span>
+                                                        @enderror
+                                                    @endif
 
-                            </form>
+                                                </div>
+                                            </div>
+                                            <div class="col-md">
+                                                <div class="form-group">
+                                                    <small>ORAL ASSESSMENT</small>
+                                                    @if ($_midshipman->assessment_details)
+                                                        <input type="text" class="form-control" name="_oral_score"
+                                                            value="{{ $_midshipman->assessment_details->oral_score }}">
+                                                    @else
+                                                        <input type="text" class="form-control" name="_oral_score"
+                                                            value="{{ old('_oral_score') }}">
+                                                        @error('_oral_score')
+                                                            <span class="badge bg-danger mt-2">{{ $message }}</span>
+                                                        @enderror
+                                                    @endif
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm float-end generate-report-button"
+                                            data-url="{{ base64_encode($_midshipman->id) }}">GENERATE
+                                            REPORT
+                                            OBT-12</button>
+                                    </form>
+                            @endif
                         </div>
-                        <button class="btn btn-primary btn-sm float-end generate-report-button"
-                            data-url="{{ base64_encode($_midshipman->id) }}">GENERATE
-                            REPORT
-                            OBT-12</button>
-                        {{-- <a href="" class="btn btn-outline-primary btn-sm rounded-pill float-end">Generate
-                            Report</a> --}}
                     </div>
                 </div>
             @endif
