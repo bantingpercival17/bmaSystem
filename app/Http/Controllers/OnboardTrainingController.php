@@ -292,15 +292,26 @@ class OnboardTrainingController extends Controller
                 'staff_id' => Auth::user()->staff->id
             );
             if ($_request->_assessment_details) {
-                $_assessment = ShipboardAssessmentDetails::where('student_id', $_data->id)->where('is_removed', false)->first();
+                /*  $_assessment = ShipboardAssessmentDetails::where('student_id', $_data->id)->where('is_removed', false)->first();
                 if ($_assessment) {
                     $_assessment->is_removed = true;
                     $_assessment->save();
-                }
+                } */
             } else {
                 ShipboardAssessmentDetails::create($_index);
             }
 
+            return $_generate_report->assessment_report($_data);
+        } catch (Exception $error) {
+            return $error->getMessage();
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    public function onboard_assessment_report_v2(Request $_request)
+    {
+        try {
+            $_generate_report = new OnboardTrainingReport();
+            $_data = StudentDetails::find(base64_decode($_request->_midshipman));
             return $_generate_report->assessment_report($_data);
         } catch (Exception $error) {
             return $error->getMessage();
@@ -312,7 +323,7 @@ class OnboardTrainingController extends Controller
         try {
             $performance_report = ShipboardPerformanceReport::find(base64_decode($request->report));
             $midshipman = StudentDetails::find(base64_decode($request->midshipman));
-            return view('pages.onboard.mopm.performance-report', compact('performance_report','midshipman'));
+            return view('pages.onboard.mopm.performance-report', compact('performance_report', 'midshipman'));
         } catch (Exception $error) {
             $this->debugTracker($error);
             return back()->with('error', $error->getMessage());
