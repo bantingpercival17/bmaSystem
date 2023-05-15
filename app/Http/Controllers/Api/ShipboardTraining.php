@@ -80,7 +80,7 @@ class ShipboardTraining extends Controller
         }
         // Set validation for Documents
         foreach ($_documents as $document) {
-            $_validate[strtolower(str_replace(' ', '_', $document->document_name))] = 'required | mimes:jpg,bmp,png,pdf,docx';
+            $_validate[strtolower(str_replace(' ', '_', $document->document_name))] = 'required';
         }
         $_request->validate($_validate);
         try {
@@ -127,7 +127,7 @@ class ShipboardTraining extends Controller
                 $_data_link = $this->saveFiles($_request->file($name), 'bma-students', 'onboard'); // store to the public folder
                 $_document_detials = [
                     'document_id' => $_docu->id,
-                    'student_id' =>  auth()->user()->id,
+                    'student_id' =>  auth()->user()->student_id,
                     'document_path' => $_data_link,
                     'file_path' => $_data_link,
                     'document_status' => null,
