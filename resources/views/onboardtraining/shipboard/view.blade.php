@@ -140,7 +140,7 @@
                                             <tr>
                                                 <td>
                                                     <a
-                                                        href=" {{ route('onboard.performance-report') }}?report={{ base64_encode($_journal->id) }}">
+                                                        href=" {{ route('onboard.performance-report') }}?report={{ base64_encode($_journal->id) }}&midshipman={{base64_encode($_midshipman->id)}}">
                                                         {{ date('F - Y', strtotime($_journal->month)) }}
                                                     </a>
                                                 </td>

@@ -311,6 +311,8 @@ class OnboardTrainingController extends Controller
     {
         try {
             $performance_report = ShipboardPerformanceReport::find(base64_decode($request->report));
+            $midshipman = StudentDetails::find(base64_decode($request->midshipman));
+            return view('pages.onboard.mopm.performance-report', compact('performance_report','midshipman'));
         } catch (Exception $error) {
             $this->debugTracker($error);
             return back()->with('error', $error->getMessage());
