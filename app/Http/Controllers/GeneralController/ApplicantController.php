@@ -431,13 +431,20 @@ class ApplicantController extends Controller
     {
         try {
             $_appointment = ApplicantMedicalAppointment::find(base64_decode($_request->appointment));
-            $_appointment->is_approved = 1;
-            $_appointment->save();
-            $_email_model = new ApplicantEmail();
-            //$_email = 'p.banting@bma.edu.ph';
-            $_email = $_appointment->account->email;
-            Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_appointment_schedule($_appointment->account));
-            return back()->with('success', 'Appointment Approved');
+            if ($_request->status != 'false') {
+                $_appointment->is_approved = 1;
+                $_appointment->save();
+                $_email_model = new ApplicantEmail();
+                //$_email = 'p.banting@bma.edu.ph';
+                $_email = $_appointment->account->email;
+                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_appointment_schedule($_appointment->account));
+                return back()->with('success', 'Appointment Approved');
+            } else {
+                $_appointment->is_approved = 0;
+                $_appointment->is_removed = true;
+                $_appointment->save();
+                return back()->with('success', 'Medical Schedule Disapproved');
+            }
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
         }
@@ -453,6 +460,11 @@ class ApplicantController extends Controller
                 'is_removed' => false
             );
             ApplicantMedicalAppointment::create($data);
+            $_email_model = new ApplicantEmail();
+            //$_email = 'p.banting@bma.edu.ph';
+            $applicant = ApplicantAccount::find($_request->applicant);
+            $_email = $applicant->email;
+            Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_appointment_schedule($applicant));
             return back()->with('success', 'Medical Schedule Success.');
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());

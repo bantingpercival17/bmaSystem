@@ -80,7 +80,7 @@ class ShipboardTraining extends Controller
         }
         // Set validation for Documents
         foreach ($_documents as $document) {
-            $_validate[strtolower(str_replace(' ', '_', $document->document_name))] = 'required | mimes:jpg,bmp,png,pdf,docx';
+            $_validate[strtolower(str_replace(' ', '_', $document->document_name))] = 'required';
         }
         $_request->validate($_validate);
         try {
