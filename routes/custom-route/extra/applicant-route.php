@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GeneralController\ApplicantController;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -22,4 +23,7 @@ Route::middleware(['auth'])->group(function () {
     ROute::get('/applicant/examination-remove', [ApplicantController::class, 'examination_remove'])->name('examination.remove');
     Route::get('/applicant/virtual-briefing', [ApplicantController::class, 'virtual_briefing_view'])->name('applicant-virtual-briefing');
     Route::post('/applicant/change-course', [ApplicantController::class, 'applicant_change_course'])->name('applicant.applicant-change-course');
+    Route::get('/applicant/not-qualifed', [ApplicantController::class, 'applicant_not_qualified'])->name('applicant.applicant-not-qualified');
+    Route::post('/applicant/orientation-scheduled', [ApplicantController::class, 'applicant_orientation_schedule'])->name('applicant.orientation-scheduled');
+    Route::get('/applicant/orientation-attended', [ApplicantController::class, 'applicant_orientation_attended'])->name('applicant.orientation-attended');
 });

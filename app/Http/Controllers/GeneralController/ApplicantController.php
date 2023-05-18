@@ -9,13 +9,18 @@ use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantAlumnia;
 use App\Models\ApplicantBriefing;
+use App\Models\ApplicantBriefingSchedule;
 use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
 use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantExaminationAnswer;
 use App\Models\ApplicantMedicalAppointment;
 use App\Models\ApplicantMedicalResult;
+use App\Models\ApplicantNoDocumentNotification;
+use App\Models\ApplicantNotQualified;
 use App\Models\CourseOffer;
+use App\Models\DocumentRequirements;
+use App\Models\Documents;
 use App\Models\MedicalAppointmentSchedule;
 use App\Report\ApplicantReport;
 use Exception;
@@ -24,6 +29,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use Svg\Tag\Rect;
 
 class ApplicantController extends Controller
 {
@@ -35,14 +41,16 @@ class ApplicantController extends Controller
         $_categories = array(
             array('view' => 'verified-applicant', 'function' => 'verified_applicants'),
             array('view' => 'pre-registration', 'function' => 'applicant_pre_registrations'),
+            array('view' => 'incomplete-document', 'function' => 'applicant_incomplete_documents'),
             array('view' => 'for-checking', 'function' => 'applicant_for_checking'), // For Verification of Document
+            array('view' => 'not-qualified', 'function' => 'applicant_not_qualified'), // Not Qualified
             array('view' => 'verified', 'function' => 'applicant_verified_documents'), // Verified Documents & Quified to Take Entrance Examination
             array('view' => 'entrance-examination-payment-verification', 'function' => 'applicant_payment_verification'), // Entrance Examination Payment Verification
             array('view' => 'entrance-examination-payment-verified', 'function' => 'applicant_payment_verified'), // Entrance Examination Payment Verified
             array('view' => 'ongoing-examination', 'function' => 'applicant_examination_ongoing'), // Entrance Examination On-going
-            array('view' => 'examination-passed', 'function' => 'applicant_examination_passed'), // Entrance Examination Passed
+            array('view' => 'entrance-examination-passer', 'function' => 'applicant_examination_passed'), // Entrance Examination Passed
             array('view' => 'examination-failed', 'function' => 'applicant_examination_failed'), // Entrance Examination Failed
-            array('view' => 'virtual-orientation', 'function' => 'applicant_virtual_orientation'), // Orientation
+            array('view' => 'briefing-orientation', 'function' => 'applicant_virtual_orientation'), // Orientation
             array('view' => 'medical-appointment', 'function' => 'applicant_medical_appointment'), // Medical Appointment
             array('view' => 'medical-scheduled', 'function' => 'applicant_medical_scheduled'),
             array('view' => 'medical-results', 'function' => 'applicant_medical_results'),
@@ -106,9 +114,22 @@ class ApplicantController extends Controller
     {
         try {
             $_applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
+            $document = Documents::find($_request->document);
             $_email_model = new ApplicantEmail();
-            //return $_applicant->email;
-            Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant));
+            //Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant, $document));
+            try {
+                Mail::to($_applicant->email)->bcc('registrar@bma.edu.ph')->send($_email_model->document_notificaiton($_applicant, $document));
+                //Mail::to('p.banting@bma.edu.ph')->bcc('k.j.cruz@bma.edu.ph')->send($_email_model->document_notificaiton($_applicant, $document));
+                $message = "Email Sent";
+            } catch (Exception $error) {
+                $message  =  $error->getMessage();
+            }
+            ApplicantNoDocumentNotification::create([
+                'applicant_id' => $_applicant->id,
+                'document_id' => $document->id,
+                'staff_id' => Auth::user()->staff->id,
+                'mail_status' => $message,
+            ]);
             return back()->with('success', 'Successfully Send the Notification');
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
@@ -137,13 +158,38 @@ class ApplicantController extends Controller
                 $_document->staff_id = Auth::user()->staff->id;
                 $_document->feedback = $_request->_comment;
                 $_document->save();
-                Mail::to($_applicant_email)->send($_email_model->document_disapproved($_document));
+                if ($_request->_comment == 'Sorry you did not meet the Grade requirement') {
+                    $applicant = ApplicantNotQualified::where('applicant_id', $_document->applicant_id)->first();
+                    if (!$applicant) {
+                        ApplicantNotQualified::create([
+                            'applicant_id' => $_document->applicant_id,
+                            'course_id' => $_document->account->course_id,
+                            'academic_id' => $_document->account->academic_id,
+                            'staff_id' => Auth::user()->staff->id
+                        ]);
+                    }
+                }
+                //Mail::to($_applicant_email)->send($_email_model->document_disapproved($_document));
                 return back()->with('success', 'Successfully Transact.');
                 //echo "Disapproved";
             }
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
         }
+    }
+    public function applicant_not_qualified(Request $request)
+    {
+        $applicant = ApplicantAccount::find(base64_decode($request->applicant));
+        $data =  ApplicantNotQualified::where('applicant_id', $applicant->id)->first();
+        if (!$data) {
+            ApplicantNotQualified::create([
+                'applicant_id' => $applicant->id,
+                'course_id' => $applicant->course_id,
+                'academic_id' => $applicant->academic_id,
+                'staff_id' => Auth::user()->staff->id
+            ]);
+        }
+        return back();
     }
     # Removed Applicant Function
     public function applicant_removed(Request $_request)
@@ -177,7 +223,7 @@ class ApplicantController extends Controller
                 $data['message'] = 'Sent Pre Registration Notification ' . $_applicant->applicant_number;
             } else {
                 if (!$_applicant->applicant_documents) {
-                    Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant));
+                    //Mail::to($_applicant->email)->send($_email_model->document_notificaiton($_applicant,));
                     $data['respond'] = '200';
                     $data['message'] = 'Sent Document Attachment Notification ' . $_applicant->applicant_number;
                 } else {
@@ -366,8 +412,8 @@ class ApplicantController extends Controller
                 $_applicants = $_request->view == $content[0] ? $_course[$content[1]] : $_applicants;
             }
         }
-        $dates = MedicalAppointmentSchedule::orderBy('date','asc')->where('is_close',false)->get();
-        return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_applicants',  '_table_content','dates'));
+        $dates = MedicalAppointmentSchedule::orderBy('date', 'asc')->where('is_close', false)->get();
+        return view('pages.general-view.applicants.medical.overview_medical', compact('_courses', '_applicants',  '_table_content', 'dates'));
     }
     public function medical_schedule_download(Request $_request)
     {
@@ -459,6 +505,56 @@ class ApplicantController extends Controller
             return back()->with('success', 'Update Course');
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
+        }
+    }
+    public function applicant_orientation_schedule(Request $request)
+    {
+        $request->validate([
+            'date' => 'required',
+            'time' => 'required',
+            'category' => 'required'
+        ]);
+        try {
+            $applicant = ApplicantBriefing::where('applicant_id', base64_decode($request->applicant))->get();
+            if (count($applicant) > 0) {
+                ApplicantBriefing::where('applicant_id', base64_decode($request->applicant))->update(['is_removed' => true]);
+            }
+            ApplicantBriefing::create([
+                'applicant_id'  => base64_decode($request->applicant),
+                'is_completed' => false,
+                'is_removed' => false
+            ]);
+            ApplicantBriefingSchedule::create([
+                'applicant_id' => base64_decode($request->applicant),
+                'schedule_date' => $request->date,
+                'schedule_time' => $request->time,
+                'category' => $request->category,
+                'staff_id' => Auth::user()->staff->id
+            ]);
+            $mail = new ApplicantEmail();
+            $applicant = ApplicantAccount::find(base64_decode($request->applicant));
+            Mail::to($applicant->email)->bcc('registrar@bma.edu.ph')->send($mail->orientation_schedule($applicant));
+            // Mail::to('k.j.cruz@bma.edu.ph')->bcc('p.banting@bma.edu.ph')->send($mail->orientation_schedule($applicant));
+            return back()->with('success', 'Successfully Scheduled');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
+    }
+    public function applicant_orientation_attended(Request $request)
+    {
+        try {
+            $orientation =  ApplicantBriefing::where('applicant_id', $request->applicant)->where('is_removed', false)->first();
+            $orientation->is_completed = true;
+            $orientation->save();
+            $mail = new ApplicantEmail();
+            $applicant = ApplicantAccount::find($request->applicant);
+            Mail::to($applicant->email)->bcc('registrar@bma.edu.ph')->send($mail->orientation_attended($applicant));
+            // Mail::to('k.j.cruz@bma.edu.ph')->bcc('p.banting@bma.edu.ph')->send($mail->orientation_attended($applicant));
+            return back()->with('success', 'Successfully Scheduled');
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
         }
     }
 }

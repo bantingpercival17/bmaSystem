@@ -1,5 +1,5 @@
 @php
-$_route = route('applicant-lists') . '?' . (request()->input('_academic') ? '&_academic=' . request()->input('_academic') . '&' : '');
+    $_route = route('applicant-lists') . '?' . (request()->input('_academic') ? '&_academic=' . request()->input('_academic') . '&' : '');
 @endphp
 <section>
     <p class="display-6 fw-bolder text-primary">Entrance Examination Overview</p>
@@ -130,7 +130,8 @@ $_route = route('applicant-lists') . '?' . (request()->input('_academic') ? '&_a
                         <tr class="text-center">
                             <th rowspan="2">COURSE</th>
                             <th rowspan="2">PRE-REGISTRATION</th>
-                            <th colspan="2">INFORMATION VERIFICATION</th>
+                            <th rowspan="2">INCOMPLETE <br> DOCUMENTS</th>
+                            <th colspan="3">INFORMATION VERIFICATION</th>
                             <th colspan="2">ENTRANCE EXAMINATION PAYMENT</th>
                             <td colspan="3">ENTRANCE EXAMINATION</td>
                             <th rowspan="2">BRIEFING</th>
@@ -138,7 +139,9 @@ $_route = route('applicant-lists') . '?' . (request()->input('_academic') ? '&_a
                             <th rowspan="2">QUALIFIED FOR ENROLLMENT</th>
                         </tr>
                         <tr>
+
                             <th>FOR CHECKING</th>
+                            <th>NOT QUALIFIED</th>
                             <th>VERIFIED</th>
                             <th>FOR VERIFICATION</th>
                             <th>PAYMENT VERIFED</th>
@@ -167,8 +170,20 @@ $_route = route('applicant-lists') . '?' . (request()->input('_academic') ? '&_a
                                 <td>
 
                                     <a
+                                        href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=incomplete-document">
+                                        {{ count($_course->applicant_incomplete_documents) }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a
                                         href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=for-checking">
                                         {{ count($_course->applicant_for_checking) }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a
+                                        href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=not-qualified">
+                                        {{ count($_course->applicant_not_qualified) }}
                                     </a>
                                 </td>
                                 <td>
@@ -201,7 +216,7 @@ $_route = route('applicant-lists') . '?' . (request()->input('_academic') ? '&_a
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=examination-passed">
+                                        href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=entrance-examination-passer">
                                         {{ count($_course->applicant_examination_passed) }}
                                     </a>
                                 </td>
@@ -213,7 +228,7 @@ $_route = route('applicant-lists') . '?' . (request()->input('_academic') ? '&_a
                                 </td>
                                 <td>
                                     <a
-                                        href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=virtual-orientation">
+                                        href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=briefing-orientation">
                                         {{ count($_course->applicant_virtual_orientation) }}
                                     </a>
                                 </td>

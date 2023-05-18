@@ -1,5 +1,5 @@
 @php
-$_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ? '_academic=' . request()->input('_academic') . '&' : '') . '_course=' . request()->input('_course') . '&view=' . request()->input('view');
+    $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ? '_academic=' . request()->input('_academic') . '&' : '') . '_course=' . request()->input('_course') . '&view=' . request()->input('view');
 @endphp
 @if (request()->input('view') == 'pre-registration')
     @section('applicant-card')
@@ -102,7 +102,54 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
         </div>
     </div> --}}
 @endif
+@if (request()->input('view') == 'incomplete-document')
+    @section('applicant-card')
+        @foreach ($_applicants as $_data)
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <p class="fw-bolder text-muted mb-0">
+                                <span class="badge bg-primary">{{ $_data->course->course_name }}</span> |
+                                {{ $_data->applicant ? $_data->applicant_number : '-' }}
+                            </p>
+                            <a href="{{ $_url_card }}&_applicant={{ base64_encode($_data->id) }}"
+                                class="text-primary fw-bolder h2">
+                                {{ strtoupper($_data->applicant->last_name . ', ' . $_data->applicant->first_name) }}
+                            </a>
 
+
+                            <div class="mt-0">
+                                <span>{{ $_data->applicant ? $_data->email : '-' }}</span> <br>
+                                <span class="badge bg-secondary">
+                                    @php
+                                        echo $_data->applicant->check_duplicate();
+                                    @endphp
+                                </span>
+                                @if ($_data->senior_high_school())
+                                    <span class="badge bg-primary">BMA SENIOR HIGH ALUMNUS</span>
+                                @endif
+                            </div>
+
+
+                        </div>
+                        <div class="col-md">
+                            <small>APPLICATION DATE</small>
+                            <div class="badge bg-primary w-100">
+
+                                <span>{{ $_data->created_at->format('F d, Y') }}</span>
+                            </div>
+
+                            <a href="{{ route('applicant-removed') }}?_applicant={{ base64_encode($_data->id) }}"
+                                class="badge bg-danger text-white w-100">REMOVE
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @endsection
+@endif
 @if (request()->input('view') == 'for-checking')
     @section('applicant-card')
         @foreach ($_applicants as $_data)
@@ -151,7 +198,57 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
         @endforeach
     @endsection
 @endif
+@if (request()->input('view') == 'not-qualified')
+    @section('applicant-card')
+        @foreach ($_applicants as $_data)
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <p class="fw-bolder text-muted mb-0">
+                                <span class="badge bg-primary">{{ $_data->course->course_name }}</span> |
+                                {{ $_data->applicant ? $_data->applicant_number : '-' }}
+                            </p>
+                            <a href="{{ $_url_card }}&_applicant={{ base64_encode($_data->id) }}"
+                                class="text-primary fw-bolder h2">
+                                {{ strtoupper($_data->applicant->last_name . ', ' . $_data->applicant->first_name) }}
+                            </a>
+                            <div class="mt-0">
+                                <span>{{ $_data->applicant ? $_data->email : '-' }}</span> <br>
+                                @if (!$_data->not_qualified)
+                                    <a href="{{ route('applicant.applicant-not-qualified') }}?applicant={{ base64_encode($_data->id) }}"
+                                        class="badge bg-primary">Not Qualified</a>
+                                @endif
+                                <span class="badge bg-secondary">
+                                    @php
+                                        echo $_data->applicant->check_duplicate();
+                                    @endphp
+                                </span>
+                                @if ($_data->senior_high_school())
+                                    <span class="badge bg-primary">BMA SENIOR HIGH ALUMNUS</span>
+                                @endif
 
+                            </div>
+
+
+                        </div>
+                        <div class="col-md">
+                            <small>APPLICATION DATE</small>
+                            <div class="badge bg-primary w-100">
+
+                                <span>{{ $_data->created_at->format('F d, Y') }}</span>
+                            </div>
+
+                            <a href="{{ route('applicant-removed') }}?_applicant={{ base64_encode($_data->id) }}"
+                                class="badge bg-danger text-white w-100">REMOVE
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @endsection
+@endif
 @if (request()->input('view') == 'verified')
     @section('applicant-card')
         @foreach ($_applicants as $_data)
@@ -353,11 +450,11 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
 @endif
 
 
-@if (request()->input('view') == 'examination-passed')
+@if (request()->input('view') == 'entrance-examination-passer')
     @section('applicant-card')
         @foreach ($_applicants as $_data)
             <div class="card">
-                <div class="card-body">
+                <div class="card-body pb-0">
                     <div class="row">
                         <div class="col-md-8">
                             <p class="fw-bolder text-muted mb-0">
@@ -369,20 +466,12 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                                 {{ strtoupper($_data->applicant->last_name . ', ' . $_data->applicant->first_name) }}
                             </a>
 
-
                             <div class="mt-0">
                                 <span>{{ $_data->applicant ? $_data->email : '-' }}</span> <br>
-                                <span class="badge bg-secondary">
-                                    @php
-                                        echo $_data->applicant->check_duplicate();
-                                    @endphp
-                                </span>
                             </div>
-
-
                         </div>
                         <div class="col-md ps-0">
-                            <small> EXAMINATION DATE</small>
+                            <small class="text-muted fw-bolder text-center"> EXAMINATION DATE</small>
                             <small
                                 class="badge bg-info">{{ $_data->applicant_examination->updated_at->format('F d, Y') }}</small>
                             <br>
@@ -403,9 +492,58 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    Documents File: {{ $_data->applicant_documents->count() }}
+                <div class="card-footer pt-0">
+                    @if (!$_data->schedule_orientation)
+                        <small class="text-muted fw-bolder">ORIENTATION SCHEDULED</small>
+                        <form action="{{ route('applicant.orientation-scheduled') }}" method="post">
+                            @csrf
+                            <input type="hidden" name="applicant" value="{{ base64_encode($_data->id) }}">
+                            <div class="row">
+                                <div class="col-md">
+                                    <small class="text-muted fw-bolder">CATEGORY</small>
+                                    <select name="category" id="" class="form-select form-select-sm">
+                                        <option value="in-person">IN-PERSON ORIENTATION</option>
+                                        <option value="online">ONLINE ORIENTATION</option>
+                                    </select>
+                                </div>
+                                <div class="col-md">
+                                    <small class="text-muted fw-bolder">DATE</small>
+                                    <input type="date" class="form-control form-control-sm" name="date">
+                                </div>
+                                <div class="col-md">
+                                    <small class="text-muted fw-bolder">TIME</small>
+                                    <input type="time" class="form-control form-control-sm" name="time">
+                                </div>
+                            </div>
+                            <div class="float-end mt-2">
+                                <button type="submit" class="btn btn-primary btn-sm">SUBMIT</button>
+                            </div>
+                        </form>
+                    @else
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md">
+                                    <small class="text-muted fw-bolder">CATEGORY</small> <br>
+                                    <label for=""
+                                        class="text-info fw-bolder">{{ strtoupper($_data->schedule_orientation->category) }}
+                                        ORIENTATION</label>
+                                </div>
+                                <div class="col-md">
+                                    <small class="text-muted fw-bolder">DATE</small><br>
+                                    <label for=""
+                                        class="text-info fw-bolder">{{ $_data->schedule_orientation->schedule_date }}</label>
+                                </div>
+                                <div class="col-md">
+                                    <small class="text-muted fw-bolder">TIME</small><br>
+                                    <label for=""
+                                        class="text-info fw-bolder">{{ $_data->schedule_orientation->schedule_time }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
+
             </div>
         @endforeach
     @endsection
@@ -471,7 +609,7 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
     @endsection
 @endif
 
-@if (request()->input('view') == 'virtual-orientation')
+@if (request()->input('view') == 'briefing-orientation')
     @section('applicant-card')
         @foreach ($_applicants as $_data)
             <div class="card">
@@ -486,23 +624,22 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                                 class=" fw-bolder h2">
                                 {{ strtoupper($_data->applicant->last_name . ', ' . $_data->applicant->first_name) }}
                             </a>
-
-
                             <div class="mt-0">
                                 <span>{{ $_data->applicant ? $_data->email : '-' }}</span> <br>
-                                <span class="badge bg-secondary">
-                                    @php
-                                        echo $_data->applicant->check_duplicate();
-                                    @endphp
-                                </span>
+
                             </div>
-
-
                         </div>
                         <div class="col-md ps-0">
-                            <small>ORIENTATION DATE</small>
-                            <small
-                                class="badge bg-info">{{ $_data->virtual_orientation->updated_at->format('F d, Y') }}</small>
+                            @if ($_data->schedule_orientation)
+                                <small class="fw-bolder text-muted">ORIENTATION SCHEDULED</small>
+                                <small
+                                    class="badge bg-info">{{ $_data->schedule_orientation->schedule_date . ' ' . $_data->schedule_orientation->schedule_time }}</small>
+                                <a href="{{ route('applicant.orientation-attended') }}?applicant={{ $_data->id }}"
+                                    class="btn btn-primary btn-sm w-100 mt-2">ATTENDED</a>
+                            @else
+                                <small class="badge bg-secondary"></small>
+                            @endif
+
                             <br>
 
                         </div>
@@ -591,8 +728,7 @@ $_url_card = route('applicant-profile') . '?' . (request()->input('_academic') ?
                         </div>
                         <div class="col-md ps-0">
                             <small>APPOINTMENT DATE</small>
-                            <small
-                                class="badge bg-info">{{ $_data->medical_appointment->appointment_date }}</small>
+                            <small class="badge bg-info">{{ $_data->medical_appointment->appointment_date }}</small>
                             <br>
 
                         </div>

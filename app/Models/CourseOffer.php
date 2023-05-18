@@ -426,6 +426,30 @@ class CourseOffer extends Model
         }
         return $_query;
     }
+    # Applicant Incomplete Documents
+    public function applicant_incomplete_documents()
+    {
+        $_level = $this->id == 3 ? 11 : 4;
+        $_documents = Documents::where('department_id', 2)
+            ->where('year_level', $_level)
+            ->where('is_removed', false)
+            ->count();
+        $_query =  $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('applicant_accounts.is_removed', false)
+            ->groupBy('applicant_accounts.id') # Applicant Account
+            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
+            ->having(DB::raw('COUNT(sd.id)'), '<', $_documents); # Applicant Documents
+        //Searching Tool
+        if (request()->input('_student')) {
+            $_student = explode(',', request()->input('_student'));
+            $_count = count($_student);
+            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+        }
+        return $_query;
+    }
     # Applicant For Verification of Documents
     public function applicant_for_checking()
     {
@@ -441,7 +465,9 @@ class CourseOffer extends Model
             ->groupBy('applicant_accounts.id') # Applicant Account
             ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
-            #->having(DB::raw('COUNT(CASE WHEN is_approved = 1 THEN 1 END)'), '<', $_documents) # Applicant Documents
+            ->leftJoin('applicant_not_qualifieds', 'applicant_not_qualifieds.applicant_id', 'applicant_accounts.id')
+            ->having(DB::raw('COUNT(sd.id)'), '>=', $_documents) # Applicant Documents
+            ->whereNull('applicant_not_qualifieds.applicant_id')
             ->where(
                 function ($_subQuery) {
                     $_subQuery
@@ -462,6 +488,27 @@ class CourseOffer extends Model
         }
         return $_query;
     }
+    # Applicant Not Qualified
+
+    public function applicant_not_qualified()
+    {
+        $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('applicant_accounts.is_removed', false)
+            ->groupBy('applicant_accounts.id') # Applicant Account
+            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
+            ->where('sd.feedback', 'like', '%Sorry you did not meet the Grade requirement%');
+
+        if (request()->input('_student')) {
+            $_student = explode(',', request()->input('_student'));
+            $_count = count($_student);
+            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+        }
+        return $_query;
+    }
+
     # Applicant Documents Approved
     public function applicant_verified_documents()
     {
@@ -854,6 +901,8 @@ class CourseOffer extends Model
                 $_point,
             ) # Get the Score;
             ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_briefings.is_removed', false)
+            ->where('applicant_briefings.is_completed', false)
             ->orderBy('applicant_briefings.updated_at', 'desc');
         //Searching Tool
         if (request()->input('_student')) {
@@ -912,6 +961,8 @@ class CourseOffer extends Model
                 $_point,
             ) # Get the Score;
             ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
+            ->where('applicant_briefings.is_removed', false)
+            ->where('applicant_briefings.is_completed', true)
             ->leftJoin('applicant_medical_appointments', 'applicant_medical_appointments.applicant_id', 'applicant_accounts.id')
             ->whereNull('applicant_medical_appointments.applicant_id');
         //Searching Tool

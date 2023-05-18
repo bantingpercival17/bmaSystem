@@ -106,6 +106,10 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     {
         return $this->hasOne(ApplicantBriefing::class, 'applicant_id')->where('is_removed', false);
     }
+    public function schedule_orientation()
+    {
+        return $this->hasOne(ApplicantBriefingSchedule::class, 'applicant_id')->where('is_removed', false);
+    }
     public function medical_appointment()
     {
         return $this->hasOne(ApplicantMedicalAppointment::class, 'applicant_id')->where('is_removed', false);
@@ -129,6 +133,14 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     public function senior_high_school()
     {
         $_school =  trim($this->applicant->senior_high_school_name);
-        return strtolower($_school) == strtolower('baliuag maritime academy') ||strtolower($_school) == strtolower('baliwag maritime academy inc.') || strtolower($_school) == strtolower('baliwag maritime academy') || strtolower($_school) == strtolower('baliwag maritime academy inc') || strtolower($_school) == strtolower('baliwag martime academy') ? 1 : 0;
+        return strtolower($_school) == strtolower('baliuag maritime academy') || strtolower($_school) == strtolower('baliwag maritime academy inc.') || strtolower($_school) == strtolower('baliwag maritime academy') || strtolower($_school) == strtolower('baliwag maritime academy inc') || strtolower($_school) == strtolower('baliwag martime academy') ? 1 : 0;
+    }
+    public function not_qualified()
+    {
+        return $this->hasOne(ApplicantNotQualified::class, 'applicant_id');
+    }
+    public function sent_notification($data)
+    {
+        return ApplicantNoDocumentNotification::where('applicant_id', $this->id)->where('document_id', $data)->where('is_removed', false)->first();
     }
 }

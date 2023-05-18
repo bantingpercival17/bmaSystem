@@ -6,7 +6,6 @@
                 @foreach ($_account->empty_documents() as $docu)
                     @php
                         $item = $docu->applicant_document;
-                        
                     @endphp
                     <div class="mt-5">
                         <div class="col-md-12">
@@ -144,12 +143,32 @@
                             @endswitch
                         @else
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-md-10">
                                     <p>Missing Document</p>
+
+                                    @if ($sent = $_account->sent_notification($docu->id))
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <small class="text-primary fw-bolder h6">APPLICANT NOTIFIED</small>
+                                            </div>
+                                            <div class="col-md">
+                                                <small class="text-muted fw-bolder">BY:</small>
+                                                <small
+                                                    class="badge bg-info">{{ $sent->staff->first_name . ' ' . $sent->staff->last_name }}</small>
+                                            </div>
+                                            <div class="col-md">
+                                                <small class="text-muted fw-bolder">DATE:</small>
+                                                <small
+                                                    class="badge bg-info">{{ $sent->created_at->format('F d, Y') }}</small>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    {{-- @if ($_account->sent_notification($docu->id))
+                                    @endif --}}
                                 </div>
                                 <div class="col-md">
                                     <a class="btn btn-outline-warning btn-sm rounded-pill btn-form-document mt-2"
-                                        href="{{ route('document-notification') }}?_applicant={{ base64_encode($_account->id) }}"
+                                        href="{{ route('document-notification') }}?_applicant={{ base64_encode($_account->id) }}&document={{ $docu->id }}"
                                         data-bs-toggle="tooltip" title=""
                                         data-bs-original-title="Send a Notification">
                                         <svg width="20" viewBox="0 0 24 24" fill="none"
