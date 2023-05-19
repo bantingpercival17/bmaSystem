@@ -169,7 +169,7 @@ class ApplicantController extends Controller
                         ]);
                     }
                 }
-                //Mail::to($_applicant_email)->send($_email_model->document_disapproved($_document));
+                Mail::to($_applicant_email)->send($_email_model->document_disapproved($_document));
                 return back()->with('success', 'Successfully Transact.');
                 //echo "Disapproved";
             }

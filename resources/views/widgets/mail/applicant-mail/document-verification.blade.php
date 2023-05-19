@@ -6,7 +6,8 @@ Good day {{ucwords($data->account->applicant->first_name)}},
 @endif
 @if ($data->is_approved == 2)
 <p>
-Upon checking and verification of our Registrar’s Office your <b>{{ ucwords(trim(str_replace('_', ' ', $data->document->document_name)))}}</b> has been disapproved due to Reason : <i>{{$data->feedback}}</i>.
+Upon checking and verification of our Registrar’s Office your <b>{{ ucwords(trim(str_replace('_', ' ', $data->document->document_name)))}}</b> has been disapproved due to : <b><i>{{$data->feedback}}</i></b>.
+<br>
 Kindly re-submit your clear and correct <b>{{ ucwords(trim(str_replace('_', ' ', $data->document->document_name)))}}</b>.
 </p>
 @endif
