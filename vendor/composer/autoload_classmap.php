@@ -117,6 +117,7 @@ return array(
     'App\\Models\\ApplicantEntranceExamination' => $baseDir . '/app/Models/ApplicantEntranceExamination.php',
     'App\\Models\\ApplicantExaminationAnswer' => $baseDir . '/app/Models/ApplicantExaminationAnswer.php',
     'App\\Models\\ApplicantExaminationEssay' => $baseDir . '/app/Models/ApplicantExaminationEssay.php',
+    'App\\Models\\ApplicantExaminationSchedule' => $baseDir . '/app/Models/ApplicantExaminationSchedule.php',
     'App\\Models\\ApplicantMedicalAppointment' => $baseDir . '/app/Models/ApplicantMedicalAppointment.php',
     'App\\Models\\ApplicantMedicalExamination' => $baseDir . '/app/Models/ApplicantMedicalExamination.php',
     'App\\Models\\ApplicantMedicalResult' => $baseDir . '/app/Models/ApplicantMedicalResult.php',

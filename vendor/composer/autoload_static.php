@@ -712,6 +712,7 @@ class ComposerStaticInitf583efe491fb3577c6cfca42394ec88f
         'App\\Models\\ApplicantEntranceExamination' => __DIR__ . '/../..' . '/app/Models/ApplicantEntranceExamination.php',
         'App\\Models\\ApplicantExaminationAnswer' => __DIR__ . '/../..' . '/app/Models/ApplicantExaminationAnswer.php',
         'App\\Models\\ApplicantExaminationEssay' => __DIR__ . '/../..' . '/app/Models/ApplicantExaminationEssay.php',
+        'App\\Models\\ApplicantExaminationSchedule' => __DIR__ . '/../..' . '/app/Models/ApplicantExaminationSchedule.php',
         'App\\Models\\ApplicantMedicalAppointment' => __DIR__ . '/../..' . '/app/Models/ApplicantMedicalAppointment.php',
         'App\\Models\\ApplicantMedicalExamination' => __DIR__ . '/../..' . '/app/Models/ApplicantMedicalExamination.php',
         'App\\Models\\ApplicantMedicalResult' => __DIR__ . '/../..' . '/app/Models/ApplicantMedicalResult.php',
