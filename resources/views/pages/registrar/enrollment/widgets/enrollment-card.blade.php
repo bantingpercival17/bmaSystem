@@ -58,10 +58,17 @@
                                     @endif
                                 </div>
                                 @if ($_student->enrollment_application->enrollment_category == 'SBT ENROLLMENT')
-                                    <div class="sbt-enrollment">
-                                        <small class="text-muted fw-bolder">SHIPBOARD ENROLLMENT</small><br>
-                                        <span class="badge bg-primary">
-                                            CLEARED ON OBT OFFICE</span>
+                                    <div class="row">
+                                        <div class="sbt-enrollment col-md">
+                                            <small class="text-muted fw-bolder">SHIPBOARD ENROLLMENT</small><br>
+                                            <span class="badge bg-primary">
+                                                CLEARED ON OBT OFFICE</span>
+                                        </div>
+                                        <div class="sbt-enrollment col-md">
+                                            <small class="text-muted fw-bolder">SEA EXPERIENCE</small><br>
+                                            <span class="badge bg-primary">
+                                                {{ strtoupper($_student->shipboard_training->shipping_company) }}</span>
+                                        </div>
                                     </div>
                                 @else
                                     @if ($_student->enrollment_assessment)
