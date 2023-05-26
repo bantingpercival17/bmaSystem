@@ -99,7 +99,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     public function image()
     {
         $_level = $this->course_id == 3 ? 11 : 4;
-        $_document = Documents::where('department_id', 2)->where('year_level', $_level)->where('document_name', '2x2 Picture')->where('is_removed', false)->first();
+        $_document = Documents::where('department_id', 2)->where('year_level', $_level)->where('document_name', '2x2 Picture with Name Tag')->where('is_removed', false)->first();
         return $this->hasOne(ApplicantDocuments::class, 'applicant_id')->where('document_id', $_document->id)->where('is_removed', false);
     }
     public function virtual_orientation()
