@@ -763,6 +763,7 @@ class ComposerStaticInitf583efe491fb3577c6cfca42394ec88f
         'App\\Models\\ShipboardPerformanceReport' => __DIR__ . '/../..' . '/app/Models/ShipboardPerformanceReport.php',
         'App\\Models\\ShippingAgencies' => __DIR__ . '/../..' . '/app/Models/ShippingAgencies.php',
         'App\\Models\\Staff' => __DIR__ . '/../..' . '/app/Models/Staff.php',
+        'App\\Models\\StaffDepartment' => __DIR__ . '/../..' . '/app/Models/StaffDepartment.php',
         'App\\Models\\StaffPayroll' => __DIR__ . '/../..' . '/app/Models/StaffPayroll.php',
         'App\\Models\\StaffPayrollDetails' => __DIR__ . '/../..' . '/app/Models/StaffPayrollDetails.php',
         'App\\Models\\StaffSalaryDetailes' => __DIR__ . '/../..' . '/app/Models/StaffSalaryDetailes.php',

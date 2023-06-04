@@ -168,6 +168,7 @@ return array(
     'App\\Models\\ShipboardPerformanceReport' => $baseDir . '/app/Models/ShipboardPerformanceReport.php',
     'App\\Models\\ShippingAgencies' => $baseDir . '/app/Models/ShippingAgencies.php',
     'App\\Models\\Staff' => $baseDir . '/app/Models/Staff.php',
+    'App\\Models\\StaffDepartment' => $baseDir . '/app/Models/StaffDepartment.php',
     'App\\Models\\StaffPayroll' => $baseDir . '/app/Models/StaffPayroll.php',
     'App\\Models\\StaffPayrollDetails' => $baseDir . '/app/Models/StaffPayrollDetails.php',
     'App\\Models\\StaffSalaryDetailes' => $baseDir . '/app/Models/StaffSalaryDetailes.php',
