@@ -48,12 +48,6 @@
                     <ol class="breadcrumb">
                         @yield('beardcrumb-content')
                     </ol>
-                    {{-- @foreach (Auth::user()->staff->routes_navigation() as $route)
-                        @if (request()->is($route))
-                            @yield('sub-navigation')
-                        @endif
-                    @endforeach --}}
-
                     <div class="conatiner-fluid content-inner  py-0">
                         @yield('page-content')
                     </div>

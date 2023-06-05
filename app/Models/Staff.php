@@ -35,6 +35,15 @@ class Staff extends Model
         }
         return '/assets/img/staff/' . $_image;
     }
+    function profile_picture()
+    {
+        if (file_exists(public_path('assets/img/staff/' . strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg'))) {
+            $_image = strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg';
+        } else {
+            $_image = 'avatar.png';
+        }
+        return '/assets/img/staff/' . $_image;
+    }
     public function subject_handles()
     {
         return $this->hasMany(SubjectClass::class, 'staff_id')
@@ -229,7 +238,7 @@ class Staff extends Model
                 'role_id' => 12,
                 'role_name' => 'Medical',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Overview', 'medical.overview'], ['Student', 'medical.student-medical-appointment'],['Medical Schedule','medical.appoitnment-schedule']],
+                'role_routes' => [['Overview', 'medical.overview'], ['Student', 'medical.student-medical-appointment'], ['Medical Schedule', 'medical.appoitnment-schedule']],
             ],
         ];
     }
@@ -368,7 +377,7 @@ class Staff extends Model
     }
     public function curriculum_list()
     {
-        return Curriculum::where('is_removed',false)->get();
+        return Curriculum::where('is_removed', false)->get();
     }
     public function medical_appointment_slot($date)
     {

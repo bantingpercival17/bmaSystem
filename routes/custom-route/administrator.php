@@ -19,6 +19,8 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   require __DIR__ . '/extra/applicant-route.php'; // Applicant Route
   require __DIR__ . '/extra/ticket-route.php'; // Ticket Route
   require __DIR__ . '/extra/enrollment-route.php'; // Enrollment Route
+  
+  require __DIR__ . '/extra/livewire-route.php'; // Livewire Route
   //  Route::get('/enrollment-list', [EnrollmentController::class, 'enrolled_list_view'])->name('enrollment.enrolled-list');
   Route::get('/', [AdministratorController::class, 'index'])->name('admin.dashboard');
   Route::get('/dashboard', [AdministratorController::class, 'index'])->name('admin.dashboard'); // Dashboard
