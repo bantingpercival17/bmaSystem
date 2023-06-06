@@ -475,6 +475,38 @@ class AccountingController extends Controller
                         ]);
                     }
                 }
+                if (!$_payment_assessment->enrollment_assessment->student->account) {
+                    // Get the Year Level
+                    $_year_level = $_payment_assessment->enrollment_assessment->year_level;
+                    // Get the Total Number of Enrollee per Year Level
+                    $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
+                        ->where('enrollment_assessments.year_level', $_year_level)
+                        ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                        ->groupBy('enrollment_assessments.student_id')
+                        ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                        ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
+                        ->groupBy('enrollment_assessments.student_id')->get();
+                    $_enrollment_count = count($_enrollment_count);
+                    // Set the student number
+                    $student_count = $_enrollment_count > 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
+                    $pattern = $_year_level == 11 ? '07-' . date('y') : date('y'); // Set the Year and Batch
+                    $student_number = $pattern . $student_count; // Final Student Number
+                    $email = $student_number . '.' . str_replace(' ', '', strtolower($_payment_assessment->enrollment_assessment->student->last_name)) . '@bma.edu.ph'; // Set Email
+                    // Set the value for Student Account
+                    $_account_details = array(
+                        'student_id' => $_payment_assessment->enrollment_assessment->student_id,
+                        'email' => $email,
+                        'personal_email' => $email,
+                        'student_number' => $student_number,
+                        'password' => Hash::make($student_number),
+                        'is_actived' => true,
+                        'is_removed' => false,
+                    );
+                    StudentAccount::create($_account_details);
+                    if ($_year_level == 11 && $_year_level == 4) {
+                        StudentAccount::create($_account_details);
+                    }
+                }
             }
 
             /*  if ($_request->remarks == 'Upon Enrollment') {
@@ -627,7 +659,6 @@ class AccountingController extends Controller
             if ($_request->remarks == 'Upon Enrollment') {
                 // Get the Assessment Detials
                 $_payment_assessment = PaymentAssessment::find($_request->_assessment);
-                //
                 // Year Level
                 $_year_level = $_payment_assessment->enrollment_assessment->course_id == 3 ? 'GRADE ' . $_payment_assessment->enrollment_assessment->year_level :
                     $_payment_assessment->enrollment_assessment->year_level . '/C';
@@ -652,74 +683,42 @@ class AccountingController extends Controller
                     );
                     StudentSection::create($_content); // Store Student Section
                 }
-
+                // If the Student don't have BMA Account and Student number 
+                return $_payment_assessment->enrollment_assessment->student;
                 if (!$_payment_assessment->enrollment_assessment->student->account) {
-                    $_payment_assessment = PaymentAssessment::find($_request->_assessment);
-                    // HOW TO IDENTIFY THE COUNT NUMBER OF THE STUDENT
-                    //return $_payment_assessment->enrollment_assessment->academic;
-                    if ($_payment_assessment->enrollment_assessment->academic->semester == 'First Semester') {
-                        if ($_payment_assessment->enrollment_assessment->year_level == '4') {
-                            $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
-                                ->where('enrollment_assessments.year_level', '4')
-                                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-                                ->groupBy('enrollment_assessments.student_id')
-                                ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
-                                ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
-                                ->groupBy('enrollment_assessments.student_id')->get();
-                            $_enrollment_count = count($_enrollment_count);
-                            $_student_number = $_enrollment_count > 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
-                            $_email =  date("y") . $_student_number . '.' . str_replace(' ', '', strtolower($_payment_assessment->enrollment_assessment->student->last_name)) . '@bma.edu.ph';
-                            $_student_number = date("y") . $_student_number;
-                            $_account_details = array(
-                                'student_id' => $_payment_assessment->enrollment_assessment->student_id,
-                                'email' => $_email,
-                                'personal_email' => $_email,
-                                'student_number' => $_student_number,
-                                'password' => Hash::make($_student_number),
-                                'is_actived' => true,
-                                'is_removed' => false,
-                            );
-                            if ($_payment_assessment->enrollment_assessment->student->account) {
-                                $_payment_assessment->enrollment_assessment->student->account->is_actived = false;
-                                $_payment_assessment->enrollment_assessment->student->account->save();
-                                StudentAccount::create($_account_details);
-                            } else {
-                                StudentAccount::create($_account_details);
-                            }
-                        }
-                        if ($_payment_assessment->enrollment_assessment->year_level == 11) {
-                            $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
-                                ->where('enrollment_assessments.year_level', 11)
-                                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-                                ->groupBy('enrollment_assessments.student_id')
-                                ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
-                                ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
-                                ->groupBy('enrollment_assessments.student_id')->get();
-                            $_enrollment_count = count($_enrollment_count);
-                            $_student_number = $_enrollment_count > 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
-                            $_email =  date("y") . $_student_number . '.' . str_replace(' ', '', strtolower($_payment_assessment->enrollment_assessment->student->last_name)) . '@bma.edu.ph';
-                            $_student_number = date("y") . $_student_number;
-                            $_account_details = array(
-                                'student_id' => $_payment_assessment->enrollment_assessment->student_id,
-                                'email' => $_email,
-                                'personal_email' => $_email,
-                                'student_number' => $_student_number,
-                                'password' => Hash::make($_student_number),
-                                'is_actived' => true,
-                                'is_removed' => false,
-                            );
-                            if ($_payment_assessment->enrollment_assessment->student->account) {
-                                $_payment_assessment->enrollment_assessment->student->account->is_actived = false;
-                                $_payment_assessment->enrollment_assessment->student->account->save();
-                                StudentAccount::create($_account_details);
-                            } else {
-                                StudentAccount::create($_account_details);
-                            }
-                        }
+                    // Get the Year Level
+                    $_year_level = $_payment_assessment->enrollment_assessment->year_level;
+                    // Get the Total Number of Enrollee per Year Level
+                    $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
+                        ->where('enrollment_assessments.year_level', $_year_level)
+                        ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                        ->groupBy('enrollment_assessments.student_id')
+                        ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                        ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
+                        ->groupBy('enrollment_assessments.student_id')->get();
+                    $_enrollment_count = count($_enrollment_count);
+                    // Set the student number
+                    $student_count = $_enrollment_count > 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
+                    $pattern = $_year_level == 11 ? '07-' . date('y') : date('y'); // Set the Year and Batch
+                    $student_number = $pattern . $student_count; // Final Student Number
+                    $email = $student_number . '.' . str_replace(' ', '', strtolower($_payment_assessment->enrollment_assessment->student->last_name)) . '@bma.edu.ph'; // Set Email
+                    // Set the value for Student Account
+                    $_account_details = array(
+                        'student_id' => $_payment_assessment->enrollment_assessment->student_id,
+                        'email' => $email,
+                        'personal_email' => $email,
+                        'student_number' => $student_number,
+                        'password' => Hash::make($student_number),
+                        'is_actived' => true,
+                        'is_removed' => false,
+                    );
+                    StudentAccount::create($_account_details);
+                    if ($_year_level == 11 && $_year_level == 4) {
+                        StudentAccount::create($_account_details);
                     }
                 }
             }
-            return back()->with('success', 'Payment Transaction Complete!');
+            // return back()->with('success', 'Payment Transaction Complete!');
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
         }
