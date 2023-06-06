@@ -149,11 +149,15 @@
         }
 
         .page-break {
-            page-break-after: unset;
+            page-break-after: always;
+        }
+
+        .page-break:last-child {
+            page-break-after: auto;
         }
 
         .content last-child {
-            page-break-after: avoid;
+            page-break-after: unset;
         }
 
         .text-fill-in {
