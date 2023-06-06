@@ -108,6 +108,35 @@
 
         }
 
+        .summary-grade-header {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+        }
+
+        .table-summary-grade {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid rgb(0, 0, 0);
+            margin-top: 10px;
+            page-break-inside: always;
+        }
+
+        .table-summary-grade td,
+        .table-summary-grade th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border: 1px solid rgb(0, 0, 0);
+            font-size: 8px;
+
+        }
+
+        .table-summary-grade th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+
         .form-code {
             font-family: "Times New Roman", Times, serif;
             font-size: 12px;
@@ -120,7 +149,7 @@
         }
 
         .page-break {
-            page-break-after: always;
+            page-break-after: unset;
         }
 
         .content last-child {

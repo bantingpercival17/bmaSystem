@@ -109,7 +109,7 @@
     <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
+                <iframe class="form-view iframe-placeholder" src="" width="100%" height="700px">
                 </iframe>
             </div>
         </div>

@@ -123,6 +123,29 @@
             text-align: center;
         }
 
+        .table-summary-grade {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid rgb(0, 0, 0);
+            margin-top: 10px;
+            page-break-inside: always;
+        }
+
+        .table-summary-grade td,
+        .table-summary-grade th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border: 1px solid rgb(0, 0, 0);
+            font-size: 9px;
+
+        }
+
+        .table-summary-grade th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align: center;
+        }
 
         .note {
             font-size: 12px;
@@ -174,8 +197,8 @@
                     <td>
                         <small>
                             GENERATED DATE: @php
-                            date_default_timezone_set('Asia/Manila');
-                            echo date('m/d/Y h:m:s');
+                                date_default_timezone_set('Asia/Manila');
+                                echo date('m/d/Y h:m:s');
                             @endphp
                         </small>
                     </td>

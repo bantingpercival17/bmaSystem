@@ -654,7 +654,69 @@ class AccountingController extends Controller
                 }
 
                 if (!$_payment_assessment->enrollment_assessment->student->account) {
-                    # code...
+                    $_payment_assessment = PaymentAssessment::find($_request->_assessment);
+                    // HOW TO IDENTIFY THE COUNT NUMBER OF THE STUDENT
+                    //return $_payment_assessment->enrollment_assessment->academic;
+                    if ($_payment_assessment->enrollment_assessment->academic->semester == 'First Semester') {
+                        if ($_payment_assessment->enrollment_assessment->year_level == '4') {
+                            $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
+                                ->where('enrollment_assessments.year_level', '4')
+                                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                                ->groupBy('enrollment_assessments.student_id')
+                                ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                                ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
+                                ->groupBy('enrollment_assessments.student_id')->get();
+                            $_enrollment_count = count($_enrollment_count);
+                            $_student_number = $_enrollment_count > 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
+                            $_email =  date("y") . $_student_number . '.' . str_replace(' ', '', strtolower($_payment_assessment->enrollment_assessment->student->last_name)) . '@bma.edu.ph';
+                            $_student_number = date("y") . $_student_number;
+                            $_account_details = array(
+                                'student_id' => $_payment_assessment->enrollment_assessment->student_id,
+                                'email' => $_email,
+                                'personal_email' => $_email,
+                                'student_number' => $_student_number,
+                                'password' => Hash::make($_student_number),
+                                'is_actived' => true,
+                                'is_removed' => false,
+                            );
+                            if ($_payment_assessment->enrollment_assessment->student->account) {
+                                $_payment_assessment->enrollment_assessment->student->account->is_actived = false;
+                                $_payment_assessment->enrollment_assessment->student->account->save();
+                                StudentAccount::create($_account_details);
+                            } else {
+                                StudentAccount::create($_account_details);
+                            }
+                        }
+                        if ($_payment_assessment->enrollment_assessment->year_level == 11) {
+                            $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
+                                ->where('enrollment_assessments.year_level', 11)
+                                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                                ->groupBy('enrollment_assessments.student_id')
+                                ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                                ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
+                                ->groupBy('enrollment_assessments.student_id')->get();
+                            $_enrollment_count = count($_enrollment_count);
+                            $_student_number = $_enrollment_count > 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
+                            $_email =  date("y") . $_student_number . '.' . str_replace(' ', '', strtolower($_payment_assessment->enrollment_assessment->student->last_name)) . '@bma.edu.ph';
+                            $_student_number = date("y") . $_student_number;
+                            $_account_details = array(
+                                'student_id' => $_payment_assessment->enrollment_assessment->student_id,
+                                'email' => $_email,
+                                'personal_email' => $_email,
+                                'student_number' => $_student_number,
+                                'password' => Hash::make($_student_number),
+                                'is_actived' => true,
+                                'is_removed' => false,
+                            );
+                            if ($_payment_assessment->enrollment_assessment->student->account) {
+                                $_payment_assessment->enrollment_assessment->student->account->is_actived = false;
+                                $_payment_assessment->enrollment_assessment->student->account->save();
+                                StudentAccount::create($_account_details);
+                            } else {
+                                StudentAccount::create($_account_details);
+                            }
+                        }
+                    }
                 }
             }
             return back()->with('success', 'Payment Transaction Complete!');
@@ -997,7 +1059,7 @@ class AccountingController extends Controller
             $view = "widgets.report.accounting.examination-permit";
             $academic =  strtoupper(Auth::user()->staff->current_academic()->semester) . ' / SY ' . Auth::user()->staff->current_academic()->school_year;
             $term = $_request->term;
-            $pdf = PDF::loadView($view, compact('sections', 'academic','term','course'));
+            $pdf = PDF::loadView($view, compact('sections', 'academic', 'term', 'course'));
             $file_name = 'Test Permit - ';
             return $pdf->setPaper([0, 0, 612.00, 792.00], 'portrait')->stream($file_name . '.pdf');
             /*  $report = new PaymentReports();

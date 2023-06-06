@@ -16,6 +16,7 @@ function start() {
 
 
 $(document).on('click', '.btn-form-document', function (evt) {
+    $('.form-view').append($("<iframe>")).attr('src', '')
     var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'];
     var file = $(this).data('document-url');
     file = file.replace(/^.*\./, '');
