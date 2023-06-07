@@ -1,5 +1,6 @@
 @page {
-    margin: 10px;
+    margin: 5px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 header {
@@ -25,7 +26,7 @@ footer {
     margin-left: 25px;
     margin-bottom: 25px;
     max-height: 12in;
-   /*  max-height: 12in;
+    /*  max-height: 12in;
    background-color: #aaa; */
 }
 
@@ -75,9 +76,11 @@ footer {
     page-break-after: always;
     content: counter(page);
 }
+
 .page-break:last-child {
     page-break-after: auto;
 }
+
 .text-fill-in {
     /* text-decoration: underline; */
     border-bottom: 1px solid rgb(0, 0, 0);
@@ -93,18 +96,18 @@ footer {
 }
 
 #footer {
-    text-align: center;
-    bottom: 0;
-    border-top: 0.1pt solid #aaa;
+    text-align:right;
+    bottom: 10px;
 }
 
 .page-number::after {
     content: "Page " counter(page);
 }
 
-  .table-content {
+.table-content {
     overflow-x: auto;
 }
+
 .summary-grade-header {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
@@ -160,6 +163,7 @@ footer {
     font-size: 14px;
 
 }
+
 .table-student-content {
     font-family: "Arial, Helvetica, sans-seriff";
     border-collapse: collapse;
@@ -173,6 +177,34 @@ footer {
     padding-top: 5px;
     padding-bottom: 5px;
     /* border: 1px solid #ddd; */
+    font-size: 10px;
+
+}
+
+.table {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0px;
+    table-layout: fixed;
+    page-break-inside: always;
+}
+
+.table-header td {
+    padding: 0px;
+    margin: 0px;
+}
+
+.table th {
+    text-align: center;
+}
+
+.table-onboard td,
+.table-onboard th {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px solid rgb(0, 0, 0);
     font-size: 10px;
 
 }

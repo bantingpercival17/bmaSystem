@@ -48,7 +48,7 @@
                                     @foreach (Auth::user()->staff->academics() as $_academic)
                                         <li>
                                             <a class="dropdown-item "
-                                                href="{{ Auth::user()->staff->navigation_dropdown_url() }}?_academic={{ base64_encode($_academic->id) }} {{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
+                                                href="?_academic={{ base64_encode($_academic->id) }} {{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
                                                 {{ $_academic->semester }} | {{ $_academic->school_year }}</a>
                                         </li>
                                     @endforeach
@@ -267,7 +267,7 @@
                     @foreach (Auth::user()->staff->academics() as $_academic)
                         <li>
                             <a class="dropdown-item "
-                                href="{{ Auth::user()->staff->navigation_dropdown_url() }}?_academic={{ base64_encode($_academic->id) }} {{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
+                                href="?_academic={{ base64_encode($_academic->id) }} {{ request()->is('accounting/particular/fee*') ? '&_department=' . request()->input('_department') : '' }}">
                                 {{ $_academic->semester }} | {{ $_academic->school_year }}</a>
                         </li>
                     @endforeach

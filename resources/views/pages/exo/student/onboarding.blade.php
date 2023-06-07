@@ -24,7 +24,7 @@
             <div class="card-header">
                 <form action="{{ route('exo.onboarding-student-list-report') }}" method="get">
                     <label for="" class="fw-bolder h3 text-primary">ONBOARDING MASTER LIST</label>
-                    <input type="hidden" name="academic" value="{{ request()->input('_academic') }}">
+                    <input type="hidden" name="_academic" value="{{ request()->input('_academic') }}">
                     <div class="row">
                         <div class="col-md">
                             <label for="" class="fw-bolder text-muted">COURSE</label>
@@ -59,6 +59,8 @@
             <div class="card-header">
                 <form action="{{ route('exo.absent-student-list-report') }}" target="_blank" method="get">
                     <label for="" class="fw-bolder h3 text-primary">ABSENT MIDSHIPMAN</label>
+                    <input type="hidden" name="_academic" value="{{ request()->input('_academic') }}">
+                    
                     <div class="row">
                         <div class="col-md">
                             <label for="" class="fw-bolder text-muted">COURSE</label>

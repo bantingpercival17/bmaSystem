@@ -42,7 +42,7 @@
                                         @php
                                             $contentNumber += 1;
                                         @endphp
-                                        <tr>
+                                        <tr class="{{ $contentNumber >= 50 ? 'page-break' : '' }}">
                                             <th>
                                                 {{ $key + 1 }}
                                             </th>
@@ -73,15 +73,6 @@
                                             @php
                                                 $contentNumber = 0;
                                             @endphp
-                                            <tr class="page-break">
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
                                         @endif
                                     @endforeach
                                 @else
