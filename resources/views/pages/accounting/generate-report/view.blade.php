@@ -177,24 +177,34 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <label for="">Examination Term</label>
-                                                    <select name="term" class="form-select">
+                                                    <label for="" class="fw-bolder text-muted">Examination
+                                                        Term</label>
+                                                    <select name="term" class="form-select form-select-sm">
                                                         <option value="midterm">Midterm Examination Permit</option>
                                                         <option value="finals">Finals Examination Permit</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <label for="">Course</label>
-                                                    <select name="course" class="form-select">
+                                                    <label for="" class="fw-bolder text-muted">Course</label>
+                                                    <select name="course" class="form-select form-select-sm">
                                                         <option value="1">BSME</option>
                                                         <option value="2">BSMT</option>
                                                         <option value="3">PBM SPECIALIZATION</option>
                                                     </select>
                                                 </div>
                                             </div>
-
+                                            <div class="form-group">
+                                                <label for="" class="fw-bolder text-muted">Academic Year</label>
+                                                <select name="academic" class="form-select form-select-sm">
+                                                    @foreach ($_academic as $academic)
+                                                        <option value="{{ base64_encode($academic->id) }}">
+                                                            {{ $academic->semester }} | {{ $academic->school_year }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
 
                                         </div>
                                         <div class="form-group">
@@ -213,7 +223,8 @@
                                     </ul>
                                 </td>
                                 <td>
-                                    <form action="{{ route('accounting.employee-attendance') }}" method="get"  target="_blank">
+                                    <form action="{{ route('accounting.employee-attendance') }}" method="get"
+                                        target="_blank">
 
                                         <div class="row">
                                             <div class="form-group col-md-6">

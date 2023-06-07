@@ -446,6 +446,13 @@ class CourseOffer extends Model
             ->where('is_removed', false)
             ->orderBy('section_name', 'Desc');
     }
+    public function sections_academic($_academic)
+    {
+        return $this->hasMany(Section::class, 'course_id')
+            ->where('academic_id', $_academic->id)
+            ->where('is_removed', false)
+            ->orderBy('section_name', 'Desc');
+    }
     public function units($_data)
     {
         return $this->hasMany(CurriculumSubject::class, 'course_id')

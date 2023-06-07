@@ -101,6 +101,10 @@
             border-bottom: 1px solid rgb(0, 0, 0);
             text-align: center;
         }
+
+        .text-header-content {
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -149,13 +153,13 @@
                                         <tr>
                                             <td style="width:55px;">STDNT NO:</td>
                                             <th class="text-fill-in">
-                                                {{ $student->student->account->student_number }}
+                                                {{ $student->student->account ? $student->student->account->student_number : '' }}
                                             </th>
                                         </tr>
                                         <tr>
                                             <td>COURSE:</td>
                                             <th class="text-fill-in">
-                                                {{ strtoupper($student->student->current_enrollment->course->course_name) }}
+                                                {{ strtoupper($course->course_name) }}
                                             </th>
                                         </tr>
                                     </thead>
@@ -163,7 +167,7 @@
                                 <div class="content-permit">
                                     <h4 class="text-header-content">
                                         {{ strtoupper($term) }}
-                                        EXAM
+                                        EXAMINATION
                                     </h4>
                                     <table class="table-2">
                                         <thead>

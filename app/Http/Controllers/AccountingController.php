@@ -1054,15 +1054,14 @@ class AccountingController extends Controller
     {
         try {
             $course = CourseOffer::find($_request->course);
-            $sections = $course->sections;
+            $academic = AcademicYear::find(base64_decode($_request->academic));
+            $sections = $course->sections_academic($academic)->get();
             $view = "widgets.report.accounting.examination-permit";
-            $academic =  strtoupper(Auth::user()->staff->current_academic()->semester) . ' / SY ' . Auth::user()->staff->current_academic()->school_year;
+            $academic =  strtoupper($academic->semester) . ' SY ' . $academic->school_year;
             $term = $_request->term;
-            $pdf = PDF::loadView($view, compact('sections', 'academic', 'term', 'course'));
-            $file_name = 'Test Permit - ';
-            return $pdf->setPaper([0, 0, 612.00, 792.00], 'portrait')->stream($file_name . '.pdf');
-            /*  $report = new PaymentReports();
-            return $report->examination_permit($section); */
+            $file_name = 'TEST-PERMIT-' . strtoupper($term) . 'EXAMINATION-' . strtoupper($course->course_name);
+            $pdf = PDF::loadView($view, compact('sections', 'term', 'course', 'academic'));
+            return $pdf->setPaper([0, 0, 612.00, 792.00], 'portrait')->donwload($file_name . '.pdf');
         } catch (\Throwable $th) {
             //throw $th;
         }
