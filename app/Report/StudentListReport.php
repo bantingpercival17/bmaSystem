@@ -51,5 +51,11 @@ class StudentListReport
         $file_name = strtoupper($course->course_name . '-' . $_year_level . '_' . Auth::user()->staff->current_academic()->school_year . "-" . Auth::user()->staff->current_academic()->semester);
         return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
     }
-    
+    function semestral_enrollees($courses)
+    {
+        
+        $pdf = PDF::loadView("widgets.report.enrollment.semestral-enrollee", compact('courses'));
+        $file_name = 'SEMESTRAL-ENROLLEE-' . Auth::user()->staff->current_academic()->semester . '-' . Auth::user()->staff->current_academic()->school_year;
+        return $pdf->setPaper($this->legal, 'portrait')->download($file_name . '.pdf');
+    }
 }

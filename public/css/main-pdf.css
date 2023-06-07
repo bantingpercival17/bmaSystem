@@ -4,7 +4,6 @@
 
 header {
     position: fixed;
-
     width: 100%;
     font-size: 12px !important;
     text-align: left;
@@ -19,15 +18,15 @@ footer {
 }
 
 .page-content {
-    top: 1.3in;
-    position: fixed;
+    top: 0.6in;
+    position: relative;
     overflow: auto;
-    text-align: left;
     margin-right: 25px;
     margin-left: 25px;
     margin-bottom: 25px;
-
-
+    max-height: 12in;
+   /*  max-height: 12in;
+   background-color: #aaa; */
 }
 
 .table-content {
@@ -99,10 +98,13 @@ footer {
     border-top: 0.1pt solid #aaa;
 }
 
-.page-number {
+.page-number::after {
     content: "Page " counter(page);
 }
 
+  .table-content {
+    overflow-x: auto;
+}
 .summary-grade-header {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
@@ -114,6 +116,7 @@ footer {
     width: 100%;
     border: 1px solid rgb(0, 0, 0);
     margin-top: 10px;
+    table-layout: fixed;
     page-break-inside: always;
 }
 
@@ -155,5 +158,21 @@ footer {
     padding-left: 10px;
     /*  border: 1px solid rgb(126, 126, 126); */
     font-size: 14px;
+
+}
+.table-student-content {
+    font-family: "Arial, Helvetica, sans-seriff";
+    border-collapse: collapse;
+    width: 100%;
+    /*  border: 1px solid #ddd;
+    border: 1px solid #ddd; */
+}
+
+.table-student-content td,
+.table-student-content th {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    /* border: 1px solid #ddd; */
+    font-size: 10px;
 
 }

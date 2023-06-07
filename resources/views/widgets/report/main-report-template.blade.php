@@ -7,25 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title-report')</title>
     <link rel="stylesheet" href="{{ public_path('css/main-pdf.css') }}">
-    <style>
-        @page {
-            margin: 5px;
-            margin-top: 10px;
-        }
-
-        .table-container {
-            position: absolute;
-            top: 1cm;
-            left: 1cm;
-            z-index: 1;
-        }
-
-
-
-        td {
-            padding: 5px;
-        }
-    </style>
+   
 </head>
 
 <body>

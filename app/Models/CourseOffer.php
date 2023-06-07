@@ -128,6 +128,59 @@ class CourseOffer extends Model
             ->groupBy('enrollment_assessments.id')
             ->orderBy('student_details.last_name', 'asc')->orderBy('student_details.first_name', 'asc');
     }
+
+    public function student_officially_enrolled_per_year($data)
+    {
+        $_query = $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
+            //->select('enrollment_assessments.curriculum_id', 'enrollment_assessments.course_id', 'enrollment_assessments.academic_id', 'enrollment_assessments.year_level','enrollment_assessments.student_id')
+            ->join('student_details', 'student_details.id', 'enrollment_assessments.student_id')
+            ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
+            ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.year_level', $data)
+            //->where('enrollment_assessments.curriculum_id', $data[1])
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('payment_transactions.is_removed', false)
+            ->groupBy('enrollment_assessments.id')
+            ->orderBy('student_details.last_name', 'asc')->orderBy('student_details.first_name', 'asc');
+        if ($data === 1) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '!=', 7);
+        }
+        if ($data === 2) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '>', 4);
+        }
+        return $_query;
+    }
+    public function student_officially_enrolled_per_year_and_curriculum($data, $curriculum)
+    {
+        $_query = $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->select('enrollment_assessments.*')
+            //->select('enrollment_assessments.curriculum_id', 'enrollment_assessments.course_id', 'enrollment_assessments.academic_id', 'enrollment_assessments.year_level','enrollment_assessments.student_id')
+            ->join('student_details', 'student_details.id', 'enrollment_assessments.student_id')
+            ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
+            ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.year_level', $data)
+            //->where('enrollment_assessments.curriculum_id', $data[1])
+            ->where('enrollment_assessments.is_removed', false)
+            ->where('payment_transactions.is_removed', false)
+            ->groupBy('enrollment_assessments.id')
+            ->orderBy('student_details.last_name', 'asc')->orderBy('student_details.first_name', 'asc');
+        /*  if ($data === 1) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '!=', 7);
+        }
+        if ($data === 2) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '>', 4);
+        } */
+        if ($curriculum <= 4) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '<=', 4);
+        }
+        if ($curriculum >= 5) {
+            $_query = $_query->where('enrollment_assessments.curriculum_id', '>=', 5);
+        }
+        return $_query;
+    }
     public function enrolled_list($data)
     {
         return $this->hasMany(EnrollmentAssessment::class, 'course_id')
