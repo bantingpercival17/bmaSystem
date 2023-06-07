@@ -1061,7 +1061,7 @@ class AccountingController extends Controller
             $term = $_request->term;
             $file_name = 'TEST-PERMIT-' . strtoupper($term) . 'EXAMINATION-' . strtoupper($course->course_name);
             $pdf = PDF::loadView($view, compact('sections', 'term', 'course', 'academic'));
-            return $pdf->setPaper([0, 0, 612.00, 792.00], 'portrait')->donwload($file_name . '.pdf');
+            return $pdf->setPaper([0, 0, 612.00, 792.00], 'portrait')->download($file_name . '.pdf');
         } catch (\Throwable $th) {
             //throw $th;
         }
