@@ -61,6 +61,7 @@ class AccountingController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('accounting');
+        set_time_limit(8000000);
     }
     public function index()
     {

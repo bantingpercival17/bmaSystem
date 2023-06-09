@@ -15,7 +15,6 @@ class StudentListReport
 {
     public function __construct()
     {
-
         $this->legal = [0, 0, 612.00, 1008.00];
         $this->short = [0, 0, 612.00, 792.00];
     }
