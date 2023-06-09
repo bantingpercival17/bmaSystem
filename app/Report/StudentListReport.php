@@ -55,7 +55,7 @@ class StudentListReport
     {
         
         $pdf = PDF::loadView("widgets.report.enrollment.semestral-enrollee", compact('courses'));
-        $file_name = 'SEMESTRAL-ENROLLEE-' . Auth::user()->staff->current_academic()->semester . '-' . Auth::user()->staff->current_academic()->school_year;
+        $file_name = 'OFFICAL LIST OF ENROLLED MIDSHIPMEN-' .strtoupper( str_replace(' ','-',Auth::user()->staff->current_academic()->semester . '-' . Auth::user()->staff->current_academic()->school_year));
         return $pdf->setPaper($this->legal, 'portrait')->download($file_name . '.pdf');
     }
 }

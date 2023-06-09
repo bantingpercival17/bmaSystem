@@ -1,5 +1,5 @@
 @extends('widgets.report.main-report-template')
-@section('title-report', 'OFFICIALLY ENROLLED : ' . Auth::user()->staff->current_academic()->semester . '-' .
+@section('title-report', 'OFFICAL LIST OF ENROLLED MIDSHIPMEN : ' . Auth::user()->staff->current_academic()->semester . '-' .
     Auth::user()->staff->current_academic()->school_year)
 @section('content')
     @foreach ($courses as $course)
@@ -14,10 +14,14 @@
                         <h3 class="text-center" style="margin:0px;">
                             <b>{{ str_replace('BS', 'BACHELOR OF SCIENCE IN', $course->course_name) }}</b>
                         </h3>
-                        <h3 class="text-center" style="margin:0px;"><b>OFFICIALLY ENROLLED</b></h3>
+                        <h3 class="text-center" style="margin:0px;"><b>OFFICAL LIST OF ENROLLED MIDSHIPMEN</b></h3>
+                        <h3 class="text-center" style="margin:0px;">
+                            <b>{{ strtoupper(Auth::user()->staff->current_academic()->semester . ', AY ' . Auth::user()->staff->current_academic()->school_year) }}</b>
+                        </h3>
                         <h3 class="text-center" style="margin:0px;">
                             <b>{{ strtoupper(Auth::user()->staff->convert_year_level($level)) }}</b>
                         </h3>
+                        <br>
 
                     </div>
                     <div class="table-content">
