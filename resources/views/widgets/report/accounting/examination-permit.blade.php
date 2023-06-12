@@ -187,9 +187,14 @@
                                     </table>
                                 </div>
                                 <div class="footer-permit">
-                                    <span class="text-small">Valid only when duly signed.</span> <br> <br>
-
-                                    <label class="text-medium text-underline"><b>IRENE CAMACHO</b></label>
+                                    <img src="{{ public_path() . '/assets\img\signature\IRENE.png' }}" alt=""
+                                    style="align-content: center; width:250px; margin:0px; position:absolute;">
+<br>
+                                    <span class="text-small">Valid only when duly signed.</span> <br>
+                                   
+                                    <label class="text-medium text-underline">
+                                        <b>IRENE CAMACHO</b>
+                                    </label>
                                     <br>
                                     <label class="text-medium">Authorized Signature</label>
                                 </div>
