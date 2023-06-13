@@ -19,6 +19,10 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class EnrollmentController extends Controller
 {
+    public function __construct()
+    {
+        set_time_limit(800000000);
+    }
     public function enrollment_view(Request $_request)
     {
         try {
