@@ -48,7 +48,7 @@
                                     </div>
                                     @if (!$_student->account)
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <small class="fw-bolder">SENIOR HIGH SCHOOL STRAND</small><br>
 
                                                 <span class="badge bg-primary">
@@ -59,6 +59,7 @@
                                 </div>
                                 @if ($_student->enrollment_application->enrollment_category == 'SBT ENROLLMENT')
                                     <div class="row">
+                                        
                                         <div class="sbt-enrollment col-md">
                                             <small class="text-muted fw-bolder">SHIPBOARD ENROLLMENT</small><br>
                                             <span class="badge bg-primary">

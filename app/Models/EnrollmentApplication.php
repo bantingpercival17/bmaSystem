@@ -18,4 +18,11 @@ class EnrollmentApplication extends Model
     {
         return $this->belongsTo(AcademicYear::class, 'academic_id');
     }
+    public function color_course()
+    {
+        $_course_color = $this->course_id == 1 ? 'bg-info' : '';
+        $_course_color = $this->course_id == 2 ? 'bg-primary' : $_course_color;
+        $_course_color = $this->course_id == 3 ? 'bg-warning text-white' : $_course_color;
+        return $_course_color;
+    }
 }

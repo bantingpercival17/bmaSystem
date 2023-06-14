@@ -1,14 +1,14 @@
-@section('page-title', 'Enrollment Assessment')
+@section('page-title', 'Enrollment')
 
 <div class="row">
     <div class="col-md-8">
-        <p class="display-6 fw-bolder text-primary">ENROLLMENT ASSESSMENT</p>
+        <p class="display-6 fw-bolder text-primary">ENROLLMENT</p>
         <div class="row">
             <div class="col">
                 <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                 <div class="form-group search-input">
                     <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
-                        name="_student">
+                        wire:model="searchInput" wire:keydown="searchStudents">
                 </div>
             </div>
         </div>
@@ -18,32 +18,36 @@
                 <span class="fw-bolder">
                     Recent Enrollee
                 </span>
-                @if (request()->input('_student'))
+                @if ($searchInput != '')
                     <p for="" class="h5">
                         <small class="text-muted"> Search Result:</small>
-                        <span class="fw-bolder h4 text-primary"> {{ strtoupper(request()->input('_student')) }}</span>
+                        <span class="fw-bolder h6 text-primary"> {{ strtoupper($searchInput) }}</span>
                     </p>
                 @endif
             </div>
 
-            @if (!request()->input('_student'))
-                @if (count($students) > 0)
+            @if ($searchInput == '')
+                @if (count($studentsList) > 0)
                     <div class="mb-3 float-end">
-                        {{ $students->links() }}
+                        {{ $studentsList->links() }}
                     </div>
                 @endif
             @else
                 <span class="text-muted h6">
-                    No. Result: <b>{{ count($students) }}</b>
+                    No. Result: <b>{{ count($studentLists) }}</b>
                 </span>
             @endif
         </div>
 
         <div class="search-container">
-
             @include('pages.registrar.enrollment.widgets.enrollment-card-v2')
-            @if (count($students) > 0)
+            @if (count($studentsList) > 0)
                 @yield('student-enrollment-card')
+            @elseif(count($studentLists) > 0)
+                @php
+                    $studentsList = $studentLists;
+                @endphp
+                @include('pages.registrar.enrollment.widgets.enrollment-card-v2')
             @else
                 <div class="card">
                     <div class="row no-gutters">
@@ -69,22 +73,22 @@
                 </div>
             @endif
         </div>
-        @if (!request()->input('_student'))
-            @if (count($students) > 0)
+        @if ($searchInput == '')
+            @if (count($studentsList) > 0)
                 <div class="mb-3 float-end">
-                    {{ $students->links() }}
+                    {{ $studentsList->links() }}
                 </div>
             @endif
         @endif
 
     </div>
     <div class="col-md-4">
-        @foreach ($_courses as $_course)
+        @foreach ($courseLists as $_course)
             <div class="col-md">
                 <a
                     href="{{ route('enrollment.view-v2') }}?_course={{ base64_encode($_course->id) }}&view={{ request()->input('view') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
-                    <div class="card  iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
-                        data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0">
+                    <div class="card"{{--  data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
+                        data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0" --}}>
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <h5 class="text-primary">

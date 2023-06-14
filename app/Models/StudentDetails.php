@@ -146,24 +146,20 @@ class StudentDetails extends Model
             $_students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'student_details.extention_name')
                 ->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
                 ->where('student_accounts.student_number', 'like', '%' . $_data . '%')
-                ->orderBy('student_details.last_name', 'asc')
-                ->get();
+                ->orderBy('student_details.last_name', 'asc');
         } else {
             if ($_count > 1) {
                 $_students = StudentDetails::where('is_removed', false)
                     ->where('last_name', 'like', '%' . $_student[0] . '%')
                     ->where('first_name', 'like', '%' . trim($_student[1]) . '%')
-                    ->orderBy('last_name', 'asc')
-                    ->get();
+                    ->orderBy('last_name', 'asc');
             } else {
                 $_students = StudentDetails::where('is_removed', false)
                     ->where('last_name', 'like', '%' . $_student[0] . '%')
-                    ->orderBy('last_name', 'asc')
-                    ->get();
+                    ->orderBy('last_name', 'asc');
             }
         }
-
-        return $_students;
+        return $_students->get();
     }
     /* Enrollment Application */
     public function enrollment_application_list()
