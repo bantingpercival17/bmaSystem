@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Controllers\MedicalController;
+use App\Http\Livewire\Medical\ApplicantView;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('medical')->group(function () {
@@ -20,5 +21,8 @@ Route::prefix('medical')->group(function () {
         Route::get('/student/medical-appointment/report', [MedicalController::class, 'student_medical_list_report'])->name('medical.export-medical-student-list');
         Route::get('/appointment-schedule', [MedicalController::class, 'appointment_view'])->name('medical.appoitnment-schedule');
         Route::post('/appointment-schedule', [MedicalController::class, 'appointment_store'])->name('medical.appoitnment-schedule-store');
+
+        // Livewire
+        Route::get('/applicant/overview', ApplicantView::class)->name('medical.applicant-view');
     });
 });

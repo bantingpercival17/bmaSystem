@@ -396,7 +396,7 @@ class ApplicantController extends Controller
     public function medical_overview(Request $_request)
     {
         $_courses = CourseOffer::all();
-
+        //$categories = array('waiting_scheduled');
         $_table_content = array(
             array('waiting for Scheduled', 'waiting_scheduled'),
             array('scheduled', 'scheduled'),

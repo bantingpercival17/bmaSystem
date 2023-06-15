@@ -22,13 +22,11 @@ class EnrollmentView extends Component
         $_courses = CourseOffer::all();
         $_curriculums = Curriculum::where('is_removed', false)->get();
         $_academic = Auth::user()->staff->current_academic();
-        /*  $studentsList = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+         $studentsList = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
             ->leftJoin('enrollment_applications as ea', 'ea.student_id', 'student_details.id')
             ->where('ea.academic_id', $_academic->id)
             ->whereNull('ea.is_approved')
-            ->where('ea.is_removed', false)->paginate(10); */
-        $studentsList = [];
-        //$this->studentsList = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')->paginate(10);
+            ->where('ea.is_removed', false)->paginate(10);
         return view('livewire.registrar.enrollment-view', compact('_courses', 'courseLists', '_curriculums', 'studentsList'));
     }
     function searchStudents()

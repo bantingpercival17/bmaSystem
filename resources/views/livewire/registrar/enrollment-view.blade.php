@@ -14,15 +14,15 @@
         </div>
         <div class="d-flex justify-content-between mb-3">
             <div>
-
-                <span class="fw-bolder">
-                    Recent Enrollee
-                </span>
                 @if ($searchInput != '')
                     <p for="" class="h5">
                         <small class="text-muted"> Search Result:</small>
                         <span class="fw-bolder h6 text-primary"> {{ strtoupper($searchInput) }}</span>
                     </p>
+                @else
+                    <span class="fw-bolder">
+                        Recent Enrollee
+                    </span>
                 @endif
             </div>
 
@@ -47,7 +47,7 @@
                 @php
                     $studentsList = $studentLists;
                 @endphp
-                @include('pages.registrar.enrollment.widgets.enrollment-card-v2')
+                @yield('student-enrollment-card')
             @else
                 <div class="card">
                     <div class="row no-gutters">
