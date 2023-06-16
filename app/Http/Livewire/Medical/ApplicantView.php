@@ -34,7 +34,7 @@ class ApplicantView extends Component
             array('failed', 'medical_result_failed')
         );
         $dates = MedicalAppointmentSchedule::orderBy('date', 'asc')->where('is_close', false)->get();
-        $this->academic =  request()->query('_academic');
+        $this->academic =  request()->query('_academic') ?: $this->academic;
 
         if ($this->selecteCategories == '') {
             $this->applicants = ApplicantAccount::select('applicant_accounts.*')
@@ -60,15 +60,29 @@ class ApplicantView extends Component
     {
         $this->selectedCategory = strtoupper(str_replace('_', ' ', $this->selecteCategories));
     }
+    function categoryCourse()
+    {
+        $course = 'ALL COURSE';
+        if ($this->selectCourse != 'ALL COURSE') {
+            $course = CourseOffer::find($this->selectCourse);
+            $course = $course->course_name;
+        }
+        $this->selectedCourse = strtoupper($course);
+    }
     function filtered()
     {
+        $this->applicants = [];
         $query =  ApplicantAccount::select('applicant_accounts.*')
             //->where('applicant_accounts.academic_id', base64_decode(request()->query('_academic')))
-            ->where('applicant_accounts.academic_id', 6)
+            ->where('applicant_accounts.academic_id', base64_decode($this->academic))
             ->where('applicant_briefings.is_removed', false)
             ->groupBy('applicant_accounts.id')
             ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false);
+        // Sort By Courses
+        if ($this->selectCourse != 'ALL COURSE') {
+            $query = $query->where('applicant_accounts.course_id', $this->selectCourse);
+        }
         if ($this->searchInput != '') {
             $_student = explode(',', $this->searchInput); // Seperate the Sentence
             $_count = count($_student);
@@ -82,9 +96,9 @@ class ApplicantView extends Component
                     ->orderBy('applicant_detials.last_name', 'asc');
             }
         }
-        if ($this->selectCourse != 'ALL COURSE') {
-            $query = $query->where('applicant_accounts.course_id', $this->selectCourse);
-        }
+
+
+
         if ($this->selecteCategories == 'waiting_for_scheduled') {
             $this->applicants = $query->leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                 ->whereNull('ama.applicant_id')->get();
