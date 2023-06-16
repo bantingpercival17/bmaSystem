@@ -116,11 +116,11 @@
                                                     <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->id) }}"
                                                         class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
                                                     <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                        data-applicant="{{ base64_encode($_data->id) }}"
+                                                        wire:click="modalData({{ base64_encode($_data->id) }})"
                                                         data-bs-toggle="modal"
                                                         data-bs-target=".modal-medical-fail">FAIL</a>
                                                     <a class="btn btn-info btn-sm w-100 text-white mb-2 btn-medical"
-                                                        data-applicant="{{ base64_encode($_data->id) }}"
+                                                        wire:click="modalData({{ base64_encode($_data->id) }})"
                                                         data-bs-toggle="modal"
                                                         data-bs-target=".modal-medical-pending">PENDING</a>
                                                 </div>
@@ -204,6 +204,52 @@
                             </select>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- Modals --}}
+    <div class="modal fade modal-medical-fail" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Medical Examination - Fail</h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form {{-- action="{{ route('medical.student-medical-result') }}" --}} wire:submit.prevent="storeFailMedical" method="get">
+                        <div class="form-group">
+                            <label for="" class="form-label fw-bolder">REMARKS</label>
+                            {{$applicantID}}
+                            <input type="text" wire:modal="remarks" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">SUBMIT</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade modal-medical-pending" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Medical Examination - Pending</h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form wire:submit.prevent="storePendingMedical" method="get">
+                        <div class="form-group">
+                            <label for="" class="form-label fw-bolder">REMARKS</label>
+                            <input type="text" wire:model="remarks" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">SUBMIT</button>
+                    </form>
+
                 </div>
             </div>
         </div>

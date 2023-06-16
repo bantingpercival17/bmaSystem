@@ -2,10 +2,13 @@
 
 namespace App\Http\Livewire\Medical;
 
+use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
+use App\Models\ApplicantMedicalResult;
 use App\Models\CourseOffer;
 use App\Models\MedicalAppointmentSchedule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -20,7 +23,8 @@ class ApplicantView extends Component
     public $applicants = [];
     public $selectedCourse = 'ALL COURSE';
     public $selectedCategory = 'WAITING FOR SCHEDULED';
-
+    public $applicantID;
+    public $remarks;
     public function render()
     {
         $courseDashboard = CourseOffer::all();
@@ -143,5 +147,53 @@ class ApplicantView extends Component
                 ->where('applicant_medical_results.is_removed', false)
                 ->groupBy('applicant_accounts.id')->get();
         }
+    }
+    function modalData($data)
+    {
+        $this->applicantID  = $data;
+    }
+    function storeFailMedical()
+    {
+        $this->medical_result(base64_encode(2));
+    }
+    function storePendingMedical()
+    {
+        $this->medical_result(false);
+    }
+    function medical_result($result)
+    {
+        $_applicant = ApplicantAccount::find(base64_decode($this->applicantID));
+        if ($result) {
+            $_details = array('applicant_id' => base64_decode($this->applicantID), 'is_fit' => base64_decode($result), 'remarks' => $this->remarks);
+        } else {
+            $_details = array('applicant_id' => base64_decode($this->applicantID), 'is_pending' => base64_decode($result), 'remarks' => $this->remarks);
+        }
+        $_medical_result = ApplicantMedicalResult::where('applicant_id', $_applicant->id)->where('is_removed', false)->first();
+        if ($_medical_result) {
+            $_medical_result->is_removed = true;
+            $_medical_result->save();
+            ApplicantMedicalResult::create($_details);
+        } else {
+            ApplicantMedicalResult::create($_details);
+        }
+        $_email_model = new ApplicantEmail();
+        $_email = $_applicant->email;
+        //$_email = 'p.banting@bma.edu.ph';
+        /* if ($result) {
+            if (base64_decode($result) == 1) {
+                // Email Passed
+                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+            } else {
+                // Email Failed
+                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+            }
+        } else {
+            //Email "Pending";
+            Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+        } */
+    }
+    public function showAlert()
+    {
+        $this->dispatchBrowserEvent('alert', ['message' => 'Data saved successfully!']);
     }
 }
