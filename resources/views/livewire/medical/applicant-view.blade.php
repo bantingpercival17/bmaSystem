@@ -6,6 +6,39 @@
     <div class="col-md-12">
         <p class="display-6 fw-bolder text-primary">{{ $pageTitle }}</p>
         <div class="row">
+            <div class="col-lg-4 col-md-12">
+                <p class="h4 text-info fw-bolder">FILTER SELECTION</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
+                        <div class="form-group search-input">
+                            <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
+                                wire:model="searchInput" wire:keydown="searchStudents">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <small class="text-primary"><b>CATEGORY</b></small>
+                        <div class="form-group search-input">
+                            <select class="form-select" wire:model="selecteCategories" wire:click="categoryChange">
+                                @foreach ($selectContent as $item)
+                                    <option value="{{ $item[1] }}">{{ ucwords($item[0]) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <small class="text-primary"><b>COURSE</b></small>
+                        <div class="form-group search-input">
+                            <select wire:model="selectCourse" class="form-select" wire:click="categoryCourse">
+                                <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
+                                @foreach ($courses as $course)
+                                    <option value="{{ $course->id }}">{{ ucwords($course->course_name) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-8">
                 <div class="d-flex justify-content-between mb-3">
                     @if ($searchInput != '')
@@ -113,16 +146,12 @@
                                                 <div class="medical-result">
                                                     <label for="" class="fw-bolder text-info">MEDICAL
                                                         RESULT</label>
-                                                    <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->id) }}"
-                                                        class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
-                                                    <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                        wire:click="modalData({{ base64_encode($_data->id) }})"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target=".modal-medical-fail">FAIL</a>
-                                                    <a class="btn btn-info btn-sm w-100 text-white mb-2 btn-medical"
-                                                        wire:click="modalData({{ base64_encode($_data->id) }})"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target=".modal-medical-pending">PENDING</a>
+                                                    <button class="btn btn-primary btn-sm w-100  mb-2"
+                                                        wire:click="medicalResult({{ $_data->id }},1,null)">FIT</button>
+                                                    <button class="btn btn-danger btn-sm w-100 mb-2"
+                                                        wire:click="medicalResultDialogBox({{ $_data->id }},2,'Medical Examination - Fail')">FAILED</button>
+                                                    <button class="btn btn-info text-white btn-sm w-100 mb-2"
+                                                        wire:click="medicalResultDialogBox({{ $_data->id }},3,'Medical Examination - Pending')">PENDING</button>
                                                 </div>
                                             @endif
                                             @if (
@@ -138,12 +167,10 @@
                                                         @endif
                                                     @else
                                                         <span class="badge bg-info mb-4">PENDING RESULT</span>
-                                                        <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($_data->id) }}"
-                                                            class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
-                                                        <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                            data-applicant="{{ base64_encode($_data->id) }}"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target=".modal-medical-fail">FAIL</a>
+                                                        <button class="btn btn-primary btn-sm w-100  mb-2"
+                                                            wire:click="medicalResult({{ $_data->id }},1,null)">FIT</button>
+                                                        <button class="btn btn-danger btn-sm w-100 mb-2"
+                                                            wire:click="medicalResultDialogBox({{ $_data->id }},2,'Medical Examination - Fail')">FAILED</button>
                                                     @endif
                                                     <span
                                                         class="badge bg-secondary">{{ $_data->medical_result->created_at->format('F d,Y') }}</span>
@@ -171,85 +198,6 @@
                             </div>
                         </div>
                     @endif
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <p class="h4 text-info fw-bolder">FILTER SELECTION</p>
-                <div class="row">
-                    <div class="col-12">
-                        <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
-                        <div class="form-group search-input">
-                            <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
-                                wire:model="searchInput" wire:keydown="searchStudents">
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <small class="text-primary"><b>CATEGORY</b></small>
-                        <div class="form-group search-input">
-                            <select class="form-select" wire:model="selecteCategories" wire:click="categoryChange">
-                                @foreach ($selectContent as $item)
-                                    <option value="{{ $item[1] }}">{{ ucwords($item[0]) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <small class="text-primary"><b>COURSE</b></small>
-                        <div class="form-group search-input">
-                            <select wire:model="selectCourse" class="form-select" wire:click="categoryCourse">
-                                <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
-                                @foreach ($courses as $course)
-                                    <option value="{{ $course->id }}">{{ ucwords($course->course_name) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- Modals --}}
-    <div class="modal fade modal-medical-fail" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel1">Medical Examination - Fail</h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form {{-- action="{{ route('medical.student-medical-result') }}" --}} wire:submit.prevent="storeFailMedical" method="get">
-                        <div class="form-group">
-                            <label for="" class="form-label fw-bolder">REMARKS</label>
-                            {{$applicantID}}
-                            <input type="text" wire:modal="remarks" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-outline-primary">SUBMIT</button>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade modal-medical-pending" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel1">Medical Examination - Pending</h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form wire:submit.prevent="storePendingMedical" method="get">
-                        <div class="form-group">
-                            <label for="" class="form-label fw-bolder">REMARKS</label>
-                            <input type="text" wire:model="remarks" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-outline-primary">SUBMIT</button>
-                    </form>
-
                 </div>
             </div>
         </div>

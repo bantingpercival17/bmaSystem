@@ -76,7 +76,8 @@
                     <div class="row">
                         <div class="col-md-6">
                             <small class="fw-bolder text-muted">CATEGORY : </small> <br>
-                            <label for="" class="fw-bolder text-primary">{{ $selectCategories }}</label>
+                            <label for=""
+                                class="fw-bolder text-primary">{{ str_replace('_', ' ', strtoupper($selectCategories)) }}</label>
                         </div>
                         <div class="col-md-6">
                             <small class="fw-bolder text-muted">COURSE : </small> <br>
@@ -141,15 +142,12 @@
                                                     <label for="" class="fw-bolder text-info">MEDICAL
                                                         RESULT</label>
                                                     <button class="btn btn-primary btn-sm w-100  mb-2"
-                                                        wire:click="medicalResult({{ $data->id }},{{ $data->enrollment_id }},1)">FIT</button>
-                                                    <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                        data-applicant="{{ base64_encode($data->id) }}"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target=".modal-medical-fail">FAIL</a>
-                                                    <a class="btn btn-info btn-sm w-100 text-white mb-2 btn-medical"
-                                                        data-applicant="{{ base64_encode($data->id) }}"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target=".modal-medical-pending">PENDING</a>
+                                                        wire:click="medicalResult({{ $data->id }},{{ $data->enrollment_id }},1,null)">FIT</button>
+                                                    <button class="btn btn-danger btn-sm w-100  mb-2"
+                                                        wire:click="medicalResultDialogBox({{ $data->id }},{{ $data->enrollment_id }},2,'Medical Examination - Fail')">FAILED</button>
+                                                    <button class="btn btn-info text-white btn-sm w-100  mb-2"
+                                                        wire:click="medicalResultDialogBox({{ $data->id }},{{ $data->enrollment_id }},0,'Medical Examination - Pending')">PENDING</button>
+
                                                 </div>
                                             @endif
                                             @if (
@@ -157,23 +155,23 @@
                                                     $selectCategories == 'medical_result_pending' ||
                                                     $selectCategories == 'medical_result_failed')
                                                 @if ($data->enrollment_assessment->medical_result)
-                                                    @if ($data->medical_result->is_fit !== null)
-                                                        @if ($data->medical_result->is_fit === 1)
+                                                    @if ($data->enrollment_assessment->medical_result->is_fit !== null)
+                                                        @if ($data->enrollment_assessment->medical_result->is_fit === 1)
                                                             <span class="badge bg-primary mb-4">FIT TO ENROLL</span>
                                                         @else
                                                             <span class="badge bg-danger mb-4">FAILED</span>
                                                         @endif
                                                     @else
                                                         <span class="badge bg-info mb-4">PENDING RESULT</span>
-                                                        <a href="{{ route('medical.applicant-medical-result') . '?result=' . base64_encode(1) . '&applicant=' . base64_encode($data->id) }}"
-                                                            class="btn btn-primary btn-sm w-100 mb-2">FIT</a>
-                                                        <a class="btn btn-danger btn-sm w-100 mb-2 btn-medical"
-                                                            data-applicant="{{ base64_encode($data->id) }}"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target=".modal-medical-fail">FAIL</a>
+                                                        <button class="btn btn-primary btn-sm w-100  mb-2"
+                                                            wire:click="medicalResult({{ $data->id }},{{ $data->enrollment_id }},1,null)">FIT</button>
+                                                        <button class="btn btn-danger btn-sm w-100  mb-2"
+                                                            wire:click="medicalResultDialogBox({{ $data->id }},{{ $data->enrollment_id }},2,'Medical Examination - Fail')">FAILED</button>
+                                                        <span
+                                                            class="badge bg-info mb-4">{{ base64_decode($data->enrollment_assessment->medical_result->remarks) }}</span>
                                                     @endif
                                                     <span
-                                                        class="badge bg-secondary">{{ $data->medical_result->created_at->format('F d,Y') }}</span>
+                                                        class="badge bg-secondary">{{ $data->enrollment_assessment->medical_result->created_at->format('F d,Y') }}</span>
                                                 @endif
                                             @endif
                                         </div>
@@ -210,14 +208,10 @@
     <script>
         window.addEventListener('swal:alert', event => {
             Swal.fire({
-                    title: event.detail.title,
-                    text: event.detail.text,
-                    icon: event.detail.type,
-                });
-            //alert('Name updated to: ' + event.detail.newName);
-        })
-        window.addEventListener('name-updated', event => {
-            alert('Name updated to: ' + event.detail.newName);
+                title: event.detail.title,
+                text: event.detail.text,
+                icon: event.detail.type,
+            });
         })
         document.addEventListener('DOMContentLoaded', function() {
             Livewire.on('swal:confirm', function(options) {

@@ -2,11 +2,13 @@
 
 namespace App\Http\Livewire\Medical;
 
+use App\Http\Controllers\Controller;
 use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantMedicalResult;
 use App\Models\CourseOffer;
 use App\Models\MedicalAppointmentSchedule;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
@@ -25,6 +27,8 @@ class ApplicantView extends Component
     public $selectedCategory = 'WAITING FOR SCHEDULED';
     public $applicantID;
     public $remarks;
+    public $remarksPending;
+    protected $listeners = ['medicalResult'];
     public function render()
     {
         $courseDashboard = CourseOffer::all();
@@ -152,9 +156,13 @@ class ApplicantView extends Component
     {
         $this->applicantID  = $data;
     }
+    function setApplicantId()
+    {
+        $this->applicantID = "hello";
+    }
     function storeFailMedical()
     {
-        $this->medical_result(base64_encode(2));
+        //$this->medical_result(base64_encode(2));
     }
     function storePendingMedical()
     {
@@ -162,38 +170,125 @@ class ApplicantView extends Component
     }
     function medical_result($result)
     {
-        $_applicant = ApplicantAccount::find(base64_decode($this->applicantID));
-        if ($result) {
-            $_details = array('applicant_id' => base64_decode($this->applicantID), 'is_fit' => base64_decode($result), 'remarks' => $this->remarks);
-        } else {
-            $_details = array('applicant_id' => base64_decode($this->applicantID), 'is_pending' => base64_decode($result), 'remarks' => $this->remarks);
-        }
-        $_medical_result = ApplicantMedicalResult::where('applicant_id', $_applicant->id)->where('is_removed', false)->first();
-        if ($_medical_result) {
-            $_medical_result->is_removed = true;
-            $_medical_result->save();
-            ApplicantMedicalResult::create($_details);
-        } else {
-            ApplicantMedicalResult::create($_details);
-        }
-        $_email_model = new ApplicantEmail();
-        $_email = $_applicant->email;
-        //$_email = 'p.banting@bma.edu.ph';
-        /* if ($result) {
-            if (base64_decode($result) == 1) {
-                // Email Passed
-                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+        try {
+            $_applicant = ApplicantAccount::find(base64_decode($this->applicantID));
+            if ($result) {
+                $_details = array('applicant_id' => base64_decode($this->applicantID), 'is_fit' => base64_decode($result), 'remarks' => $this->remarks);
             } else {
-                // Email Failed
-                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+                $_details = array('applicant_id' => base64_decode($this->applicantID), 'is_pending' => base64_decode($result), 'remarks' => $this->remarks);
             }
-        } else {
-            //Email "Pending";
-            Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
-        } */
+            $_medical_result = ApplicantMedicalResult::where('applicant_id', $_applicant->id)->where('is_removed', false)->first();
+            if ($_medical_result) {
+                $_medical_result->is_removed = true;
+                $_medical_result->save();
+                ApplicantMedicalResult::create($_details);
+            } else {
+                ApplicantMedicalResult::create($_details);
+            }
+            $_email_model = new ApplicantEmail();
+            $_email = $_applicant->email;
+            //$_email = 'p.banting@bma.edu.ph';
+            /* if ($result) {
+                if (base64_decode($result) == 1) {
+                    // Email Passed
+                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+                } else {
+                    // Email Failed
+                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+                }
+            } else {
+                //Email "Pending";
+                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+            } */
+        } catch (Exception $error) {
+            $this->dispatchBrowserEvent('swal:alert', [
+                'title' => 'Error!',
+                'text' =>  $error->getMessage(),
+                'type' => '',
+            ]);
+            $controller = new Controller();
+            $controller->debugTracker($error);
+        }
     }
-    public function showAlert()
+    function medicalResult($applicant,  $result, $remarks)
     {
-        $this->dispatchBrowserEvent('alert', ['message' => 'Data saved successfully!']);
+        try {
+            $_applicant = ApplicantAccount::find($applicant);
+            switch ($result) {
+                case 1:
+                    // Medical Passed
+                    $_details = array('applicant_id' => $applicant, 'is_fit' => 1, 'remarks' => null);
+                    break;
+                case 2:
+                    // Medical Failed
+                    $_details = array('applicant_id' => $applicant, 'is_fit' => 2, 'remarks' => $remarks);
+                    break;
+                case 3:
+                    // Medical Passed
+                    $_details = array('applicant_id' => $applicant, 'is_pending' => 0, 'remarks' => $remarks);
+                    break;
+                default:
+                    # code...
+                    break;
+            }
+            $medical_result = ApplicantMedicalResult::where('applicant_id', $_applicant->id)->where('is_removed', false)->first();
+            if ($medical_result) {
+                $medical_result->is_removed = true;
+                $medical_result->save();
+                ApplicantMedicalResult::create($_details);
+            } else {
+                ApplicantMedicalResult::create($_details);
+            }
+            $_email_model = new ApplicantEmail();
+            $_email = $_applicant->email;
+            //$_email = 'p.banting@bma.edu.ph';
+            /* if ($result) {
+                if (base64_decode($result) == 1) {
+                    // Email Passed
+                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+                } else {
+                    // Email Failed
+                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+                }
+            } else {
+                //Email "Pending";
+                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
+            } */
+            $this->dispatchBrowserEvent('swal:alert', [
+                'title' => 'Complete!',
+                'text' => 'Successfully Transact',
+                'type' => 'success',
+            ]);
+        } catch (Exception $error) {
+            $this->dispatchBrowserEvent('swal:alert', [
+                'title' => 'Error!',
+                'text' =>  $error->getMessage(),
+                'type' => 'danger',
+            ]);
+            $controller = new Controller();
+            $controller->debugTracker($error);
+        }
+    }
+    function medicalResultDialogBox($applicant, $result, $title)
+    {
+        $this->dispatchBrowserEvent('swal:confirmInput', [
+            'title' => $title,
+            'text' => '',
+            'type' => 'info',
+            'confirmButtonText' => 'Submit',
+            'cancelButtonText' => 'Cancel',
+            'method' => 'medicalResult',
+            'input' => 'text',
+            'inputPlaceholder' => 'Enter a remarks',
+            'params' => ['applicant' => $applicant, 'result' => $result],
+        ]);
+    }
+    function medicalResult2($applicant, $result, $remarks)
+    {
+        $this->dispatchBrowserEvent('swal:alert', [
+            'title' => 'Complete!',
+            'text' => $applicant . "-" . $result . '-' . $remarks,
+            'type' => 'success',
+        ]);
     }
 }

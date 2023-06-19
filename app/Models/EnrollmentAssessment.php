@@ -121,5 +121,9 @@ class EnrollmentAssessment extends Model
     {
         return $this->hasOne(StudentCancellation::class, 'enrollment_id');
     }
-   
+
+    function medical_result()
+    {
+        return $this->hasOne(StudentMedicalResult::class, 'enrollment_id');
+    }
 }

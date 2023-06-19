@@ -26,6 +26,7 @@ class StudentView extends Component
     public $sections = [];
     public $selectSection = 'ALL SECTION';
     public $showData;
+    protected $listeners = ['medicalResult'];
     public function render()
     {
         $courses = CourseOffer::all();
@@ -74,6 +75,14 @@ class StudentView extends Component
                 $students = $students->join('student_medical_results', 'student_medical_results.enrollment_id', 'enrollment_assessments.id')
                     ->where('student_medical_results.is_fit', 1);
                 break;
+            case 'medical_result_pending':
+                $students = $students->join('student_medical_results', 'student_medical_results.enrollment_id', 'enrollment_assessments.id')
+                    ->where('student_medical_results.is_pending', 0);
+                break;
+            case 'medical_result_failed':
+                $students = $students->join('student_medical_results', 'student_medical_results.enrollment_id', 'enrollment_assessments.id')
+                    ->where('student_medical_results.is_fit', 2);
+                break;
             default:
                 # code...
                 break;
@@ -99,16 +108,14 @@ class StudentView extends Component
             $this->sections = [];
         }
     }
-    function medicalResult($student, $enrollment, $result)
+    function medicalResult($student, $enrollment, $result, $remarks)
     {
         try {
-
             $_student = StudentDetails::find($student);
-
             if ($result) {
-                $_details = array('student_id' => $student, 'is_fit' => $result, 'remarks' => null, 'staff_id' => Auth::user()->staff->id, 'enrollment_id' => $enrollment);
+                $_details = array('student_id' => $student, 'is_fit' => $result, 'remarks' => $result == null ?: base64_encode($remarks), 'staff_id' => Auth::user()->staff->id, 'enrollment_id' => $enrollment);
             } else {
-                $_details = array('student_id' => $student, 'is_pending' => 0, 'remarks' => $this->remarks, 'staff_id' => Auth::user()->staff->id, 'enrollment_id' => $enrollment);
+                $_details = array('student_id' => $student, 'is_pending' => 0, 'remarks' => base64_encode($remarks), 'staff_id' => Auth::user()->staff->id, 'enrollment_id' => $enrollment);
             }
             $_medical_result = StudentMedicalResult::where('student_id', $_student->id)->where('enrollment_id', $enrollment)->where('is_removed', false)->first();
             //$this->showData = $result;
@@ -119,8 +126,6 @@ class StudentView extends Component
             } else {
                 StudentMedicalResult::create($_details);
             }
-            // /session()->flash('success', 'Successfully Transact');
-            //return back()->with('success', 'Successfully Transact');
             $this->dispatchBrowserEvent('swal:alert', [
                 'title' => 'Complete!',
                 'text' => 'Successfully Transact',
@@ -136,15 +141,18 @@ class StudentView extends Component
             $controller->debugTracker($error);
         }
     }
-    public function delete()
+    function medicalResultDialogBox($student, $enrollment, $result, $title)
     {
-        // Perform deletion logic here
-        // ...
-        $this->dispatchBrowserEvent('swal:alert', [
-            'title' => 'Deleted!',
-            'text' => 'The item has been deleted successfully.',
-            'type' => 'success',
+        $this->dispatchBrowserEvent('swal:confirmInputStudent', [
+            'title' => $title,
+            'text' => '',
+            'type' => 'info',
+            'confirmButtonText' => 'Submit',
+            'cancelButtonText' => 'Cancel',
+            'method' => 'medicalResult',
+            'input' => 'text',
+            'inputPlaceholder' => 'Enter a remarks',
+            'params' => ['student' => $student, 'result' => $result, 'enrollment' => $enrollment],
         ]);
-        //$this->dispatchBrowserEvent('name-updated', ['newName' => '12345']);
     }
 }
