@@ -3,6 +3,7 @@
 use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Controllers\MedicalController;
 use App\Http\Livewire\Medical\ApplicantView;
+use App\Http\Livewire\Medical\StudentView;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('medical')->group(function () {
@@ -24,5 +25,6 @@ Route::prefix('medical')->group(function () {
 
         // Livewire
         Route::get('/applicant/overview', ApplicantView::class)->name('medical.applicant-view');
+        Route::get('/student/overview', StudentView::class)->name('medical.student-view');
     });
 });

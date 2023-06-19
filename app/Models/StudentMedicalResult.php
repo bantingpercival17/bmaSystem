@@ -15,6 +15,7 @@ class StudentMedicalResult extends Model
         'image_path',
         'remarks',
         'staff_id',
+        'enrollment_id'
 
     ];
 }

@@ -31,7 +31,7 @@
                 @livewire('components.top-navigation-menu')
             </div>
             <div style="margin-top:7%;">
-                
+
                 <div class="conatiner-fluid content-inner">
 
 
@@ -64,11 +64,14 @@
     {{-- documents Viewr --}}
     <script src="{{ asset('resources/js/plugins/custom-document-viewer.js') }}"></script>
     <script src="{{ asset('resources/js/plugins/viewer.1.0.0.js') }}"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
+
+
     <script src="{{ asset('resources/plugin/select/js/select2.min.js') }}"></script>
     <script src="{{ asset('resources/plugin/toastify/toastify.js') }}"></script>
     <script src="{{ asset('resources/plugin/editor/editor.js') }}"></script>
-
+    
+    @stack('scripts')
     <script>
         @if (Session::has('success'))
             Swal.fire({
@@ -148,7 +151,7 @@
         })
         $('.select').select2()
     </script>
-    @yield('js')
+    @yield('scripts')
 </body>
 
 </html>
