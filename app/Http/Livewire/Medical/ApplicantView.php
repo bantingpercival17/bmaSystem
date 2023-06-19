@@ -242,7 +242,7 @@ class ApplicantView extends Component
             $_email_model = new ApplicantEmail();
             $_email = $_applicant->email;
             //$_email = 'p.banting@bma.edu.ph';
-            /* if ($result) {
+            if ($result) {
                 if (base64_decode($result) == 1) {
                     // Email Passed
                     Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
@@ -253,7 +253,7 @@ class ApplicantView extends Component
             } else {
                 //Email "Pending";
                 Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
-            } */
+            }
             $this->dispatchBrowserEvent('swal:alert', [
                 'title' => 'Complete!',
                 'text' => 'Successfully Transact',
