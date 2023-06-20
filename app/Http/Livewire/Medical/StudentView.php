@@ -73,14 +73,17 @@ class StudentView extends Component
                 break;
             case 'medical_result_passed':
                 $students = $students->join('student_medical_results', 'student_medical_results.enrollment_id', 'enrollment_assessments.id')
+                    ->where('student_medical_results.is_removed', false)
                     ->where('student_medical_results.is_fit', 1);
                 break;
             case 'medical_result_pending':
                 $students = $students->join('student_medical_results', 'student_medical_results.enrollment_id', 'enrollment_assessments.id')
+                    ->where('student_medical_results.is_removed', false)
                     ->where('student_medical_results.is_pending', 0);
                 break;
             case 'medical_result_failed':
                 $students = $students->join('student_medical_results', 'student_medical_results.enrollment_id', 'enrollment_assessments.id')
+                    ->where('student_medical_results.is_removed', false)
                     ->where('student_medical_results.is_fit', 2);
                 break;
             default:

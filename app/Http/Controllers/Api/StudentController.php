@@ -69,9 +69,10 @@ class StudentController extends Controller
     {
         try {
             $academic = AcademicYear::where('is_active', 1)->first(); // Get active Academic Year
-            $student = StudentDetails::find(auth()->user()->student_id);
-            $registration = auth()->user()->student->student_enrollment_application;
-            $enrollment_assessment = auth()->user()->student->current_enrollment;
+            $student = StudentDetails::find(auth()->user()->student_id); // Get the login Student
+            $registration = auth()->user()->student->student_enrollment_application; // Get the Registration Form
+            $enrollment_assessment = auth()->user()->student->current_enrollment; // New Enrollment Year
+            $medical_result = auth()->user()->student->enrollment_assessment->medical_result;
             $tags = [];
             $total_fees = [];
             $tuition_assessment = [];
@@ -98,7 +99,7 @@ class StudentController extends Controller
                 }
             }
             $tuition = compact('tuition_assessment', 'tags', 'units', 'total_fees');
-            $data = compact('academic', 'registration', 'enrollment_assessment', 'tuition');
+            $data = compact('academic', 'registration', 'enrollment_assessment', 'tuition','medical_result');
             return response(['data' => $data], 200);
         } catch (Exception $error) {
             $this->debugTrackerStudent($error);

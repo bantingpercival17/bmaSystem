@@ -124,6 +124,6 @@ class EnrollmentAssessment extends Model
 
     function medical_result()
     {
-        return $this->hasOne(StudentMedicalResult::class, 'enrollment_id');
+        return $this->hasOne(StudentMedicalResult::class, 'enrollment_id')->where('is_removed', false);
     }
 }
