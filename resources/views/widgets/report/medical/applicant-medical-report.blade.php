@@ -22,30 +22,33 @@
                         </thead>
                         <tbody>
                             @php
-                                $breakNumber = 30;
+                                $breakNumber = 40;
                                 $contentNumber = 0;
                             @endphp
                             @if (count($item['value']) > 0)
                                 @foreach ($item['value'] as $key => $value)
-                                    <tr class="{{ $contentNumber >= 35 ? 'page-break' : '' }}">
+                                    @php
+                                        $contentNumber += 1;
+                                    @endphp
+                                    <tr class="{{ $contentNumber >= $breakNumber ? 'page-break' : '' }}">
                                         <th>
                                             {{ $key + 1 }}
                                         </th>
                                         <td>{{ strtoupper($value->applicant->last_name . ', ' . $value->applicant->first_name . ' ' . $value->applicant->middle_name) }}
                                         </td>
-                                        <td>{{ $value->course->course_name }}</td>
+                                        <td>{{ $value->course->course_code }}</td>
                                         <td>
                                             @if ($value->medical_appointment)
                                                 @if ($value->medical_appointment)
-                                                    {{ $value->medical_appointment->appointment_date }} <br>APPROVED
+                                                    {{ $value->medical_appointment->appointment_date }}-APPROVED
                                                 @else
-                                                    {{ $value->medical_appointment->appointment_date }} <br>PENDING
+                                                    {{ $value->medical_appointment->appointment_date }}-PENDING
                                                 @endif
                                             @else
                                                 NO MEDICAL APPOINTMENT
                                             @endif
                                         </td>
-                                        <td style="width: 150px;">
+                                        <td style="width: 250px;" class="text-center">
                                             @if ($value->medical_result)
                                                 @if ($value->medical_result->is_fit)
                                                     @if ($value->medical_result->is_fit == 1)
@@ -53,11 +56,10 @@
                                                     @else
                                                         NOT QUALIFIED
                                                     @endif
-                                                    <br>
                                                     {{ $value->medical_result->created_at->format('F d,y') }}
                                                 @else
                                                     @if ($value->medical_result->is_pending == 0)
-                                                        {{ $value->medical_result->remarks }} <br>
+                                                        {{ $value->medical_result->remarks }} 
                                                         {{ $value->medical_result->created_at->format('F d,y') }}
                                                     @endif
                                                 @endif
@@ -68,8 +70,9 @@
                                         @php
                                             $contentNumber = 0;
                                         @endphp
-                                    @endforeach
-                                @endif
+                                    @endif
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
                     <br>
