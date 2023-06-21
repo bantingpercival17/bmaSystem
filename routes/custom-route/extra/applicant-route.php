@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\GeneralController\ApplicantController;
+use App\Http\Livewire\Registrar\Applicant\ApplicantProfileView;
+use App\Http\Livewire\Registrar\Applicant\ApplicantView;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/applicant/not-qualifed', [ApplicantController::class, 'applicant_not_qualified'])->name('applicant.applicant-not-qualified');
     Route::post('/applicant/orientation-scheduled', [ApplicantController::class, 'applicant_orientation_schedule'])->name('applicant.orientation-scheduled');
     Route::get('/applicant/orientation-attended', [ApplicantController::class, 'applicant_orientation_attended'])->name('applicant.orientation-attended');
+
+    Route::get('/applicants/overview', ApplicantView::class)->name('applicant.overview');
+    Route::get('/applicants/profile-view', ApplicantProfileView::class)->name('applicant.profile-view');
 });

@@ -7,7 +7,7 @@ use App\Models\CourseOffer;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
-class ApplicantView extends Component
+class ApplicantProfileView extends Component
 {
     public $selectCategories = 'for_checking';
     public $selectCourse = 'ALL COURSE';
@@ -15,13 +15,19 @@ class ApplicantView extends Component
     public $searchInput;
     public $dataLists = [];
     public $academic;
+    public $profile = [];
+    public $activeTab  = 'profile';
+    protected $listeners = ['bmaAlumnia'];
     public function render()
     {
         $filterContent = array('registered', 'registration', 'for_checking', 'not_qualified', 'qualified_for_entrance_examination');
         $filterCourses = CourseOffer::all();
         $this->academic =  request()->query('_academic') ?: $this->academic;
+        $this->profile = request()->query('_applicant') ? ApplicantAccount::find(base64_decode(request()->query('_applicant'))) : $this->profile;
+        $this->selectCategories =  request()->query('_catergory') ?: $this->selectCategories;
+
         $this->filterData();
-        return view('livewire.registrar.applicant.applicant-view', compact('filterContent', 'filterCourses'));
+        return view('livewire.registrar.applicant.applicant-profile-view', compact('filterContent', 'filterCourses'));
     }
     function categoryCourse()
     {
@@ -37,7 +43,7 @@ class ApplicantView extends Component
         $this->dataLists = [];
         $query = ApplicantAccount::select('applicant_accounts.*')
             ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_accounts.is_removed',false)
+            ->where('applicant_accounts.is_removed', false)
             ->where('applicant_accounts.academic_id', base64_decode($this->academic));
         // Sort By Courses
         if ($this->selectCourse != 'ALL COURSE') {
@@ -99,5 +105,29 @@ class ApplicantView extends Component
                 $this->dataLists = [];
                 break;
         }
+    }
+    function swtchTab($data)
+    {
+        $this->activeTab = $data;
+    }
+    function dialogBoxSHS($data)
+    {
+        $this->dispatchBrowserEvent('swal:confirm', [
+            'title' => 'Are you sure?',
+            'text' => 'This is BMA SHS Alumnia',
+            'type' => 'info',
+            'confirmButtonText' => 'Yes',
+            'cancelButtonText' => 'Cancel',
+            'method' => 'medicalResult',
+            'params' => ['data' => $data],
+        ]);
+    }
+    function bmaAlumnia($data)
+    {
+        $this->dispatchBrowserEvent('swal:alert', [
+            'title' => 'Complete!',
+            'text' => 'Successfully Transact'. $data,
+            'type' => 'success',
+        ]);
     }
 }

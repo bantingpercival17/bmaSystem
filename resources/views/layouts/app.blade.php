@@ -81,7 +81,7 @@
             });
             //alert('Name updated to: ' + event.detail.newName);
         })
-        window.addEventListener('swal:confirm', event => {
+     /*    window.addEventListener('swal:confirm', event => {
             console.log('show:confirm')
             Swal.fire({
                 title: options.title,
@@ -95,6 +95,20 @@
 
                     Livewire.emit(options.method);
                 }
+            });
+        }) */
+        window.addEventListener('swal:confirm', event => {
+            console.log('confirm')
+            Swal.fire({
+                title: event.detail.title,
+                text: event.detail.text,
+                icon: event.detail.type,
+                showCancelButton: true,
+                cancelButtonText: event.detail.cancelButtonText,
+                confirmButtonText: event.detail.confirmButtonText,
+                preConfirm: function(value) {
+                    Livewire.emit(event.detail.method)
+                },
             });
         })
         window.addEventListener('swal:confirmInput', event => {
