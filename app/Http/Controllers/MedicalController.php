@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Exports\CourseApplicantMedicalList;
 use App\Exports\CourseStudentMedicalList;
+use App\Models\ApplicantAccount;
 use App\Models\CourseOffer;
 use App\Models\MedicalAppointmentSchedule;
 use App\Models\StudentDetails;
 use App\Models\StudentMedicalAppointment;
 use App\Models\StudentMedicalResult;
+use App\Report\MedicalReport;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -103,7 +105,7 @@ class MedicalController extends Controller
     public function appointment_view(Request $request)
     {
         try {
-            $dates = MedicalAppointmentSchedule::orderBy('date','desc')->get();
+            $dates = MedicalAppointmentSchedule::orderBy('date', 'desc')->get();
             return view('pages.medical.schedule', compact('dates'));
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
@@ -129,6 +131,72 @@ class MedicalController extends Controller
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
             $this->debugTracker($error);
+        }
+    }
+    function applicant_medical_report(Request $request)
+    {
+        $report = new MedicalReport();
+        $dataContent = array(
+            array('name' => 'waiting_for_scheduled', 'value' => $this->applicant_medical('waiting_for_scheduled', $request->_academic)),
+            array('name' => 'medical_scheduled', 'value' => $this->applicant_medical('medical_scheduled', $request->_academic)),
+            array('name' => 'waiting_for_medical_result', 'value' => $this->applicant_medical('waiting_for_medical_result', $request->_academic)),
+            array('name' => 'medical_result_passed', 'value' => $this->applicant_medical('medical_result_passed', $request->_academic)),
+            array('name' => 'medical_result_pending', 'value' => $this->applicant_medical('medical_result_pending', $request->_academic)),
+            array('name' => 'medical_result_failed', 'value' => $this->applicant_medical('medical_result_failed', $request->_academic))
+        );
+        return $report->applicant_medical_report($dataContent);
+    }
+    function applicant_medical($data, $academic)
+    {
+        $query =  ApplicantAccount::select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', base64_decode($academic))
+            ->where('applicant_briefings.is_removed', false)
+            ->groupBy('applicant_accounts.id')
+            ->join('applicant_briefings', 'applicant_briefings.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_accounts.is_removed', false);
+        if ($data === 'waiting_for_scheduled') {
+            return  $query->leftJoin('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                ->whereNull('ama.applicant_id')->get();
+        }
+        if ($data == 'medical_scheduled') {
+            return  $query->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')
+                ->where('ama.is_removed', false)
+                ->where('is_approved', false)
+                ->groupBy('applicant_accounts.id')->get();
+        }
+        if ($data == 'waiting_for_medical_result') {
+            return  $query->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')
+                ->where('ama.is_removed', false)
+                ->where('is_approved', true)->leftJoin('applicant_medical_results', 'applicant_medical_results.applicant_id', 'ama.applicant_id')
+                ->whereNull('applicant_medical_results.applicant_id')
+                ->groupBy('applicant_accounts.id')->get();
+        }
+        if ($data == 'medical_result_passed') {
+            return $query->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')
+                ->where('ama.is_removed', false)
+                ->where('is_approved', true)
+                ->join('applicant_medical_results', 'applicant_medical_results.applicant_id', 'applicant_briefings.applicant_id')
+                ->where('applicant_medical_results.is_fit', true)
+                ->where('applicant_medical_results.is_removed', false)
+                ->groupBy('applicant_accounts.id')->get();
+        }
+        if ($data == 'medical_result_pending') {
+            return $query->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')
+                ->where('ama.is_removed', false)
+                ->where('is_approved', true)
+                ->join('applicant_medical_results', 'applicant_medical_results.applicant_id', 'applicant_briefings.applicant_id')
+                ->where('applicant_medical_results.is_pending', false)
+                ->where('applicant_medical_results.is_removed', false)
+                ->groupBy('applicant_accounts.id')->get();
+        }
+        if ($data == 'medical_result_failed') {
+            return $query->join('applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_briefings.applicant_id')
+                ->where('ama.is_removed', false)
+                ->where('is_approved', true)
+                ->join('applicant_medical_results', 'applicant_medical_results.applicant_id', 'applicant_briefings.applicant_id')
+                ->where('applicant_medical_results.is_fit', 2)
+                ->where('applicant_medical_results.is_removed', false)
+                ->groupBy('applicant_accounts.id')->get();
         }
     }
 }

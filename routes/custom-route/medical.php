@@ -26,5 +26,9 @@ Route::prefix('medical')->group(function () {
         // Livewire
         Route::get('/applicant/overview', ApplicantView::class)->name('medical.applicant-view');
         Route::get('/student/overview', StudentView::class)->name('medical.student-view');
+
+
+        // Report 
+        Route::get('applicant/medical-report', [MedicalController::class, 'applicant_medical_report'])->name('medical.applicant-report');
     });
 });

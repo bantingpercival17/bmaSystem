@@ -37,6 +37,12 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-md-12">
+                        <small class="text-primary"><b>GENERATE REPORT</b></small>
+                        <div class="form-group search-input">
+                            <button class="btn btn-primary w-100" wire:click="generateReport">PDF REPORT</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-8">

@@ -8,6 +8,7 @@ use App\Models\ApplicantAccount;
 use App\Models\ApplicantMedicalResult;
 use App\Models\CourseOffer;
 use App\Models\MedicalAppointmentSchedule;
+use App\Report\MedicalReport;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -81,7 +82,6 @@ class ApplicantView extends Component
     {
         $this->applicants = [];
         $query =  ApplicantAccount::select('applicant_accounts.*')
-            //->where('applicant_accounts.academic_id', base64_decode(request()->query('_academic')))
             ->where('applicant_accounts.academic_id', base64_decode($this->academic))
             ->where('applicant_briefings.is_removed', false)
             ->groupBy('applicant_accounts.id')
@@ -290,5 +290,9 @@ class ApplicantView extends Component
             'text' => $applicant . "-" . $result . '-' . $remarks,
             'type' => 'success',
         ]);
+    }
+    function generateReport()
+    {
+        return redirect(route('medical.applicant-report').'?_academic='.$this->academic);
     }
 }
