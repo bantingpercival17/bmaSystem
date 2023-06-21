@@ -21,10 +21,13 @@
                             </tr>
                         </thead>
                         <tbody>
-
+                            @php
+                                $breakNumber = 30;
+                                $contentNumber = 0;
+                            @endphp
                             @if (count($item['value']) > 0)
                                 @foreach ($item['value'] as $key => $value)
-                                    <tr>
+                                    <tr class="{{ $contentNumber >= 35 ? 'page-break' : '' }}">
                                         <th>
                                             {{ $key + 1 }}
                                         </th>
@@ -60,8 +63,13 @@
                                                 @endif
                                             @endif
                                         </td>
-                                @endforeach
-                            @endif
+                                    </tr>
+                                    @if ($contentNumber >= $breakNumber)
+                                        @php
+                                            $contentNumber = 0;
+                                        @endphp
+                                    @endforeach
+                                @endif
                         </tbody>
                     </table>
                     <br>
