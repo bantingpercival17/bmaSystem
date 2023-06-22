@@ -79,26 +79,8 @@
                 text: event.detail.text,
                 icon: event.detail.type,
             });
-            //alert('Name updated to: ' + event.detail.newName);
         })
-     /*    window.addEventListener('swal:confirm', event => {
-            console.log('show:confirm')
-            Swal.fire({
-                title: options.title,
-                text: options.text,
-                icon: options.type,
-                showCancelButton: true,
-                confirmButtonText: options.confirmButtonText,
-                cancelButtonText: options.cancelButtonText,
-            }).then((result) => {
-                if (result.isConfirmed && options.method) {
-
-                    Livewire.emit(options.method);
-                }
-            });
-        }) */
         window.addEventListener('swal:confirm', event => {
-            console.log('confirm')
             Swal.fire({
                 title: event.detail.title,
                 text: event.detail.text,
@@ -107,7 +89,7 @@
                 cancelButtonText: event.detail.cancelButtonText,
                 confirmButtonText: event.detail.confirmButtonText,
                 preConfirm: function(value) {
-                    Livewire.emit(event.detail.method,event.detail.params.data)
+                    Livewire.emit(event.detail.method, event.detail.params.data)
                 },
             });
         })
@@ -146,6 +128,33 @@
         window.addEventListener('name-updated', event => {
             window.addEventListener('swal:')
             alert('Name updated to: ' + event.detail.newName);
+        })
+        @if(Session::has('success'))
+        Swal.fire({
+            title: 'Complete!',
+            text: "{{ session('success') }}",
+            icon: 'success',
+            confirmButtonText: 'Okay'
+        })
+        /* toastr.success("{{ session('message') }}") */
+        @endif
+        $('.btn-assessment').click(function(event) {
+            Swal.fire({
+                title: 'Enrollment Assessment',
+                text: "Do you want to submit?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                var form = $(this).data('form');
+                if (result.isConfirmed) {
+                    console.log(form)
+                    document.getElementById(form).submit()
+                }
+            })
+            event.preventDefault();
         })
     </script>
     @yield('script')

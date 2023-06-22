@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Registrar;
 
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
+use App\Models\EnrollmentApplication;
 use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -15,7 +16,7 @@ class EnrollmentView extends Component
 
     public $searchInput;
     public $academic;
-
+    protected $listeners = ['approvedEnrollment', 'disapprovedEnrollment'];
     public function render()
     {
         $courseLists = CourseOffer::all();
@@ -30,19 +31,33 @@ class EnrollmentView extends Component
             ->whereNull('ea.is_approved')
             ->where('ea.is_removed', false)->paginate(10);
         if ($this->searchInput != '') {
-            $student_detials = new StudentDetails();
-            $studentsList = $student_detials->student_search($this->searchInput);
+            $query = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'student_details.middle_initial')
+               
+                ->where('student_details.is_removed', false);
+            $_student = explode(',', $this->searchInput); // Seperate the Sentence
+            $_count = count($_student);
+            if ($_count > 1) {
+                $query = $query->where('student_details.last_name', 'like', '%' . $_student[0] . '%')
+                    ->where('student_details.first_name', 'like', '%' . trim($_student[1]) . '%')
+                    ->orderBy('student_details.last_name', 'asc');
+            } else {
+                $query = $query->where('student_details.last_name', 'like', '%' . $_student[0] . '%')
+                    ->orderBy('student_details.last_name', 'asc');
+            }
+            $studentsList = $query->paginate(10);
         }
         return view('livewire.registrar.enrollment-view', compact('_courses', 'courseLists', '_curriculums', 'studentsList'));
     }
     /* Disapproved Application */
     function confirmBox($data, $status)
     {
-        if (base64_decode($status) == 'disapproved') {
-            $value = array('text' => 'Do you want to disapproved this Enrollment Application?', 'method' => '');
-        }
-        if (base64_decode($status) == 'approved') {
-            $value = array('text' => 'Do you want to approved this Enrollment Application?', 'method' => '');
+        switch (base64_decode($status)) {
+            case 'disapproved':
+                $value = array('text' => 'Do you want to disapproved this Enrollment Application?', 'method' => 'disapprovedEnrollment');
+                break;
+            case 'approved':
+                $value = array('text' => 'Do you want to approved this Enrollment Application?', 'method' => 'approvedEnrollment');
+                break;
         }
         $this->dispatchBrowserEvent('swal:confirm', [
             'title' => 'Enrollment Assessment',
@@ -53,5 +68,32 @@ class EnrollmentView extends Component
             'method' => $value['method'],
             'params' => ['data' => $data],
         ]);
+    }
+    function approvedEnrollment()
+    {
+    }
+    function disapprovedEnrollment($data)
+    {
+        $_academic = Auth::user()->staff->current_academic();
+        $this->academic =  request()->query('_academic') ?: $this->academic;
+        $academic = base64_decode($this->academic) ?: $_academic->id;
+        $application = EnrollmentApplication::where('student_id', base64_decode($data))
+            ->where('academic_id', $academic)
+            ->where('is_removed', false)->first();
+        if ($application) {
+            $application->is_approved = false;
+            $application->save();
+            $this->dispatchBrowserEvent('swal:alert', [
+                'title' => 'Complete!',
+                'text' => 'Successfully Transact',
+                'type' => 'success',
+            ]);
+        } else {
+            $this->dispatchBrowserEvent('swal:alert', [
+                'title' => 'Complete!',
+                'text' => 'Invalid Data',
+                'type' => 'warning',
+            ]);
+        }
     }
 }
