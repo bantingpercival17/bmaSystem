@@ -324,21 +324,21 @@ class CourseOffer extends Model
     }
     public function enrollment_application()
     {
-        $_academic = AcademicYear::where('id', '<', Auth::user()->staff->current_academic()->id)
-            ->orderBy('id', 'desc')
-            ->first();
-
+        /*  $studentsList = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+        ->leftJoin('enrollment_applications as ea', 'ea.student_id', 'student_details.id')
+        ->where('ea.academic_id', $_academic->id)
+        ->whereNull('ea.is_approved')
+        ->where('ea.is_removed', false)->paginate(10); */
+        return $this->hasMany(EnrollmentApplication::class, 'course_id')
+            ->where('is_removed', false)
+            ->where('academic_id', Auth::user()->staff->current_academic()->id)
+            ->whereNull('is_approved');
         /* return $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->join('enrollment_applications as ea', 'ea.student_id', 'enrollment_assessments.student_id')
             ->whereNull('ea.is_approved')
             ->where('enrollment_assessments.is_removed', false)
-            ->where('enrollment_assessments.academic_id', $_academic->id); */
-        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
-            ->join('enrollment_applications as ea', 'ea.student_id', 'enrollment_assessments.student_id')
-            ->whereNull('ea.is_approved')
-            ->where('enrollment_assessments.is_removed', false)
             ->where('enrollment_assessments.academic_id', $_academic->id)
-            ->where('ea.academic_id', Auth::user()->staff->current_academic()->id);
+            ->where('ea.academic_id', Auth::user()->staff->current_academic()->id); */
     }
 
     public function enrollment_assessment_year_level($data)

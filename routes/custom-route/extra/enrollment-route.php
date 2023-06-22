@@ -1,6 +1,6 @@
 <?php
-
 use App\Http\Controllers\GeneralController\EnrollmentController;
+use App\Http\Livewire\Registrar\Enrollment\EnrolledStudentView;
 use App\Http\Livewire\Registrar\EnrollmentView;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +19,5 @@ Route::middleware(['auth'])->group(function () {
 
     // Livewire Route
     Route::get('/enrollment/v2', EnrollmentView::class)->name('enrollment.view-v2');
+    Route::get('/enrollment/enrolled-student-list', EnrolledStudentView::class)->name('enrollment.enrolled-student-list');
 });

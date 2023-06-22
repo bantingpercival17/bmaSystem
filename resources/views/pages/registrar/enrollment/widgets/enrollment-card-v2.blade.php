@@ -79,7 +79,7 @@
                                             </div>
                                         @endif
                                     @endif
-                                    @else
+                                @else
                                     <span class="badge bg-info">NO ENROLLMENT REGISTRATION</span>
                                 @endif
                             </div>
@@ -230,9 +230,10 @@
                                         @endif
                                     </div>
                                     <div class="float-end">
-                                        <a href="" class="btn btn-danger btn-sm">DISAPPROVE</a>
+                                        <button type="button" class="btn btn-outline-info btn-sm"
+                                            wire:click='confirmBox("{{ base64_encode($_student->id) }}","{{ base64_encode('disapproved') }}" )'>DISAPPROVE</button>
                                         <button type="button" class="btn btn-info btn-sm text-white btn-assessment"
-                                            data-form="{{ base64_encode($_student->id) }}">
+                                            wire:click='confirmBox("{{ base64_encode($_student->id) }}","{{ base64_encode('approved') }}" )'>
                                             ASSESS</button>
                                     </div>
                                 </form>

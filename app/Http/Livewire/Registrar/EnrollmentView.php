@@ -13,8 +13,8 @@ class EnrollmentView extends Component
 {
     //use WithPagination;
 
-    public $studentLists = [];
     public $searchInput;
+    public $academic;
 
     public function render()
     {
@@ -22,21 +22,36 @@ class EnrollmentView extends Component
         $_courses = CourseOffer::all();
         $_curriculums = Curriculum::where('is_removed', false)->get();
         $_academic = Auth::user()->staff->current_academic();
-         $studentsList = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
+        $this->academic =  request()->query('_academic') ?: $this->academic;
+        $academic = base64_decode($this->academic) ?: $_academic->id;
+        $studentsList = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
             ->leftJoin('enrollment_applications as ea', 'ea.student_id', 'student_details.id')
-            ->where('ea.academic_id', $_academic->id)
+            ->where('ea.academic_id', $academic)
             ->whereNull('ea.is_approved')
             ->where('ea.is_removed', false)->paginate(10);
+        if ($this->searchInput != '') {
+            $student_detials = new StudentDetails();
+            $studentsList = $student_detials->student_search($this->searchInput);
+        }
         return view('livewire.registrar.enrollment-view', compact('_courses', 'courseLists', '_curriculums', 'studentsList'));
     }
-    function searchStudents()
+    /* Disapproved Application */
+    function confirmBox($data, $status)
     {
-        if ($this->searchInput) {
-            $student_detials = new StudentDetails();
-            //$this->studentLists = [];
-            $this->studentLists = $student_detials->student_search($this->searchInput);
-        } else {
-            //$this->studentsList = [];
+        if (base64_decode($status) == 'disapproved') {
+            $value = array('text' => 'Do you want to disapproved this Enrollment Application?', 'method' => '');
         }
+        if (base64_decode($status) == 'approved') {
+            $value = array('text' => 'Do you want to approved this Enrollment Application?', 'method' => '');
+        }
+        $this->dispatchBrowserEvent('swal:confirm', [
+            'title' => 'Enrollment Assessment',
+            'text' => $value['text'],
+            'type' => 'info',
+            'confirmButtonText' => 'Yes',
+            'cancelButtonText' => 'Cancel',
+            'method' => $value['method'],
+            'params' => ['data' => $data],
+        ]);
     }
 }

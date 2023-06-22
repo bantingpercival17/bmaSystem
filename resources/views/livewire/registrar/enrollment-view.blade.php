@@ -8,7 +8,7 @@
                 <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                 <div class="form-group search-input">
                     <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
-                        wire:model="searchInput" wire:keydown="searchStudents">
+                        wire:model="searchInput">
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
                 @endif
             @else
                 <span class="text-muted h6">
-                    No. Result: <b>{{ count($studentLists) }}</b>
+                    No. Result: <b>{{ count($studentsList) }}</b>
                 </span>
             @endif
         </div>
@@ -42,11 +42,6 @@
         <div class="search-container">
             @include('pages.registrar.enrollment.widgets.enrollment-card-v2')
             @if (count($studentsList) > 0)
-                @yield('student-enrollment-card')
-            @elseif(count($studentLists) > 0)
-                @php
-                    $studentsList = $studentLists;
-                @endphp
                 @yield('student-enrollment-card')
             @else
                 <div class="card">
@@ -83,12 +78,16 @@
 
     </div>
     <div class="col-md-4">
+        <div class="form-content mb-2">
+            <a href="{{ route('enrollment.enrolled-student-list') }}?_academic={{ request()->input('_academic') }}"
+                class="badge bg-primary w-100">{{ strtoupper('List of Enrolled Students') }}</a>
+            <a href="" class="badge bg-primary w-100">{{ strtoupper('List of Withdrawl / Drop') }}</a>
+        </div>
         @foreach ($courseLists as $_course)
             <div class="col-md">
                 <a
                     href="{{ route('enrollment.view-v2') }}?_course={{ base64_encode($_course->id) }}&view={{ request()->input('view') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
-                    <div class="card"{{--  data-iq-gsap="onStart" data-iq-position-y="50" data-iq-rotate="0"
-                        data-iq-trigger="scroll" data-iq-ease="power.out" data-iq-opacity="0" --}}>
+                    <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <h5 class="text-primary">

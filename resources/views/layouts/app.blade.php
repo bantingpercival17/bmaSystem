@@ -107,7 +107,7 @@
                 cancelButtonText: event.detail.cancelButtonText,
                 confirmButtonText: event.detail.confirmButtonText,
                 preConfirm: function(value) {
-                    Livewire.emit(event.detail.method)
+                    Livewire.emit(event.detail.method,event.detail.params.data)
                 },
             });
         })

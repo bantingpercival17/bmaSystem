@@ -118,7 +118,7 @@ class ApplicantProfileView extends Component
             'type' => 'info',
             'confirmButtonText' => 'Yes',
             'cancelButtonText' => 'Cancel',
-            'method' => 'medicalResult',
+            'method' => 'bmaAlumnia',
             'params' => ['data' => $data],
         ]);
     }
