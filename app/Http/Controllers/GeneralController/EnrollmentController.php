@@ -234,4 +234,29 @@ class EnrollmentController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
+    function enrollment_cancellation_report(Request $request)
+    {
+        try {
+            $query =  StudentDetails::select('student_details.*')
+                ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
+                ->join('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
+                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                ->groupBy('enrollment_assessments.id')
+                ->orderBy('student_cancellations.created_at', 'DESC');
+            $withdrawn = $query->where('student_cancellations.type_of_cancellations', 'withdrawn')->get();
+            $dropped =  StudentDetails::select('student_details.*')
+                ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
+                ->join('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
+                ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+                ->groupBy('enrollment_assessments.id')
+                ->orderBy('student_cancellations.created_at', 'DESC')
+                ->where('student_cancellations.type_of_cancellations', 'dropped')->get();
+            $data = compact('withdrawn', 'dropped');
+            $report = new StudentListReport();
+            return $report->enrollment_cancellation($data);
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
+    }
 }

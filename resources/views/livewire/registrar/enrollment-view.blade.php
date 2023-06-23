@@ -82,7 +82,7 @@
             <a href="{{ route('enrollment.enrolled-student-list') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}"
                 class="badge bg-primary w-100">{{ strtoupper('List of Enrolled Students') }}</a>
             <a
-                href="{{ route('enrollment.enrolled-student-list') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}"class="badge bg-primary w-100">{{ strtoupper('List of Withdrawn & Dropped') }}</a>
+                href="{{ route('enrollment.withdrawn-list') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}"class="badge bg-primary w-100">{{ strtoupper('List of Withdrawn & Dropped') }}</a>
         </div>
         @foreach ($courseLists as $_course)
             <div class="col-md">

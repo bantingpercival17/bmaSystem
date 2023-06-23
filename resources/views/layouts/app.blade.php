@@ -138,6 +138,15 @@
         })
         /* toastr.success("{{ session('message') }}") */
         @endif
+        @if(Session::has('error'))
+        Swal.fire({
+            title: 'Existing Data!',
+            text: "{{ session('error') }}",
+            icon: 'error',
+            confirmButtonText: 'Okay'
+        })
+        /* toastr.success("{{ session('message') }}") */
+        @endif
         $('.btn-assessment').click(function(event) {
             Swal.fire({
                 title: 'Enrollment Assessment',

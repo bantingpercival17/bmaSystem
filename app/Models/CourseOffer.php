@@ -1455,4 +1455,13 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.is_removed', false)
             ->where('enrollment_assessments.year_level', $_level);
     }
+    function enrollment_cancellation($data)
+    {
+        return   $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->join('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->groupBy('enrollment_assessments.id')
+            ->where('student_cancellations.type_of_cancellations', $data)
+            ->orderBy('student_cancellations.created_at', 'DESC');
+    }
 }

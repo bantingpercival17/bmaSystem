@@ -7,6 +7,7 @@ use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\EnrollmentAssessment;
 use App\Models\Section;
+use App\Models\StudentDetails;
 use App\Models\StudentSection;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Auth;
@@ -52,9 +53,14 @@ class StudentListReport
     }
     function semestral_enrollees($courses)
     {
-        
         $pdf = PDF::loadView("widgets.report.enrollment.semestral-enrollee", compact('courses'));
-        $file_name = 'OFFICAL LIST OF ENROLLED MIDSHIPMEN-' .strtoupper( str_replace(' ','-',Auth::user()->staff->current_academic()->semester . '-' . Auth::user()->staff->current_academic()->school_year));
+        $file_name = 'OFFICAL LIST OF ENROLLED MIDSHIPMEN-' . strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester . '-' . Auth::user()->staff->current_academic()->school_year));
         return $pdf->setPaper($this->legal, 'portrait')->download($file_name . '.pdf');
+    }
+    function enrollment_cancellation($data)
+    {
+        $pdf = PDF::loadView("widgets.report.enrollment.enrollment_cancellation", compact('data'));
+        $file_name = 'OFFICAL LIST OF WITHDRAWN AND DROP-' . strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester . '-' . Auth::user()->staff->current_academic()->school_year));
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 }
