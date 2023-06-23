@@ -118,47 +118,52 @@
                 @endif
             </div>
             <div class="content-data">
-                @if (count($dataList) > 0)
+                {{ $dataLists }}
+                @if (count($dataLists) > 0)
                     @foreach ($dataLists as $data)
-                        @php
-                            if ($_data->student->enrollment_assessment) {
-                                $_course_color = $_data->student->enrollment_assessment->course_id == 1 ? 'bg-primary' : '';
-                                $_course_color = $_data->student->enrollment_assessment->course_id == 2 ? 'bg-info' : $_course_color;
-                                $_course_color = $_data->student->enrollment_assessment->course_id == 3 ? 'bg-warning text-white' : $_course_color;
-                            } else {
-                                $_course_color = 'text-muted';
-                            }
-                        @endphp
                         <div class="card mb-2">
                             <div class="row no-gutters">
-                                <div class="col-md {{-- ps-0 --}}">
+                                <div class="col-md-3">
+                                <img src="{{ $data ? $data->profile_pic($data->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                                    class="card-img" alt="#">
+                            </div>
+                                <div class="col-md">
                                     <div class="card-body p-3 me-2">
-                                        <div class="float-end">
-                                            <small
-                                                class="badge bg-primary">{{ $data->student->enrollment_status->created_at->format('F d, Y') }}</small>
-                                        </div>
-                                        <a
-                                            href="{{ route('registrar.student-profile') }}?_student={{ base64_encode($data->student->id) }}">
-                                            <label for=""
-                                                class="text-muted  fw-bolder h5">{{ $data ? strtoupper($data->student->last_name . ', ' . $data->student->first_name . ' ' . $data->student->middle_name . ' ' . $data->student->extection_name) : 'MIDSHIPMAN NAME' }}</label>
-                                            -
-                                            <small class="fw-bolder text-muted h5">
-                                                {{ $data ? ($data->student->account ? $data->student->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
-                                            </small>
-                                        </a>
-
-                                        <p class="mb-0">
-                                            <small class="fw-bolder badge {{ $_course_color }}">
-                                                {{ $data ? ($data->student->enrollment_status ? strtoupper($data->student->enrollment_assessment->year_and_section($data->student->enrollment_assessment)) : 'SECTION') : 'SECTION' }}
-                                            </small>
-                                        </p>
-
-                                        <div class="mt-5">
+                                        <div class="">
                                             <div class="float-end">
-                                                <a href="{{ route('registrar.student-information-report') }}?_assessment={{ base64_encode($data->student->enrollment_assessment->id) }}"
+                                                <a href="{{ route('registrar.student-information-report') }}?_assessment={{ base64_encode($data->enrollment_assessment->id) }}"
                                                     class="badge bg-info text-white">
                                                     PRINT
                                                 </a>
+                                            </div>
+                                        </div>
+                                        <label for=""
+                                            class="fw-bolder text-primary h4">{{ $data ? strtoupper($data->last_name . ', ' . $data->first_name) : 'MIDSHIPMAN NAME' }}</label>
+                                        <p class="mb-0">
+                                            <small class="fw-bolder badge bg-secondary">
+                                                {{ $data ? ($data->account ? $data->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
+                                            </small> |
+                                            <small class="fw-bolder badge bg-secondary">
+                                                {{ $data ? ($data->enrollment_status ? strtoupper(Auth::user()->staff->convert_year_level($data->enrollment_status->year_level)) : 'YEAR LEVEL') : 'YEAR LEVEL' }}
+                                            </small> |
+                                            <small
+                                                class="fw-bolder badge {{ $data->enrollment_assessment ? $data->enrollment_assessment->color_course() : 'bg-secondary' }}">
+                                                {{ $data ? ($data->enrollment_status ? $data->enrollment_status->course->course_name : 'COURSE') : 'COURSE' }}
+                                            </small>
+                                        </p>
+                                        <div class="row mt-0">
+
+                                            <div class="col-md">
+                                                <small class="fw-bolder text-muted">CURRICULUM:</small> <br>
+                                                <small class="badge bg-primary">
+                                                    {{ $data ? ($data->enrollment_status ? strtoupper($data->enrollment_status->curriculum->curriculum_name) : 'CURRICULUM') : 'CURRICULUM' }}
+                                                </small>
+                                            </div>
+                                            <div class="col-md">
+                                                <small class="fw-bolder text-muted">SECTION:</small> <br>
+                                                <small class="badge bg-primary">
+                                                    {{ $data ? ($data->enrollment_status ? strtoupper($data->enrollment_status->academic->semester . ' | ' . $data->enrollment_status->academic->school_year) : 'SECTION') : 'SECTION' }}
+                                                </small>
                                             </div>
                                         </div>
 
@@ -171,12 +176,18 @@
             </div>
         </div>
         <div class="col-lg-4">
+            <div class="form-content mb-2">
+                <a href="{{ route('enrollment.view-v2') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}"
+                    class="badge bg-primary w-100">{{ strtoupper('enrollment assessment') }}</a>
+                <a
+                    href="{{ route('enrollment.enrolled-student-list') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}"class="badge bg-primary w-100">{{ strtoupper('List of Withdrawn & Dropped') }}</a>
+            </div>
             <div class="row">
                 <div class="col-12">
                     <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                     <div class="form-group search-input">
                         <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
-                            wire:model="searchInput" wire:keydown="searchStudents">
+                            wire:model="searchInput">
                     </div>
                 </div>
                 <div class="col-12">
@@ -205,6 +216,17 @@
                     </div>
                 </div>
 
+            </div>
+            <div class="">
+                <small class="fw-bolder text-muted">EXPORT OFFICALLY ENROLLED</small>
+                <div class="d-flex justify-content-between">
+                    <a href="{{ route('enrollment.enrolled-list-report') }}?_report=excel-report{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                        class="badge bg-primary w-100">Excel</a>
+                    <a href="{{ route('enrollment.enrolled-list-report') }}?_report=pdf-report{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                        class="badge bg-danger w-100">PDF</a>
+                </div>
+                <a href="{{ route('enrollment.semestarl-enrollment-list') }}?_report=excel-report{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}"
+                    class="badge bg-primary w-100">CHED FORM IN EXCEL</a>
             </div>
         </div>
     </div>

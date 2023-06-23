@@ -54,7 +54,30 @@ class EnrollmentController extends Controller
     public function course_enrolled_report(Request $_request)
     {
         try {
-          
+
+            // Excell Report
+            if ($_request->_report == 'excel-report') {
+                $_course = CourseOffer::find(base64_decode($_request->_course));
+                $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+                $_file_export = new CourseStudentEnrolled($_course);
+                $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
+                ob_end_clean();
+                return $_respond;
+            }
+            if ($_request->_report == 'pdf-report') {
+                $report = new StudentListReport();
+                $courses = CourseOffer::all();
+                return $report->semestral_enrollees($courses);
+                //return Excel::download($_file_export, $_file_name . '.pdf'); // Download the File
+            }
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    function officall_enrolled(Request $_request)
+    {
+        try {
+
             // Excell Report
             if ($_request->_report == 'excel-report') {
                 $_course = CourseOffer::find(base64_decode($_request->_course));

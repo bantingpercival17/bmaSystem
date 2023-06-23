@@ -79,9 +79,10 @@
     </div>
     <div class="col-md-4">
         <div class="form-content mb-2">
-            <a href="{{ route('enrollment.enrolled-student-list') }}?_academic={{ request()->input('_academic') }}"
+            <a href="{{ route('enrollment.enrolled-student-list') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}"
                 class="badge bg-primary w-100">{{ strtoupper('List of Enrolled Students') }}</a>
-            <a href="" class="badge bg-primary w-100">{{ strtoupper('List of Withdrawn & Dropped') }}</a>
+            <a
+                href="{{ route('enrollment.enrolled-student-list') }}{{ request()->input('_academic') ? '?_academic=' . request()->input('_academic') : '' }}"class="badge bg-primary w-100">{{ strtoupper('List of Withdrawn & Dropped') }}</a>
         </div>
         @foreach ($courseLists as $_course)
             <div class="col-md">
@@ -141,4 +142,3 @@
     </div>
 
 </div>
-

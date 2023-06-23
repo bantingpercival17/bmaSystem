@@ -27,7 +27,7 @@ class EnrolledStudentView extends Component
         $_academic = Auth::user()->staff->current_academic();
         $this->academic =  request()->query('_academic') ?: $this->academic;
         $academic = base64_decode($this->academic) ?: $_academic->id;
-        $dataLists = $this->filterData();
+        $dataLists = $this->filterData($academic);
         return view('livewire.registrar.enrollment.enrolled-student-view', compact('selectCourses', 'courses', 'dataLists'));
     }
     function categoryCourse()
@@ -40,13 +40,13 @@ class EnrolledStudentView extends Component
         $this->selectedCourse = strtoupper($course);
     }
 
-    function filterData()
+    function filterData($academic)
     {
         $query = StudentDetails::select('student_details.*')
             ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
             ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
             ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
-            ->where('enrollment_assessments.academic_id', base64_decode($this->academic))
+            ->where('enrollment_assessments.academic_id', $academic)
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
         if ($this->searchInput != '') {
