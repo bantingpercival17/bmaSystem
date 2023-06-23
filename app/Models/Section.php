@@ -47,7 +47,7 @@ class Section extends Model
     }
     public function subject_class()
     {
-        return $this->hasMany(SubjectClass::class, 'section_id')->where('is_removed', false);
+        return $this->hasMany(SubjectClass::class, 'section_id')->where('is_removed', false)->orderBy('curriculum_subject_id', 'asc');
     }
     public function course()
     {
