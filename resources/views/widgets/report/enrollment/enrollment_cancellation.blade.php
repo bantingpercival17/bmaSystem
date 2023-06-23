@@ -1,11 +1,11 @@
 @extends('widgets.report.main-report-template')
-@section('title-report', 'OFFICAL LIST OF WITHDRAWN AND DROP : ' . Auth::user()->staff->current_academic()->semester .
+@section('title-report', 'OFFICIAL LIST OF WITHDRAWN AND DROP : ' . Auth::user()->staff->current_academic()->semester .
     '-' . Auth::user()->staff->current_academic()->school_year)
 @section('content')
     <div class="withdrawn">
         <div class="page-content">
             <div class="summary-grade-header">
-                <h3 class="text-center" style="margin:0px;"><b>OFFICAL LIST OF WITHDRAWN MIDSHIPMEN</b></h3>
+                <h3 class="text-center" style="margin:0px;"><b>OFFICIAL LIST OF WITHDRAWN MIDSHIPMEN</b></h3>
                 <h3 class="text-center" style="margin:0px;">
                     <b>{{ strtoupper(Auth::user()->staff->current_academic()->semester . ', AY ' . Auth::user()->staff->current_academic()->school_year) }}</b>
                 </h3>
@@ -116,7 +116,7 @@
     <div class="dropped">
         <div class="page-content">
             <div class="summary-grade-header">
-                <h3 class="text-center" style="margin:0px;"><b>OFFICAL LIST OF DROPPED MIDSHIPMEN</b></h3>
+                <h3 class="text-center" style="margin:0px;"><b>OFFICIAL LIST OF DROPPED MIDSHIPMEN</b></h3>
                 <h3 class="text-center" style="margin:0px;">
                     <b>{{ strtoupper(Auth::user()->staff->current_academic()->semester . ', AY ' . Auth::user()->staff->current_academic()->school_year) }}</b>
                 </h3>

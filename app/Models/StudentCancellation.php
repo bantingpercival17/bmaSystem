@@ -10,7 +10,7 @@ class StudentCancellation extends Model
     use HasFactory;
     protected $fillable = [
         'enrollment_id',
-        'type_of_cancellation',
+        'type_of_cancellations',
         'date_of_cancellation',
         'cancellation_evidence',
         'staff_id'

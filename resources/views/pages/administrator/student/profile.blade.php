@@ -27,6 +27,10 @@
                     <div class="form-group search-input">
                         <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
                             name="search_student">
+                        @if (request()->input('_academic'))
+                            <input type="hidden" name="_academic" value="{{ request()->input('_academic') }}">
+                        @endif
+
                     </div>
                 </div>
             </form>
@@ -124,13 +128,13 @@
 
                     <div class="d-flex" id="head-check">
                         <a class="nav-link {{ request()->input('view') == 'profile' || !request()->input('view') ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($_student->id) }}&view=profile">PROFILE</a>
+                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($_student->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&view=profile">PROFILE</a>
                         <a class="nav-link  {{ request()->input('view') == 'enrollment' ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($_student->id) }}&view=enrollment">ENROLLMENT</a>
+                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($_student->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&view=enrollment">ENROLLMENT</a>
                         <a class="nav-link   {{ request()->input('view') == 'account' ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($_student->id) }}&view=account">ACCOUNT</a>
+                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($_student->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&view=account">ACCOUNT</a>
                         <a class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($_student->id) }}&view=grades">CERTIFICATE
+                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($_student->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}&view=grades">CERTIFICATE
                             OF GRADE</a>
 
                         {{-- <a class="nav-link  " href="http://bma.edu.ph/bma/about-us">SETTING</a> --}}
@@ -150,7 +154,6 @@
                         @include('pages.administrator.student.profile-tab-content.grade-view')
                     @endif
                 </div>
-               
             @else
                 <div class="card mb-2">
                     <div class="row no-gutters">

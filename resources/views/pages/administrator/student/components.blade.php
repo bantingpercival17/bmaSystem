@@ -15,7 +15,7 @@
                 </h5>
                 <div class="d-inline-block w-100">
                     <p class="mb-0">Enrollment Applicantion Date: <span
-                            class="badge bg-info">{{ $_student->enrollment_application_v2->created_at->format('F d,Y') }}</span>
+                            class="badge bg-info">{{ $_student->enrollment_application_v2->created_at }}</span>
                     </p>
                     <p class="mb-0">Enrollment Applicantion Status: <span
                             class="badge bg-info">{{ $_student->enrollment_application_v2->is_approved ? 'APPROVED' : 'PENDING' }}</span>

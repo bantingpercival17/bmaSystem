@@ -16,7 +16,7 @@
 
                 @if ($_section->count() > 0)
                     <br>
-                    <h3 class="text-center" style="margin:0px;"><b>OFFICAL LIST OF ENROLLED MIDSHIPMEN</b></h3>
+                    <h3 class="text-center" style="margin:0px;"><b>OFFICIAL LIST OF ENROLLED MIDSHIPMEN</b></h3>
                     <h4 class="text-center" style="margin:0px;">
                         <b>{{ strtoupper($_academic->semester . ', AY ' . $_academic->school_year) }}</b>
                     </h4>

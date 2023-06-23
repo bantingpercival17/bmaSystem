@@ -20,10 +20,10 @@
                                 <div class="form-group">
                                     <small class="form-label fw-bolder">TYPE OF CANCELLATION</small>
                                     <select name="type" id="" class="form-select">
-                                        <option value="drop" {{ old('type') == 'drop' ? 'selected' : '' }}>Dropping
+                                        <option value="dropped" {{ old('type') == 'dropped' ? 'selected' : '' }}>Dropping
                                             Form
                                         </option>
-                                        <option value="withdrawal" {{ old('type') == 'withdrawal' ? 'selected' : '' }}>
+                                        <option value="withdrawn" {{ old('type') == 'withdrawn' ? 'selected' : '' }}>
                                             Withdrawal Form</option>
                                     </select>
                                     @error('type')
@@ -58,8 +58,6 @@
             @yield('enrollment-step')
 
         </div>
-
-
     </div>
 </div>
 <div class="card">
