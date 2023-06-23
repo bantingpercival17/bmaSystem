@@ -6,6 +6,116 @@
     <div class="col-md-12">
         <p class="display-6 fw-bolder text-primary">{{ $pageTitle }}</p>
         <div class="row">
+            <div class="col-lg-8">
+                @if ($profile)
+                    <div class="card mb-2">
+                        <div class="row no-gutters">
+                            <div class="col-md-3">
+                                @if ($profile->image)
+                                    <img src="{{ json_decode($profile->image->file_links)[0] }}"
+                                        class="avatar-130 rounded" alt="applicant-profile">
+                                @endif
+                                {{-- <img src="{{ $_student ? $_student->profile_picture() : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                            class="card-img" alt="#"> --}}
+                            </div>
+                            <div class="col-md ps-0">
+                                <div class="card-body p-3 me-2">
+                                    <p class="float-end">
+                                        <small class="badge bg-info" data-bs-toggle="modal"
+                                            data-bs-target=".modal-change-course" data-bs-toggle="change course"
+                                            title="">
+                                            CHANGE COURSE
+                                        </small>
+                                    </p>
+                                    <label for=""
+                                        class="fw-bolder text-primary h4">{{ $profile ? strtoupper($profile->applicant->last_name . ', ' . $profile->applicant->first_name) : 'MIDSHIPMAN NAME' }}</label>
+                                    <p class="mb-0">
+                                        <small class="fw-bolder badge {{ $profile->color_course() }}">
+                                            {{ $profile->course->course_name }}
+                                        </small> -
+                                        <small class="badge bg-primary">
+                                            {{ $profile->applicant_number }}
+                                        </small>
+                                    </p>
+                                    <p>
+
+                                        @if ($profile->is_alumnia)
+                                            <span class="badge bg-primary float-end">
+                                                BMA SENIOR HIGH ALUMNUS
+                                            </span>
+                                        @else
+                                            @if ($profile->senior_high_school())
+                                                <button class="btn btn-outline-primary btn-sm float-end rounded-pill"
+                                                    id="btn-alumnia" data-id="{{ base64_encode($profile->id) }}"> BMA
+                                                    SENIOR HIGH ALUMNUS</button>
+                                            @endif
+                                            @if (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph')
+                                                <button class="btn btn-primary btn-sm float-end"
+                                                    wire:click="dialogBoxSHS({{ $profile->id }})">BMA</button>
+                                            @endif
+                                        @endif
+
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
+
+                        <div class="d-flex" id="head-check">
+                            <a class="nav-link {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
+                                wire:click="swtchTab('overiew')">OVERVIEW</a>
+                            <a class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
+                                wire:click="swtchTab('profile')">PROFILE</a>
+                            <a class="nav-link {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
+                                wire:click="swtchTab('documents')">DOCUMENTS</a>
+
+                            <a class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
+                                href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">ENTRANCE
+                                EXAMINATION</a>
+                            <a class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
+                                wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</a>
+                        </div>
+                    </nav>
+                    <div class="mt-4">
+                        @if ($activeTab == 'profile')
+                            @include('livewire.registrar.applicant.profile-components.information')
+                        @endif
+                        @if ($activeTab == 'documents')
+                            @include('livewire.registrar.applicant.profile-components.documents')
+                        @endif
+                        @if ($activeTab == 'account')
+                            @include('pages.administrator.student.profile-tab-content.account-view')
+                        @endif
+                        @if ($activeTab == 'grades')
+                            @include('pages.administrator.student.profile-tab-content.grade-view')
+                        @endif
+                        @if ($activeTab == 'medical')
+                            @include('livewire.registrar.applicant.profile-components.medical-view')
+                        @endif
+                    </div>
+                @else
+                    <div class="card mb-2">
+                        <div class="row no-gutters">
+                            <div class="col-md-3">
+                                <img src="{{ 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                                    class="card-img" alt="#">
+                            </div>
+                            <div class="col-md ps-0">
+                                <div class="card-body p-3 me-2">
+                                    <h4 class="card-title text-primary fw-bolder">
+                                        APPLICANT'S NAME
+                                    </h4>
+                                    <p class="card-text fw-bolder">
+                                        <span>APPLICANT NO.| COURSE</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+            </div>
             <div class="col-lg-4">
                 <div class="row">
                     <div class="col-12">
@@ -126,111 +236,6 @@
                         </div>
                     @endif
                 </div>
-
-            </div>
-            <div class="col-lg-8">
-                @if ($profile)
-                    <div class="card mb-2">
-                        <div class="row no-gutters">
-                            <div class="col-md-3">
-                                @if ($profile->image)
-                                    <img src="{{ json_decode($profile->image->file_links)[0] }}"
-                                        class="avatar-130 rounded" alt="applicant-profile">
-                                @endif
-                                {{--   <img src="{{ $_student ? $_student->profile_picture() : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                                    class="card-img" alt="#"> --}}
-                            </div>
-                            <div class="col-md ps-0">
-                                <div class="card-body p-3 me-2">
-                                    <p class="float-end">
-                                        <small class="badge bg-info" data-bs-toggle="modal"
-                                            data-bs-target=".modal-change-course" data-bs-toggle="change course"
-                                            title="">
-                                            CHANGE COURSE
-                                        </small>
-                                    </p>
-                                    <label for=""
-                                        class="fw-bolder text-primary h4">{{ $profile ? strtoupper($profile->applicant->last_name . ', ' . $profile->applicant->first_name) : 'MIDSHIPMAN NAME' }}</label>
-                                    <p class="mb-0">
-                                        <small class="fw-bolder badge {{ $profile->color_course() }}">
-                                            {{ $profile->course->course_name }}
-                                        </small> -
-                                        <small class="badge bg-primary">
-                                            {{ $profile->applicant_number }}
-                                        </small>
-                                    </p>
-                                    <p>
-                                        @if ($profile->is_alumnia)
-                                            <span class="badge bg-primary float-end">
-                                                BMA SENIOR HIGH ALUMNUS
-                                            </span>
-                                        @else
-                                          {{--   @if ($profile->senior_high_school())
-                                                <button class="btn btn-outline-primary btn-sm float-end rounded-pill"
-                                                    id="btn-alumnia" data-id="{{ base64_encode($profile->id) }}"> BMA
-                                                    SENIOR HIGH ALUMNUS</button>
-                                            @endif --}}
-
-                                        @endif
-                                        @if (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph')
-                                            <button class="btn btn-outline-primary btn-sm float-end rounded-pill"
-                                                wire:click="dialogBoxSHS({{ $profile->id }})"> BMA
-                                                SENIOR HIGH ALUMNUS</button>
-                                        @endif
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
-
-                        <div class="d-flex" id="head-check">
-                            <a class="nav-link {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('overiew')">OVERVIEW</a>
-                            <a class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('profile')">PROFILE</a>
-                            <a class="nav-link {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('documents')">DOCUMENTS</a>
-
-                            <a class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                                href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">ENTRANCE
-                                EXAMINATION</a>
-                        </div>
-                    </nav>
-                    <div class="mt-4">
-                        @if ($activeTab == 'profile')
-                            @include('livewire.registrar.applicant.profile-components.information')
-                        @endif
-                        @if ($activeTab == 'documents')
-                            @include('livewire.registrar.applicant.profile-components.documents')
-                        @endif
-                        @if ($activeTab == 'account')
-                            @include('pages.administrator.student.profile-tab-content.account-view')
-                        @endif
-                        @if ($activeTab == 'grades')
-                            @include('pages.administrator.student.profile-tab-content.grade-view')
-                        @endif
-                    </div>
-                @else
-                    <div class="card mb-2">
-                        <div class="row no-gutters">
-                            <div class="col-md-3">
-                                <img src="{{ 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                                    class="card-img" alt="#">
-                            </div>
-                            <div class="col-md ps-0">
-                                <div class="card-body p-3 me-2">
-                                    <h4 class="card-title text-primary fw-bolder">
-                                        APPLICANT'S NAME
-                                    </h4>
-                                    <p class="card-text fw-bolder">
-                                        <span>APPLICANT NO.| COURSE</span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
 
             </div>
         </div>

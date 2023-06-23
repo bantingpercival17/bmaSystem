@@ -3,7 +3,9 @@
 namespace App\Http\Livewire\Registrar\Applicant;
 
 use App\Models\ApplicantAccount;
+use App\Models\ApplicantAlumnia;
 use App\Models\CourseOffer;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -16,7 +18,7 @@ class ApplicantProfileView extends Component
     public $dataLists = [];
     public $academic;
     public $profile = [];
-    public $activeTab  = 'profile';
+    public $activeTab  = 'documents';
     protected $listeners = ['bmaAlumnia'];
     public function render()
     {
@@ -124,9 +126,11 @@ class ApplicantProfileView extends Component
     }
     function bmaAlumnia($data)
     {
+        $_data = array('applicant_id' => $data, 'staff_id' => Auth::user()->staff->id);
+        ApplicantAlumnia::create($_data);
         $this->dispatchBrowserEvent('swal:alert', [
             'title' => 'Complete!',
-            'text' => 'Successfully Transact'. $data,
+            'text' => 'Successfully Transact',
             'type' => 'success',
         ]);
     }
