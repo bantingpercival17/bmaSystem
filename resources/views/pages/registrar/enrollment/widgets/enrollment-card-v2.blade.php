@@ -71,6 +71,33 @@
 
                                                 </div>
                                             </div>
+                                            @if (Auth::user()->staff->current_academic()->semester == 'First Semester')
+                                                <div class="medical-result">
+                                                    <div class="col-md">
+                                                        <small class="fw-bolder">MEDICAL RESULT STATUS</small> <br>
+                                                        @if ($_student->enrollment_assessment->medical_result)
+                                                            @if ($_student->enrollment_assessment->medical_result->is_fit !== null)
+                                                                @if ($_student->enrollment_assessment->medical_result->is_fit === 1)
+                                                                    <span class="badge bg-primary mb-4">FIT TO
+                                                                        ENROLL</span>
+                                                                @else
+                                                                    <span class="badge bg-danger mb-4">FAILED</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="badge bg-info mb-4">PENDING RESULT</span>
+                                                            @endif
+                                                            <span
+                                                                class="badge bg-secondary">{{ $_student->enrollment_assessment->medical_result->created_at->format('F d,Y') }}</span>
+                                                        @else
+                                                            <label for="" class="fw-bolder text-muted">WAIT FOR
+                                                                MEDICAL
+                                                                RESULT</label>
+                                                        @endif
+
+
+                                                    </div>
+                                                </div>
+                                            @endif
                                         @endif
                                     @endif
                                 @else
@@ -127,7 +154,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                  {{--   <div class="col-md-6">
+                                    {{--   <div class="col-md-6">
                                         <div class="form-group">
                                             <small class="fw-bolder">YEAR LEVEL : </small>
                                             <select name="_level"
@@ -184,7 +211,5 @@
     @endforeach
 @endsection
 @section('script')
-    <script>
-      
-    </script>
+    <script></script>
 @endsection

@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/student', [StudentController::class, 'student_details']);
     Route::get('/student/information', [StudentController::class, 'student_information']);
     Route::get('/student/enrollment', [StudentController::class, 'enrollment_overview']);
+    Route::get('/student/enrollment-history', [StudentController::class, 'student_enrollment_history']);
     Route::post('/student/enrollment/registration', [StudentController::class, 'enrollment_application']);
     Route::post('/student/enrollment/payment-mode', [StudentController::class, 'enrollment_payment_mode']); // Payment Mode
 

@@ -37,6 +37,7 @@ class StudentDetails extends Model
         }
         return $_image;
     }
+    /* Latest Enrollment Assessment */
     public function enrollment_assessment()
     {
         return $this->hasOne(EnrollmentAssessment::class, 'student_id')
@@ -44,6 +45,7 @@ class StudentDetails extends Model
             ->where('is_removed', 0)
             ->orderBy('id', 'desc');
     }
+    /* Enrollment Assessment Base on the Selected Academic Year */
     public function enrollment_assessment_v2()
     {
         return $this->hasOne(EnrollmentAssessment::class, 'student_id')
@@ -51,7 +53,18 @@ class StudentDetails extends Model
             ->where('is_removed', 0)
             ->orderBy('id', 'desc');
     }
-
+    /* Previous Enrollment Assessment*/
+    function prev_enrollment_assessment()
+    {
+        $academic = AcademicYear::where('is_active', true)->first();
+        $previous =  AcademicYear::where('id', '<', $academic->id)
+            ->orderBy('id', 'desc')
+            ->first();
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+            ->where('academic_id', $previous->id)
+            ->where('is_removed', 0)
+            ->orderBy('id', 'desc');
+    }
     public function enrollment_status()
     {
         //return Auth::user()->staff->current_academic()->id;
@@ -66,7 +79,7 @@ class StudentDetails extends Model
     {
         return $this->hasMany(EnrollmentAssessment::class, 'student_id')
             ->where('is_removed', 0)
-            ->orderBy('id', 'desc');
+            ->orderBy('id', 'desc')->with('course')->with('academic');
     }
     public function enrollment_application()
     {
