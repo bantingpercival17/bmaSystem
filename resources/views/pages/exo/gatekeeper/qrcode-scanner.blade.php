@@ -92,6 +92,8 @@
 
                                     <button class="btn btn-secondary btn-sm" onclick="statusCamera(false);">Off
                                         Camera</button>
+                                    <a href="{{ route('exo.scanner') }}" class="btn btn-info w-100 mt-5">GO TO
+                                        NEW VERSION</a>
                                 </div>
 
                             </div>

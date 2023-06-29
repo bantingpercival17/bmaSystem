@@ -38,7 +38,7 @@
         <main class="main-content">
             @yield('navigation')
             @if (request()->is('teacher/subjects/*'))
-                <div style="margin-top:5%;">
+                <div style="margin-top:7%;">
                     @include('layouts.navigation-teacher')
                     @yield('teacher-navbar')
                     @yield('page-content')

@@ -1189,6 +1189,19 @@ class StudentDetails extends Model
         $_week_dates = [$_week_start . '%', $_week_end . '%'];
         return $this->hasOne(StudentOnboardingAttendance::class, 'student_id')->whereBetween('created_at', $_week_dates);
     }
+    function student_attendance_per_week()
+    {
+        $now = request()->input('week') ? request()->input('week') : date('Y-m-d');
+        $day = new DateTime($now);
+        $week = date('l', strtotime($now));
+        $modify = $week == 'Sunday' ? 'Sunday' : 'Last Sunday';
+        $_week_start = $day->modify($modify);
+        $_week_start = $day->format('Y-m-d');
+        $_week_end = $day->modify('Next Saturday');
+        $_week_end = $day->format('Y-m-d');
+        $_week_dates = [$_week_start . '%', $_week_end . '%'];
+        return $this->hasOne(StudentOnboardingAttendance::class, 'student_id')->whereBetween('created_at', $_week_dates)->orderBy('id', 'desc');
+    }
     public function id_verification()
     {
         return $this->hasOne(StudentIDDetails::class, 'student_id')->where('is_removed', false);
