@@ -14,7 +14,7 @@
                                 wire:model="scanData">
                             <button class="btn btn-primary btn-sm float-end mt-2" wire:click="inputClear">CLEAR</button>
                         </div>
-                        <a href="{{ route('exo.qrcode-scanner') }}" class="btn btn-info w-100 mt-5">GO TO OLD VERSION</a>
+                        <a href="{{ route('exo.qrcode-scanner') }}" class="btn btn-info w-100 text-white mt-5">GO TO OLD VERSION</a>
                     </div>
                 </div>
             </div>
