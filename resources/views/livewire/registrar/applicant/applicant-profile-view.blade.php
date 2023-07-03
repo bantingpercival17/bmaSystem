@@ -60,6 +60,19 @@
                             </div>
                         </div>
                     </div>
+                    <table class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
+                        <thead class="d-flex">
+                            <tr>
+                                <td class="nav-link  {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }} "
+                                wire:click="swtchTab('overiew')">OVERVIEW</td>
+                                <td class="nav-link  {{ $activeTab == 'profile' ? 'active' : 'text-muted' }} "
+                                wire:click="swtchTab('profile')">PROFILE</td>
+                                <td class="nav-link  {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }} "
+                                wire:click="swtchTab('overiew')">OVERVIEW</td>
+
+                            </tr>
+                        </thead>
+                    </table>
                     <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
 
                         <div class="d-flex" id="head-check">
@@ -85,7 +98,7 @@
                             @include('livewire.registrar.applicant.profile-components.documents')
                         @endif
                         @if ($activeTab == 'account')
-                            @include('pages.administrator.student.profile-tab-content.account-view')
+                            @include('livewire.registrar.applicant.profile-components.entrance-examination')
                         @endif
                         @if ($activeTab == 'grades')
                             @include('pages.administrator.student.profile-tab-content.grade-view')
