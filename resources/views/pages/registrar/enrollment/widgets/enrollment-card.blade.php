@@ -52,12 +52,12 @@
                                                 <small class="fw-bolder">SENIOR HIGH SCHOOL STRAND</small><br>
 
                                                 <span class="badge bg-primary">
-                                                    {{ $_student->enrollment_application ? strtoupper($_student->enrollment_application->strand) : '' }}</span>
+                                                    {{ $_student->enrollment_application_v2 ? strtoupper($_student->enrollment_application_v2->strand) : '' }}</span>
                                             </div>
                                         </div>
                                     @endif
                                 </div>
-                                @if ($_student->enrollment_application->enrollment_category == 'SBT ENROLLMENT')
+                                @if ($_student->enrollment_application_v2->enrollment_category == 'SBT ENROLLMENT')
                                     <div class="row">
                                         
                                         <div class="sbt-enrollment col-md">
