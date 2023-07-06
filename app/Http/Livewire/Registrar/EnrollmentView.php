@@ -32,7 +32,7 @@ class EnrollmentView extends Component
             ->where('ea.is_removed', false)->paginate(10);
         if ($this->searchInput != '') {
             $query = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'student_details.middle_initial')
-               
+
                 ->where('student_details.is_removed', false);
             $_student = explode(',', $this->searchInput); // Seperate the Sentence
             $_count = count($_student);
@@ -69,8 +69,16 @@ class EnrollmentView extends Component
             'params' => ['data' => $data],
         ]);
     }
-    function approvedEnrollment()
+    function approvedEnrollment($data)
     {
+        $this->dispatchBrowserEvent('submit:form', [
+            'form' => $data
+        ]);
+       /*  $this->dispatchBrowserEvent('swal:alert', [
+            'title' => 'Complete!',
+            'text' => 'Successfully Transact',
+            'type' => 'success',
+        ]); */
     }
     function disapprovedEnrollment($data)
     {

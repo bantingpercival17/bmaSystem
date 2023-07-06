@@ -185,10 +185,13 @@
                                         <button type="button" class="btn btn-outline-info btn-sm"
                                             wire:click='confirmBox("{{ base64_encode($_student->id) }}","{{ base64_encode('disapproved') }}" )'>DISAPPROVE</button>
                                     @endif
-                                    <button type="button" class="btn btn-info btn-sm text-white btn-assessment"
+                                    {{--  <button type="button" class="btn btn-info btn-sm text-white btn-assessment"
                                         data-form="{{ base64_encode($_student->id) }}">
-                                        ASSESS</button>
-
+                                        ASSESS</button> --}}
+                                    <button type="button" class="btn btn-info btn-sm text-white"
+                                        wire:click='confirmBox("{{ base64_encode($_student->id) }}","{{ base64_encode('approved') }}" )'>
+                                        ASSESS
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -211,5 +214,24 @@
     @endforeach
 @endsection
 @section('script')
-    <script></script>
+    <script>
+        /*  $('.btn-assessment').click(function(event) {
+                     Swal.fire({
+                         title: 'Enrollment Assessment',
+                         text: "Do you want to submit?",
+                         icon: 'warning',
+                         showCancelButton: true,
+                         confirmButtonColor: '#3085d6',
+                         cancelButtonColor: '#d33',
+                         confirmButtonText: 'Yes'
+                     }).then((result) => {
+                         var form = $(this).data('form');
+                         if (result.isConfirmed) {
+                             console.log(form)
+                             document.getElementById(form).submit()
+                         }
+                     })
+                     event.preventDefault();
+                 }) */
+    </script>
 @endsection

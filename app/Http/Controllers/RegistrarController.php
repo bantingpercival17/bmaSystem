@@ -109,7 +109,7 @@ class RegistrarController extends Controller
                 $_year_level = Auth::user()->staff->current_academic()->semester == 'First Semester' ? intval($_current_assessment->year_level) +  $_value : intval($_current_assessment->year_level);
 
                 if ($_student->enrollment_application) {
-                    $_year_level = $_student->enrollment_application->enrollment_category === 'SBT ENROLLMENT' ? $_year_level - 1 : $_year_level;
+                    $_year_level = $_student->enrollment_application->enrollment_category === 'SBT ENROLLMENT' ? $_year_level : $_year_level;
                 }
 
                 // Old Student
@@ -376,7 +376,7 @@ class RegistrarController extends Controller
             $_schedule = SubjectClass::find(base64_decode($request->subject_class));
             $_schedule->staff_id = $request->teacher;
             $_schedule->save();
-            return redirect(route('registrar.course-subject-handle-view').'?_subject='.base64_encode($_schedule->curriculum_subject_id))->with('success', 'Successfully Removed Schedule');
+            return redirect(route('registrar.course-subject-handle-view') . '?_subject=' . base64_encode($_schedule->curriculum_subject_id))->with('success', 'Successfully Removed Schedule');
         } catch (Exception $err) {
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());

@@ -183,9 +183,10 @@ class Staff extends Model
                 'role_id' => 3,
                 'role_name' => 'Registrar',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance']],
+                'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Enrollment v2', 'enrollment.view-v2'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance']],
             ],
             [
+                
                 'role_id' => 4,
                 'role_name' => 'Accounting',
                 'role_icon' => 'icon-job',

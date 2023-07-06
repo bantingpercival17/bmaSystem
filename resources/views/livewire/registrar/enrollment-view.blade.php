@@ -41,6 +41,18 @@
 
         <div class="search-container">
             @include('pages.registrar.enrollment.widgets.enrollment-card-v2')
+            {{--   <div class="m-5" wire:loading wire:target="searchInput">
+                <div style="color: #79bbb5; align" class="la-ball-square-clockwise-spin la-3x">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div> --}}
             @if (count($studentsList) > 0)
                 @yield('student-enrollment-card')
             @else
@@ -142,3 +154,4 @@
     </div>
 
 </div>
+

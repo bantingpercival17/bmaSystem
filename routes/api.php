@@ -32,6 +32,9 @@ use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/additional-api/applicant-api.php';
 Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
+Route::get('/cors', function () {
+    return csrf_token();
+});
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
     //Route::post('/logout', [ApplicantController::class, 'logout']);
