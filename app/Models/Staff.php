@@ -190,7 +190,7 @@ class Staff extends Model
                 'role_id' => 4,
                 'role_name' => 'Accounting',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Payment Transaction', 'accounting.payment-transactions'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars'], ['Semestral Clearance', 'accounting.semestral-clearance'], ['Applicant Payment', 'accounting.applicant-transaction'], ['Payroll', 'accounting.payroll-view'], ['Employee', 'accounting.employee-view'], ['Report', 'accounting.report'], ['Void Transaction', 'accounting.payment-void']],
+                'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Assessment v2', 'accounting.assessments-v2'], ['Payment Transaction', 'accounting.payment-transactions'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars'], ['Semestral Clearance', 'accounting.semestral-clearance'], ['Applicant Payment', 'accounting.applicant-transaction'], ['Payroll', 'accounting.payroll-view'], ['Employee', 'accounting.employee-view'], ['Report', 'accounting.report'], ['Void Transaction', 'accounting.payment-void']],
             ],
             [
                 'role_id' => 5,

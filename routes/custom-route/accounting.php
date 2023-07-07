@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountingController;
+use App\Http\Livewire\Accounting\AssessmentFees;
 
 Route::prefix('accounting')->group(function () {
     /* Applicants */
@@ -65,7 +66,7 @@ Route::prefix('accounting')->group(function () {
     Route::post('/generate-report/balance', [AccountingController::class, 'balance_report'])->name('accounting.report-balance');
     Route::post('/generate-report/monthly-report', [AccountingController::class, 'report_student_monthly_payment'])->name('accounting.monthly-payment-report');
     Route::get('/generate-report/employee-attendance', [AccountingController::class, 'employee_attendace_report'])->name('accounting.employee-attendance');
-    Route::get('/generate-report/test-permit',[AccountingController::class,'examination_permit'])->name('accounting.test-permit');
+    Route::get('/generate-report/test-permit', [AccountingController::class, 'examination_permit'])->name('accounting.test-permit');
     // Staff
     Route::get('/staff/view', [AccountingController::class, 'employee_view'])->name('accounting.employee-view');
     Route::get('/staff/payroll-view', [AccountingController::class, 'staff_payroll_view'])->name('accounting.payroll-view');
@@ -84,4 +85,7 @@ Route::prefix('accounting')->group(function () {
     Route::post('/payment-transaction/payment-void', [AccountingController::class, 'payment_transaction_void'])->name('accounting.transaction-void');
     Route::get('/payment-void-transaction', [AccountingController::class, 'void_view'])->name('accounting.payment-void');
     Route::post('/payment-void-transaction', [AccountingController::class, 'void_transaction'])->name('accounting.void-transaction');
+
+    /* Laravel Livewire Route*/
+    Route::get('/assessment-fee-v2', AssessmentFees::class)->name('accounting.assessments-v2');
 });

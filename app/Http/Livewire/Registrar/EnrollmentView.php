@@ -36,14 +36,21 @@ class EnrollmentView extends Component
                 ->where('student_details.is_removed', false);
             $_student = explode(',', $this->searchInput); // Seperate the Sentence
             $_count = count($_student);
-            if ($_count > 1) {
-                $query = $query->where('student_details.last_name', 'like', '%' . $_student[0] . '%')
-                    ->where('student_details.first_name', 'like', '%' . trim($_student[1]) . '%')
+            if (is_numeric($this->searchInput)) {
+                $query = $query->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
+                    ->where('student_accounts.student_number', 'like', '%' . $this->searchInput . '%')
                     ->orderBy('student_details.last_name', 'asc');
             } else {
-                $query = $query->where('student_details.last_name', 'like', '%' . $_student[0] . '%')
-                    ->orderBy('student_details.last_name', 'asc');
+                if ($_count > 1) {
+                    $query = $query->where('student_details.last_name', 'like', '%' . $_student[0] . '%')
+                        ->where('student_details.first_name', 'like', '%' . trim($_student[1]) . '%')
+                        ->orderBy('student_details.last_name', 'asc');
+                } else {
+                    $query = $query->where('student_details.last_name', 'like', '%' . $_student[0] . '%')
+                        ->orderBy('student_details.last_name', 'asc');
+                }
             }
+
             $studentsList = $query->paginate(10);
         }
         return view('livewire.registrar.enrollment-view', compact('_courses', 'courseLists', '_curriculums', 'studentsList'));
@@ -74,7 +81,7 @@ class EnrollmentView extends Component
         $this->dispatchBrowserEvent('submit:form', [
             'form' => $data
         ]);
-       /*  $this->dispatchBrowserEvent('swal:alert', [
+        /*  $this->dispatchBrowserEvent('swal:alert', [
             'title' => 'Complete!',
             'text' => 'Successfully Transact',
             'type' => 'success',
