@@ -142,10 +142,12 @@
                                                     <div class="badge bg-primary w-100">
                                                         <span>{{ $_data->medical_appointment->appointment_date }}</span>
                                                     </div>
-                                                    <a href="{{ route('medical.applicant-appointment') }}?appointment={{ base64_encode($_data->medical_appointment->id) }}&status=true"
-                                                        class="btn btn-sm btn-outline-info w-100 mt-2">APPROVED</a>
-                                                    <a href="{{ route('medical.applicant-appointment') }}?appointment={{ base64_encode($_data->medical_appointment->id) }}&status=false"
-                                                        class="btn btn-sm btn-outline-danger w-100 mt-2">DISAPPROVED</a>
+                                                    <button
+                                                        wire:click="appointmentScheduled('{{ base64_encode($_data->medical_appointment->id) }}',1)"
+                                                        class="btn btn-sm btn-outline-info w-100 mt-2">APPROVED</button>
+                                                    <button
+                                                        wire:click="appointmentScheduled('{{ base64_encode($_data->medical_appointment->id) }}',0)"
+                                                        class="btn btn-sm btn-outline-danger w-100 mt-2">DISAPPROVED</button>
                                                 </div>
                                             @endif
                                             @if ($selecteCategories == 'waiting_for_medical_result')

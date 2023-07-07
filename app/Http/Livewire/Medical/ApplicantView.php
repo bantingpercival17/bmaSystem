@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Medical;
 use App\Http\Controllers\Controller;
 use App\Mail\ApplicantEmail;
 use App\Models\ApplicantAccount;
+use App\Models\ApplicantMedicalAppointment;
 use App\Models\ApplicantMedicalResult;
 use App\Models\CourseOffer;
 use App\Models\MedicalAppointmentSchedule;
@@ -168,6 +169,30 @@ class ApplicantView extends Component
     {
         $this->medical_result(false);
     }
+    function appointmentScheduled($appointment, $status)
+    {
+        $_appointment = ApplicantMedicalAppointment::find(base64_decode($appointment));
+        $message = null;
+        if ($status) {
+            $_appointment->is_approved = 1;
+            $_appointment->save();
+            $_email_model = new ApplicantEmail();
+            //$_email = 'p.banting@bma.edu.ph';
+            $_email = $_appointment->account->email;
+            //Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_appointment_schedule($_appointment->account));
+            $message = 'Appointment Approved';
+        } else {
+            $_appointment->is_approved = 0;
+            $_appointment->is_removed = true;
+            $_appointment->save();
+            $message = 'Medical Schedule Disapproved';
+        }
+        $this->dispatchBrowserEvent('swal:alert', [
+            'title' => 'Complete!',
+            'text' => $message,
+            'type' => 'success',
+        ]);
+    }
     function medical_result($result)
     {
         try {
@@ -293,6 +318,6 @@ class ApplicantView extends Component
     }
     function generateReport()
     {
-        return redirect(route('medical.applicant-report').'?_academic='.$this->academic);
+        return redirect(route('medical.applicant-report') . '?_academic=' . $this->academic);
     }
 }
