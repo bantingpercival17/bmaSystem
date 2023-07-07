@@ -179,7 +179,7 @@ class ApplicantView extends Component
             $_email_model = new ApplicantEmail();
             //$_email = 'p.banting@bma.edu.ph';
             $_email = $_appointment->account->email;
-            //Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_appointment_schedule($_appointment->account));
+            Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_appointment_schedule($_appointment->account));
             $message = 'Appointment Approved';
         } else {
             $_appointment->is_approved = 0;
