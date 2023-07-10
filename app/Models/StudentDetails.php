@@ -65,6 +65,14 @@ class StudentDetails extends Model
             ->where('is_removed', 0)
             ->orderBy('id', 'desc');
     }
+    function past_enrollment_assessment()
+    {
+        $academic = AcademicYear::where('is_active', true)->first();
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+            ->where('academic_id', '<', $academic->id)
+            ->where('is_removed', 0)
+            ->orderBy('id', 'desc');
+    }
     public function enrollment_status()
     {
         //return Auth::user()->staff->current_academic()->id;
@@ -1220,5 +1228,31 @@ class StudentDetails extends Model
         return $this->hasOne(EnrollmentAssessment::class, 'student_id')
             ->where('academic_id', $_academic->id)
             ->where('is_removed', false)->with('course');
+    }
+    function enrollment_year_level()
+    {
+        $level = '';
+        // First check if the Student have a History of enrollment 
+        $enrollment = $this->enrollment_history;
+        if (count($enrollment) > 0) {
+            // Get the Latest Enrollment Assessment
+            $assessment = $this->past_enrollment_assessment;
+            if ($assessment->course_id != 3) {
+                $level = $assessment->year_level - 1;
+            } else {
+                $level = $assessment->year_level + 1;
+            }
+        }
+        // If the Student are no history of enrollment
+        else {
+            // Check First the Enrollment Applicantion
+            $application = $this->enrollment_application_v2;
+            if ($application->course_id != 3) {
+                $level = 4;
+            } else {
+                $level = 11;
+            }
+        }
+        return $level;
     }
 }

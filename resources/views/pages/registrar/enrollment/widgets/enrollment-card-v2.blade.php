@@ -154,19 +154,19 @@
                                             </select>
                                         </div>
                                     </div>
-                                    {{--   <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <small class="fw-bolder">YEAR LEVEL : </small>
-                                            <select name="_level"
-                                                class="form-select form-select-sm mb-3 shadow-none input-curriculum">
-                                                @foreach ($_curriculums as $curriculum)
-                                                    <option value="{{ $curriculum->id }}"
-                                                        {{ $_student->enrollment_assessment_v2 ? ($_student->enrollment_assessment_v2->curriculum_id == $curriculum->id ? 'selected' : '') : '' }}>
-                                                        {{ $curriculum->curriculum_name }}</option>
+                                            <select name="_level" class="form-select form-select-sm mb-3 shadow-none ">
+                                                @foreach ($yearLevelList as $item)
+                                                    <option value="{{ $item }}"
+                                                        {{ $_student->enrollment_year_level() == $item ? 'selected' : '' }}>
+                                                        {{ Auth::user()->staff->convert_year_level($item) }}</option>
                                                 @endforeach
+
                                             </select>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     @if (!$_student->account)
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -216,22 +216,22 @@
 @section('script')
     <script>
         /*  $('.btn-assessment').click(function(event) {
-                     Swal.fire({
-                         title: 'Enrollment Assessment',
-                         text: "Do you want to submit?",
-                         icon: 'warning',
-                         showCancelButton: true,
-                         confirmButtonColor: '#3085d6',
-                         cancelButtonColor: '#d33',
-                         confirmButtonText: 'Yes'
-                     }).then((result) => {
-                         var form = $(this).data('form');
-                         if (result.isConfirmed) {
-                             console.log(form)
-                             document.getElementById(form).submit()
-                         }
-                     })
-                     event.preventDefault();
-                 }) */
+                             Swal.fire({
+                                 title: 'Enrollment Assessment',
+                                 text: "Do you want to submit?",
+                                 icon: 'warning',
+                                 showCancelButton: true,
+                                 confirmButtonColor: '#3085d6',
+                                 cancelButtonColor: '#d33',
+                                 confirmButtonText: 'Yes'
+                             }).then((result) => {
+                                 var form = $(this).data('form');
+                                 if (result.isConfirmed) {
+                                     console.log(form)
+                                     document.getElementById(form).submit()
+                                 }
+                             })
+                             event.preventDefault();
+                         }) */
     </script>
 @endsection

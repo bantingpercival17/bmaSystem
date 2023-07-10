@@ -128,7 +128,7 @@ class RegistrarController extends Controller
                         "academic_id" => Auth::user()->staff->current_academic()->id,
                         "course_id" => $_request->_course ?: $_student->enrollment_assessment->course_id,
                         "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
-                        "year_level" => strval($_year_level),
+                        "year_level" => $_request->_level ?: strval($_year_level),
                         "bridging_program" => $_request->_bridging_program ?: "without",
                         "staff_id" => Auth::user()->id,
                         "is_removed" => 0
@@ -157,6 +157,7 @@ class RegistrarController extends Controller
                     $_assessment_details = [
                         "course_id" => $_request->_course ?: $_student->enrollment_assessment->course_id,
                         "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
+                        "year_level" => $_request->_level ?: strval($_year_level),
                         "bridging_program" => $_request->_bridging_program ?: "without",
 
                     ];

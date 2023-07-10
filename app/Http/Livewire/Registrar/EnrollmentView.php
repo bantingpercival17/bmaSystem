@@ -16,6 +16,7 @@ class EnrollmentView extends Component
 
     public $searchInput;
     public $academic;
+    public $yearLevelList = [11, 12, 4, 3, 2, 1];
     protected $listeners = ['approvedEnrollment', 'disapprovedEnrollment'];
     public function render()
     {
