@@ -1464,4 +1464,10 @@ class CourseOffer extends Model
             ->where('student_cancellations.type_of_cancellations', $data)
             ->orderBy('student_cancellations.created_at', 'DESC');
     }
+    function course_semestral_fees()
+    {
+        return $this->hasMany(CourseSemestralFees::class, 'course_id')
+            ->where('academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('is_removed', false);
+    }
 }

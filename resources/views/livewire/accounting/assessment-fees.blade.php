@@ -22,25 +22,10 @@
                                 </small> -
 
                                 <small
-                                    class="fw-bolder badge {{ $profile->enrollment_assessment ? $profile->enrollment_assessment->color_course() : 'bg-secondary' }}">
-                                    {{ $profile->enrollment_assessment ? $profile->enrollment_assessment->course->course_name : 'COURSE' }}
+                                    class="fw-bolder badge {{ $profile ? ($profile->enrollment_assessment ? $profile->enrollment_assessment->color_course() : 'bg-secondary') : 'bg-secondary' }}">
+                                    {{ $profile ? ($profile->enrollment_assessment ? $profile->enrollment_assessment->course->course_name : 'COURSE') : 'COURSE' }}
                                 </small>
                             </p>
-                            {{-- <div class="row mt-0">
-                                <div class="col-md">
-                                    <small class="fw-bolder text-muted">ACADEMIC YEAR:</small> <br>
-                                    <small
-                                        class="badge bg-primary">{{ $_assessment ? strtoupper($_assessment->academic->semester . ' | ' . $_assessment->academic->school_year) : 'ACADEMIC YEAR' }}
-                                    </small>
-                                </div>
-                                <div class="col-md">
-                                    <small class="fw-bolder text-muted">CURRICULUM:</small> <br>
-                                    <small
-                                        class="badge bg-primary">{{ $_assessment ? strtoupper($_assessment->curriculum->curriculum_name) : 'CURRICULUM' }}
-                                    </small>
-                                </div>
-                            </div> --}}
-
                         </div>
 
                     </div>
@@ -49,12 +34,11 @@
             @if ($profile)
                 <div class="card shadow">
                     <div class="card-header p-3">
-                        <h5 class="header-text"><b class="text-primary">PAYMENT ASSESSMENT</b>
+                        <h5 class="header-text"><b class="text-primary">ENROLLMENT ASSESSMENT DETAILS</b>
                         </h5>
                     </div>
                     <div class="card-body p-3">
                         <div class="enrollment-details">
-                            <h6 class="fw-bolder text-primary">ENROLLMENT ASSESSMENT DETAILS </h6>
                             <div class="row">
                                 <div class="form-group col-md">
                                     <small class="fw-bolder text-muted">COURSE</small>
@@ -62,13 +46,106 @@
                                         class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? $profile->enrollment_assessment->course->course_name : 'NO COURSE' }}</label>
                                 </div>
                                 <div class="form-group col-md">
+                                    <small class="fw-bolder text-muted">ACADEMIC YEAR</small>
+                                    <label for=""
+                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? $profile->enrollment_assessment->academic->school_year . '-' . $profile->enrollment_assessment->academic->semester : 'NO COURSE' }}</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md">
+                                    <small class="fw-bolder text-muted">YEAR LEVEL</small>
+                                    <label for=""
+                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? Auth::user()->staff->convert_year_level($profile->enrollment_assessment->year_level) : 'NO COURSE' }}</label>
+                                </div>
+                                <div class="form-group col-md">
                                     <small class="fw-bolder text-muted">CURRICULUM</small>
                                     <label for=""
                                         class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? $profile->enrollment_assessment->curriculum->curriculum_name : 'NO COURSE' }}</label>
                                 </div>
-                            </div>
 
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md">
+                                    <small class="fw-bolder text-muted">SCHOLARSHIP GRANT</small>
+                                    <label for=""
+                                        class="form-control form-control-sm border border-info">{{ $profile->scholarship_grant ? $profile->$profile->scholarship_grant->voucher->voucher_name : 'NO SCHOLARSHIP' }}</label>
+                                </div>
+                                <div class="form-group col-md">
+                                    <small class="fw-bolder text-muted">BRIDGING PROGRAM</small>
+                                    <label for=""
+                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? strtoupper($profile->enrollment_assessment->bridging_program) : 'NO BRIDGING PROGRAM' }}</label>
+                                </div>
+                                @if ($profile->enrollment_application_v2)
+                                    @if ($profile->enrollment_application_v2->enrollment_category == 'SBT ENROLLMENT')
+                                        <div class="form-group col-md">
+                                            <small class="text-muted fw-bolder">SEA EXPERIENCE</small>
+                                            <label for=""
+                                                class="form-control form-control-sm border border-info">{{ strtoupper($profile->shipboard_training->shipping_company) }}</label>
+                                        </div>
+                                    @endif
+
+                                @endif
+                            </div>
                         </div>
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <div class="card-header p-3">
+                        <h5 class="header-text"><b class="text-primary">PAYMENT ASSESSMENT DETAILS </b>
+                        </h5>
+                    </div>
+                    <div class="card-body p-5">
+                        <h6 class="text-primary fw-bolder"></h6>
+                        <div class="row">
+                            <div class="form-group col-md">
+                                <small class="form-label">FEE NAME</small>
+                                <br>
+                                <label class="h5 text-primary form-label">
+                                    TUITION FEE
+                                </label>
+                            </div>
+                            <div class="form-group col-md">
+                                <small class="form-label">FEE AMOUNT</small>
+                                <br>
+                                <label class="h5 text-primary form-label">
+                                    34,150.50
+                                </label>
+                            </div>
+                            <div class="form-group col-md">
+                                <small class="form-label">UPON ENROLLMENT</small>
+                                <br>
+                                <label class="h5 text-primary form-label">
+                                    34,150.50
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md">
+                                <small class="form-label">MONTHLY FEE</small>
+                                <br>
+                                <label class="h5 text-primary form-label">
+                                    0.00
+                                </label>
+                            </div>
+                            <div class="form-group col-md">
+                                <small class="form-label">TOTAL FEES</small>
+                                <br>
+                                <label class="h5 text-primary form-label">
+                                    34,150.50
+                                </label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <small class="form-label">PAYMENT MODE</small>
+                                <br>
+                                <div class="col-sm">
+                                    <select name="mode" class="form-select form-select-sm payment-mode">
+                                        <option value="0">Fullpayment</option>
+                                        <option value="1">Installment</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             @endif
@@ -112,6 +189,10 @@
                                             class="badge {{ $item->enrollment_assessment ? $item->enrollment_assessment->color_course() : 'bg-secondary' }} ">{{ $item->enrollment_assessment ? $item->enrollment_assessment->course->course_code : '-' }}</small>
                                         -
                                         <span>{{ $item->account ? $item->account->student_number : 'NEW STUDENT' }}</span>
+                                        <div>
+                                            <span
+                                                class="text-danger">{{ $item->enrollment_application_payment ? ($item->enrollment_application_payment->payment_mode === 0 ? 'FULL-PAYMENT' : ($item->enrollment_application_payment->payment_mode === 1 || $item->enrollment_application_payment->payment_mode === 2 ? 'INSTALLMENT' : '-')) : '-' }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

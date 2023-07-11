@@ -1255,4 +1255,8 @@ class StudentDetails extends Model
         }
         return $level;
     }
+    function scholarship_grant()
+    {
+        return $this->hasOne(StudentScholarshipGrant::class, 'student_id')->where('is_removed', false);
+    }
 }

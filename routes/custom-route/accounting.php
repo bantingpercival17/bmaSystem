@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountingController;
 use App\Http\Livewire\Accounting\AssessmentFees;
+use App\Http\Livewire\Accounting\FeesView;
 
 Route::prefix('accounting')->group(function () {
     /* Applicants */
@@ -87,5 +88,6 @@ Route::prefix('accounting')->group(function () {
     Route::post('/payment-void-transaction', [AccountingController::class, 'void_transaction'])->name('accounting.void-transaction');
 
     /* Laravel Livewire Route*/
+    Route::get('/fees-v2', FeesView::class)->name('accounting.fees-v2');
     Route::get('/assessment-fee-v2', AssessmentFees::class)->name('accounting.assessments-v2');
 });

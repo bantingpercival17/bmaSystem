@@ -168,7 +168,7 @@ class AccountingController extends Controller
     public function course_fee_create_view(Request $_request)
     {
         $_department = base64_decode($_request->_course) == 3 ? 'senior_high' : 'college';
-        $_particulars = Particulars::where('department', $_department)->where('is_removed', false)/* ->where('particular_type', 'tuition_type') */->get();
+        $_particulars = Particulars::where('department', $_department)->where('is_removed', false)->where('particular_tag','!=', 'addition_tags')->get();
         $_curriculum = Curriculum::all();
         $_course = CourseOffer::find(base64_decode($_request->_course));
         //$_courses = CourseOffer::where('is_removed', false)->get();
