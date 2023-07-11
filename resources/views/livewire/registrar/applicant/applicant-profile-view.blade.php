@@ -60,7 +60,7 @@
                             </div>
                         </div>
                     </div>
-                    <table class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
+                    {{-- <table class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
                         <thead class="d-flex">
                             <tr>
                                 <td class="nav-link  {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }} "
@@ -72,7 +72,7 @@
 
                             </tr>
                         </thead>
-                    </table>
+                    </table> --}}
                     <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
 
                         <div class="d-flex" id="head-check">

@@ -558,8 +558,11 @@ class CourseOffer extends Model
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id') # Applicant Account
             ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
-            ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
-            ->where('sd.feedback', 'like', '%Sorry you did not meet the Grade requirement%');
+            ->join('applicant_not_qualifieds', 'applicant_not_qualifieds.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_not_qualifieds.is_removed', false)
+            /*  ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
+            ->where('sd.feedback', 'like', '%Sorry you did not meet the Grade requirement%')
+            ->where('sd.is_removed',false) */;
 
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
@@ -903,6 +906,7 @@ class CourseOffer extends Model
                 '>=',
                 $_documents,
             )
+            /*  ->orderBy('applicant_detials.last_name', 'asc') */
             ->groupBy('applicant_accounts.id');
 
         if (request()->input('_student')) {
@@ -910,6 +914,33 @@ class CourseOffer extends Model
             $_count = count($_student);
             $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
+        return $_query;
+    }
+    public function verified_applicants_v2()
+    {
+        $_level = $this->id == 3 ? 11 : 4;
+        $_documents = Documents::where('department_id', 2)
+            ->where('year_level', $_level)
+            ->where('is_removed', false)
+            ->count();
+        $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*', 'applicant_detials.last_name')
+            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('applicant_accounts.is_removed', false)
+            ->where(
+                function ($_subQuery) {
+                    $_subQuery
+                        ->select(DB::raw('count("is_approved")'))
+                        ->from('applicant_documents')
+                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where('applicant_documents.is_removed', false)
+                        ->where('applicant_documents.is_approved', true);
+                },
+                '>=',
+                $_documents,
+            )
+            ->groupBy('applicant_accounts.id')->orderBy('applicant_detials.last_name', 'asc');
         return $_query;
     }
     /* Entrance Examination Payment */

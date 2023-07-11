@@ -290,7 +290,47 @@
         @endforeach
     @endsection
 @endif
+@if (request()->input('view') == 'alumnia')
+    @section('applicant-card')
+        @foreach ($_applicants as $_data)
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <p class="fw-bolder text-muted mb-0">
+                                <span class="badge bg-primary">{{ $_data->course->course_name }}</span> |
+                                {{ $_data->applicant ? $_data->applicant_number : '-' }}
+                            </p>
+                            <a href="{{ $_url_card }}&_applicant={{ base64_encode($_data->id) }}"
+                                class=" fw-bolder h2">
+                                {{ strtoupper($_data->applicant->last_name . ', ' . $_data->applicant->first_name) }}
+                            </a>
 
+
+                            <div class="mt-0">
+                                <span>{{ $_data->applicant ? $_data->email : '-' }}</span> <br>
+                                <span class="badge bg-secondary">
+                                    @php
+                                        echo $_data->applicant->check_duplicate();
+                                    @endphp
+                                </span>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md">
+                            <small>APPLICATION DATE</small>
+                            <div class="badge bg-primary w-100">
+
+                                <span>{{ $_data->created_at->format('F d, Y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @endsection
+@endif
 
 @if (request()->input('view') == 'entrance-examination-payment-verification')
     @section('applicant-card')

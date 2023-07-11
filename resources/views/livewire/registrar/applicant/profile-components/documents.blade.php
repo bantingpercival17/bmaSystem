@@ -1,5 +1,11 @@
 <div class="card">
     <div class="card-body">
+        @if (!$profile->not_qualified)
+            <a href="{{ route('applicant.applicant-not-qualified') }}?applicant={{ base64_encode($profile->id) }}"
+                class="badge bg-primary">Not Qualified</a>
+        @endif
+        {{--  <a href="{{ route('applicant.applicant-not-qualified') }}?applicant={{ base64_encode($profile->id) }}"
+            class="badge bg-primary">Not Qualified</a> --}}
         @if (count($profile->empty_documents()) > 0)
             @foreach ($profile->empty_documents() as $docu)
                 @php

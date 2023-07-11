@@ -137,7 +137,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     }
     public function not_qualified()
     {
-        return $this->hasOne(ApplicantNotQualified::class, 'applicant_id');
+        return $this->hasOne(ApplicantNotQualified::class, 'applicant_id')->where('is_removed', false);
     }
     public function sent_notification($data)
     {

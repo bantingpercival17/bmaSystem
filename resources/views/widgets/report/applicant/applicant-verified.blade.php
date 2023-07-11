@@ -26,9 +26,133 @@
                         </thead>
                         <tbody>
 
-                            @if (count($course->verified_applicants) > 0)
+                            @if (count($course->verified_applicants_v2) > 0)
                                 @foreach ($course->verified_applicants as $key => $enrollee)
-                                    @php
+                                    @if (!$enrollee->is_alumnia)
+                                        @if ($enrollee->payment)
+                                            @if ($enrollee->payment->is_approved)
+                                                @if (!$enrollee->applicant_examination->is_finish)
+                                                    @php
+                                                        $contentNumber += 1;
+                                                    @endphp
+                                                    <tr class="{{ $contentNumber >= 50 ? 'page-break' : '' }}">
+                                                        <th>
+                                                            {{ $contentNumber }}
+                                                        </th>
+                                                        <td>{{ $enrollee->created_at->format('F d,y') }}</td>
+                                                        <td>
+                                                            {{ strtoupper($enrollee->applicant->last_name) }},
+                                                            {{ strtoupper($enrollee->applicant->first_name) }}
+                                                            @if (trim(strtoupper($enrollee->applicant->middle_name)) !== 'N/A')
+                                                                {{ strtoupper($enrollee->applicant->middle_name) }}
+                                                            @endif
+                                                        </td>
+                                                        <td>{{ $enrollee->contact_number }}</td>
+                                                        <td>
+                                                            @if ($enrollee->is_alumnia)
+                                                                {{ strtoupper('BMA-Alumnia') }}
+                                                            @else
+                                                                @if ($enrollee->payment)
+                                                                    @if ($enrollee->payment->is_approved)
+                                                                        @if ($enrollee->applicant_examination->is_finish)
+                                                                            ExaminationResult
+                                                                        @else
+                                                                            READY FOR EXAMINATION
+                                                                        @endif
+                                                                    @else
+                                                                        FOR PAYMENT VERIFICATION
+                                                                    @endif
+                                                                @else
+                                                                    WFP
+                                                                @endif
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                            @else
+                                                @php
+                                                    $contentNumber += 1;
+                                                @endphp
+                                                <tr class="{{ $contentNumber >= 50 ? 'page-break' : '' }}">
+                                                    <th>
+                                                        {{ $contentNumber }}
+                                                    </th>
+                                                    <td>{{ $enrollee->created_at->format('F d,y') }}</td>
+                                                    <td>
+                                                        {{ strtoupper($enrollee->applicant->last_name) }},
+                                                        {{ strtoupper($enrollee->applicant->first_name) }}
+                                                        @if (trim(strtoupper($enrollee->applicant->middle_name)) !== 'N/A')
+                                                            {{ strtoupper($enrollee->applicant->middle_name) }}
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $enrollee->contact_number }}</td>
+                                                    <td>
+                                                        @if ($enrollee->is_alumnia)
+                                                            {{ strtoupper('BMA-Alumnia') }}
+                                                        @else
+                                                            @if ($enrollee->payment)
+                                                                @if ($enrollee->payment->is_approved)
+                                                                    @if ($enrollee->applicant_examination->is_finish)
+                                                                        ExaminationResult
+                                                                    @else
+                                                                        READY FOR EXAMINATION
+                                                                    @endif
+                                                                @else
+                                                                    FOR PAYMENT VERIFICATION
+                                                                @endif
+                                                            @else
+                                                                WFP
+                                                            @endif
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        @else
+                                            @php
+                                                $contentNumber += 1;
+                                            @endphp
+                                            <tr class="{{ $contentNumber >= 50 ? 'page-break' : '' }}">
+                                                <th>
+                                                    {{ $contentNumber }}
+                                                </th>
+                                                <td>{{ $enrollee->created_at->format('F d,y') }}</td>
+                                                <td>
+                                                    {{ strtoupper($enrollee->applicant->last_name) }},
+                                                    {{ strtoupper($enrollee->applicant->first_name) }}
+                                                    @if (trim(strtoupper($enrollee->applicant->middle_name)) !== 'N/A')
+                                                        {{ strtoupper($enrollee->applicant->middle_name) }}
+                                                    @endif
+                                                </td>
+                                                <td>{{ $enrollee->contact_number }}</td>
+                                                <td>
+                                                    @if ($enrollee->is_alumnia)
+                                                        {{ strtoupper('BMA-Alumnia') }}
+                                                    @else
+                                                        @if ($enrollee->payment)
+                                                            @if ($enrollee->payment->is_approved)
+                                                                @if ($enrollee->applicant_examination->is_finish)
+                                                                    ExaminationResult
+                                                                @else
+                                                                    READY FOR EXAMINATION
+                                                                @endif
+                                                            @else
+                                                                FOR PAYMENT VERIFICATION
+                                                            @endif
+                                                        @else
+                                                            WFP
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
+
+                                        @if ($contentNumber >= 50)
+                                            @php
+                                                $contentNumber = 0;
+                                            @endphp
+                                        @endif
+                                    @endif
+                                    {{--   @php
                                         $contentNumber += 1;
                                     @endphp
                                     <tr class="{{ $contentNumber >= 50 ? 'page-break' : '' }}">
@@ -68,7 +192,7 @@
                                         @php
                                             $contentNumber = 0;
                                         @endphp
-                                    @endif
+                                    @endif --}}
                                 @endforeach
                             @else
                                 <tr>

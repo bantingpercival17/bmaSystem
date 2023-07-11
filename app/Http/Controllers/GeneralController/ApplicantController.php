@@ -48,6 +48,7 @@ class ApplicantController extends Controller
             array('view' => 'entrance-examination-payment-verification', 'function' => 'applicant_payment_verification'), // Entrance Examination Payment Verification
             array('view' => 'entrance-examination-payment-verified', 'function' => 'applicant_payment_verified'), // Entrance Examination Payment Verified
             array('view' => 'ongoing-examination', 'function' => 'applicant_examination_ongoing'), // Entrance Examination On-going
+            array('view' => 'alumnia', 'function' => 'applicant_alumnia'), // Entrance Examination On-going
             array('view' => 'entrance-examination-passer', 'function' => 'applicant_examination_passed'), // Entrance Examination Passed
             array('view' => 'examination-failed', 'function' => 'applicant_examination_failed'), // Entrance Examination Failed
             array('view' => 'briefing-orientation', 'function' => 'applicant_virtual_orientation'), // Orientation
