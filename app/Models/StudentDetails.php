@@ -1234,13 +1234,16 @@ class StudentDetails extends Model
         $level = '';
         // First check if the Student have a History of enrollment 
         $enrollment = $this->enrollment_history;
+        
         if (count($enrollment) > 0) {
             // Get the Latest Enrollment Assessment
             $assessment = $this->past_enrollment_assessment;
-            if ($assessment->course_id != 3) {
-                $level = $assessment->year_level - 1;
-            } else {
-                $level = $assessment->year_level + 1;
+            if ($assessment) {
+                if ($assessment->course_id != 3) {
+                    $level = $assessment->year_level - 1;
+                } else {
+                    $level = $assessment->year_level + 1;
+                }
             }
         }
         // If the Student are no history of enrollment
