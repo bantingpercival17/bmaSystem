@@ -2,6 +2,7 @@
 
 namespace App\Report;
 
+use App\Models\CourseOffer;
 use App\Models\Examination;
 use Barryvdh\DomPDF\Facade as PDF;
 
@@ -44,6 +45,16 @@ class ApplicantReport
         // Set the Filename of report
 
         $file_name = 'EXAMINATION RESULT - ' . $_data->applicant_number . '-' . date('Ymd') . '.pdf';
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    function applicant_vefied_list()
+    {
+        $_layout = $this->path . '.applicant-verified';
+        // Import PDF Class
+        $courses = CourseOffer::all();
+        $pdf = PDF::loadView($_layout, compact('courses'));
+        // Set the Filename of report
+        $file_name = 'APPLICANT LIST [VERIFIED] - ' . date('Ymd') . '.pdf';
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 }

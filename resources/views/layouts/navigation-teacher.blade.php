@@ -1,7 +1,7 @@
 @section('teacher-navbar')
     <div class="nav-scroller text-center mt-0">
         @php
-            $grade_route = $_subject->curriculum_subject->subject->subject_code == 'NSTP 1' && $_subject->curriculum_subject->subject->subject_code == 'NSTP 1' ? 'teacher.grade-sheet-special' : 'teacher.grading-sheet';
+            $grade_route = $_subject->curriculum_subject->subject->subject_code == 'NSTP 1' || $_subject->curriculum_subject->subject->subject_code == 'NSTP 2' ? 'teacher.grade-sheet-special' : 'teacher.grading-sheet';
             $_routes = [['name' => 'Lesson', 'route' => 'teacher.subject-view'], ['name' => 'Student', 'route' => 'teacher.subject-class-students'], ['name' => 'Semestral Clearance', 'route' => 'teacher.semestral-clearance'], ['name' => 'Grading Sheet', 'route' => $grade_route]];
         @endphp
         <nav class="nav nav-underline bg-soft-primary  pb-0" aria-label="Secondary navigation ">

@@ -132,8 +132,11 @@
                             <th rowspan="2">PRE-REGISTRATION</th>
                             <th rowspan="2">INCOMPLETE <br> DOCUMENTS</th>
                             <th colspan="3">INFORMATION VERIFICATION</th>
+                            <th>BMA-ALUMNIA</th>
                             <th colspan="2">ENTRANCE EXAMINATION PAYMENT</th>
-                            <td colspan="3">ENTRANCE EXAMINATION</td>
+                            <th
+                                colspan="{{ Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph' ? 3 : 2 }}">
+                                ENTRANCE EXAMINATION</th>
                             <th rowspan="2">BRIEFING</th>
                             <th colspan="3">MEDICAL EXAMINATION</th>
                             <th rowspan="2">QUALIFIED FOR ENROLLMENT</th>
@@ -143,10 +146,12 @@
                             <th>FOR CHECKING</th>
                             <th>NOT QUALIFIED</th>
                             <th>VERIFIED</th>
+                            <th></th>
                             <th>FOR VERIFICATION</th>
                             <th>PAYMENT VERIFED</th>
-
-                            <th>ONGOING</th>
+                            @if (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph')
+                                <th>ONGOING</th>
+                            @endif
                             <th>PASSED</th>
                             <th>FAILED</th>
                             <th>FOR SCHEDULING</th>
@@ -192,6 +197,11 @@
                                     </a>
                                 </td>
                                 <td>
+                                    <a href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=alumnia">
+                                        {{ count($_course->applicant_alumnia) }}
+                                    </a>
+                                </td>
+                                <td>
                                     {{ count($_course->applicant_payment_verification_v2) }}
                                     <a
                                         href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=entrance-examination-payment-verification">
@@ -208,12 +218,14 @@
                                     <a
                                         href="{{ route('applicant-examination-status') . '?_course=' . base64_encode($_course->id) . '&_status=' . base64_encode('ready-for-examination') }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">{{ count($_course->applicant_examination_ready) }}</a>
                                 </td> --}}
-                                <td>
-                                    <a
-                                        href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=ongoing-examination">
-                                        {{ count($_course->applicant_examination_ongoing) }}
-                                    </a>
-                                </td>
+                                @if (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph')
+                                    <td>
+                                        <a
+                                            href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=ongoing-examination">
+                                            {{ count($_course->applicant_examination_ongoing) }}
+                                        </a>
+                                    </td>
+                                @endif
                                 <td>
                                     <a
                                         href="{{ $_route . '_course=' . base64_encode($_course->id) }}&view=entrance-examination-passer">

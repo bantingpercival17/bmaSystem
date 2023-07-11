@@ -3,6 +3,8 @@
 use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Livewire\Registrar\Applicant\ApplicantProfileView;
 use App\Http\Livewire\Registrar\Applicant\ApplicantView;
+use App\Models\CourseOffer;
+use App\Report\ApplicantReport;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +33,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/applicants/overview', ApplicantView::class)->name('applicant.overview');
     Route::get('/applicants/profile-view', ApplicantProfileView::class)->name('applicant.profile-view');
+    Route::get('/applicants/verified', function () {
+        $applicant = new ApplicantReport();
+        return $applicant->applicant_vefied_list();
+    });
 });
