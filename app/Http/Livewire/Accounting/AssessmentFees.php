@@ -11,6 +11,7 @@ class AssessmentFees extends Component
     public $inputStudent;
     public $academic;
     public $profile = null;
+    public $paymentMode;
     public function render()
     {
         $_academic = Auth::user()->staff->current_academic();
@@ -18,7 +19,37 @@ class AssessmentFees extends Component
         $academic = base64_decode($this->academic) ?: $_academic->id;
         $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->recentStudent($academic);
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
-        return view('livewire.accounting.assessment-fees', compact('studentLists'));
+        $tuition_fees = [];
+        if ($this->profile) {
+            $enrollment_assessment = $this->profile->enrollment_assessment;
+            if ($enrollment_assessment) {
+                $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
+                if ($tuition_fees) {
+                    $tags = $tuition_fees->semestral_fees();
+                    $total_tuition  = $tuition_fees->total_tuition_fees($enrollment_assessment);
+                    $total_tuition_with_interest  = $tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
+                    $upon_enrollment = 0;
+                    $upon_enrollment = $tuition_fees->upon_enrollment_v2($enrollment_assessment);
+                    $monthly = 0;
+                    $monthly = $tuition_fees->monthly_fees_v2($enrollment_assessment);
+                    $tuition_fees = array(
+                        'fee_amount' => $total_tuition,
+                        'upon_enrollment' => $total_tuition,
+                        'monthly' => 0.00,
+                        'total_fees' => $total_tuition
+                    );
+                    if ($this->paymentMode == 1) {
+                        $tuition_fees = array(
+                            'fee_amount' => $total_tuition,
+                            'upon_enrollment' => $upon_enrollment,
+                            'monthly' => $monthly,
+                            'total_fees' => $total_tuition_with_interest
+                        );
+                    }
+                }
+            }
+        }
+        return view('livewire.accounting.assessment-fees', compact('studentLists', 'tuition_fees'));
     }
 
     function recentStudent($academic)

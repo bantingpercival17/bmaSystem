@@ -95,7 +95,7 @@
                         </h5>
                     </div>
                     <div class="card-body p-5">
-                        <h6 class="text-primary fw-bolder"></h6>
+                        <h6 class="text-primary fw-bolder">TOTAL TUITION FEE</h6>
                         <div class="row">
                             <div class="form-group col-md">
                                 <small class="form-label">FEE NAME</small>
@@ -108,14 +108,22 @@
                                 <small class="form-label">FEE AMOUNT</small>
                                 <br>
                                 <label class="h5 text-primary form-label">
-                                    34,150.50
+                                    @if ($tuition_fees)
+                                        {{ number_format($tuition_fees['fee_amount'], 2) }}
+                                    @else
+                                        0.00
+                                    @endif
                                 </label>
                             </div>
                             <div class="form-group col-md">
                                 <small class="form-label">UPON ENROLLMENT</small>
                                 <br>
                                 <label class="h5 text-primary form-label">
-                                    34,150.50
+                                    @if ($tuition_fees)
+                                        {{ number_format($tuition_fees['upon_enrollment'], 2) }}
+                                    @else
+                                        0.00
+                                    @endif
                                 </label>
                             </div>
                         </div>
@@ -124,28 +132,38 @@
                                 <small class="form-label">MONTHLY FEE</small>
                                 <br>
                                 <label class="h5 text-primary form-label">
-                                    0.00
+                                    @if ($tuition_fees)
+                                        {{ number_format($tuition_fees['monthly'], 2) }}
+                                    @else
+                                        0.00
+                                    @endif
                                 </label>
                             </div>
                             <div class="form-group col-md">
                                 <small class="form-label">TOTAL FEES</small>
                                 <br>
                                 <label class="h5 text-primary form-label">
-                                    34,150.50
+                                    @if ($tuition_fees)
+                                        {{ number_format($tuition_fees['total_fees'], 2) }}
+                                    @else
+                                        0.00
+                                    @endif
                                 </label>
                             </div>
                             <div class="form-group col-md-6">
                                 <small class="form-label">PAYMENT MODE</small>
                                 <br>
                                 <div class="col-sm">
-                                    <select name="mode" class="form-select form-select-sm payment-mode">
+                                    <select name="mode" wire:model="paymentMode"
+                                        class="form-select form-select-sm payment-mode">
                                         <option value="0">Fullpayment</option>
                                         <option value="1">Installment</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
-
+                        <h6 class="text-primary fw-bolder">ADDITIONAL PARTICULARS</h6>
+                        
                     </div>
                 </div>
             @endif
