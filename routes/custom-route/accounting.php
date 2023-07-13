@@ -87,7 +87,10 @@ Route::prefix('accounting')->group(function () {
     Route::get('/payment-void-transaction', [AccountingController::class, 'void_view'])->name('accounting.payment-void');
     Route::post('/payment-void-transaction', [AccountingController::class, 'void_transaction'])->name('accounting.void-transaction');
 
+
+    Route::post('/fees/additional-fee',[AccountingController::class,'particular_additional_fee'])->name('acounting.addtional-fee');
     /* Laravel Livewire Route*/
     Route::get('/fees-v2', FeesView::class)->name('accounting.fees-v2');
     Route::get('/assessment-fee-v2', AssessmentFees::class)->name('accounting.assessments-v2');
+    
 });

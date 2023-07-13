@@ -13,6 +13,7 @@ use App\Imports\ImportSalaryDetails;
 use App\Imports\StudentTransactionHistoryImport;
 use App\Mail\ApplicantEmail;
 use App\Models\AcademicYear;
+use App\Models\AdditionalFees;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantPayment;
 use App\Models\CourseOffer;
@@ -129,7 +130,9 @@ class AccountingController extends Controller
     public function fee_view(Request $_request)
     {
         $_courses = CourseOffer::where('is_removed', false)->get();
-        return view('pages.accounting.fee.view', compact('_courses'));
+        $fees = AdditionalFees::where('is_removed', false)->get();
+        $particulars = Particulars::where('particular_tag', 'addition_tags')->where('is_removed', false)->get();
+        return view('pages.accounting.fee.view', compact('_courses', 'fees', 'particulars'));
     }
     public function course_fee_view(Request $_request)
     {
@@ -168,7 +171,7 @@ class AccountingController extends Controller
     public function course_fee_create_view(Request $_request)
     {
         $_department = base64_decode($_request->_course) == 3 ? 'senior_high' : 'college';
-        $_particulars = Particulars::where('department', $_department)->where('is_removed', false)->where('particular_tag','!=', 'addition_tags')->get();
+        $_particulars = Particulars::where('department', $_department)->where('is_removed', false)->where('particular_tag', '!=', 'addition_tags')->get();
         $_curriculum = Curriculum::all();
         $_course = CourseOffer::find(base64_decode($_request->_course));
         //$_courses = CourseOffer::where('is_removed', false)->get();
@@ -1073,6 +1076,21 @@ class AccountingController extends Controller
             $_employees = Staff::where('is_removed', false)->orderBy('staff.department', 'asc')
                 ->orderBy('staff.last_name', 'asc')->get();
             return view('pages.accounting.employee.view', compact('_employees'));
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    function particular_additional_fee(Request $request)
+    {
+        try {
+            $request->validate(
+                ['particular' => 'required', 'fee_amount' => 'required']
+            );
+            AdditionalFees::create([
+                'particular_id' => $request->particular,
+                'amount' => $request->fee_amount
+            ]);
+            return back()->with('success', 'Additional Fee Successfully Added.');
         } catch (\Throwable $th) {
             //throw $th;
         }
