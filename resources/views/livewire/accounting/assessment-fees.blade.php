@@ -60,7 +60,7 @@
                                 <div class="form-group col-md">
                                     <small class="fw-bolder text-muted">CURRICULUM</small>
                                     <label for=""
-                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? $profile->enrollment_assessment->curriculum->curriculum_name : 'NO COURSE' }}</label>
+                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? $profile->enrollment_assessment->curriculum->curriculum_name : 'NO CURRICULUM' }}</label>
                                 </div>
 
                             </div>
@@ -95,75 +95,122 @@
                         </h5>
                     </div>
                     <div class="card-body p-5">
-                        <h6 class="text-primary fw-bolder">TOTAL TUITION FEE</h6>
-                        <div class="row">
-                            <div class="form-group col-md">
-                                <small class="form-label">FEE NAME</small>
-                                <br>
-                                <label class="h5 text-primary form-label">
-                                    TUITION FEE
-                                </label>
-                            </div>
-                            <div class="form-group col-md">
-                                <small class="form-label">FEE AMOUNT</small>
-                                <br>
-                                <label class="h5 text-primary form-label">
-                                    @if ($tuition_fees)
-                                        {{ number_format($tuition_fees['fee_amount'], 2) }}
-                                    @else
-                                        0.00
-                                    @endif
-                                </label>
-                            </div>
-                            <div class="form-group col-md">
-                                <small class="form-label">UPON ENROLLMENT</small>
-                                <br>
-                                <label class="h5 text-primary form-label">
-                                    @if ($tuition_fees)
-                                        {{ number_format($tuition_fees['upon_enrollment'], 2) }}
-                                    @else
-                                        0.00
-                                    @endif
-                                </label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="form-group col-md">
-                                <small class="form-label">MONTHLY FEE</small>
-                                <br>
-                                <label class="h5 text-primary form-label">
-                                    @if ($tuition_fees)
-                                        {{ number_format($tuition_fees['monthly'], 2) }}
-                                    @else
-                                        0.00
-                                    @endif
-                                </label>
-                            </div>
-                            <div class="form-group col-md">
-                                <small class="form-label">TOTAL FEES</small>
-                                <br>
-                                <label class="h5 text-primary form-label">
-                                    @if ($tuition_fees)
-                                        {{ number_format($tuition_fees['total_fees'], 2) }}
-                                    @else
-                                        0.00
-                                    @endif
-                                </label>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <small class="form-label">PAYMENT MODE</small>
-                                <br>
-                                <div class="col-sm">
-                                    <select name="mode" wire:model="paymentMode"
-                                        class="form-select form-select-sm payment-mode">
-                                        <option value="0">Fullpayment</option>
-                                        <option value="1">Installment</option>
-                                    </select>
+                        <form wire:submit.prevent="storeAssessment">
+                            <h6 class="text-info fw-bolder">TOTAL TUITION FEE</h6>
+                            <div class="row">
+                                <div class="form-group col-md">
+                                    <small class="form-label">FEE NAME</small>
+                                    <br>
+                                    <label class="h5 text-primary form-label">
+                                        TUITION FEE
+                                    </label>
+                                </div>
+                                <div class="form-group col-md">
+                                    <small class="form-label">FEE AMOUNT</small>
+                                    <br>
+                                    <label class="h5 text-primary form-label">
+                                        @if ($tuition_fees)
+                                            {{ number_format($tuition_fees['fee_amount'], 2) }}
+                                        @else
+                                            0.00
+                                        @endif
+                                    </label>
+                                </div>
+                                <div class="form-group col-md">
+                                    <small class="form-label">UPON ENROLLMENT</small>
+                                    <br>
+                                    <label class="h5 text-primary form-label">
+                                        @if ($tuition_fees)
+                                            {{ number_format($tuition_fees['upon_enrollment'], 2) }}
+                                        @else
+                                            0.00
+                                        @endif
+                                    </label>
                                 </div>
                             </div>
-                        </div>
-                        <h6 class="text-primary fw-bolder">ADDITIONAL PARTICULARS</h6>
-                        
+                            <div class="row">
+                                <div class="form-group col-md">
+                                    <small class="form-label">MONTHLY FEE</small>
+                                    <br>
+                                    <label class="h5 text-primary form-label">
+                                        @if ($tuition_fees)
+                                            {{ number_format($tuition_fees['monthly'], 2) }}
+                                        @else
+                                            0.00
+                                        @endif
+                                    </label>
+                                </div>
+                                <div class="form-group col-md">
+                                    <small class="form-label">TOTAL FEES</small>
+                                    <br>
+                                    <label class="h5 text-primary form-label">
+                                        @if ($tuition_fees)
+                                            {{ number_format($tuition_fees['total_fees'], 2) }}
+                                        @else
+                                            0.00
+                                        @endif
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <small class="form-label">PAYMENT MODE</small>
+                                    <br>
+                                    <div class="col-sm">
+                                        <select name="mode" wire:model="paymentMode"
+                                            class="form-select form-select-sm payment-mode">
+                                            <option value="0">Fullpayment</option>
+                                            <option value="1">Installment</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="badge bg-primary float-end" data-bs-toggle="modal"
+                                data-bs-target=".view-modal">ADD
+                                PARTICULARS</span>
+                            <h6 class="text-info fw-bolder">ADDITIONAL
+                                PARTICULARS</h6>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>FEE NAME</td>
+                                        <td>FEE AMOUNT</td>
+                                        <td>ACTION</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($particularLists as $item)
+                                        <tr>
+                                            <td class="text-muted">
+                                                {{ $item['particular']['particular_name'] }}
+                                            </td>
+                                            <td>{{ number_format($item['amount'], 2) }}</td>
+                                            <td></td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-muted">NO FEES</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                            {{-- <h6 class="text-info fw-bolder">DISCOUNT</h6> --}}
+
+                            {{--   <h6 class="text-info fw-bolder">TOTAL SEMESTRAL FEES</h6> --}}
+                            <div class="row">
+                                {{-- <div class="form-group col-md-8">
+                                    <small class="form-label">TOTAL AMOUNT</small>
+                                    <br>
+                                    <label class="h5 text-primary form-label">
+                                        {{ number_format($totalSemestralFees, 2) }}
+                                    </label>
+                                </div> --}}
+                                <div class="form-group col-md">
+                                    <button type="submit" class="btn btn-primary float-end">SUBMIT</button>
+                                </div>
+                                
+                            </div>
+
+                        </form>
+
                     </div>
                 </div>
             @endif
@@ -228,6 +275,46 @@
                         </div>
                     </div>
                 @endforelse
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bolder">ADD PARTICULARS FEE</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td>FEE NAME</td>
+                                <td>FEE AMOUNT</td>
+                                <td>ACTION</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($particularFees as $item)
+                                <tr>
+                                    <td>{{ $item->particular->particular_name }}</td>
+                                    <td>{{ number_format($item->amount, 2) }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary"
+                                            wire:click="addFees({{ $item->id }})" data-bs-dismiss="modal"
+                                            aria-label="Close">ADD</button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-muted">NO FEES</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

@@ -17,8 +17,8 @@ class CreatePaymentAdditionalFeesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('enrollment_id');
             $table->foreign('enrollment_id')->references('id')->on('enrollment_assessments');
-            $table->unsignedBigInteger('assessement_id');
-            $table->foreign('assessement_id')->references('id')->on('payment_assessments');
+            $table->unsignedBigInteger('assessment_id');
+            $table->foreign('assessment_id')->references('id')->on('payment_assessments');
             $table->unsignedBigInteger('fees_id');
             $table->foreign('fees_id')->references('id')->on('additional_fees');
             $table->string('status')->nullable();

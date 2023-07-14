@@ -14,4 +14,8 @@ class PaymentAdditionalFees extends Model
     {
         return $this->belongsTo(EnrollmentAssessment::class, 'enrollment_id');
     }
+    function fee_details()
+    {
+        return $this->belongsTo(AdditionalFees::class, 'fees_id');
+    }
 }

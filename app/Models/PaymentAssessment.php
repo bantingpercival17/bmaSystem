@@ -60,5 +60,8 @@ class PaymentAssessment extends Model
         $_data =  $this->hasOne(PaymentTransaction::class, 'assessment_id')->where('remarks', $data)->where('is_removed', false)->first();
         return $_data ?  $_data->payment_amount : '';
     }
-    
+    function additional_fees()
+    {
+        return $this->hasMany(PaymentAdditionalFees::class, 'assessment_id')->where('is_removed', false);
+    }
 }
