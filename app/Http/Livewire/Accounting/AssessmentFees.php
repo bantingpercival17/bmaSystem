@@ -28,7 +28,10 @@ class AssessmentFees extends Component
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
         $tuition_fees = [];
         if ($this->profile) {
-            $enrollment_assessment = $this->profile->enrollment_assessment;
+            /* if (request()->input('reassessment')) {
+                # code...
+            } */
+            $enrollment_assessment = $this->profile->enrollment_status;
             if ($enrollment_assessment) {
                 $this->enrollmentAssessment = $enrollment_assessment->id;
                 $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
@@ -129,7 +132,7 @@ class AssessmentFees extends Component
                 'enrollment_id' => $this->enrollmentAssessment,
                 'course_semestral_fee_id' => $tuition_fees->id,
                 'payment_mode' => $this->paymentMode,
-                'staff_id' => auth()->user()->staff->id,
+                'staff_id' => Auth::user()->id,
                 'total_payment' => $total_tuitionfee,
                 'upon_enrollment' => $upon_enrollment,
                 'monthly_payment' => $monthly_payment,
@@ -159,6 +162,7 @@ class AssessmentFees extends Component
                 $_payment_assessment->total_payment =  $total_tuitionfee;
                 $_payment_assessment->upon_enrollment =  $upon_enrollment;
                 $_payment_assessment->monthly_payment =  $monthly_payment;
+                $_payment_assessment->staff_id = Auth::user()->id;
                 $_payment_assessment->save();
                 if (count($_payment_assessment->additional_fees) == 0) {
                     if (count($this->particularLists) > 0) {

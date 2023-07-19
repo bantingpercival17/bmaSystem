@@ -100,6 +100,10 @@ class EnrollmentAssessment extends Model
                 ->where('student_sections.is_removed', false);
         }, '<=', 39)->first();
     }
+    function student_section()
+    {
+        return $this->hasOne(StudentSection::class, 'enrollment_id')->where('is_removed', false);
+    }
     public function color_course()
     {
         $_course_color = $this->course_id == 1 ? 'bg-info' : '';

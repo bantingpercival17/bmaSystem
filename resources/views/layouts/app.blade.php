@@ -246,24 +246,24 @@
         </div>
     </div>
     @if (Auth::user())
-        @if (request()->is('executive/scanner'))
-            @livewire('components.top-navigation-scanner')
-            {{ $slot }}
-        @else
-            @livewire('components.side-navigation-menu')
-            <main class="main-content">
-                <div class="position-relative">
-                    @livewire('components.top-navigation-menu')
-                </div>
-                <div style="margin-top:7%;">
-                    <div class="conatiner-fluid content-inner">
-                        {{ $slot }}
-                    </div>
-                </div>
-            </main>
-        @endif
+    @if (request()->is('executive/scanner'))
+    @livewire('components.top-navigation-scanner')
+    {{ $slot }}
     @else
-        {{ $slot }}
+    @livewire('components.side-navigation-menu')
+    <main class="main-content">
+        <div class="position-relative">
+            @livewire('components.top-navigation-menu')
+        </div>
+        <div style="margin-top:7%;">
+            <div class="conatiner-fluid content-inner">
+                {{ $slot }}
+            </div>
+        </div>
+    </main>
+    @endif
+    @else
+    {{ $slot }}
     @endif
     @livewireScripts
     {{-- <script src="{{ asset('js/app-1.js') }}"></script> --}}
@@ -295,34 +295,34 @@
     <script src="{{ asset('assets\plugins\sweetalert2\sweetalert2.all.min.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('assets\plugins\sweetalert2\sweetalert2.min.css') }}">
     @if (request()->is('executive/scanner'))
-        <script>
-            function updateTime() {
-                console.log('working')
-                Livewire.emit('updateTime')
+    <script>
+        function updateTime() {
+            console.log('working')
+            Livewire.emit('updateTime')
 
+        }
+        setInterval(updateTime, 1000);
+        // Add an event listener for the barcode scanner
+        window.addEventListener("keydown", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("qr-code-scanner").focus();
             }
-            setInterval(updateTime, 1000);
-            // Add an event listener for the barcode scanner
-            window.addEventListener("keydown", function(event) {
-                if (event.keyCode === 13) {
-                    event.preventDefault();
-                    document.getElementById("qr-code-scanner").focus();
-                }
-            });
-            window.addEventListener('qrcode:alert', event => {
-                console.log('qrcode:alert')
-                Swal.fire({
-                    title: event.detail.title,
-                    text: event.detail.text,
-                    icon: event.detail.type,
-                    timer: 2000,
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                })
-                var audio_custom = new Audio(event.detail.audio);
-                audio_custom.play()
+        });
+        window.addEventListener('qrcode:alert', event => {
+            console.log('qrcode:alert')
+            Swal.fire({
+                title: event.detail.title,
+                text: event.detail.text,
+                icon: event.detail.type,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false,
             })
-        </script>
+            var audio_custom = new Audio(event.detail.audio);
+            audio_custom.play()
+        })
+    </script>
     @endif
     <script>
         window.addEventListener('swal:alert', event => {
@@ -380,6 +380,22 @@
                 },
             });
         })
+        window.addEventListener('swal:confirmInputVoid', event => {
+            console.log('confirmInput')
+            Swal.fire({
+                title: event.detail.title,
+                text: event.detail.text,
+                icon: event.detail.type,
+                showCancelButton: true,
+                cancelButtonText: event.detail.cancelButtonText,
+                confirmButtonText: event.detail.confirmButtonText,
+                input: event.detail.input,
+                inputPlaceholder: event.detail.inputPlaceholder,
+                preConfirm: function(value) {
+                    Livewire.emit(event.detail.method, event.detail.params.payment, value)
+                },
+            });
+        })
         window.addEventListener('submit:form', event => {
             //alert('Name updated to: ' + event.detail.form);
             document.getElementById(event.detail.form).submit()
@@ -388,23 +404,23 @@
             window.addEventListener('swal:')
             alert('Name updated to: ' + event.detail.newName);
         })
-        @if (Session::has('success'))
-            Swal.fire({
-                title: 'Complete!',
-                text: "{{ session('success') }}",
-                icon: 'success',
-                confirmButtonText: 'Okay'
-            })
-            /* toastr.success("{{ session('message') }}") */
+        @if(Session::has('success'))
+        Swal.fire({
+            title: 'Complete!',
+            text: "{{ session('success') }}",
+            icon: 'success',
+            confirmButtonText: 'Okay'
+        })
+        /* toastr.success("{{ session('message') }}") */
         @endif
-        @if (Session::has('error'))
-            Swal.fire({
-                title: 'Existing Data!',
-                text: "{{ session('error') }}",
-                icon: 'error',
-                confirmButtonText: 'Okay'
-            })
-            /* toastr.success("{{ session('message') }}") */
+        @if(Session::has('error'))
+        Swal.fire({
+            title: 'Existing Data!',
+            text: "{{ session('error') }}",
+            icon: 'error',
+            confirmButtonText: 'Okay'
+        })
+        /* toastr.success("{{ session('message') }}") */
         @endif
     </script>
     @yield('script')

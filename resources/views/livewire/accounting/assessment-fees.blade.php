@@ -22,8 +22,8 @@
                                 </small> -
 
                                 <small
-                                    class="fw-bolder badge {{ $profile ? ($profile->enrollment_assessment ? $profile->enrollment_assessment->color_course() : 'bg-secondary') : 'bg-secondary' }}">
-                                    {{ $profile ? ($profile->enrollment_assessment ? $profile->enrollment_assessment->course->course_name : 'COURSE') : 'COURSE' }}
+                                    class="fw-bolder badge {{ $profile ? ($profile->enrollment_status ? $profile->enrollment_status->color_course() : 'bg-secondary') : 'bg-secondary' }}">
+                                    {{ $profile ? ($profile->enrollment_status ? $profile->enrollment_status->course->course_name : 'COURSE') : 'COURSE' }}
                                 </small>
                             </p>
                         </div>
@@ -43,24 +43,24 @@
                                 <div class="form-group col-md">
                                     <small class="fw-bolder text-muted">COURSE</small>
                                     <label for=""
-                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? $profile->enrollment_assessment->course->course_name : 'NO COURSE' }}</label>
+                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_status ? $profile->enrollment_status->course->course_name : 'NO COURSE' }}</label>
                                 </div>
                                 <div class="form-group col-md">
                                     <small class="fw-bolder text-muted">ACADEMIC YEAR</small>
                                     <label for=""
-                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? $profile->enrollment_assessment->academic->school_year . '-' . $profile->enrollment_assessment->academic->semester : 'NO COURSE' }}</label>
+                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_status ? $profile->enrollment_status->academic->school_year . '-' . $profile->enrollment_status->academic->semester : 'NO COURSE' }}</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-md">
                                     <small class="fw-bolder text-muted">YEAR LEVEL</small>
                                     <label for=""
-                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? Auth::user()->staff->convert_year_level($profile->enrollment_assessment->year_level) : 'NO COURSE' }}</label>
+                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_status ? Auth::user()->staff->convert_year_level($profile->enrollment_status->year_level) : 'NO COURSE' }}</label>
                                 </div>
                                 <div class="form-group col-md">
                                     <small class="fw-bolder text-muted">CURRICULUM</small>
                                     <label for=""
-                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? $profile->enrollment_assessment->curriculum->curriculum_name : 'NO CURRICULUM' }}</label>
+                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_status ? $profile->enrollment_status->curriculum->curriculum_name : 'NO CURRICULUM' }}</label>
                                 </div>
 
                             </div>
@@ -73,7 +73,7 @@
                                 <div class="form-group col-md">
                                     <small class="fw-bolder text-muted">BRIDGING PROGRAM</small>
                                     <label for=""
-                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_assessment ? strtoupper($profile->enrollment_assessment->bridging_program) : 'NO BRIDGING PROGRAM' }}</label>
+                                        class="form-control form-control-sm border border-info">{{ $profile->enrollment_status ? strtoupper($profile->enrollment_status->bridging_program) : 'NO BRIDGING PROGRAM' }}</label>
                                 </div>
                                 @if ($profile->enrollment_application_v2)
                                     @if ($profile->enrollment_application_v2->enrollment_category == 'SBT ENROLLMENT')
@@ -206,7 +206,7 @@
                                 <div class="form-group col-md">
                                     <button type="submit" class="btn btn-primary float-end">SUBMIT</button>
                                 </div>
-                                
+
                             </div>
 
                         </form>
@@ -251,7 +251,7 @@
                                             class="text-primary fw-bolder">{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</small>
                                         <br>
                                         <small
-                                            class="badge {{ $item->enrollment_assessment ? $item->enrollment_assessment->color_course() : 'bg-secondary' }} ">{{ $item->enrollment_assessment ? $item->enrollment_assessment->course->course_code : '-' }}</small>
+                                            class="badge {{ $item->enrollment_status ? $item->enrollment_status->color_course() : 'bg-secondary' }} ">{{ $item->enrollment_status ? $item->enrollment_status->course->course_code : '-' }}</small>
                                         -
                                         <span>{{ $item->account ? $item->account->student_number : 'NEW STUDENT' }}</span>
                                         <div>

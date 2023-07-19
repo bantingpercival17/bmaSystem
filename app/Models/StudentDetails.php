@@ -83,6 +83,13 @@ class StudentDetails extends Model
         return $_query;
         //return $this->hasOne(EnrollmentAssessment::class, 'student_id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('is_removed', 0)->orderBy('id', 'desc');
     }
+    function enrollment_selection($academic)
+    {
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+            ->where('academic_id', $academic)
+            ->where('is_removed', 0)
+            ->orderBy('id', 'desc')->first();
+    }
     public function enrollment_history()
     {
         return $this->hasMany(EnrollmentAssessment::class, 'student_id')
@@ -1234,7 +1241,7 @@ class StudentDetails extends Model
         $level = '';
         // First check if the Student have a History of enrollment 
         $enrollment = $this->enrollment_history;
-        
+
         if (count($enrollment) > 0) {
             // Get the Latest Enrollment Assessment
             $assessment = $this->past_enrollment_assessment;
