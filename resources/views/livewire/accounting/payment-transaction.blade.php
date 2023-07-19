@@ -179,7 +179,7 @@
                             </label>
                             <span class="badge bg-primary float-end" data-bs-toggle="modal"
                                 data-bs-target=".view-modal">ADD
-                                PARTICULARS</span>
+                                ADDITIONAL FEES</span>
                             @if (count($additional_fees) > 0)
                                 @foreach ($additional_fees as $additionalFees)
                                     <div class="row p-0 mt-0 mb-0">
@@ -225,7 +225,7 @@
 
                                                             <small>
                                                                 <a class="badge bg-secondary"
-                                                                    wire:click="addTransaction('{{ $additionalFees->fee_details->particular->particular_name }}','additional')">ADD
+                                                                    wire:click="addTransaction('{{ $additionalFees->fee_details->particular->particular_name }}','additional','{{ base64_encode($additionalFees->id) }}')">ADD
                                                                     TRANSACTION</a>
                                                             </small>
                                                             <small>
@@ -406,11 +406,16 @@
                                         <small class="form-label">TOTAL PAYABLE:</small>
                                         <br>
                                         <label class="h5 text-primary form-label">
-                                            {{ $paymentAssessment
-                                                ? ($paymentAssessment->course_semestral_fee_id
-                                                    ? number_format($paymentAssessment->course_semestral_fee->total_payments($paymentAssessment), 2)
-                                                    : number_format($paymentAssessment->total_payment, 2))
-                                                : '-' }}
+                                            @if ($transactionStatus == 'tuition-fee')
+                                                {{ $paymentAssessment
+                                                    ? ($paymentAssessment->course_semestral_fee_id
+                                                        ? number_format($paymentAssessment->course_semestral_fee->total_payments($paymentAssessment), 2)
+                                                        : number_format($paymentAssessment->total_payment, 2))
+                                                    : '-' }}
+                                            @else
+                                                {{ number_format($paymentDetails['total_payable'], 2) }}
+                                            @endif
+
                                         </label>
                                     </div>
                                 </div>
@@ -419,7 +424,12 @@
                                         <small class="form-label">TOTAL PAID:</small>
                                         <br>
                                         <label class="h5 text-primary form-label">
-                                            {{ $paymentAssessment ? number_format($paymentAssessment->total_paid_amount->sum('payment_amount'), 2) : '-' }}
+                                            @if ($transactionStatus == 'tuition-fee')
+                                                {{ $paymentAssessment ? number_format($paymentAssessment->total_paid_amount->sum('payment_amount'), 2) : '-' }}
+                                            @else
+                                                {{ number_format($paymentDetails['total_paid'], 2) }}
+                                            @endif
+
                                         </label>
                                     </div>
                                 </div>
@@ -428,7 +438,12 @@
                                         <small class="form-label">Balance:</small>
                                         <br>
                                         <label class="h5 text-danger form-label">
-                                            {{ $paymentAssessment ? number_format(($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount'), 2) : '-' }}
+                                            @if ($transactionStatus == 'tuition-fee')
+                                                {{ $paymentAssessment ? number_format(($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount'), 2) : '-' }}
+                                            @else
+                                                {{ number_format($paymentDetails['balance'], 2) }}
+                                            @endif
+
                                         </label>
                                     </div>
                                 </div>

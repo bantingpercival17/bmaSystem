@@ -41,6 +41,7 @@ class PaymentTransaction extends Component
     public $transactionAmount = null;
     public $transactionVoucher = null;
     public $onlinePaymentTransaction = null;
+    public $paymentDetails = [];
     protected $rules = [
         'transactionOrNumber' => 'required',
         'transactionAmount' => 'required',
@@ -138,12 +139,18 @@ class PaymentTransaction extends Component
         }
         $this->paymentAssessment = $this->profile->enrollment_status->payment_assessments;;
     }
-    function addTransaction($term, $status)
+    function addTransaction($term, $status, $id)
     {
         $this->activeCard = 'transaction';
         $this->particularName =  $term;
         $this->transactionStatus = $status;
         $this->transactionRemarks = $term;
+        $fees = PaymentAdditionalFees::find(base64_decode($id));
+        $this->paymentDetails = array(
+            'total_payable' => $fees->fee_details->amount,
+            'total_paid' => $fees->fee_total_paid(),
+            'balance' => $fees->fee_details->amount - $fees->fee_total_paid()
+        );
     }
     function paymentTransaction()
     {
@@ -190,7 +197,7 @@ class PaymentTransaction extends Component
             $this->reset(['transactionAmount', 'transactionOrNumber', 'transactionVoucher', 'transactionPaymentMethod', 'transactionRemarks', 'transactionDate']);
             $this->dispatchBrowserEvent('swal:alert', [
                 'title' => 'Payment Transaction!',
-                'text' => json_encode($paymentDetails),
+                'text' => 'Successfully Transact!',
                 'type' => 'success',
             ]);
             $this->swtchTab('overview');

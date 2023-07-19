@@ -163,11 +163,12 @@
                                     </div>
                                 </div>
                             </div>
+                            <hr>
                             <span class="badge bg-primary float-end" data-bs-toggle="modal"
                                 data-bs-target=".view-modal">ADD
-                                PARTICULARS</span>
+                                ADDITIONAL FEES</span>
                             <h6 class="text-info fw-bolder">ADDITIONAL
-                                PARTICULARS</h6>
+                                FEES</h6>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -192,9 +193,24 @@
                                     @endforelse
                                 </tbody>
                             </table>
-                            {{-- <h6 class="text-info fw-bolder">DISCOUNT</h6> --}}
-
-                            {{--   <h6 class="text-info fw-bolder">TOTAL SEMESTRAL FEES</h6> --}}
+                            <hr>
+                            <h6 class="text-info fw-bolder">SCHOLARSHIP GRANT</h6>
+                            <div class="row">
+                                <div class="form-group col-md">
+                                    <small class="fw-bolder text-muted">SCHOLARSHIP GRANT</small>
+                                    <label for=""
+                                        class="form-control form-control-sm border border-info">{{ $profile->scholarship_grant ? $profile->$profile->scholarship_grant->voucher->voucher_name : 'NO SCHOLARSHIP' }}</label>
+                                </div>
+                            </div>
+                            <hr>
+                            <h6 class="text-info fw-bolder">FORWARDED OVER-PAYMENT</h6>
+                            <div class="row">
+                                <div class="form-group col-md">
+                                    <small class="fw-bolder text-muted">FORWARDED AMOUNT</small>
+                                    <label for=""
+                                        class="form-control form-control-sm border border-info">{{ number_format($profile->enrollment_assessment->over_payment() * -1, 2) }}</label>
+                                </div>
+                            </div>
                             <div class="row">
                                 {{-- <div class="form-group col-md-8">
                                     <small class="form-label">TOTAL AMOUNT</small>

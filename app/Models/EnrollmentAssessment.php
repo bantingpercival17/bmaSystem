@@ -130,4 +130,13 @@ class EnrollmentAssessment extends Model
     {
         return $this->hasOne(StudentMedicalResult::class, 'enrollment_id')->where('is_removed', false);
     }
+    function over_payment()
+    {
+        $previous =  AcademicYear::where('id', '<', $this->academic_id)
+            ->orderBy('id', 'desc')
+            ->first();
+        $enrollment = EnrollmentAssessment::where('academic_id', $previous->id)->where('student_id', $this->student_id)->where('is_removed', false)->first();
+        $paymentAssessment = $enrollment->payment_assessments;
+        return ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
+    }
 }
