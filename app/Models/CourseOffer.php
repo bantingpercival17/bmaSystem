@@ -1551,4 +1551,14 @@ class CourseOffer extends Model
             ->where('academic_id', Auth::user()->staff->current_academic()->id)
             ->where('is_removed', false);
     }
+    function student_medical_result($level)
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'course_id')
+            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.year_level', $level)
+            ->where('enrollment_assessments.is_removed', false)
+            ->join('student_medical_results', 'student_medical_results.enrollment_id', 'enrollment_assessments.id')
+            ->where('student_medical_results.is_removed', false)
+            ->where('student_medical_results.is_pending', 0);
+    }
 }

@@ -158,4 +158,8 @@ class StudentView extends Component
             'params' => ['student' => $student, 'result' => $result, 'enrollment' => $enrollment],
         ]);
     }
+    function generateReport()
+    {
+        return redirect(route('medical.student-report') . '?_academic=' . $this->academic);
+    }
 }
