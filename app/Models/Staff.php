@@ -154,7 +154,7 @@ class Staff extends Model
         $_course = CourseOffer::all();
         $_total = 0;
         foreach ($_course as $key => $value) {
-            $_total += count($value->verified_applicants);
+            $_total += count($value->applicant_registrants);
         }
         return $_total;
     }
@@ -183,7 +183,7 @@ class Staff extends Model
                 'role_id' => 3,
                 'role_name' => 'Registrar',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Enrollment v2', 'enrollment.view-v2'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance']],
+                'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Enrollment v2', 'enrollment.view-v2'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance'],['Scholarship Grants','registrar.scholarship-grants']],
             ],
             [
                 
