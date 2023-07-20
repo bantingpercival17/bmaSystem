@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use PhpOffice\PhpSpreadsheet\Theme;
 
 class GradeImport implements ToCollection
 {
@@ -149,7 +150,7 @@ class GradeImport implements ToCollection
     public function grade_upload_v2($collection)
     {
         $_section = SubjectClass::find($this->section); // Get the Subject Section
-        $_path = '/upload-logs/upload-grades/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . '/'; // Set the File Path
+        $_path = '/upload-logs/upload-grades/' . $_section->academic->school_year . '/' . $_section->academic->semester . '/' . str_replace('/', '', $_section->section->section_name) . '/'; // Set the File Path
         $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . ' ' . $_section->curriculum_subject->subject->subject_code . date('dmyhis')) . '.log'; // Set the Filename
         $_headers = $collection[0]; // The Headers
 

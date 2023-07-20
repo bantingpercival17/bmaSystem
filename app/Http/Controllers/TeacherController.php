@@ -245,7 +245,7 @@ class TeacherController extends Controller
     public function subject_grade_bulk_upload(Request $_request)
     {
         $_section = SubjectClass::find(Crypt::decrypt($_request->_section));
-        $_path = '/teacher/grade-sheet/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . "/";
+        $_path = '/teacher/grade-sheet/' . $_section->academic->school_year . '/' . $_section->academic->semester . '/' . str_replace('/', '', $_section->section->section_name) . "/";
         $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_name . date('dmyhis'));
         $_file_extention =  $_request->file('_file_grade')->getClientOriginalExtension();
         $_file_name = $_file_name . "." . $_file_extention;
