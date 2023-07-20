@@ -60,5 +60,47 @@ class PaymentAssessment extends Model
         $_data =  $this->hasOne(PaymentTransaction::class, 'assessment_id')->where('remarks', $data)->where('is_removed', false)->first();
         return $_data ?  $_data->payment_amount : '';
     }
-    
+    function additional_fees()
+    {
+        return $this->hasMany(PaymentAdditionalFees::class, 'assessment_id')->where('is_removed', false);
+    }
+    function account_card_details()
+    {
+        $transactionList = array();
+        array_push($transactionList, array(
+            'date' => $this->created_at->format('Y-m-d'),
+            'orNumber' => '',
+            'remarks' => 'TUITION FEE',
+            'debit' => null,
+            'credit' => $this->total_payment
+        ));
+        //$transactions = $this->hasMany(PaymentTransaction::class, 'assessment_id')->where('is_removed', false);
+        $transactions = $this->payment_transaction;
+        $addtionalFees = $this->additional_fees;
+        foreach ($addtionalFees as $key => $value) {
+            array_push($transactionList, array(
+                'date' => $this->created_at->format('Y-m-d'),
+                'orNumber' => '',
+                'remarks' => $value->fee_details->particular->particular_name,
+                'debit' => null,
+                'credit' => $value->fee_details->amount
+            ));
+        }
+        foreach ($transactions as $key => $transaction) {
+            array_push($transactionList, array(
+                'date' => $transaction->transaction_date,
+                'orNumber' => $transaction->or_number,
+                'remarks' => $transaction->remarks,
+                'debit' => $transaction->payment_amount,
+                'credit' => null
+            ));
+        }
+        usort($transactionList, function ($a, $b) {
+            $dateA = strtotime($a['date']);
+            $dateB = strtotime($b['date']);
+            return $dateA - $dateB;
+        });
+
+        return $transactionList;
+    }
 }

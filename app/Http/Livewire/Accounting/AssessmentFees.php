@@ -2,6 +2,10 @@
 
 namespace App\Http\Livewire\Accounting;
 
+use App\Models\AdditionalFees;
+use App\Models\EnrollmentAssessment;
+use App\Models\PaymentAdditionalFees;
+use App\Models\PaymentAssessment;
 use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -11,7 +15,10 @@ class AssessmentFees extends Component
     public $inputStudent;
     public $academic;
     public $profile = null;
-    public $paymentMode;
+    public $paymentMode = 0;
+    public $particularLists = [];
+    public $totalSemestralFees = 0;
+    public $enrollmentAssessment = null;
     public function render()
     {
         $_academic = Auth::user()->staff->current_academic();
@@ -21,10 +28,24 @@ class AssessmentFees extends Component
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
         $tuition_fees = [];
         if ($this->profile) {
-            $enrollment_assessment = $this->profile->enrollment_assessment;
+            /* if (request()->input('reassessment')) {
+                # code...
+            } */
+            $enrollment_assessment = $this->profile->enrollment_status;
             if ($enrollment_assessment) {
+                $this->enrollmentAssessment = $enrollment_assessment->id;
                 $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
                 if ($tuition_fees) {
+
+                    if ($enrollment_assessment->payment_assessments) {
+                        $this->paymentMode = $enrollment_assessment->payment_assessments->payment_mode;
+                        if (count($enrollment_assessment->payment_assessments->additional_fees)) {
+                            foreach ($enrollment_assessment->payment_assessments->additional_fees as $key => $value) {
+                                $fee = AdditionalFees::with('particular')->find($value->fees_id);
+                                $this->particularLists[] = $fee;
+                            }
+                        }
+                    }
                     $tags = $tuition_fees->semestral_fees();
                     $total_tuition  = $tuition_fees->total_tuition_fees($enrollment_assessment);
                     $total_tuition_with_interest  = $tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
@@ -38,6 +59,7 @@ class AssessmentFees extends Component
                         'monthly' => 0.00,
                         'total_fees' => $total_tuition
                     );
+                    $this->totalSemestralFees = $total_tuition;
                     if ($this->paymentMode == 1) {
                         $tuition_fees = array(
                             'fee_amount' => $total_tuition,
@@ -45,11 +67,13 @@ class AssessmentFees extends Component
                             'monthly' => $monthly,
                             'total_fees' => $total_tuition_with_interest
                         );
+                        $this->totalSemestralFees = $total_tuition_with_interest;
                     }
                 }
             }
         }
-        return view('livewire.accounting.assessment-fees', compact('studentLists', 'tuition_fees'));
+        $particularFees = AdditionalFees::where('is_removed', false)->get();
+        return view('livewire.accounting.assessment-fees', compact('studentLists', 'tuition_fees', 'particularFees'));
     }
 
     function recentStudent($academic)
@@ -81,5 +105,85 @@ class AssessmentFees extends Component
             }
         }
         return $query->paginate(20);
+    }
+    function addFees($fee)
+    {
+        $fee = AdditionalFees::with('particular')->find($fee);
+        $this->particularLists[] = $fee;
+    }
+
+    function storeAssessment()
+    {
+        try {
+            $enrollment_assessment = EnrollmentAssessment::find($this->enrollmentAssessment);
+            $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
+            if ($this->paymentMode == 1) {
+                // Installment
+                $total_tuitionfee =  $tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
+                $upon_enrollment = $tuition_fees->upon_enrollment_v2($enrollment_assessment);
+                $monthly_payment = $tuition_fees->monthly_fees_v2($enrollment_assessment);
+            } else {
+                //FullPayment
+                $total_tuitionfee = $tuition_fees->total_tuition_fees($enrollment_assessment);;
+                $upon_enrollment = $tuition_fees->total_tuition_fees($enrollment_assessment);;
+                $monthly_payment = 0;
+            }
+            $_details = array(
+                'enrollment_id' => $this->enrollmentAssessment,
+                'course_semestral_fee_id' => $tuition_fees->id,
+                'payment_mode' => $this->paymentMode,
+                'staff_id' => Auth::user()->id,
+                'total_payment' => $total_tuitionfee,
+                'upon_enrollment' => $upon_enrollment,
+                'monthly_payment' => $monthly_payment,
+                'voucher_amount' => 0,
+                'is_removed' => 0
+            );
+            $_payment_assessment = PaymentAssessment::where('enrollment_id', $this->enrollmentAssessment)->first();
+            if (!$_payment_assessment) {
+                $assessment = PaymentAssessment::create($_details);
+                if (count($this->particularLists) > 0) {
+                    foreach ($this->particularLists as $key => $list) {
+                        $add = PaymentAdditionalFees::where('assessment_id', $assessment->id)->where('fees_id', $list['id'])->first();
+                        if (!$add) {
+                            PaymentAdditionalFees::create([
+                                'enrollment_id' => $this->enrollmentAssessment,
+                                'assessment_id' => $assessment->id,
+                                'fees_id' => $list['id'],
+                                'status' => 'NO PAYMENT'
+                            ]);
+                        }
+                    }
+                }
+                return redirect(route('accounting.payment-transactions-v2') . "?student=" . base64_encode($this->profile->id))->with('success', 'Payment Assessment Complete.');
+            } else {
+                $_payment_assessment->course_semestral_fee_id =   $tuition_fees->id;
+                $_payment_assessment->payment_mode = $this->paymentMode;
+                $_payment_assessment->total_payment =  $total_tuitionfee;
+                $_payment_assessment->upon_enrollment =  $upon_enrollment;
+                $_payment_assessment->monthly_payment =  $monthly_payment;
+                $_payment_assessment->staff_id = Auth::user()->id;
+                $_payment_assessment->save();
+                if (count($_payment_assessment->additional_fees) == 0) {
+                    if (count($this->particularLists) > 0) {
+                        foreach ($this->particularLists as $key => $list) {
+                            PaymentAdditionalFees::create([
+                                'enrollment_id' => $this->enrollmentAssessment,
+                                'assessment_id' => $_payment_assessment->id,
+                                'fees_id' => $list['id'],
+                                'status' => 'NO PAYMENT'
+                            ]);
+                        }
+                    }
+                }
+                return redirect(route('accounting.payment-transactions-v2') . "?student=" . base64_encode($this->profile->id))->with('success', 'Payment Assessment Updated');
+            }
+        } catch (\Throwable $th) {
+            $this->dispatchBrowserEvent('swal:alert', [
+                'title' => 'System Bug!',
+                'text' => $th->getMessage(),
+                'type' => 'warning',
+            ]);
+        }
     }
 }

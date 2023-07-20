@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title-report')</title>
     <link rel="stylesheet" href="{{ public_path('css/main-pdf.css') }}">
-   
+    @yield('style')
 </head>
 
 <body>

@@ -486,6 +486,18 @@ class CourseOffer extends Model
         }
         return $_query;
     }
+    function applicant_registrants()
+    {
+        $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('applicant_accounts.is_removed', false)
+            ->groupBy('applicant_accounts.id') # Applicant Account
+            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join('applicant_documents', 'applicant_documents.applicant_id', 'applicant_accounts.id');
+
+        return $_query;
+    }
     # Applicant Incomplete Documents
     public function applicant_incomplete_documents()
     {

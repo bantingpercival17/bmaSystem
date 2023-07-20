@@ -100,6 +100,10 @@ class EnrollmentAssessment extends Model
                 ->where('student_sections.is_removed', false);
         }, '<=', 39)->first();
     }
+    function student_section()
+    {
+        return $this->hasOne(StudentSection::class, 'enrollment_id')->where('is_removed', false);
+    }
     public function color_course()
     {
         $_course_color = $this->course_id == 1 ? 'bg-info' : '';
@@ -125,5 +129,14 @@ class EnrollmentAssessment extends Model
     function medical_result()
     {
         return $this->hasOne(StudentMedicalResult::class, 'enrollment_id')->where('is_removed', false);
+    }
+    function over_payment()
+    {
+        $previous =  AcademicYear::where('id', '<', $this->academic_id)
+            ->orderBy('id', 'desc')
+            ->first();
+        $enrollment = EnrollmentAssessment::where('academic_id', $previous->id)->where('student_id', $this->student_id)->where('is_removed', false)->first();
+        $paymentAssessment = $enrollment->payment_assessments;
+        return ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
     }
 }
