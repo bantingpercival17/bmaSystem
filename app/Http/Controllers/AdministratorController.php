@@ -125,13 +125,14 @@ class AdministratorController extends Controller
     }
     public function student_reset_password(Request $_request)
     {
+        $student = StudentDetails::find(base64_decode($_request->_student));
         $_student_accounts = StudentAccount::where('is_removed', false)->find(base64_decode($_request->_student));
         $length = 5;
         $_password = 'BMA-' . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
-        $_student_accounts->password = Hash::make($_password);
-        $_student_accounts->save();
+        $student->account->password = Hash::make($_password);
+        $student->account->save();
         StudentPasswordReset::create([
-            'student_id' => $_student_accounts->student_id,
+            'student_id' => $student->account->student_id,
             'password_string' => $_password,
             'is_status' => 'reset-password',
             'is_removed' => false,
