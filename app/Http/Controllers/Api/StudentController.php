@@ -326,9 +326,10 @@ class StudentController extends Controller
             return $this->student_enrollment_application($_request);
             //return response(['message' => 'Successfully Submitted.'], 200);
         } catch (Expression $error) {
+            $this->debugTrackerStudent($error);
             return response([
                 'message' => $error
-            ], 402);
+            ], 500);
         }
     }
     public function student_enrollment_application(Request $_request)
@@ -355,9 +356,10 @@ class StudentController extends Controller
                 ], 402);
             }
         } catch (Expression $error) {
+            $this->debugTrackerStudent($error);
             return response([
                 'message' => $error
-            ], 402);
+            ], 500);
         }
     }
     public function enrollment_payment_mode(Request $_request)
@@ -368,9 +370,25 @@ class StudentController extends Controller
             $student->save();
             return response(['message' => 'Successfully Submitted.'], 200);
         } catch (Expression $error) {
+            $this->debugTrackerStudent($error);
             return response([
                 'message' => $error
-            ], 402);
+            ], 500);
+        }
+    }
+    /* Payment View */
+    function student_payment_overview(Request $_request)
+    {
+        try {
+            $enrollment_list = auth()->user()->student->enrollment_assessment_history;
+            $currently_enrolled = auth()->user()->student->enrollment_assessment->payment_assessments;
+            $data = compact('enrollment_list', 'currenlty_enrolled');
+            return response(['data' => $data, 200]);
+        } catch (Expression $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error
+            ], 500);
         }
     }
     /* Onboarding Performance Report */
@@ -463,9 +481,10 @@ class StudentController extends Controller
                 ], 402);
             }
         } catch (Expression $error) {
+            $this->debugTrackerStudent($error);
             return response([
                 'message' => $error
-            ], 402);
+            ], 500);
         }
     }
     public function student_enrollment_payment_store(Request $_request)

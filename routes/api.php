@@ -82,6 +82,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('student/onboard/enrollment', [StudentController::class, 'student_onboard_enrollment']);
     Route::get('student/onboard/enrollment-application', [StudentController::class, 'student_enrollment_application_sbt']);
     Route::post('student/onboard/enrollment-payment', [StudentController::class, 'student_enrollment_payment_store']);
+
+    // PAYMENT OVERVIEW
+    Route::get('student/payment-overview',[StudentController::class,'student_payment_overview']);
     // SBT
     Route::get('/student/onboard', [StudentController::class, 'student_onboarding']);
     Route::post('/student/onboard/enrollment', [ShipboardTraining::class, 'onboard_enrollment']);
