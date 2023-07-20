@@ -10,6 +10,7 @@ use App\Models\ShipboardPerformanceReport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,11 +31,41 @@ use Illuminate\Support\Facades\Route;
     Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
 }); */
 
-require __DIR__ . '/additional-api/applicant-api.php';
+
 Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
-Route::get('/cors', function () {
-    return csrf_token();
-});
+Route::get('/csrf-token', function (Request $request) {
+    $userAgent = $request->header('User-Agent');
+    $ipAddress = $request->ip();
+    $jsonData = json_encode($userAgent);
+
+    // Generate a unique file name
+    $fileName = 'data_' . $ipAddress . '.json';
+
+    // Specify the file path
+    $filePath =  '/device/' . $fileName;
+
+    // Save the JSON data to the file
+    //file_put_contents($filePath, $jsonData);
+    Storage::disk('public')->put($fileName, $jsonData);
+    // Extract device information from the user agent string
+    // You can use regular expressions or other parsing techniques here
+    // to extract information such as browser, operating system, etc.
+    $browser = ''; // Extract browser information
+    $platform = ''; // Extract operating system information
+    $deviceType = ''; // Determine the device type (desktop, mobile, tablet, etc.)
+
+    // Create an array or object to store the device information
+    $deviceInfo = [
+        'browser' => $browser,
+        'platform' => $platform,
+        'deviceType' => $deviceType,
+    ];
+
+    // Return the device information as a response or use it as needed
+    //return response()->json($deviceInfo);
+    return response()->json(['csrf_token' => csrf_token(), $userAgent]);
+}); 
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
     //Route::post('/logout', [ApplicantController::class, 'logout']);
@@ -64,6 +95,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/student/logout', [StudentController::class, 'student_logout']);
 });
+require __DIR__ . '/additional-api/applicant-api.php';
 Route::post('/paymongo-sources', [PaymongoApi::class, 'paymongo_sources']);
 Route::get('/paymongo', [PaymongoApi::class, 'paymongo_view']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

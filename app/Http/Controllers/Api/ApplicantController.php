@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
+use App\Models\ApplicantDetials;
+use App\Models\Documents;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,10 +16,16 @@ class ApplicantController extends Controller
 {
     public function applicant_information()
     {
-        $auth = auth()->user();
-        return $auth;
-        $data = Auth::guard('applicant')->user();
-        return response(['data' => $data], 200);
+        $data = auth()->user();
+        $data = ApplicantAccount::with('applicant')->find($data->id);
+        $_level = Auth::user()->course_id == 3 ? 11 : 4;
+        $listOfDocuments =  Documents::where('year_level', $_level)
+            ->where('department_id', 2)
+            ->where('is_removed', false)
+            ->get();
+        $documents = $data->applicant_documents;
+        $documents = compact('documents', 'listOfDocuments');
+        return response(['data' => $data, 'documents' => $documents], 200);
     }
     public function create_applicant_details(Request $_request)
     {

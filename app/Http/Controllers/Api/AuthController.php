@@ -21,25 +21,16 @@ class AuthController extends Controller
         $_fields = $_request->validate([
             'email' => 'required|string',
             'password' => 'required',
-
         ]);
         try {
-
-            // Check Email
+            $credentials = $_request->only('email', 'password');
+            $user = Auth::guard('applicant')->attempt($credentials);
+            if (!$user) {
+                return response(['message' => 'These credentials do not match our records'], 401);
+            }
             $account = ApplicantAccount::where('email', $_fields['email'])->first();
-            // Check Password
-            if (!$account || !Hash::check($_fields['password'], $account->password)) {
-                return response(['message' => 'Invalid Creadials'], 401);
-            }
-            /* if (!Auth::guard('applicant')->attempt($_fields)) {
-                return response([
-                    'message' => 'Invalide Credentials.'
-                ], 401);
-            }
-            $_data = Auth::guard('applicant')->user(); // Get the Applicant Account Details
-            $account = ApplicantAccount::find($_data->id); */
-            $_token = $account->createToken('secretToken')->plainTextToken; // Get the secure Token
-            return response(['data' => $account, 'token' => $_token], 200); // Then return Response to the Front End
+            $token = $account->createToken('applicantToken')->plainTextToken; // Get the secure Token
+            return response(['token' => $token], 200);
         } catch (Expression $error) {
             return response([
                 'message' => $error
@@ -128,7 +119,7 @@ class AuthController extends Controller
         try {
             if (!Auth::guard('student')->attempt($_fields)) {
                 return response([
-                    'message' => 'Invalide Credentials.'
+                    'message' => 'Invalid Credentials.'
                 ], 401);
             }
             $_data = Auth::guard('student')->user();
