@@ -1269,4 +1269,15 @@ class StudentDetails extends Model
     {
         return $this->hasOne(StudentScholarshipGrant::class, 'student_id')->where('is_removed', false);
     }
+    /* For Api Model */
+    function enrollment_assessment_history()
+    {
+        return $this->hasMany(EnrollmentAssessment::class, 'student_id')->with('course')->with('academic')->with('curriculum')->with('payment_assessment_details_with_transactions');
+    }
+    public function enrollment_assessment_details()
+    {
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+            ->where('is_removed', 0)
+            ->orderBy('id', 'desc')->with('course')->with('academic')->with('curriculum')->with('payment_assessment_details_with_transactions');
+    }
 }

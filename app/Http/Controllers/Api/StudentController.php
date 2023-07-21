@@ -381,9 +381,9 @@ class StudentController extends Controller
     {
         try {
             $enrollment_list = auth()->user()->student->enrollment_assessment_history;
-            $currently_enrolled = auth()->user()->student->enrollment_assessment->payment_assessments;
-            $data = compact('enrollment_list', 'currenlty_enrolled');
-            return response(['data' => $data, 200]);
+            $currently_enrolled = auth()->user()->student->enrollment_assessment_details;
+            $data = compact('enrollment_list', 'currently_enrolled');
+            return response(['data' => $data], 200);
         } catch (Expression $error) {
             $this->debugTrackerStudent($error);
             return response([

@@ -139,4 +139,16 @@ class EnrollmentAssessment extends Model
         $paymentAssessment = $enrollment->payment_assessments;
         return ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
     }
+    function payment_assessment_details()
+    {
+        return $this->hasOne(PaymentAssessment::class, 'enrollment_id')->with('payment_assessment_paid');
+    }
+    function payment_assessment_details_with_transactions()
+    {
+        return $this->hasOne(PaymentAssessment::class, 'enrollment_id')
+            ->with('payment_transaction')
+            ->with('online_payment_transaction')
+            ->withSum('total_paid_amount', 'payment_amount')
+            ->with('additional_fees');
+    }
 }
