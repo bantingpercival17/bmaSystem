@@ -62,7 +62,7 @@ class PaymentAssessment extends Model
     }
     function additional_fees()
     {
-        return $this->hasMany(PaymentAdditionalFees::class, 'assessment_id')->where('is_removed', false);
+        return $this->hasMany(PaymentAdditionalFees::class, 'assessment_id')/* ->with('total_paid') */->with('fee_details')->where('is_removed', false);
     }
     function account_card_details()
     {
@@ -103,4 +103,5 @@ class PaymentAssessment extends Model
 
         return $transactionList;
     }
+    
 }

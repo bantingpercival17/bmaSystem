@@ -273,6 +273,36 @@ class PaymentTransaction extends Component
             /*  if ($yearLevel == 11 && $yearLevel == 4) {
                 StudentAccount::create($_account_details);
             } */
+        } else {
+            # Get the Year level of the Student
+            $yearLevel = $enrollment->year_level;
+            # Get the Total Number of Enrollee per Year Level
+            $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
+                ->where('enrollment_assessments.year_level', $yearLevel)
+                ->where('enrollment_assessments.academic_id', $this->academicData->id)
+                ->groupBy('enrollment_assessments.student_id')
+                ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
+                ->groupBy('enrollment_assessments.student_id')->get();
+            $_enrollment_count = count($_enrollment_count);
+            // Set the student number
+            $student_count = $_enrollment_count >= 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
+            $pattern = $yearLevel == 11 ? '07-' . date('y') : date('y'); // Set the Year and Batch
+            $student_number = $pattern . $student_count; // Final Student Number
+            $email = $student_number . '.' . str_replace(' ', '', strtolower($enrollment->student->last_name)) . '@bma.edu.ph'; // Set Email
+            // Set the value for Student Account
+            $_account_details = array(
+                'student_id' => $enrollment->student_id,
+                'email' => $email,
+                'personal_email' => $email,
+                'student_number' => $student_number,
+                'password' => Hash::make($student_number),
+                'is_actived' => true,
+                'is_removed' => false,
+            );
+            if ($yearLevel == 11 && $yearLevel == 4) {
+                StudentAccount::create($_account_details);
+            }
         }
     }
     function voidTransaction($payment, $remarks)
@@ -331,7 +361,7 @@ class PaymentTransaction extends Component
             'cancelButtonText' => 'Cancel',
             'method' => 'paymentDisapproved',
             'input' => 'text',
-            'inputPlaceholder' => 'Enter a Reason',
+            'inputPlaceholder' => 'Enter a Reason', 
             'params' => ['payment' => $payment],
         ]);
     }
