@@ -19,7 +19,7 @@ class ScannerView extends Component
     public $dataProfile;
     public $activeTab;
     public $week_dates;
-
+    public $scanQrCode = null;
     public function mount()
     {
         $first_day =  new DateTime();
@@ -37,22 +37,26 @@ class ScannerView extends Component
         $profile = [];
         $employees = $this->attendanceTable('employee');
         $students = $this->attendanceTable('student');
+
         if ($this->scanData) {
-            $word = 'employee';
-            if (strpos($this->scanData, $word) !== false) {
-                $data = explode(":", $this->scanData);
-                $this->dataProfile = count($data) > 1 ? $data[1] : str_replace($word, '', $this->scanData);
-                $this->testing = $word;
-            } else {
-                $data = explode(".", $this->scanData);
-                $this->dataProfile = count($data) > 1 ? $data[0] : '';
-                $this->testing = 'student';
+            if ($this->scanData !== $this->scanQrCode) {
+                $word = 'employee';
+                if (strpos($this->scanData, $word) !== false) {
+                    $data = explode(":", $this->scanData);
+                    $this->dataProfile = count($data) > 1 ? $data[1] : str_replace($word, '', $this->scanData);
+                    $this->testing = $word;
+                } else {
+                    $data = explode(".", $this->scanData);
+                    $this->dataProfile = count($data) > 1 ? $data[0] : '';
+                    $this->testing = 'student';
+                }
+                $this->scanData = '';
+                $profile = $this->scanQrcode($this->testing, $this->dataProfile);
+                $employees = $this->attendanceTable('employee');
+                $students = $this->attendanceTable('student');
+                $this->scanData = '';
+                $this->scanQrCode = $this->scanData;
             }
-            $this->scanData = '';
-            $profile = $this->scanQrcode($this->testing, $this->dataProfile);
-            $employees = $this->attendanceTable('employee');
-            $students = $this->attendanceTable('student');
-            $this->scanData = '';
         }
 
         return view('livewire.executive.attendance.scanner-view', compact('employees', 'students', 'profile'));
