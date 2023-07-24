@@ -42,6 +42,7 @@ class PaymentTransaction extends Component
     public $transactionVoucher = null;
     public $onlinePaymentTransaction = null;
     public $paymentDetails = [];
+    public $particularId = null;
     protected $rules = [
         'transactionOrNumber' => 'required',
         'transactionAmount' => 'required',
@@ -145,6 +146,7 @@ class PaymentTransaction extends Component
         $this->particularName =  $term;
         $this->transactionStatus = $status;
         $this->transactionRemarks = $term;
+        $this->particularId = base64_decode($id);
         $fees = PaymentAdditionalFees::find(base64_decode($id));
         $this->paymentDetails = array(
             'total_payable' => $fees->fee_details->amount,
@@ -155,7 +157,7 @@ class PaymentTransaction extends Component
     function paymentTransaction()
     {
         try {
-            $amount = str_replace(",", "", $this->transactionAmount);
+            $convertedAmount = str_replace(",", "", $this->transactionAmount);
             // Payment transaction types
             $tuition_fee_remarks = ['Tuition Fee', 'Upon Enrollment', '1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
             // Determine payment transaction type
@@ -174,13 +176,18 @@ class PaymentTransaction extends Component
                 'assessment_id' => $this->paymentAssessment->id,
                 'or_number' => $this->transactionVoucher ? $orNumber : $this->transactionOrNumber,
                 'payment_transaction' => $payment_transaction,
-                'payment_amount' => $this->transactionVoucher ? $amount : $this->transactionAmount,
+                'payment_amount' => $this->transactionVoucher ? $amount : $convertedAmount,
                 'payment_method' => $this->transactionVoucher ? $paymentMethod : $this->transactionPaymentMethod,
                 'remarks' => $this->transactionRemarks,
                 'transaction_date' => $this->transactionDate ?: date('Y-m-d'),
                 'staff_id' => Auth::user()->id,
                 'is_removed' => false
             );
+            if ($this->particularId) {
+                $fees = PaymentAdditionalFees::find($this->particularId);
+                $fees->status = $convertedAmount;
+                $fees->save();
+            }
             $paymentTransaction = ModelsPaymentTransaction::create($paymentDetails);
             if ($paymentTransaction) {
                 // The Auto Section
@@ -194,7 +201,7 @@ class PaymentTransaction extends Component
                     $onlinePayment->save();
                 }
             }
-            $this->reset(['transactionAmount', 'transactionOrNumber', 'transactionVoucher', 'transactionPaymentMethod', 'transactionRemarks', 'transactionDate']);
+            $this->reset(['transactionAmount', 'transactionOrNumber', 'transactionVoucher', 'transactionPaymentMethod', 'transactionRemarks', 'transactionDate', 'particularId']);
             $this->dispatchBrowserEvent('swal:alert', [
                 'title' => 'Payment Transaction!',
                 'text' => 'Successfully Transact!',
@@ -361,7 +368,7 @@ class PaymentTransaction extends Component
             'cancelButtonText' => 'Cancel',
             'method' => 'paymentDisapproved',
             'input' => 'text',
-            'inputPlaceholder' => 'Enter a Reason', 
+            'inputPlaceholder' => 'Enter a Reason',
             'params' => ['payment' => $payment],
         ]);
     }
