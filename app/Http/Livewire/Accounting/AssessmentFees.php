@@ -15,7 +15,7 @@ class AssessmentFees extends Component
     public $inputStudent;
     public $academic;
     public $profile = null;
-    public $paymentMode = null;
+    public $paymentMode = 0;
     public $tempPaymentMode = null;
     public $particularLists = [];
     public $totalSemestralFees = 0;
