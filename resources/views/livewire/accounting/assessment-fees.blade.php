@@ -203,14 +203,17 @@
                                 </div>
                             </div>
                             <hr>
-                            <h6 class="text-info fw-bolder">FORWARDED OVER-PAYMENT</h6>
-                            <div class="row">
-                                <div class="form-group col-md">
-                                    <small class="fw-bolder text-muted">FORWARDED AMOUNT</small>
-                                    <label for=""
-                                        class="form-control form-control-sm border border-info">{{ number_format($profile->enrollment_assessment->over_payment() * -1, 2) }}</label>
+                            @if (count($profile->enrollment_history) > 0)
+                                <h6 class="text-info fw-bolder">FORWARDED OVER-PAYMENT</h6>
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <small class="fw-bolder text-muted">FORWARDED AMOUNT</small>
+                                        <label for=""
+                                            class="form-control form-control-sm border border-info">{{ number_format($profile->enrollment_assessment->over_payment() * -1, 2) }}</label>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
+
                             <div class="row">
                                 {{-- <div class="form-group col-md-8">
                                     <small class="form-label">TOTAL AMOUNT</small>
