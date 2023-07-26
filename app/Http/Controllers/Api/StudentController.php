@@ -9,7 +9,9 @@ use App\Models\DocumentRequirements;
 use App\Models\Documents;
 use App\Models\EducationalDetails;
 use App\Models\EnrollmentApplication;
+use App\Models\EnrollmentAssessment;
 use App\Models\ParentDetails;
+use App\Models\PaymentAssessment;
 use App\Models\PaymentTrasanctionOnline;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardJournal;
@@ -34,9 +36,11 @@ class StudentController extends Controller
             $student = StudentDetails::find($student->student_id);
             $profile_picture = $student->profile_picture();
             return response(['account' => $student, 'profile_picture' => $profile_picture], 200);
-        } catch (Exception $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
-            return response(['error' => $error->getMessage()], 505);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
         }
     }
     public function student_information()
@@ -46,9 +50,11 @@ class StudentController extends Controller
             $student = StudentDetails::with('educational_background')->with('parent_details')->with('enrollment_assessment')->with('account')->find($account->student_id);
             //$profile_picture = $student->profile_picture();
             return response(['student' => $student], 200);
-        } catch (Exception $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
-            return response(['error' => $error->getMessage()], 505);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
         }
     }
     /* Enrollment History of Student */
@@ -57,9 +63,11 @@ class StudentController extends Controller
         try {
             $data = auth()->user()->student->enrollment_history;
             return response(['data' => $data], 200);
-        } catch (Exception $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
-            return response(['error' => $error->getMessage()], 505);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
         }
     }
     public function student_update_information(Request $_request)
@@ -120,9 +128,11 @@ class StudentController extends Controller
             $enrollment = compact('academic', 'enrollment', 'tuition');
             return response(['data' => $enrollment], 200);
             //return response(['data' => $data], 200);
-        } catch (Exception $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
-            return response(['error' => $error->getMessage()], 505);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
         }
     }
 
@@ -325,10 +335,10 @@ class StudentController extends Controller
             }
             return $this->student_enrollment_application($_request);
             //return response(['message' => 'Successfully Submitted.'], 200);
-        } catch (Expression $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([
-                'message' => $error
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -355,10 +365,10 @@ class StudentController extends Controller
                     'message' => ' Your Already Submit Enrollment Application!'
                 ], 402);
             }
-        } catch (Expression $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([
-                'message' => $error
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -369,10 +379,10 @@ class StudentController extends Controller
             $student->payment_mode = $_request->paymentMode;
             $student->save();
             return response(['message' => 'Successfully Submitted.'], 200);
-        } catch (Expression $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([
-                'message' => $error
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -384,10 +394,46 @@ class StudentController extends Controller
             $currently_enrolled = auth()->user()->student->enrollment_assessment_details;
             $data = compact('enrollment_list', 'currently_enrolled');
             return response(['data' => $data], 200);
-        } catch (Expression $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([
-                'message' => $error
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function student_payment_transaction(Request $request)
+    {
+        $request->validate([
+            'transaction_date' => 'required',
+            'amount_paid' => 'required',
+            'reference_number' => 'required',
+            'payment_mode' => 'required',
+            'remarks' => 'required',
+            'file' => 'required',
+        ]);
+        try {
+            $paymentAssessment = PaymentAssessment::find($request->payment);
+            $enrollment_assessment = EnrollmentAssessment::find($paymentAssessment->enrollment_id);
+            $semester = '/' . $enrollment_assessment->academic->semester . '-' . $enrollment_assessment->academic->school_year;
+            $_file_link = $this->saveFiles($request->file('file'), 'bma-students', 'accounting' . $semester);
+            $payment_data = [
+                'assessment_id' => $paymentAssessment->id,
+                'amount_paid' => str_replace(',', '', $request->amount_paid),
+                'reference_number' => $request->reference_number,
+                'transaction_type' => $request->remarks,
+                'reciept_attach_path' => $_file_link,
+                'is_removed' => 0,
+            ];
+            if ($request->document) {
+                PaymentTrasanctionOnline::find($request->document)->update(['is_removed' => true]);
+            }
+            PaymentTrasanctionOnline::create($payment_data);
+
+            return response(['data' => 'done', 'message' => 'Successfully Submitted.'], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -452,9 +498,11 @@ class StudentController extends Controller
             $tuition = compact('tuition_assessment', 'tags', 'units', 'total_fees', 'online_transaction', 'payment_transaction');
             $enrollment = compact('application_details', 'shipboard_application', 'enrollment', 'tuition');
             return response(['data' => $enrollment], 200);
-        } catch (Exception $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
-            return response(['error' => $error->getMessage()], 505);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
         }
     }
     public function student_enrollment_application_sbt(Request $_request)
@@ -480,10 +528,10 @@ class StudentController extends Controller
                     'message' => ' Your Already Submit Enrollment Application!'
                 ], 402);
             }
-        } catch (Expression $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([
-                'message' => $error
+                'message' => $error->getMessage()
             ], 500);
         }
     }
@@ -512,9 +560,11 @@ class StudentController extends Controller
             }
             PaymentTrasanctionOnline::create($_payment_data);
             return response(['data' => 'done', 'message' => 'Successfully Submitted.'], 200);
-        } catch (Exception $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
-            return response(['error' => $error->getMessage()], 505);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
         }
     }
     public function student_onboarding()
@@ -534,9 +584,11 @@ class StudentController extends Controller
                 ->get();
 
             return response(['shipboard_information' => $onboard_assessment, 'companies' => $shipboard_company, 'documents' => $documents], 200);
-        } catch (Exception $error) {
+        } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
-            return response(['error' => $error->getMessage()], 505);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
         }
     }
 
