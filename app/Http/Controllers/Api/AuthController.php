@@ -141,4 +141,17 @@ class AuthController extends Controller
             ], 402);
         }
     }
+    function student_forget_password(Request $request)
+    {
+        $request->validate(['email' => 'required']);
+        try {
+            $account = StudentAccount::where('email', $request->email)->where('is_removed',false)->first();
+            return $account;
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
 }

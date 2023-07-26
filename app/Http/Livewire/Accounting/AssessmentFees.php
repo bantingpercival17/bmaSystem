@@ -15,7 +15,8 @@ class AssessmentFees extends Component
     public $inputStudent;
     public $academic;
     public $profile = null;
-    public $paymentMode = 0;
+    public $paymentMode = null;
+    public $tempPaymentMode = null;
     public $particularLists = [];
     public $totalSemestralFees = 0;
     public $enrollmentAssessment = null;
@@ -45,6 +46,9 @@ class AssessmentFees extends Component
                                 $this->particularLists[] = $fee;
                             }
                         }
+                    }
+                    if ($this->tempPaymentMode !== null) {
+                       $this->paymentMode = $this->tempPaymentMode;
                     }
                     $tags = $tuition_fees->semestral_fees();
                     $total_tuition  = $tuition_fees->total_tuition_fees($enrollment_assessment);
@@ -185,5 +189,9 @@ class AssessmentFees extends Component
                 'type' => 'warning',
             ]);
         }
+    }
+    function paymentModeChange($item)
+    {
+        $this->tempPaymentMode = $item;
     }
 }

@@ -156,7 +156,7 @@
                                     <br>
                                     <div class="col-sm">
                                         <select name="mode" wire:model="paymentMode"
-                                            class="form-select form-select-sm payment-mode">
+                                            class="form-select form-select-sm payment-mode" wire:change="paymentModeChange($event.target.value)">
                                             <option value="0">Fullpayment</option>
                                             <option value="1">Installment</option>
                                         </select>

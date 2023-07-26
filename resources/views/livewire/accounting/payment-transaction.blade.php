@@ -155,6 +155,22 @@
                                         </label>
                                     </div>
                                 </div>
+                                @if ($paymentAssessment->payment_mode == 1)
+                                    <div class=" col-md-4">
+                                        <small class="form-label">UPON ENROLLMENT</small>
+                                        <br>
+                                        <label class="h5 text-primary form-label">
+                                            {{ number_format($paymentAssessment->upon_enrollment, 2) }}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="form-label">MONTHLY FEE</small>
+                                        <br>
+                                        <label class="h5 text-primary form-label">
+                                            {{ number_format($paymentAssessment->monthly_payment, 2) }}
+                                        </label>
+                                    </div>
+                                @endif
                                 <div class="col-md">
                                     <div class="form-group">
                                         <small class="form-label">TOTAL PAID:</small>
