@@ -203,7 +203,7 @@
                                 </div>
                             </div>
                             <hr>
-                            @if (count($profile->enrollment_history) > 0)
+                            @if (count($profile->enrollment_history) > 1)
                                 <h6 class="text-info fw-bolder">FORWARDED OVER-PAYMENT</h6>
                                 <div class="row">
                                     <div class="form-group col-md">
