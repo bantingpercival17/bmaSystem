@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\StudentEnrollmentMail;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDetials;
@@ -13,6 +14,7 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -145,10 +147,19 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required']);
         try {
-            $account = StudentAccount::where('email', $request->email)->where('is_removed',false)->first();
-            return $account;
+            $account = StudentAccount::where('email', $request->email)->where('is_removed', false)->first();
+            if (!$account) {
+                return response(['message' => 'Email does not exist', 'errors' => ['email' => ['Student Email does not exist']]], 422);
+            }
+            $mail = new StudentEnrollmentMail();
+            $length = 8;
+            $_password = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+            $account->password = Hash::make($_password);
+            $account->save();
+            Mail::to($account->email)->bcc('developer@bma.edu.ph')->send($mail->student_forget_password($account, $_password));
+            return response(['data' => 'success'], 200);
         } catch (\Throwable $error) {
-            $this->debugTrackerStudent($error);
+            //$this->debugTrackerStudent($error);
             return response([
                 'message' => $error->getMessage()
             ], 500);

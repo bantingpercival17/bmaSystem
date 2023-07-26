@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Storage;
 
 
 Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
-Route::post('/student/forgot-password',[AuthController::class,'student_forget_password']);
+Route::post('/student/forget-password',[AuthController::class,'student_forget_password']);
 Route::get('/csrf-token', function (Request $request) {
     $userAgent = $request->header('User-Agent');
     $ipAddress = $request->ip();
