@@ -52,6 +52,26 @@ class StudentView extends Component
             ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
             ->where('enrollment_assessments.academic_id',  base64_decode($this->academic))
             ->where('enrollment_assessments.is_removed', false);
+        // Filtering Student by Name
+        if ($this->searchInput != '') {
+
+            $_student = explode(',', $this->searchInput); // Seperate the Sentence
+            $_count = count($_student);
+            if (is_numeric($this->searchInput)) {
+                $students = $students->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
+                    ->where('student_accounts.student_number', 'like', '%' . $this->searchInput . '%')
+                    ->orderBy('student_details.last_name', 'asc');
+            } else {
+                if ($_count > 1) {
+                    $students = $students->where('student_details.last_name', 'like', '%' . $_student[0] . '%')
+                        ->where('student_details.first_name', 'like', '%' . trim($_student[1]) . '%')
+                        ->orderBy('student_details.last_name', 'asc');
+                } else {
+                    $students = $students->where('student_details.last_name', 'like', '%' . $_student[0] . '%')
+                        ->orderBy('student_details.last_name', 'asc');
+                }
+            }
+        }
         // Filtering Student by Course
         if ($this->selectCourse != 'ALL COURSE') {
             $students = $students->where('enrollment_assessments.course_id', $this->selectCourse);

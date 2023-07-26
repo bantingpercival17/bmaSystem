@@ -13,7 +13,7 @@
                         <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                         <div class="form-group search-input">
                             <input type="search" class="form-control border border-primary" placeholder="Search Pattern: Lastname, Firstname"
-                                wire:model="searchInput" wire:keydown="searchStudents">
+                                wire:model="searchInput">
                         </div>
                     </div>
                     <div class="col-12">
