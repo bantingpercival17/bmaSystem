@@ -72,7 +72,7 @@ class PaymentTransaction extends Component
                 $additional_fees = $this->paymentAssessment->additional_fees;
             }
             $scholarshipList =  Voucher::where('is_removed', false)->get();
-            
+
         }
         return view('livewire.accounting.payment-transaction', compact('studentLists',  'particularFees', 'scholarshipList', 'additional_fees'));
     }
@@ -178,7 +178,7 @@ class PaymentTransaction extends Component
                 'payment_transaction' => $payment_transaction,
                 'payment_amount' => $this->transactionVoucher ? $amount : $convertedAmount,
                 'payment_method' => $this->transactionVoucher ? $paymentMethod : $this->transactionPaymentMethod,
-                'remarks' => $this->transactionRemarks,
+                'remarks' => strtoupper($this->transactionRemarks),
                 'transaction_date' => $this->transactionDate ?: date('Y-m-d'),
                 'staff_id' => Auth::user()->staff->id,
                 'is_removed' => false

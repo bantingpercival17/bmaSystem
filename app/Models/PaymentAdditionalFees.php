@@ -22,6 +22,6 @@ class PaymentAdditionalFees extends Model
     {
         $fee_name = $this->fee_details->particular->particular_name;
         return  PaymentTransaction::where('assessment_id', $this->assessment_id)->where('is_removed', false)
-            ->where('remarks', 'like', '%' . $fee_name . '%')->sum('payment_amount');
+            ->where('remarks', 'like', '%' . strtoupper($fee_name) . '%')->sum('payment_amount');
     }
 }
