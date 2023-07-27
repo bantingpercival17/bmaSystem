@@ -73,6 +73,41 @@
                             </tr>
                         </thead>
                     </table> --}}
+                    <table class="nav nav-underline bg-soft-primary p-0 text-center" aria-label="Secondary navigation">
+                        <thead class="d-flex">
+                            <tr>
+                                <td class="nav-link {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
+                                    wire:click="swtchTab('overiew')">OVERVIEW</td>
+                                {{--  <td class="nav-link  {{ $activeCard == 'overview' ? 'active' : 'text-muted' }} "
+                                    wire:click="swtchTab('overview')">OVERVIEW</td> --}}
+                            </tr>
+                            <tr>
+                                <td class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
+                                    wire:click="swtchTab('profile')">PROFILE</td>
+                                {{--  <td class="nav-link  {{ $activeCard == 'transaction' ? 'active' : 'text-muted' }} "
+                                    wire:click="swtchTab('transaction')">TRANSACTION</td> --}}
+                            </tr>
+                            <tr>
+                                <td class="nav-link {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
+                                    wire:click="swtchTab('documents')">DOCUMENTS</td>
+                                {{--  <td class="nav-link  {{ $activeCard == 'history' ? 'active' : 'text-muted' }} "
+                                    wire:click="swtchTab('history')">PAYMENT HISTORY</td> --}}
+                            </tr>
+                            <tr>
+                                <td class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
+                                    href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">
+                                    ENTRANCE
+                                    EXAMINATION</td>
+                                {{--  <td class="nav-link  {{ $activeCard == 'online-payment' ? 'active' : 'text-muted' }} "
+                                    wire:click="swtchTab('online-payment')">ONLINE PAYMENT</td> --}}
+
+                            </tr>
+                            <tr>
+                                <td class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
+                                    wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</td>
+                            </tr>
+                        </thead>
+                    </table>
                     <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
 
                         <div class="d-flex" id="head-check">
