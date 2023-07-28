@@ -38,12 +38,10 @@
                         <thead>
                             <tr>
                                 <th width="10px">NO.</th>
-                                <th style="width: 90px;">STUDENT NUMBER</th>
+                                <th style="width: 120px;">STUDENT NUMBER</th>
                                 <th>LAST NAME</th>
                                 <th>FIRST NAME</th>
                                 <th>MIDDLE NAME</th>
-                                <th style="width: 90px;">EXTENSION NAME</th>
-                                <th style="width: 50px;">MIDDLE INITIAL</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,24 +55,16 @@
                                         <td class="text-center">
                                             {{ $_student->student->account->student_number }}
                                         </td>
-                                        <td>{{ strtoupper($_student->student->last_name) }}</td>
+                                        <td>{{ strtoupper($_student->student->last_name) }} @if (trim(strtoupper($_student->student->extention_name)) !== 'N/A')
+                                                {{ strtoupper($_student->student->extention_name) }}
+                                            @endif
+                                        </td>
                                         <td>{{ strtoupper($_student->student->first_name) }}</td>
                                         <td>
                                             @if (trim(strtoupper($_student->student->middle_name)) !== 'N/A')
                                                 {{ strtoupper($_student->student->middle_name) }}
                                             @endif
 
-                                        </td>
-                                        <td>
-                                            @if (trim(strtoupper($_student->student->extention_name)) !== 'N/A')
-                                                {{ strtoupper($_student->student->extention_name) }}
-                                            @endif
-
-                                        </td>
-                                        <td>
-                                            @if (trim(strtoupper($_student->student->middle_name)) !== 'N/A')
-                                                {{ strtoupper($_student->student->middle_initial) }}
-                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -96,10 +86,10 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                      
+
                                     </td>
                                     <td>
-                                        
+
                                     </td>
                                 </tr>
                                 <tr>

@@ -15,7 +15,9 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use ZipArchive;
 
 class EnrollmentController extends Controller
 {
@@ -54,7 +56,7 @@ class EnrollmentController extends Controller
     public function course_enrolled_report(Request $_request)
     {
         try {
-
+            $current_academic =  Auth::user()->staff->current_academic()->school_year . '-' . strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester));
             // Excell Report
             if ($_request->_report == 'excel-report') {
                 $_course = CourseOffer::find(base64_decode($_request->_course));
@@ -63,6 +65,36 @@ class EnrollmentController extends Controller
                 $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
                 ob_end_clean();
                 return $_respond;
+            }
+            if ($_request->_report == 'excel-report-2') {
+                $courses = CourseOffer::all();
+                $_file_name = $current_academic . '-OFFICIAL-LIST';
+                // Create a new zip archive
+                $zipFileName = $_file_name . '.zip';
+                $zip = new ZipArchive();
+                if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+                    foreach ($courses as $key => $_course) {
+                        $_file_name = $current_academic . '-' . $_course->course_code;
+                        $_file_export = new CourseStudentEnrolled($_course);
+                        $fileContents = Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX)->getFile();
+
+                        $zip->addFromString($_file_name . '.xlsx', file_get_contents($fileContents)); // Add the file to the zip archive
+
+                        echo $_file_name . '.xlsx has been added to the zip archive<br>';
+                    }
+                    $zip->close();
+
+                    // Send the zip archive to the client for download
+                    header('Content-Type: application/zip');
+                    header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
+                    header('Content-Length: ' . filesize($zipFileName));
+                    readfile($zipFileName);
+
+                    // Delete the temporary zip file after sending it to the client
+                    #unlink($zipFileName);
+                } else {
+                    echo "Failed to create the zip archive.";
+                }
             }
             if ($_request->_report == 'pdf-report') {
                 $report = new StudentListReport();

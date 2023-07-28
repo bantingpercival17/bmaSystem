@@ -212,7 +212,7 @@ $pageTitle = 'List of Enrolled Student';
             <div class="">
                 <small class="fw-bolder text-muted">EXPORT OFFICALLY ENROLLED</small>
                 <div class="d-flex justify-content-between">
-                    <a href="{{ route('enrollment.enrolled-list-report') }}?_report=excel-report{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-primary w-100">Excel</a>
+                    <a href="{{ route('enrollment.enrolled-list-report') }}?_report=excel-report-2{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-primary w-100">Excel</a>
                     <a href="{{ route('enrollment.enrolled-list-report') }}?_report=pdf-report{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-danger w-100">PDF</a>
                 </div>
                 <a href="{{ route('enrollment.semestarl-enrollment-list') }}?_report=excel-report{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-primary w-100">CHED FORM IN EXCEL</a>
