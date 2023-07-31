@@ -56,7 +56,7 @@ class EnrollmentController extends Controller
     public function course_enrolled_report(Request $_request)
     {
         try {
-            $current_academic =  Auth::user()->staff->current_academic()->school_year . '-' . strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester));
+            $current_academic =  strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester)) . '-' . Auth::user()->staff->current_academic()->school_year;
             // Excell Report
             if ($_request->_report == 'excel-report') {
                 $_course = CourseOffer::find(base64_decode($_request->_course));
@@ -68,7 +68,7 @@ class EnrollmentController extends Controller
             }
             if ($_request->_report == 'excel-report-2') {
                 $courses = CourseOffer::all();
-                $_file_name = $current_academic . '-OFFICIAL-LIST-'.date('Ymdhms');
+                $_file_name = $current_academic . '-OFFICIAL-LIST-' . date('Ymdhms');
                 // Create a new zip archive
                 $zipFileName = $_file_name . '.zip';
                 $zip = new ZipArchive();
@@ -78,19 +78,11 @@ class EnrollmentController extends Controller
                         $_file_export = new CourseStudentEnrolled($_course);
                         $fileContents = Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX)->getFile();
                         $zip->addFromString($_file_name . '.xlsx', file_get_contents($fileContents)); // Add the file to the zip archive
-                        echo $_file_name . '.xlsx has been added to the zip archive<br>';
+                        //echo $_file_name . '.xlsx has been added to the zip archive<br>';
                     }
                     $zip->close();
-                    // Send the zip archive to the client for download
-                    header('Content-Type: application/zip');
-                    header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
-                    header('Content-Length: ' . filesize($zipFileName));
-                    readfile($zipFileName);
-                    // Delete the temporary zip file after sending it to the client
-                   
-                    //return public_path($zipFileName);
-                    return response()->download(public_path($zipFileName));
-                    unlink($zipFileName);
+                    return redirect(asset($zipFileName));
+                    //unlink($zipFileName);
                 } else {
                     echo "Failed to create the zip archive.";
                 }
