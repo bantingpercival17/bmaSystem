@@ -89,8 +89,8 @@ class EnrollmentController extends Controller
                     // Delete the temporary zip file after sending it to the client
                    
                     //return public_path($zipFileName);
-                    return response()->download(public_path('2023-2024-FIRST-SEMESTER-OFFICIAL-LIST-20230731090725.zip'));
-                    //unlink($zipFileName);
+                    return response()->download(public_path($zipFileName));
+                    unlink($zipFileName);
                 } else {
                     echo "Failed to create the zip archive.";
                 }
