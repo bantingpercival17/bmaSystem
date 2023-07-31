@@ -68,7 +68,7 @@ class EnrollmentController extends Controller
             }
             if ($_request->_report == 'excel-report-2') {
                 $courses = CourseOffer::all();
-                $_file_name = $current_academic . '-OFFICIAL-LIST-' . date('Ymdhms');
+                $_file_name = 'storage/department/registrar/zip-file'. $current_academic . '-OFFICIAL-LIST-' . date('Ymdhms');
                 // Create a new zip archive
                 $zipFileName = $_file_name . '.zip';
                 $zip = new ZipArchive();
