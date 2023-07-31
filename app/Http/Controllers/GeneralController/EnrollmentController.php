@@ -82,12 +82,15 @@ class EnrollmentController extends Controller
                     }
                     $zip->close();
                     // Send the zip archive to the client for download
-                    /* header('Content-Type: application/zip');
+                    header('Content-Type: application/zip');
                     header('Content-Disposition: attachment; filename="' . $zipFileName . '"');
                     header('Content-Length: ' . filesize($zipFileName));
-                    readfile($zipFileName); */
+                    readfile($zipFileName);
                     // Delete the temporary zip file after sending it to the client
-                    #unlink($zipFileName);
+                   
+                    //return public_path($zipFileName);
+                    return response()->download(public_path('2023-2024-FIRST-SEMESTER-OFFICIAL-LIST-20230731090725.zip'));
+                    //unlink($zipFileName);
                 } else {
                     echo "Failed to create the zip archive.";
                 }
