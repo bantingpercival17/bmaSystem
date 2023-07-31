@@ -484,6 +484,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-footer">
+                 
+                    <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
+                        class="btn btn-sm btn-primary float-end">Reset Examination</a>
+                </div>
             </div>
         @endforeach
     @endsection
