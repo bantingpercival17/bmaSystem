@@ -232,13 +232,15 @@
 
 
                         </div>
-                        <div class="col-md">
+                        <div class="col-md-3">
                             <small>APPLICATION DATE</small>
                             <div class="badge bg-primary w-100">
 
                                 <span>{{ $_data->created_at->format('F d, Y') }}</span>
                             </div>
-
+                            <a href="{{ route('applicant-reconsideration') }}?_applicant={{ base64_encode($_data->id) }}"
+                                class="badge bg-info w-100">RECONSIDERATION
+                            </a>
                             <a href="{{ route('applicant-removed') }}?_applicant={{ base64_encode($_data->id) }}"
                                 class="badge bg-danger text-white w-100">REMOVE
                             </a>
@@ -917,7 +919,6 @@
                         <div class="col-md">
                             <small>APPLICATION DATE</small>
                             <div class="badge bg-primary w-100">
-
                                 <span>{{ $_data->created_at->format('F d, Y') }}</span>
                             </div>
                         </div>

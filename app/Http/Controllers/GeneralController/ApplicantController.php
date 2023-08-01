@@ -570,4 +570,19 @@ class ApplicantController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
+    function applicant_reconsideration(Request $request)
+    {
+        try {
+            $applicant_account = ApplicantAccount::find(base64_decode($request->_applicant));
+            ApplicantDocuments::where('applicant_id', $applicant_account->id)->where('is_removed', false)->update(['is_approved' => true, 'staff_id' => Auth::user()->staff->id]);
+            $account = ApplicantNotQualified::where('applicant_id', $applicant_account->id)->where('is_removed', false)->first();
+            $account->is_removed = true;
+            $account->save();
+            
+            return back()->with('success', 'Successfully Transact');
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('error', $th->getMessage());
+        }
+    }
 }
