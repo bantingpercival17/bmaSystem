@@ -1,9 +1,13 @@
-@extends('widgets.report.grade-v2.report_layout_1')
+@extends('widgets.report.main-report-template')
 @section('title-report', 'FORM AD 02 - GRADING SHEET : ' . $_subject->curriculum_subject->subject->subject_code)
 @section('form-code', 'AD - 02')
 @section('content')
-    <div class="content">
-        <h3 class="text-center"><b>REPORT OF GRADES</b></h3>
+    <div class="page-content">
+        <div class="summary-grade-header">
+            <h2 class="text-center" style="margin:0px;">
+                <b>REPORT OF GRADES</b>
+            </h2>
+        </div>
         <table class="table-content">
             <tbody>
                 <tr>
@@ -26,7 +30,8 @@
                 </tr>
             </tbody>
         </table>
-        <table class="table-2">
+        <br>
+        <table class="table-outline-2 table-student-content">
             <thead>
                 <tr>
                     <th></th>
@@ -37,8 +42,8 @@
                 </tr>
                 <tr class="text-center">
                     <td style="width: 20px; text-align: center;">NO</td>
-                    <td style="width: 40px; text-align: center;">STD NO.</td>
-                    <td style="width: 180px;text-align: center;">COMPLETE NAME</td>
+                    <td style="width: 60px; text-align: center;">STD NO.</td>
+                    <td style="width: 200px;text-align: center;">COMPLETE NAME</td>
                     <td>PERCENT</td>
                     <td>RANGE</td>
                     <td>PERCENT</td>
@@ -51,7 +56,8 @@
                         <tr>
                             <td class="text-center">{{ $_key + 1 }}</td>
                             <td class="text-center">
-                                {{ $_student->student->account ? $_student->student->account->student_number : '' }}</td>
+                                {{ $_student->student->account ? $_student->student->account->student_number : '' }}
+                            </td>
                             <td style="padding-left: 10px;">
                                 {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
                             </td>
@@ -95,8 +101,43 @@
 
             </tbody>
         </table>
-
-
+        <div class="signatories">
+            <br>
+            <table class="table table-header ">
+                <tbody>
+                    <tr>
+                        <td>
+                            PREPARED BY:
+                        </td>
+                        <td>
+                            VALIDATED BY:
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <u>
+                                <b>{{ strtoupper($_subject->staff->first_name . ' ' . $_subject->staff->last_name) }}</b>
+                            </u>
+                        </td>
+                        <td>
+                            <u>
+                                <b>{{ strtoupper($_subject->finals_grade_submission->approved_by) }}</b>
+                            </u>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><small>Subject Teacher</small> </td>
+                        <td><small>Department Dead</small> </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 @endsection

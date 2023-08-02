@@ -16,12 +16,12 @@
         </a>
 
     </li>
-    <li class="breadcrumb-item ">
+    {{--  <li class="breadcrumb-item ">
         <a href="">
             {{ $_section->course->course_name }}
         </a>
 
-    </li>
+    </li> --}}
     <li class="breadcrumb-item active" aria-current="page">
         {{ $_section->section_name }}
     </li>
@@ -43,17 +43,16 @@
             <div class="card-body">
                 <ul class="nav nav-tabs justify-content-center nav-fill" id="myTab-2" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="student-tab-justify" data-bs-toggle="tab" href="#student-justify"
+                        <a class="nav-link " id="student-tab-justify" data-bs-toggle="tab" href="#student-justify"
                             role="tab" aria-controls="student" aria-selected="true">STUDENT LIST</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a class="nav-link" id="subject-tab-justify" data-bs-toggle="tab" href="#subject-justify"
                             role="tab" aria-controls="subject" aria-selected="false">SUBJECT LIST</a>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent-3">
-                    <div class="tab-pane fade show active" id="student-justify" role="tabpanel"
-                        aria-labelledby="student-tab-justify">
+                    <div class="tab-pane fade" id="student-justify" role="tabpanel" aria-labelledby="student-tab-justify">
                         <<div class="table-responsive">
                             <table class="table table-striped" id="datatable" data-toggle="data-table">
                                 <thead>
@@ -95,13 +94,14 @@
                             </table>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="subject-justify" role="tabpanel" aria-labelledby="subject-tab-justify">
+                <div class="tab-pane fade show active" id="subject-justify" role="tabpanel"
+                    aria-labelledby="subject-tab-justify">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>SUBJECT NAME / TEACHER NAME</th>
-                                    <th>FORM </th>
+                                    <th>GRADE STATUS</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -116,73 +116,31 @@
                                                     {{ strtoupper($item->staff->first_name . ' ' . $item->staff->last_name) }}
                                                 </small>
                                             </td>
-                                            <td class="d-flex justify-content-between">
+                                            <td>
                                                 <div class="row">
-                                                    <div class="col-md">
-                                                        @if ($item->midterm_grade_submission)
-                                                            @if ($item->midterm_grade_submission->is_approved === 1)
-                                                                <button type="button"
-                                                                    class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target=".grade-view-modal"
-                                                                    data-grade-url="{{ route('dean.grading-sheet-view') }}?_subject={{ base64_encode($item->id) }}&_period=midterm&_preview=pdf&_form=ad1">
-                                                                    MIDTERM</button>
-                                                            @else
-                                                                <span class="badge bg-secondary fw-bolder">
-                                                                    MIDTERM GRADE <br> ONGOING CHECKING
-                                                                </span>
+                                                    <div class="ms-2">
+                                                        @if ($item->finals_grade_submission && $item->midterm_grade_submission)
+                                                            @if ($item->finals_grade_submission->is_approved === 1 && $item->midterm_grade_submission->is_approved === 1)
+                                                                @if ($item->grade_final_verification)
+                                                                    <span class="badge bg-primary">Grade
+                                                                        Verified</span> <br>
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-primary btn-sm btn-form-grade  mt-2"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target=".grade-view-modal"
+                                                                        data-grade-url="{{ route('registrar.subject-grade') }}?_subject={{ base64_encode($item->id) }}&_period=finals&_preview=pdf&_form=ad2">
+                                                                        VIEW FORM AD-02</button>
+                                                                @else
+                                                                    <span class="badge bg-info">FOR
+                                                                        APPROVAL <br> OF DEAN</span>
+                                                                @endif
                                                             @endif
                                                         @else
-                                                            <span class="badge bg-secondary fw-bolder">
-                                                                MIDTERM GRADE <br> NOT YET SUBMMITED
-                                                            </span>
+                                                            <span class="badge bg-info">FOR
+                                                                APPROVAL OF <br> DEPARTMENT HEAD</span>
                                                         @endif
-                                                    </div>
 
-                                                    <div class="col-md">
-                                                        @if ($item->finals_grade_submission)
-                                                            @if ($item->finals_grade_submission->is_approved === 1)
-                                                                <button type="button"
-                                                                    class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target=".grade-view-modal"
-                                                                    data-grade-url="{{ route('dean.grading-sheet-view') }}?_subject={{ base64_encode($item->id) }}&_period=midterm&_preview=pdf&_form=ad1">
-                                                                    FINALS</button>
-                                                            @else
-                                                                <span class="badge bg-secondary fw-bolder mt-2">
-                                                                    FINALS GRADE <br> ONGOING CHECKING
-                                                                </span>
-                                                            @endif
-                                                        @else
-                                                            <span class="badge bg-secondary fw-bolder mt-2">
-                                                                FINALS GRADE <br> NOT YET SUBMMITED
-                                                            </span>
-                                                        @endif
                                                     </div>
-                                                    <div class="col-md">
-                                                        @if ($item->finals_grade_submission || $item->midterm_grade_submission)
-                                                            <button type="button"
-                                                                class="btn btn-primary btn-sm btn-form-grade w-100 mt-2"
-                                                                data-bs-toggle="modal" data-bs-target=".grade-view-modal"
-                                                                data-grade-url="{{ route('dean.grading-sheet-view') }}?_subject={{ base64_encode($item->id) }}&_period=finals&_preview=pdf&_form=ad2">
-                                                                FORM AD-02</button>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <div class="ms-2">
-                                                    @if ($item->finals_grade_submission && $item->midterm_grade_submission)
-                                                        @if ($item->finals_grade_submission->is_approved === 1 && $item->midterm_grade_submission->is_approved === 1)
-                                                            @if ($item->grade_final_verification)
-                                                                <span class="badge bg-primary float-start">Grade
-                                                                    Verified</span>
-                                                            @else
-                                                                <span class="badge bg-info float-start">FOR
-                                                                    APPROVAL</span>
-                                                            @endif
-                                                        @endif
-                                                    @endif
-
-                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -202,15 +160,23 @@
     <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
+                <iframe class="form-view iframe-placeholder" src="">
                 </iframe>
             </div>
         </div>
     </div>
+@section('css')
+    <style>
+        .form-view {
+            height: 100vh;
+        }
+    </style>
+@endsection
 @section('js')
     <script>
         $(document).on('click', '.btn-form-grade', function(evt) {
             // $(".form-view").contents().find("body").html("");
+            $('.form-view').attr('src', '')
             $('.form-view').attr('src', $(this).data('grade-url'))
         });
     </script>

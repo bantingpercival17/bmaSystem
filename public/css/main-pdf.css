@@ -31,7 +31,7 @@ footer {
 }
 
 .table-content {
-    font-family: "Times New Roman", Times, serif;
+    /* font-family: "Times New Roman", Times, serif; */
     border-collapse: collapse;
     width: 100%;
     text-align: left;
@@ -56,6 +56,13 @@ footer {
 
 }
 
+.table-outline-2 td,
+.table-outline-2 th {
+    padding: 5px;
+    border: 1px solid rgb(0, 0, 0);
+    width: auto;
+
+}
 .table-center {
     text-align: center;
 }

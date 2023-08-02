@@ -14,4 +14,8 @@ class GradeSubmission extends Model
     {
         return $this->belongsTo(SubjectClass::class, 'subject_class_id')->latest();
     }
+    function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
+    }
 }
