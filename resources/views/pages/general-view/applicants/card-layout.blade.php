@@ -352,7 +352,8 @@
 
 
                             <div class="mt-0">
-                                <span>{{ $_data->applicant ? $_data->email : '-' }}</span> <br>
+                                <span> {{ $_data->applicant ? $_data->contact_number : '-' }}</span> <br>
+                                <span>{{ $_data->applicant ? $_data->email : '-' }} - {{ $_data->applicant ? $_data->contact_number : '-' }}</span> <br>
                                 <span class="badge bg-secondary">
                                     @php
                                         echo $_data->applicant->check_duplicate();

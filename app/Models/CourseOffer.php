@@ -966,6 +966,10 @@ class CourseOffer extends Model
         $_documents = intval($_documents);
         $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
+            ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
+            //->whereNull('applicant_payments.is_approved')
+            
+            ->where('applicant_payments.is_removed', false)
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id')
@@ -981,9 +985,8 @@ class CourseOffer extends Model
                 '>=',
                 $_documents,
             )
-            ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_payments.is_removed', false)
-            ->whereNull('applicant_payments.is_approved');
+            ->where('applicant_payments.is_approved', 0)
+            ;
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
