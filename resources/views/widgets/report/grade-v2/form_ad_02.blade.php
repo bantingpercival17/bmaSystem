@@ -127,7 +127,10 @@
                         </td>
                         <td>
                             <u>
-                                <b>{{ strtoupper($_subject->finals_grade_submission->approved_by) }}</b>
+                                @if ($_subject->finals_grade_submission)
+                                      <b>{{ strtoupper($_subject->finals_grade_submission->approved_by) }}</b>
+                                @endif
+                              
                             </u>
                         </td>
                     </tr>
