@@ -79,7 +79,7 @@ class PaymentAssessment extends Model
         $addtionalFees = $this->additional_fees;
         foreach ($addtionalFees as $key => $value) {
             array_push($transactionList, array(
-                'date' => $this->created_at->format('Y-m-d'),
+                'date' => '',
                 'orNumber' => '',
                 'remarks' => $value->fee_details->particular->particular_name,
                 'debit' => null,
