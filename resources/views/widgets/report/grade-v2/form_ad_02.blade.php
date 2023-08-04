@@ -32,6 +32,9 @@
         </table>
         <br>
         <table class="table-outline-2 table-student-content">
+            @php
+                $contentNumber = 0;
+            @endphp
             <thead>
                 <tr>
                     <th></th>
@@ -53,7 +56,11 @@
             <tbody>
                 @if ($_students->count() > 0)
                     @foreach ($_students as $_key => $_student)
-                        <tr>
+                        @php
+                            $contentNumber += 1;
+                            $contentCount = 40;
+                        @endphp
+                        <tr {{ $contentNumber >= $contentCount ? 'page-break' : '' }}>
                             <td class="text-center">{{ $_key + 1 }}</td>
                             <td class="text-center">
                                 {{ $_student->student->account ? $_student->student->account->student_number : '' }}
@@ -96,6 +103,11 @@
                                 </b>
                             </td>
                         </tr>
+                        @if ($contentNumber >= 50)
+                            @php
+                                $contentNumber = 0;
+                            @endphp
+                        @endif
                     @endforeach
                 @endif
 
@@ -128,9 +140,9 @@
                         <td>
                             <u>
                                 @if ($_subject->finals_grade_submission)
-                                      <b>{{ strtoupper($_subject->finals_grade_submission->approved_by) }}</b>
+                                    <b>{{ strtoupper($_subject->finals_grade_submission->approved_by) }}</b>
                                 @endif
-                              
+
                             </u>
                         </td>
                     </tr>
