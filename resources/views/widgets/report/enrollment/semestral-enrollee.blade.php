@@ -27,6 +27,7 @@
                     <div class="table-content">
                         @php
                             $contentNumber = 0;
+                            $contentCount = 45;
                         @endphp
                         <table class="table-student-content">
                             <thead>
@@ -46,7 +47,7 @@
                                         @php
                                             $contentNumber += 1;
                                         @endphp
-                                        <tr class="{{ $contentNumber >= 50 ? 'page-break' : '' }}">
+                                        <tr class="{{ $contentNumber >= $contentCount ? 'page-break' : '' }}">
                                             <th>
                                                 {{ $key + 1 }}
                                             </th>
@@ -77,7 +78,7 @@
                                                 @endif
                                             </td> --}}
                                         </tr>
-                                        @if ($contentNumber >= 50)
+                                        @if ($contentNumber >= $contentCount)
                                             @php
                                                 $contentNumber = 0;
                                             @endphp

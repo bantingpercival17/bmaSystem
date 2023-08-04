@@ -34,6 +34,7 @@
         <table class="table-outline-2 table-student-content">
             @php
                 $contentNumber = 0;
+                $contentCount = 40;
             @endphp
             <thead>
                 <tr>
@@ -58,9 +59,8 @@
                     @foreach ($_students as $_key => $_student)
                         @php
                             $contentNumber += 1;
-                            $contentCount = 40;
                         @endphp
-                        <tr {{ $contentNumber >= $contentCount ? 'page-break' : '' }}>
+                        <tr class="{{ $contentNumber >= $contentCount ? 'page-break' : '' }}">
                             <td class="text-center">{{ $_key + 1 }}</td>
                             <td class="text-center">
                                 {{ $_student->student->account ? $_student->student->account->student_number : '' }}
@@ -103,7 +103,7 @@
                                 </b>
                             </td>
                         </tr>
-                        @if ($contentNumber >= 50)
+                        @if ($contentNumber >= $contentCount)
                             @php
                                 $contentNumber = 0;
                             @endphp
