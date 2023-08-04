@@ -48,7 +48,7 @@ class AssessmentFees extends Component
                         }
                     }
                     if ($this->tempPaymentMode !== null) {
-                       $this->paymentMode = $this->tempPaymentMode;
+                        $this->paymentMode = $this->tempPaymentMode;
                     }
                     $tags = $tuition_fees->semestral_fees();
                     $total_tuition  = $tuition_fees->total_tuition_fees($enrollment_assessment);
@@ -136,7 +136,7 @@ class AssessmentFees extends Component
                 'enrollment_id' => $this->enrollmentAssessment,
                 'course_semestral_fee_id' => $tuition_fees->id,
                 'payment_mode' => $this->paymentMode,
-                'staff_id' => Auth::user()->id,
+                'staff_id' => Auth::user()->staff->id,
                 'total_payment' => $total_tuitionfee,
                 'upon_enrollment' => $upon_enrollment,
                 'monthly_payment' => $monthly_payment,
@@ -166,7 +166,7 @@ class AssessmentFees extends Component
                 $_payment_assessment->total_payment =  $total_tuitionfee;
                 $_payment_assessment->upon_enrollment =  $upon_enrollment;
                 $_payment_assessment->monthly_payment =  $monthly_payment;
-                $_payment_assessment->staff_id = Auth::user()->id;
+                $_payment_assessment->staff_id = Auth::user()->staff->id;
                 $_payment_assessment->save();
                 if (count($_payment_assessment->additional_fees) == 0) {
                     if (count($this->particularLists) > 0) {
