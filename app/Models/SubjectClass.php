@@ -26,6 +26,10 @@ class SubjectClass extends Model
     {
         return $this->belongsTo(CurriculumSubject::class, 'curriculum_subject_id');
     }
+    public function curriculum_subjects()
+    {
+        return $this->belongsTo(CurriculumSubject::class, 'curriculum_subject_id')->with('subject');
+    }
     public function submitted_grade($_form, $_period)
     {
         //return $this->hasOne(GradeSubmission::class,'subject_class_id')->latest();
@@ -68,6 +72,12 @@ class SubjectClass extends Model
     public function student_computed_grade($student)
     {
         return $this->hasOne(GradeComputed::class, 'subject_class_id')->where('removed_at', false)->where('student_id', $student);
+    }
+    public function student_semestral_subject_grade()
+    {
+        return  $this->hasOne(GradeComputed::class, 'subject_class_id')->where('removed_at', false)->where('student_id', auth()->user()->student_id);
+        return auth()->user()->student->percentage_grade(base64_encode($data->final_grade));
+
     }
     public function e_clearance()
     {

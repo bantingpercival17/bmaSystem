@@ -644,6 +644,17 @@ class RegistrarController extends Controller
         try {
             $_section = Section::find(base64_decode($_request->_section));
             $_student_list = $_section->student_sections;
+            foreach ($_student_list as $student) {
+                $verify = StudentSection::where('student_id', $student->student_id)->where('section_id', $_section->id)->whereNull('enrollment_id')
+                ->where('is_removed', false)->first();
+                //echo json_encode( $verify). "<br>";
+                if ($verify) {
+                    $enrollment = EnrollmentAssessment::where('student_id', $student->student_id)->where('academic_id', $_section->academic_id)->where('is_removed', false)->first();
+                    $verify->enrollment_id = $enrollment->id;
+                    $verify->save();
+                    //echo "Save: " . $student->student->first_name . "<br>";
+                }
+            }
             return view('pages.registrar.sections.section_view', compact('_section', '_student_list'));
         } catch (Exception $err) {
             $this->debugTracker($err);
@@ -676,6 +687,7 @@ class RegistrarController extends Controller
     }
     public function section_store_student(Request $_request)
     {
+        //TODO:: add the enrollment id
         try {
             StudentSection::create([
                 'student_id' => base64_decode($_request->_student),

@@ -18,6 +18,7 @@ use App\Models\ShipboardJournal;
 use App\Models\ShippingAgencies;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
+use App\Models\GradePublish;
 use Exception;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
@@ -89,7 +90,7 @@ class StudentController extends Controller
     public function enrollment_overview(Request $_request)
     {
         try {
-            // Enrollment Procudure 
+            // Enrollment Procudure
             $application = auth()->user()->student->student_enrollment_application;
             $academic = AcademicYear::where('is_active', true)->first();
             $medical_result = auth()->user()->student->prev_enrollment_assessment->medical_result;
@@ -441,7 +442,7 @@ class StudentController extends Controller
     public function student_onboard_enrollment()
     {
         try {
-            // Get the Document Requirments 
+            // Get the Document Requirments
             $document_requirements = Documents::where('is_removed', false)
                 ->where('document_propose', 'PRE-DEPLOYMENT')
                 ->with('student_upload_documents')
@@ -452,7 +453,7 @@ class StudentController extends Controller
                 ->where('is_removed', false)
                 ->orderBy('agency_name')
                 ->get();
-            // Get the Shipboard Information 
+            // Get the Shipboard Information
             $shipboard_application = ShipBoardInformation::where('student_id', auth()->user()->student_id)
                 ->where('is_removed', false)->with('document_requirements')->with('document_requirements_approved')->first();
             $document_status = ShipBoardInformation::where('student_id', auth()->user()->student_id)
@@ -460,7 +461,7 @@ class StudentController extends Controller
             // VESSEL TYPE
             $vessel_type = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER', 'BULK CARIER', 'CRUISE LINE '];
 
-            // Enrollment Procudure 
+            // Enrollment Procudure
             $application = auth()->user()->student->student_enrollment_application;
             $academic = AcademicYear::where('is_active', true)->first();
             // Tuition Fee Assessment
@@ -592,6 +593,51 @@ class StudentController extends Controller
         }
     }
 
+    /* ACADEMIC */
+    function semestral_grade(Request $request)
+    {
+        try {
+            // Get First the Current and Paid Enrollment Assessment
+             $query = EnrollmentAssessment::select('enrollment_assessments.*')
+                 ->with('academic')
+                 ->with('course')
+                 ->with('curriculum')
+                ->where('student_id', Auth::user()->student_id)
+                ->where('enrollment_assessments.is_removed',false)
+                ->join('payment_assessments','payment_assessments.enrollment_id','enrollment_assessments.id')
+                ->where('payment_assessments.is_removed',false)
+                ->join('payment_transactions','payment_transactions.assessment_id','payment_assessments.id')
+                ->where('payment_transactions.is_removed',false)->orderBy('enrollment_assessments.id', 'desc');
+                
+            if ($request->key) {
+                $enrollment = EnrollmentAssessment::select('enrollment_assessments.*')
+                    ->with('academic')
+                    ->with('course')
+                    ->with('curriculum')
+                    ->find(base64_decode($request->key));
+                    
+                if ($enrollment->student_id !== Auth::user()->student_id) {
+                    return response(['status' => '404', 'message' => 'Invalid Account'], 200);
+                }
+            } else {
+                // Get First the Current and Paid Enrollment Assessment
+                $enrollment = $query->first();  
+            }
+            $enrollmentHistory= Auth::user()->student->enrollment_history;
+            $section =  $enrollment->student_section;
+            $gradePublish = GradePublish::where('student_id',$enrollment->student_id)
+            ->where('academic_id',$enrollment->academic_id)
+            ->where('is_removed',false)->first();
+            $percent = [[0, 69.46, 5.0], [69.47, 72.88, 3.0], [72.89, 76.27, 2.75], [76.28, 79.66, 2.5], [79.67, 83.05, 2.25], [83.06, 86.44, 2.0], [86.45, 89.83, 1.75], [89.84, 93.22, 1.5], [93.23, 96.61, 1.25], [96.62, 100, 1.0]];
+            return response(['data'=>$section,'enrollment'=>$enrollment,'enrollmentHistory'=>$enrollmentHistory,'gradePublish'=>$gradePublish,'percent'=>$percent],200);
+            
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
     public function student_logout()
     {
         auth()

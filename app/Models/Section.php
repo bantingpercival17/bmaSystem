@@ -49,6 +49,15 @@ class Section extends Model
     {
         return $this->hasMany(SubjectClass::class, 'section_id')->where('is_removed', false)->orderBy('curriculum_subject_id', 'asc');
     }
+    public function subject_details()
+    {
+        return $this->hasMany(SubjectClass::class, 'section_id')
+        ->with('curriculum_subjects')
+        ->with('staff')
+        ->with('student_semestral_subject_grade')
+        ->where('is_removed', false)->orderBy('curriculum_subject_id', 'asc');
+    }
+
     public function course()
     {
         return $this->belongsTo(CourseOffer::class, 'course_id');
