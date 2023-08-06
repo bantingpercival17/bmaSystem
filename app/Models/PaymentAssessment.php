@@ -68,7 +68,7 @@ class PaymentAssessment extends Model
     {
         $transactionList = array();
         array_push($transactionList, array(
-            'date' => $this->created_at->format('Y-m-d'),
+            'date' => '',
             'orNumber' => '',
             'remarks' => 'TUITION FEE',
             'debit' => null,
@@ -79,7 +79,7 @@ class PaymentAssessment extends Model
         $addtionalFees = $this->additional_fees;
         foreach ($addtionalFees as $key => $value) {
             array_push($transactionList, array(
-                'date' => $this->created_at->format('Y-m-d'),
+                'date' => '',
                 'orNumber' => '',
                 'remarks' => $value->fee_details->particular->particular_name,
                 'debit' => null,
@@ -95,13 +95,12 @@ class PaymentAssessment extends Model
                 'credit' => null
             ));
         }
-        usort($transactionList, function ($a, $b) {
+      /*   usort($transactionList, function ($a, $b) {
             $dateA = strtotime($a['date']);
             $dateB = strtotime($b['date']);
             return $dateA - $dateB;
-        });
+        }); */
 
         return $transactionList;
     }
-    
 }

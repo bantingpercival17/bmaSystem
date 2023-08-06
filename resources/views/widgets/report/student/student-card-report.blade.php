@@ -113,7 +113,11 @@
                     <tr>
                         <td>NAME:</td>
                         <th class="text-fill-in">
-                            {{ strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name) }}
+                            @php
+                                $extensionName = strtolower($_student->extention_name) != 'n/a' ? $_student->extention_name : '';
+                                
+                            @endphp
+                            {{ strtoupper($_student->last_name . ' ' . $extensionName . ', ' . $_student->first_name . ' ' . $_student->middle_name) }}
                         </th>
                         <td>SCHOOL YEAR:</td>
                         <th class="text-fill-in">
@@ -262,13 +266,18 @@
                             <br>
                             IRENE CAMACHO
                         </th>
-                        <td></td>
+                        <th>
+                            <br>
+                            <br><br>
+                            <br><br>
+                            {{ strtoupper($_student->last_name . ' ' . $extensionName . ', ' . $_student->first_name) }}
+                        </th>
                     </tr>
                     <tr>
                         <th>ACCOUNTING CLERK</th>
                         <th>BOOKKEEPER</th>
                         <th>ACCOUNTING HEAD-OIC</th>
-                        <td></td>
+                        <th>MIDSHIPMAN</th>
                     </tr>
                 </table>
                 <div class="page-break"></div>

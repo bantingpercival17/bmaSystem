@@ -138,8 +138,17 @@ class EnrollmentAssessment extends Model
             ->orderBy('id', 'desc')
             ->first();
         $enrollment = EnrollmentAssessment::where('academic_id', $previous->id)->where('student_id', $this->student_id)->where('is_removed', false)->first();
-        $paymentAssessment = $enrollment->payment_assessments;
-        return ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
+
+        if ($enrollment) {
+            $paymentAssessment = $enrollment->payment_assessments;
+            if ($paymentAssessment) {
+                return ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
     }
     function payment_assessment_details()
     {
