@@ -148,7 +148,7 @@
                     </tr>
                     <tr>
                         <td><small>Subject Teacher</small> </td>
-                        <td><small>Department Dead</small> </td>
+                        <td><small>Department Head</small> </td>
                     </tr>
                 </tbody>
             </table>
