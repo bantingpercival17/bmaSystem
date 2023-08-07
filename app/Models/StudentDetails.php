@@ -94,7 +94,7 @@ class StudentDetails extends Model
     {
         return $this->hasMany(EnrollmentAssessment::class, 'student_id')
             ->where('is_removed', 0)
-            ->orderBy('id', 'desc')->with('course')->with('academic');
+            ->orderBy('id', 'desc')->with('course')->with('academic')->with('curriculum');
     }
     public function enrollment_application()
     {
@@ -1239,7 +1239,7 @@ class StudentDetails extends Model
     function enrollment_year_level()
     {
         $level = '';
-        // First check if the Student have a History of enrollment 
+        // First check if the Student have a History of enrollment
         $enrollment = $this->enrollment_history;
 
         if (count($enrollment) > 0) {

@@ -66,7 +66,7 @@ Route::get('/csrf-token', function (Request $request) {
     // Return the device information as a response or use it as needed
     //return response()->json($deviceInfo);
     return response()->json(['csrf_token' => csrf_token(), $userAgent]);
-}); 
+});
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
@@ -99,7 +99,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_report_view']);
     Route::post('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_file_attachment']);
 // ACADEMIC
-
+Route::get('/student/semestral-grade', [StudentController::class, 'semestral_grade']);
     Route::post('/student/logout', [StudentController::class, 'student_logout']);
 });
 require __DIR__ . '/additional-api/applicant-api.php';
