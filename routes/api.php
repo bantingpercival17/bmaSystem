@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ApplicantController;
+use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ShipboardTraining;
@@ -102,6 +103,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/student/logout', [StudentController::class, 'student_logout']);
 });
 require __DIR__ . '/additional-api/applicant-api.php';
+require __DIR__ . '/additional-api/attendance-api.php';
 Route::post('/paymongo-sources', [PaymongoApi::class, 'paymongo_sources']);
 Route::get('/paymongo', [PaymongoApi::class, 'paymongo_view']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
