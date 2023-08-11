@@ -196,6 +196,15 @@ class StudentController extends Controller
             'junior_high_school_name' => 'required|max:100',
             'junior_high_school_address' => 'required|max:255',
             'junior_high_school_year' => 'required|max:100',
+            'household_income' => 'required',
+            'dswd_beneficiary' => 'required',
+            'home_ownership' => 'required',
+            'car_ownership' => 'required',
+            'available_device' => 'required',
+            'available_connection' => 'required',
+            'available_provider' => 'required',
+            'learning_modality' => 'required',
+            'distance_learning_effect' => 'required'
         ];
         if (auth()->user()->student->enrollment_assessment->course_id != 3) {
             $_fields += [
@@ -261,16 +270,16 @@ class StudentController extends Controller
                 'guardian_contact_number' => $_request->guardian_contact_number,
                 'guardian_address' => $_request->guardian_address,
 
-                'household_income' =>  auth()->user()->student->parent_details ? auth()->user()->student->parent_details->household_income : '',
-                'dswd_listahan' =>  auth()->user()->student->parent_details ? auth()->user()->student->parent_details->dswd_listahan : '',
-                'homeownership' =>  auth()->user()->student->parent_details ? auth()->user()->student->parent_details->homeownership : '',
-                'car_ownership' =>  auth()->user()->student->parent_details ? auth()->user()->student->parent_details->car_ownership : '',
+                'household_income' =>  $_request->household_income,
+                'dswd_listahan' => $_request->dswd_beneficiary,
+                'homeownership' => $_request->home_ownership,
+                'car_ownership' => $_request->car_ownership,
 
-                'available_devices' => auth()->user()->student->parent_details ? auth()->user()->student->parent_details->available_devices : '',
-                'available_connection' => auth()->user()->student->parent_details ? auth()->user()->student->parent_details->available_connection : '',
-                'available_provider' => auth()->user()->student->parent_details ? auth()->user()->student->parent_details->available_provider : '',
-                'learning_modality' => auth()->user()->student->parent_details ? auth()->user()->student->parent_details->learning_modality : '',
-                'distance_learning_effect' => auth()->user()->student->parent_details ? auth()->user()->student->parent_details->distance_learning_effect : '',
+                'available_devices' => serialize($_request->available_device),
+                'available_connection' => $_request->available_connection,
+                'available_provider' => serialize($_request->available_provider),
+                'learning_modality' => serialize($_request->learning_modality),
+                'distance_learning_effect' => serialize($_request->distance_learning_effect),
                 'is_removed' => 0
             ];
             $_education = [$_elementary, $_high_school];
@@ -598,39 +607,38 @@ class StudentController extends Controller
     {
         try {
             // Get First the Current and Paid Enrollment Assessment
-             $query = EnrollmentAssessment::select('enrollment_assessments.*')
-                 ->with('academic')
-                 ->with('course')
-                 ->with('curriculum')
+            $query = EnrollmentAssessment::select('enrollment_assessments.*')
+                ->with('academic')
+                ->with('course')
+                ->with('curriculum')
                 ->where('student_id', Auth::user()->student_id)
-                ->where('enrollment_assessments.is_removed',false)
-                ->join('payment_assessments','payment_assessments.enrollment_id','enrollment_assessments.id')
-                ->where('payment_assessments.is_removed',false)
-                ->join('payment_transactions','payment_transactions.assessment_id','payment_assessments.id')
-                ->where('payment_transactions.is_removed',false)->orderBy('enrollment_assessments.id', 'desc');
-                
+                ->where('enrollment_assessments.is_removed', false)
+                ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                ->where('payment_assessments.is_removed', false)
+                ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
+                ->where('payment_transactions.is_removed', false)->orderBy('enrollment_assessments.id', 'desc');
+
             if ($request->key) {
                 $enrollment = EnrollmentAssessment::select('enrollment_assessments.*')
                     ->with('academic')
                     ->with('course')
                     ->with('curriculum')
                     ->find(base64_decode($request->key));
-                    
+
                 if ($enrollment->student_id !== Auth::user()->student_id) {
                     return response(['status' => '404', 'message' => 'Invalid Account'], 200);
                 }
             } else {
                 // Get First the Current and Paid Enrollment Assessment
-                $enrollment = $query->first();  
+                $enrollment = $query->first();
             }
-            $enrollmentHistory= Auth::user()->student->enrollment_history;
+            $enrollmentHistory = Auth::user()->student->enrollment_history;
             $section =  $enrollment->student_section;
-            $gradePublish = GradePublish::where('student_id',$enrollment->student_id)
-            ->where('academic_id',$enrollment->academic_id)
-            ->where('is_removed',false)->first();
+            $gradePublish = GradePublish::where('student_id', $enrollment->student_id)
+                ->where('academic_id', $enrollment->academic_id)
+                ->where('is_removed', false)->first();
             $percent = [[0, 69.46, 5.0], [69.47, 72.88, 3.0], [72.89, 76.27, 2.75], [76.28, 79.66, 2.5], [79.67, 83.05, 2.25], [83.06, 86.44, 2.0], [86.45, 89.83, 1.75], [89.84, 93.22, 1.5], [93.23, 96.61, 1.25], [96.62, 100, 1.0]];
-            return response(['data'=>$section,'enrollment'=>$enrollment,'enrollmentHistory'=>$enrollmentHistory,'gradePublish'=>$gradePublish,'percent'=>$percent],200);
-            
+            return response(['data' => $section, 'enrollment' => $enrollment, 'enrollmentHistory' => $enrollmentHistory, 'gradePublish' => $gradePublish, 'percent' => $percent], 200);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([

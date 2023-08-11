@@ -13,6 +13,11 @@ use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
+    function fetch_attendance()
+    {
+        $data = array('employee' => $this->attendanceTable('employee'), 'student' => $this->attendanceTable('student'));
+        return response(['data' => $data], 200);
+    }
     function store_attendance(Request $request)
     {
         try {
@@ -25,7 +30,7 @@ class AttendanceController extends Controller
             } else {
                 $data = explode(".", $data);
                 $data = count($data) > 1 ? $data[0] : '';
-                $this->studentProcess($data);
+                return $this->studentProcess($data);
             }
         } catch (\Throwable $error) {
             $this->reportBug($error);
@@ -47,16 +52,16 @@ class AttendanceController extends Controller
             $account = StudentAccount::where('student_number', $username)->first();
 
             if (!$account) {
-                //('Invalid User', 'No Data', 'warning', 'error');
-                return null;
+                return response(['data' => ['status' => 'error', 'message' => 'Invalid User']], 200);
             }
 
             $profile = [
                 'type' => 'student',
-                'image' => $account->student->profile_picture(),
+                'image' => asset($account->student->profile_picture()),
+                'email' => str_replace('@bma.edu.ph', '', $account->email),
                 'name' => strtoupper(trim($account->student->last_name . ', ' . $account->student->first_name)),
-                'course' => $account->student->enrollment_assessment->course->course_name,
-                'section' => $account->student->current_section->section->section_name,
+                'department' => $account->student->enrollment_assessment->course->course_name,
+                /*  'section' => $account->student->current_section->section->section_name, */
             ];
 
 
@@ -98,10 +103,13 @@ class AttendanceController extends Controller
                 $profile['sound'] = '/assets/audio/' . trim(strtolower(str_replace(' ', '', str_replace('/', '-', $account->student->first_name)))) . '-good-morning.mp3';
             }
             $profile['attendance'] = $account->student->student_attendance_per_week;
-            $this->alert($profile['time_status'], $profile['message'], 'success', $profile['sound']);
-            return $profile;
+            return response(['data' => $profile], 200);
+            /*   $this->alert($profile['time_status'], $profile['message'], 'success', $profile['sound']); */
+            /* return response(['data' => ['status' => 'error', 'message' => $th->getMessage(),]], 200);
+            return $profile; */
         } catch (\Throwable $th) {
-            $this->alert('Scanner Error', $th->getMessage(), 'warning', 'error');
+            /* $this->alert('Scanner Error', $th->getMessage(), 'warning', 'error'); */
+            return response(['data' => ['status' => 'error', 'message' => $th->getMessage(),]], 200);
         }
     }
 
@@ -115,7 +123,7 @@ class AttendanceController extends Controller
             $profile = [
                 'type' => 'employee',
                 'email' => $account->email,
-                'image' => $account->staff->profile_picture(),
+                'image' => asset($account->staff->profile_picture()),
                 'name' => strtoupper(trim($account->name)),
                 'department' => $account->staff->department,
             ];
@@ -156,6 +164,35 @@ class AttendanceController extends Controller
             return response(['data' => ['status' => 'error', 'message' => $th->getMessage(),]], 200);
         }
     }
+    public function attendanceTable($user)
+    {
+        $first_day =  new DateTime();
+        $last_day = new DateTime();
+        $first_day->modify('last Sunday');
+        $last_day->modify('Next Saturday');
+        $week_dates = array(
+            $first_day->format('Y-m-d') . '%',  $last_day->format('Y-m-d') . '%'
+        );
+        switch ($user) {
+            case 'employee':
+                return EmployeeAttendance::select('users.email', 'staff.first_name', 'staff.last_name', 'staff.department', 'employee_attendances.time_in', 'employee_attendances.time_out')
+                    ->join('staff', 'staff.id', 'employee_attendances.staff_id')
+                    ->join('users', 'users.id', 'staff.user_id')
+                    ->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%')
+                    ->orderBy('employee_attendances.updated_at', 'desc')
+                    ->get();
+            case 'student':
+                return StudentOnboardingAttendance::select('student_accounts.email', 'student_details.first_name', 'student_details.last_name', 'student_onboarding_attendances.time_in', 'student_onboarding_attendances.time_out')
+                    ->join('student_details', 'student_details.id', 'student_onboarding_attendances.student_id')
+                    ->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
+                    /* ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
+                    ->join('course_offers', 'course_offers.id', 'enrollment_assessments.course_id') */
+                    ->whereBetween('student_onboarding_attendances.created_at', $week_dates)
+                    ->orderBy('student_onboarding_attendances.updated_at', 'desc')->get();
+            default:
+                return [];
+        }
+    }
 
     function reportBug($error)
     {
@@ -169,5 +206,31 @@ class AttendanceController extends Controller
             'is_status' => 0,
         );
         DebugReport::create($_data);
+    }
+    function data_sync()
+    {
+        try {
+            // Employee Data
+            $employeesList = User::all();
+            foreach ($employeesList as $key => $value) {
+                if ($value->staff) {
+                    $employees[] = array(
+                        'type' => 'employee',
+                        'email' => $value->email,
+                        'name' => strtoupper(trim($value->name)),
+                        'department' => $value->staff->department,
+                        'image' => asset($value->staff->profile_picture()),
+                    );
+                }
+            }
+            $students = [];
+            $data = compact('employees', 'students');
+            return response($data, 200);
+        } catch (\Throwable $error) {
+            $this->reportBug($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
     }
 }
