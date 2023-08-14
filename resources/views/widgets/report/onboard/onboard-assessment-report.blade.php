@@ -36,7 +36,7 @@
                         </td>
                         <td width="120px"><small>SCORE:</small></td>
                         <td class="text-fill-in">
-                            <small><b>{{$_assessment['total_score']}}</b></small>
+                            <small><b>{{ $_assessment['total_score'] }}</b></small>
                         </td>
                     </tr>
                     <tr>
@@ -63,27 +63,28 @@
                         <td> <u><b>{{ $_assessment['written_score'] }}</b></u> / 40</td>
                         <td>x 100</i> </td>
                         <td>x 30%</td>
-                        <td><u><b>{{ number_format($_assessment['written_final_score'], 1, '.', '') }}</b></u></td>
+                        <td><u><b>{{ number_format($_assessment['written_final_score'], 2, '.', '') }}</b></u></td>
                     </tr>
                     <tr>
                         <td><i><b>B. Practical Assessment: (30%)</b></i></td>
-                        <td> <u><b>{{ number_format($_assessment['practical_score'], 1, '.', '') }}</b></u> /
+                        <td> <u><b>{{ number_format($_assessment['practical_score'], 2, '.', '') }}</b></u> /
                             {{ $_assessment['practical_item'] }}</td>
                         <td>x 100</i> </td>
                         <td>x 30%</td>
-                        <td><u><b>{{ number_format($_assessment['practical_final_score'], 1, '.', '') }}</b></u></td>
+                        <td><u><b>{{ number_format($_assessment['practical_final_score'], 2, '.', '') }}</b></u></td>
                     </tr>
                     <tr>
                         <td><i><b>C. Oral Interview: (40%)</b></i></td>
-                        <td> <u><b>{{ $_assessment['oral_score'] }}</b></u> / {{ $_assessment['oral_item'] }}</td>
+                        <td> <u><b>{{ $_assessment['oral_score'] }}</b></u> /
+                            {{ $_assessment['oral_item'] }}</td>
                         <td>x 100</i> </td>
                         <td>x 40%</td>
-                        <td><u><b>{{ number_format($_assessment['oral_final_score'], 1, '.', '') }}</b></u></td>
+                        <td><u><b>{{ number_format($_assessment['oral_final_score'], 2, '.', '') }}</b></u></td>
                     </tr>
                     <tr>
                         <td colspan="4" style="text-align: right; padding-right:10px; "><b>FINAL GRADE</b> </td>
                         <td style="color:{{ $_assessment['total_score'] >= 50 ? '#0275d8' : '#d9534f' }};">
-                            <b><u>{{ number_format($_assessment['total_score'], 1, '.', '') }}</u></b>
+                            <b><u>{{ number_format($_assessment['total_score'], 2, '.', '') }}</u></b>
                         </td>
                     </tr>
                 </tbody>
@@ -172,7 +173,7 @@
                 <tr>
                     <td colspan="4" style="text-align: right; padding-right:10px; "><b>FINAL GRADE</b> </td>
                     <td style="color:{{ $_result['total_score'] >= 50 ? '#0275d8' : '#d9534f' }};">
-                        <b><u>{{ number_format($_result['total_score'], 1, '.', '') }}</u></b>
+                        <b><u>{{ number_format($_result['total_score'], 2, '.', '') }}</u></b>
                     </td>
                 </tr>
             </tbody>

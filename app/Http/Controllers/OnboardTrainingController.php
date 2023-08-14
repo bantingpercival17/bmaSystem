@@ -171,8 +171,8 @@ class OnboardTrainingController extends Controller
         $_midshipman = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
         $_shipboard_monitoring = $_request->_cadet ? $_student_detials->student_search($_request->_cadet) : $_student_detials->student_shipboard_journals()->paginate(10);
         if ($_midshipman) {
-            $_department = $_midshipman->enrollment_assessment->course_id == 1 ? "MARINE ENGINEERING" : "MARINE TRANSPORTATION";
-            $_assessors = Staff::where('department', $_department)->get();
+            $_department = $_midshipman->enrollment_assessment->course_id == 1 ? "BSME" : "BSMT";
+            $_assessors = Staff::where('department', $_department)->where('is_removed', false)->get();
         } else {
             $_assessors = [];
         }

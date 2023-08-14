@@ -45,7 +45,7 @@ class OnboardTrainingReport
         $_written_score = (($_data->onboard_examination->result->count() / 40) * 100) * .30;
         $_practical_score = (($_details->practical_score / $_item[0]) * 100) * .30;
         $_oral_score =  (($_details->oral_score / $_item[1]) * 100) * .40;
-        $_total_score = $_written_score + $_practical_score + $_oral_score +.1;
+        $_total_score = number_format($_written_score, 2) + number_format($_practical_score, 2) + number_format($_oral_score, 2);
         $_assessment = array(
             'written_score' => $_data->onboard_examination->result->count(),
             'written_final_score' => $_written_score,
