@@ -35,6 +35,16 @@ class OnboardTrainingReport
         $file_name = 'BMA OBT-20: ' . strtoupper($_data->last_name . ', ' . $_data->first_name) . '.pdf';
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
+    public function monthlySummaryReport($data, $narrative)
+    {
+        // Set the Layout for the report
+        $_layout = $this->path . '.monthly-summary-v2-report';
+        // Import PDF Class
+        $pdf = PDF::loadView($_layout, compact('data', 'narrative'));
+        // Set the Filename of report
+        $file_name = 'BMA OBT-20: ' . strtoupper($data->last_name . ', ' . $data->first_name) . '.pdf';
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
     public function assessment_report($_data)
     {
         // Set the Layout for the report

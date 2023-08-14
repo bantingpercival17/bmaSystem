@@ -224,6 +224,19 @@ class OnboardTrainingController extends Controller
             return back()->with('error', $error->getMessage());
         }
     }
+    public function onboard_monthly_summary_report_v2(Request $_request)
+    {
+        try {
+            $generateReport = new OnboardTrainingReport();
+            $student = StudentDetails::find(base64_decode($_request->_midshipman));
+            $narativeReport = ShipboardPerformanceReport::find(base64_decode($_request->narativeReport));
+            return $generateReport->monthlySummaryReport($student, $narativeReport);
+            //return $_generate_report->monthly_summary_report($_data);
+        } catch (Exception $error) {
+            return $error->getMessage();
+            return back()->with('error', $error->getMessage());
+        }
+    }
     # Onboard Examination Assessment
     public function onboard_examination(Request $_request)
     {
