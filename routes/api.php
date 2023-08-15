@@ -98,6 +98,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_store']);
     Route::get('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_report_view']);
     Route::post('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_file_attachment']);
+    Route::get('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_shipboard']);
 // ACADEMIC
 Route::get('/student/semestral-grade', [StudentController::class, 'semestral_grade']);
     Route::post('/student/logout', [StudentController::class, 'student_logout']);

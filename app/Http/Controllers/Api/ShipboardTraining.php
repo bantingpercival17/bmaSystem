@@ -7,6 +7,8 @@ use App\Models\AcademicYear;
 use App\Models\DeploymentAssesment;
 use App\Models\DocumentRequirements;
 use App\Models\Documents;
+use App\Models\ShipboardAssessmentDetails;
+use App\Models\ShipboardExamination;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardPerformanceReport;
 use App\Models\ShippingAgencies;
@@ -272,6 +274,19 @@ class ShipboardTraining extends Controller
             return response(['error' => $error->getMessage()], 505);
             $request->header('User-Agent');
             // Create a function to Controler file to save and store the details of bugs
+        }
+    }
+    function student_onboard_shipboard(Request $request)
+    {
+        try {
+            $assessment = ShipboardExamination::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
+            $examinationDetails = ShipboardAssessmentDetails::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
+            return response(['assessment' => $assessment, 'examinationDetails' => $examinationDetails], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
         }
     }
 }

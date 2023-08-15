@@ -45,6 +45,15 @@ class StudentDetails extends Model
             ->where('is_removed', 0)
             ->orderBy('id', 'desc');
     }
+    /* Latest Enrollment Status with Paid */
+    public function enrollment_assessment_paid()
+    {
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+            ->select('enrollment_assessments.*')
+            ->where('enrollment_assessments.is_removed', 0)
+            ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+            ->orderBy('enrollment_assessments.id', 'desc');
+    }
     /* Enrollment Assessment Base on the Selected Academic Year */
     public function enrollment_assessment_v2()
     {

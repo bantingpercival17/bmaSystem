@@ -19,6 +19,8 @@ use App\Models\ShippingAgencies;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
 use App\Models\GradePublish;
+use App\Models\ShipboardAssessmentDetails;
+use App\Models\ShipboardExamination;
 use Exception;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
@@ -601,7 +603,7 @@ class StudentController extends Controller
             ], 500);
         }
     }
-
+    
     /* ACADEMIC */
     function semestral_grade(Request $request)
     {

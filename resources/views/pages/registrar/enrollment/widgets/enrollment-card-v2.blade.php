@@ -23,8 +23,8 @@
                                                 @if ($_student->enrollment_application_v2)
                                                     {{ $_student->enrollment_application_v2->course->course_name }}
                                                 @else
-                                                    @if ($_student->enrollment_assessment)
-                                                        {{ $_student->enrollment_assessment->course->course_name }}
+                                                    @if ($_student->enrollment_assessment_paid)
+                                                        {{ $_student->enrollment_assessment_paid->course->course_name }}
                                                     @else
                                                     @endif
                                                 @endif
@@ -65,7 +65,7 @@
                                             </div>
                                         </div>
                                     @else
-                                        @if ($_student->enrollment_assessment)
+                                        @if ($_student->enrollment_assessment_paid)
                                             <div class="clearance-status mt-2">
                                                 <div class="row">
 
@@ -75,9 +75,9 @@
                                                 <div class="medical-result">
                                                     <div class="col-md">
                                                         <small class="fw-bolder">MEDICAL RESULT STATUS</small> <br>
-                                                        @if ($_student->enrollment_assessment->medical_result)
-                                                            @if ($_student->enrollment_assessment->medical_result->is_fit !== null)
-                                                                @if ($_student->enrollment_assessment->medical_result->is_fit === 1)
+                                                        @if ($_student->enrollment_assessment_paid->medical_result)
+                                                            @if ($_student->enrollment_assessment_paid->medical_result->is_fit !== null)
+                                                                @if ($_student->enrollment_assessment_paid->medical_result->is_fit === 1)
                                                                     <span class="badge bg-primary mb-4">FIT TO
                                                                         ENROLL</span>
                                                                 @else
@@ -87,7 +87,7 @@
                                                                 <span class="badge bg-info mb-4">PENDING RESULT</span>
                                                             @endif
                                                             <span
-                                                                class="badge bg-secondary">{{ $_student->enrollment_assessment->medical_result->created_at->format('F d,Y') }}</span>
+                                                                class="badge bg-secondary">{{ $_student->enrollment_assessment_paid->medical_result->created_at->format('F d,Y') }}</span>
                                                         @else
                                                             <label for="" class="fw-bolder text-muted">WAIT FOR
                                                                 MEDICAL
