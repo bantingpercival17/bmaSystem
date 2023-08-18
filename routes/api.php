@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Storage;
 
 
 Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
-Route::post('/student/forget-password',[AuthController::class,'student_forget_password']);
+Route::post('/student/forget-password', [AuthController::class, 'student_forget_password']);
 Route::get('/csrf-token', function (Request $request) {
     $userAgent = $request->header('User-Agent');
     $ipAddress = $request->ip();
@@ -86,8 +86,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('student/onboard/enrollment-payment', [StudentController::class, 'student_enrollment_payment_store']);
 
     // PAYMENT OVERVIEW
-    Route::get('student/payment-overview',[StudentController::class,'student_payment_overview']);
-    Route::post('student/payment-transaction',[StudentController::class,'student_payment_transaction']);
+    Route::get('student/payment-overview', [StudentController::class, 'student_payment_overview']);
+    Route::post('student/payment-transaction', [StudentController::class, 'student_payment_transaction']);
     // SBT
     Route::get('/student/onboard', [StudentController::class, 'student_onboarding']);
     Route::post('/student/onboard/enrollment', [ShipboardTraining::class, 'onboard_enrollment']);
@@ -98,9 +98,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_store']);
     Route::get('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_report_view']);
     Route::post('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_file_attachment']);
-    Route::get('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_shipboard']);
-// ACADEMIC
-Route::get('/student/semestral-grade', [StudentController::class, 'semestral_grade']);
+    Route::get('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_assessment_view']);
+    Route::post('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_assessment_verification']);
+    Route::get('student/onboard/assessment/questioner', [ShipboardTraining::class, 'student_onboard_assessment_questioner']);
+    // ACADEMIC
+    Route::get('/student/semestral-grade', [StudentController::class, 'semestral_grade']);
     Route::post('/student/logout', [StudentController::class, 'student_logout']);
 });
 require __DIR__ . '/additional-api/applicant-api.php';

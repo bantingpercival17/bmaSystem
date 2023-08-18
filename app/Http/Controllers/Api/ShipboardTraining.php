@@ -276,12 +276,45 @@ class ShipboardTraining extends Controller
             // Create a function to Controler file to save and store the details of bugs
         }
     }
-    function student_onboard_shipboard(Request $request)
+    function student_onboard_assessment_view(Request $request)
     {
         try {
             $assessment = ShipboardExamination::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
+            $shipboardInformation = ShipBoardInformation::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
             $examinationDetails = ShipboardAssessmentDetails::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
-            return response(['assessment' => $assessment, 'examinationDetails' => $examinationDetails], 200);
+            return response(['assessment' => $assessment, 'examinationDetails' => $examinationDetails, 'shipboardInformation' => $shipboardInformation], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function student_onboard_assessment_verification(Request $request)
+    {
+        $request->validate(['examination_code' => 'required',]);
+        try {
+            $assessment = ShipboardExamination::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
+            if ($request->examination_code != $assessment->examination_code) {
+                return response(['errors' => ['data' => ["Invalid Examination Code, Try again!"]]], 422);
+            }
+            $assessment->examination_start = now();
+            $assessment->is_finish = 0;
+            $assessment->save();
+            return response(['data' => 'Examination Code Verified'], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function student_onboard_assessment_questioner()
+    {
+        try {
+            $questioner = ShipboardExamination::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
+            $examinations = $questioner->assessment_questions;
+            return response(['questions' => $examinations, 'details' => $questioner], 200);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([

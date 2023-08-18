@@ -12,4 +12,12 @@ class ShipboardExaminationAnswer extends Model
         'examination_id',
         'question_id'
     ];
+    public function assessment_questions()
+    {
+        return $this->belongsTo(ShipboardExamination::class, 'examination_id');
+    }
+    public function question()
+    {
+        return $this->belongsTo(ExaminationQuestion::class, 'question_id')->select('id', 'question', 'image_path');
+    }
 }
