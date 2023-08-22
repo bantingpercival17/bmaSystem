@@ -229,7 +229,7 @@ class PaymentTransaction extends Component
                 $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
                     ->whereColumn('student_sections.section_id', 'sections.id')
                     ->where('student_sections.is_removed', false);
-            }, '<=', 40)->first();
+            }, '<', 40)->first();
 
         if ($section) {
             $oldValidation = StudentSection::where('section_id', $section->id)
