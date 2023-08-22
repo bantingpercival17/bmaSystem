@@ -119,26 +119,37 @@
                                             <td>
                                                 <div class="row">
                                                     <div class="ms-2">
-                                                        @if ($item->finals_grade_submission && $item->midterm_grade_submission)
-                                                            @if ($item->finals_grade_submission->is_approved === 1 && $item->midterm_grade_submission->is_approved === 1)
-                                                                @if ($item->grade_final_verification)
-                                                                    <span class="badge bg-primary">Grade
-                                                                        Verified</span> <br>
-                                                                    <button type="button"
-                                                                        class="btn btn-outline-primary btn-sm btn-form-grade  mt-2"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target=".grade-view-modal"
-                                                                        data-grade-url="{{ route('registrar.subject-grade') }}?_subject={{ base64_encode($item->id) }}&_period=finals&_preview=pdf&_form=ad2">
-                                                                        VIEW FORM AD-02</button>
-                                                                @else
-                                                                    <span class="badge bg-info">FOR
-                                                                        APPROVAL <br> OF DEAN</span>
-                                                                @endif
-                                                            @endif
+                                                        @if ($item->curriculum_subject->subject->subject_code == 'NSTP 2')
+                                                            <span class="badge bg-primary">Grade
+                                                                Verified</span> <br>
+                                                            <button type="button"
+                                                                class="btn btn-outline-primary btn-sm btn-form-grade  mt-2"
+                                                                data-bs-toggle="modal" data-bs-target=".grade-view-modal"
+                                                                data-grade-url="{{ route('registrar.subject-grade') }}?_subject={{ base64_encode($item->id) }}&_period=finals&_preview=pdf&_form=ad2">
+                                                                VIEW FORM AD-02</button>
                                                         @else
-                                                            <span class="badge bg-info">FOR
-                                                                APPROVAL OF <br> DEPARTMENT HEAD</span>
+                                                            @if ($item->finals_grade_submission && $item->midterm_grade_submission)
+                                                                @if ($item->finals_grade_submission->is_approved === 1 && $item->midterm_grade_submission->is_approved === 1)
+                                                                    @if ($item->grade_final_verification)
+                                                                        <span class="badge bg-primary">Grade
+                                                                            Verified</span> <br>
+                                                                        <button type="button"
+                                                                            class="btn btn-outline-primary btn-sm btn-form-grade  mt-2"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target=".grade-view-modal"
+                                                                            data-grade-url="{{ route('registrar.subject-grade') }}?_subject={{ base64_encode($item->id) }}&_period=finals&_preview=pdf&_form=ad2">
+                                                                            VIEW FORM AD-02</button>
+                                                                    @else
+                                                                        <span class="badge bg-info">FOR
+                                                                            APPROVAL <br> OF DEAN</span>
+                                                                    @endif
+                                                                @endif
+                                                            @else
+                                                                <span class="badge bg-info">FOR
+                                                                    APPROVAL OF <br> DEPARTMENT HEAD</span>
+                                                            @endif
                                                         @endif
+
 
                                                     </div>
                                             </td>

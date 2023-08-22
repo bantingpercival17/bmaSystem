@@ -134,7 +134,7 @@ class Staff extends Model
     }
     public function dean_signature($_department)
     {
-        $_staff = Staff::where('job_description', 'SCHOOL DIRECTOR')->where('department', $_department)->first();
+        $_staff = Staff::where('job_description', 'SCHOOL DIRECTOR')/* ->where('department', $_department) */->first();
         return $_staff->user->email;
     }
 
