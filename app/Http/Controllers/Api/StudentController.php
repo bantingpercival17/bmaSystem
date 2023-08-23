@@ -225,7 +225,7 @@ class StudentController extends Controller
                 'middle_name' => trim(ucwords(mb_strtolower($_request->middle_name))),
                 'middle_initial' => trim(ucwords(mb_strtolower($_request->middle_initial))),
                 'extention_name' => $_request->extension_name,
-                'birthday' => $_request->birthday,
+                'birthday' => $_request->birth_date,
                 'birth_place' => trim(ucwords(mb_strtolower($_request->birth_place))),
                 'height' => $_request->height,
                 'weight' => $_request->weight,
