@@ -101,6 +101,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_assessment_view']);
     Route::post('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_assessment_verification']);
     Route::get('student/onboard/assessment/questioner', [ShipboardTraining::class, 'student_onboard_assessment_questioner']);
+    Route::post('student/onboard/assessment/questioner', [ShipboardTraining::class, 'student_assessment_answer']);
+    Route::post('student/onboard/assessment/finish', [ShipboardTraining::class, 'finish_onboard_assessment']);
     // ACADEMIC
     Route::get('/student/semestral-grade', [StudentController::class, 'semestral_grade']);
     Route::post('/student/logout', [StudentController::class, 'student_logout']);

@@ -10,7 +10,8 @@ class ShipboardExaminationAnswer extends Model
     use HasFactory;
     protected $fillable = [
         'examination_id',
-        'question_id'
+        'question_id',
+        'choices_id'
     ];
     public function assessment_questions()
     {

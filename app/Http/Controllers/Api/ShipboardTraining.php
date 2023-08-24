@@ -9,6 +9,7 @@ use App\Models\DocumentRequirements;
 use App\Models\Documents;
 use App\Models\ShipboardAssessmentDetails;
 use App\Models\ShipboardExamination;
+use App\Models\ShipboardExaminationAnswer;
 use App\Models\ShipBoardInformation;
 use App\Models\ShipboardPerformanceReport;
 use App\Models\ShippingAgencies;
@@ -279,7 +280,7 @@ class ShipboardTraining extends Controller
     function student_onboard_assessment_view(Request $request)
     {
         try {
-            $assessment = ShipboardExamination::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
+            $assessment = ShipboardExamination::where('student_id', auth()->user()->student_id)->where('is_removed', false)->with('result')->first();
             $shipboardInformation = ShipBoardInformation::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
             $examinationDetails = ShipboardAssessmentDetails::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
             return response(['assessment' => $assessment, 'examinationDetails' => $examinationDetails, 'shipboardInformation' => $shipboardInformation], 200);
@@ -315,6 +316,35 @@ class ShipboardTraining extends Controller
             $questioner = ShipboardExamination::where('student_id', auth()->user()->student_id)->where('is_removed', false)->first();
             $examinations = $questioner->assessment_questions;
             return response(['questions' => $examinations, 'details' => $questioner], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function student_assessment_answer(Request $request)
+    {
+        try {
+            $questioner = ShipboardExaminationAnswer::find($request->question);
+            $questioner->choices_id = $request->choices;
+            $questioner->save();
+            return response(['data' => 'Complete'], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function finish_onboard_assessment(Request $request)
+    {
+        try {
+            $questioner = ShipboardExamination::find($request->examination);
+            $questioner->examination_end = now();
+            $questioner->is_finish = 1;
+            $questioner->save();
+            return response(['data' => ['message' => 'Examination Complete']], 200);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([
