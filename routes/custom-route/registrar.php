@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\RegistrarController;
 use App\Http\Livewire\Registrar\ScholarshipGrantView;
+use App\Http\Livewire\Registrar\Subjects\SubjectHandle\SubjectHandleView;
 use App\Models\CourseOffer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -34,6 +35,8 @@ Route::prefix('registrar')->group(function () {
     Route::get('/subjects/curriculum/subject', [RegistrarController::class, 'curriculum_subject_remove'])->name('registrar.remove-curriculum-subject'); // Remove Curriculum Subject
     Route::get('/subjects/curriculum/view', [RegistrarController::class, 'curriculum_subject_view'])->name('registrar.view-curriculum-subject'); // Remove Curriculum Subject
     Route::post('/subjects/curriculum/update', [RegistrarController::class, 'curriculum_subject_update'])->name('registrar.update-curriculum-subject'); // Store Curriculum Subject
+    /* Livewire - Subjects */
+    Route::get('/subjects/classes/v2', SubjectHandleView::class)->name('registrar.course-subject-view-v2');
 
     // Enrollment
     Route::get('/enrollment', [RegistrarController::class, 'enrollment_view'])->name('registrar.enrollment');
@@ -47,7 +50,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/student-profile/view', [RegistrarController::class, 'student_profile_view'])->name('registrar.student-profile');
     Route::get('/student-profile/student-information-report', [RegistrarController::class, 'student_information_report'])->name('registrar.student-information-report');
     Route::get('/student-profile/student-application-report', [RegistrarController::class, 'student_application_report'])->name('registrar.student-application-view');
-    // Section 
+    // Section
     Route::get('/sections', [RegistrarController::class, 'section_view'])->name('registrar.section-view'); // Section View
     Route::post('/sections', [RegistrarController::class, 'section_store'])->name('registrar.section-store'); // Section Store
     Route::get('/sections/view', [RegistrarController::class, 'section_add_student_view'])->name('registrar.section-add-student-view');
@@ -96,7 +99,7 @@ Route::prefix('registrar')->group(function () {
     /* Applicants */
     //require __DIR__ . '\extra\applicant-route.php'; // Applicant Route
 
-    // Applicant 
+    // Applicant
     //Route::get('/applicant');
     require __DIR__ . '/extra/applicant-route.php'; // Applicant Route
     require __DIR__ . '/extra/ticket-route.php'; // Applicant Route

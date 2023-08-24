@@ -968,7 +968,7 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')
             //->whereNull('applicant_payments.is_approved')
-            
+
             ->where('applicant_payments.is_removed', false)
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)

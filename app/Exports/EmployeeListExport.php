@@ -78,6 +78,6 @@ class EmployeeListExport implements FromCollection, ShouldAutoSize, WithMapping,
     }
     public function title(): string
     {
-        return 'Empolyee';
+        return 'Empolyee Details';
     }
 }
