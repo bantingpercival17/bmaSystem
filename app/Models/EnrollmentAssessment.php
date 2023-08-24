@@ -103,8 +103,8 @@ class EnrollmentAssessment extends Model
     function student_section()
     {
         return $this->hasOne(StudentSection::class, 'enrollment_id')
-        ->with('student_section')
-        ->where('is_removed', false);
+            ->with('student_section')
+            ->where('is_removed', false);
     }
     public function color_course()
     {
@@ -134,21 +134,20 @@ class EnrollmentAssessment extends Model
     }
     function over_payment()
     {
-        $previous =  AcademicYear::where('id', '<', $this->academic_id)
+        $enrollment = EnrollmentAssessment::where('student_id', $this->student_id)->orderBy('id', 'desc')
+        ->where('academic_id', '!=', $this->academic_id)->first();
+      /*   $previous =  AcademicYear::where('id', '<', $this->academic_id)
             ->orderBy('id', 'desc')
             ->first();
         $enrollment = EnrollmentAssessment::where('academic_id', $previous->id)->where('student_id', $this->student_id)->where('is_removed', false)->first();
-
+         */$value = 0;
         if ($enrollment) {
             $paymentAssessment = $enrollment->payment_assessments;
             if ($paymentAssessment) {
-                return ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
-            } else {
-                return 0;
+                $value =  ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
             }
-        } else {
-            return 0;
         }
+        return $value;
     }
     function payment_assessment_details()
     {

@@ -9,6 +9,7 @@ use App\Models\PaymentAdditionalFees;
 use App\Models\PaymentTransaction as ModelsPaymentTransaction;
 use App\Models\PaymentTrasanctionOnline;
 use App\Models\Section;
+use App\Models\Staff;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
 use App\Models\StudentSection;
@@ -22,6 +23,7 @@ use Livewire\Component;
 class PaymentTransaction extends Component
 {
     public $inputStudent;
+    public $staff = null;
     public $academic;
     public $academicData;
     public $academicHistory;
@@ -39,7 +41,7 @@ class PaymentTransaction extends Component
     public $transactionOrNumber = null;
     public $transactionDate = null;
     public $transactionAmount = null;
-    public $transactionVoucher = null;
+    public $transactionVoucher = 0;
     public $onlinePaymentTransaction = null;
     public $paymentDetails = [];
     public $particularId = null;
@@ -50,6 +52,7 @@ class PaymentTransaction extends Component
     protected $listeners = ['voidTransaction', 'paymentDisapproved'];
     public function render()
     {
+        $this->staff = auth()->user()->staff->id;
         $_academic = Auth::user()->staff->current_academic();
         $this->academic =  request()->query('_academic') ?: $this->academic;
         $academic = base64_decode($this->academic) ?: $_academic->id;
@@ -72,7 +75,6 @@ class PaymentTransaction extends Component
                 $additional_fees = $this->paymentAssessment->additional_fees;
             }
             $scholarshipList =  Voucher::where('is_removed', false)->get();
-
         }
         return view('livewire.accounting.payment-transaction', compact('studentLists',  'particularFees', 'scholarshipList', 'additional_fees'));
     }
@@ -166,12 +168,18 @@ class PaymentTransaction extends Component
                 $voucher = Voucher::find($this->transactionVoucher);
                 $orNumber = $voucher->voucher_code . '.' . $this->profile->account->student_number;
                 $fullVoucher = ['TCC SCHOLAR', 'MMSL - SCHOLAR'];
-                $amount = in_array($voucher->voucher_name, $fullVoucher) ? $this->paymentAssessment->total_payment : $voucher->voucher_amount;
+                if ($voucher->voucher_code == 'CAPT.SINGSON') {
+                    $tuition_fees = $this->paymentAssessment->enrollment_assessment->course_level_tuition_fee();
+                    $amount =  $tuition_fees->tuition_fee_discount($this->paymentAssessment->enrollment_assessment);
+                } else {
+                    $amount = in_array($voucher->voucher_name, $fullVoucher) ? $this->paymentAssessment->total_payment : $voucher->voucher_amount;
+                }
                 $paymentMethod = 'VOUCHER';
             } else {
                 $this->validate();
             }
             // Create a Payment Details
+            $staff = Staff::where('user_id', Auth::user()->id)->first();
             $paymentDetails = array(
                 'assessment_id' => $this->paymentAssessment->id,
                 'or_number' => $this->transactionVoucher ? $orNumber : $this->transactionOrNumber,
@@ -180,7 +188,7 @@ class PaymentTransaction extends Component
                 'payment_method' => $this->transactionVoucher ? $paymentMethod : $this->transactionPaymentMethod,
                 'remarks' => strtoupper($this->transactionRemarks),
                 'transaction_date' => $this->transactionDate ?: date('Y-m-d'),
-                'staff_id' => Auth::user()->staff->id,
+                'staff_id' => $staff->id,
                 'is_removed' => false
             );
             if ($this->particularId) {

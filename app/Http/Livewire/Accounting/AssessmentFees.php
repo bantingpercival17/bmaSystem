@@ -2,10 +2,13 @@
 
 namespace App\Http\Livewire\Accounting;
 
+use App\Models\AcademicYear;
 use App\Models\AdditionalFees;
 use App\Models\EnrollmentAssessment;
 use App\Models\PaymentAdditionalFees;
 use App\Models\PaymentAssessment;
+use App\Models\PaymentForwardedAmount;
+use App\Models\PaymentTransaction;
 use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -13,6 +16,7 @@ use Livewire\Component;
 class AssessmentFees extends Component
 {
     public $inputStudent;
+    public $staff = null;
     public $academic;
     public $profile = null;
     public $paymentMode = 0;
@@ -22,9 +26,11 @@ class AssessmentFees extends Component
     public $enrollmentAssessment = null;
     public function render()
     {
+        $this->staff = Auth::user()->staff->id;
         $_academic = Auth::user()->staff->current_academic();
         $this->academic =  request()->query('_academic') ?: $this->academic;
         $academic = base64_decode($this->academic) ?: $_academic->id;
+        $this->academic = $academic;
         $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->recentStudent($academic);
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
         $tuition_fees = [];
@@ -136,7 +142,7 @@ class AssessmentFees extends Component
                 'enrollment_id' => $this->enrollmentAssessment,
                 'course_semestral_fee_id' => $tuition_fees->id,
                 'payment_mode' => $this->paymentMode,
-                'staff_id' => Auth::user()->staff->id,
+                'staff_id' => $this->staff,
                 'total_payment' => $total_tuitionfee,
                 'upon_enrollment' => $upon_enrollment,
                 'monthly_payment' => $monthly_payment,
@@ -159,14 +165,16 @@ class AssessmentFees extends Component
                         }
                     }
                 }
+                $this->forwardedPayment($assessment);
                 return redirect(route('accounting.payment-transactions-v2') . "?student=" . base64_encode($this->profile->id))->with('success', 'Payment Assessment Complete.');
             } else {
+                $this->forwardedPayment($_payment_assessment);
                 $_payment_assessment->course_semestral_fee_id =   $tuition_fees->id;
                 $_payment_assessment->payment_mode = $this->paymentMode;
                 $_payment_assessment->total_payment =  $total_tuitionfee;
                 $_payment_assessment->upon_enrollment =  $upon_enrollment;
                 $_payment_assessment->monthly_payment =  $monthly_payment;
-                $_payment_assessment->staff_id = Auth::user()->staff->id;
+                $_payment_assessment->staff_id = $this->staff;
                 $_payment_assessment->save();
                 if (count($_payment_assessment->additional_fees) == 0) {
                     if (count($this->particularLists) > 0) {
@@ -193,5 +201,44 @@ class AssessmentFees extends Component
     function paymentModeChange($item)
     {
         $this->tempPaymentMode = $item;
+    }
+    function forwardedPayment($currentAssessment)
+    {
+        //$profile->enrollment_assessment->over_payment();
+        // Get the Previous Enrollment Semester
+        $enrollment = EnrollmentAssessment::where('student_id', $this->profile->id)->orderBy('id', 'desc')
+            ->where('academic_id', '!=', $this->academic)->first(); //Check if the Enrollment 
+        if ($enrollment) {
+            $paymentAssessment = $enrollment->payment_assessments;
+            if ($paymentAssessment) {
+                // Then Check the Payment Fowarded Amount
+                $checkForwardedPayment = PaymentForwardedAmount::where('previous_assessment_id', $paymentAssessment->id)->where('is_removed', false)->first();
+                $value =  ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
+                if (($value * -1) > 100) {
+                    if (!$checkForwardedPayment) {
+                        $data =  array('previous_assessment_id' => $paymentAssessment->id, 'forwarded_amount' => $value * -1, 'current_assessment_id' => $currentAssessment->id);
+                        if (strtoupper($enrollment->academic->semester) == 'FIRST SEMESTER') {
+                            $semester = '1ST SEM';
+                        } else {
+                            $semester = '2ND SEM';
+                        }
+                        $orName = $semester . ' SY ' . str_replace('20', '', $enrollment->academic->school_year);
+                        PaymentForwardedAmount::create($data);
+                        $paymentDetails = array(
+                            'assessment_id' => $currentAssessment->id,
+                            'or_number' => $orName,
+                            'payment_transaction' => 'TUITION FEE',
+                            'payment_amount' => $value * -1,
+                            'payment_method' => 'OVER-PAYMENT',
+                            'remarks' => 'FORWARDED PAYMENT',
+                            'transaction_date' => date('Y-m-d'),
+                            'staff_id' => $this->staff,
+                            'is_removed' => false
+                        );
+                        PaymentTransaction::create($paymentDetails);
+                    }
+                }
+            }
+        }
     }
 }

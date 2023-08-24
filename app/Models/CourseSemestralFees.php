@@ -357,4 +357,15 @@ class CourseSemestralFees extends Model
     {
         return $_course_fee->course_id == 3 ? ($_amount + 710) : ($_amount + ($_amount * 0.035));
     }
+    function tuition_fee_discount($_data)
+    {
+        $_number_of_units = $_data->course->units($_data)->units;
+        $_tuition_fees = $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->join('particulars as p', 'p.id', 'pf.particular_id')
+            ->where('p.particular_tag', 'tuition_tags')
+            ->where('semestral_fees.is_removed', false)->get();
+        return ($_tuition_fees[0]->fees * $_number_of_units) * .50;
+    }
 }
