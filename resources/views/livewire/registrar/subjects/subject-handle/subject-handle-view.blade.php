@@ -153,30 +153,23 @@
                     <small class="text-primary"data-toggle="tooltip" data-placement="right"
                         title="Upload the Template Excel File"><b>UPLOAD TEACHING LOAD</b> </small>
                     <div class="form-group">
-                        <form action="{{ route('registrar.subject-schedule-upload') }}" method="post"
-                            enctype="multipart/form-data">
+                        <form wire:submit.prevent="importTeachingLoad" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <input class="form-control form-control-sm  border border-primary"
-                                            type="file" id="customFile1" name="upload-file">
-                                        {{--   <input type="hidden" name="curriculum" value="{{ $curriculum->id }}">
-                                        <input type="hidden" name="course" value="{{ $_course->id }}">
-                                        <input type="hidden" name="level"
-                                            value="{{ Auth::user()->staff->convert_year_level($_level) }}"> --}}
+                                            type="file" wire:model="fileImport">
+
+                                        @error('fileImport')
+                                            <span class="badge bg-danger mt-2">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <button class="btn btn-info text-white btn-sm float-end"
                                         type="submit">UPLOAD</button>
                                 </div>
-                                {{-- <div class="col-md">
-                                    <a href="{{ route('registrar.subject-schedule-template') }}?course={{ base64_encode($_course->id) }}&data={{ base64_encode(json_encode([$curriculum->id, $_level, Auth::user()->staff->current_academic()->semester])) }}&section={{ base64_encode(json_encode([Auth::user()->staff->current_academic()->id, $_level])) }}"
-                                        class="btn btn-info btn-sm text-white">SCHEDULE
-                                        TEMPLATE</a>
-                                </div> --}}
-                            </div>
 
                         </form>
                     </div>

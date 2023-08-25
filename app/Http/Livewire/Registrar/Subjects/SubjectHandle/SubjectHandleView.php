@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Registrar\Subjects\SubjectHandle;
 
 use App\Exports\WorkBook\TeachingLoadAndScheduleWorkBook;
+use App\Imports\SubjectScheduleImport;
 use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
@@ -12,21 +13,24 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Maatwebsite\Excel\Facades\Excel;
 use ZipArchive;
+use Livewire\WithFileUploads;
 
 class SubjectHandleView extends Component
 {
+    use WithFileUploads;
     public $academic;
     public $course;
     public $selectedCourse = null;
     public $selectedCurriculum = null;
     public $selectCourse = null;
     public $selectCurriculum = null;
+    public $fileImport = null;
     public function render()
     {
         $courseLists = CourseOffer::all();
         $curriculumLists = Curriculum::where('is_removed', false)->orderBy('id', 'desc')->get();
         $academic = Auth::user()->staff->current_academic();
-        $this->academic = request()->query('_academic') ? base64_decode(request()->query('_academic')) : $this->academic; // Check the parameter
+        $this->academic = request()->query('_academic') ? base64_decode(request()->query('_academic')) : $academic->id; // Check the parameter
         $academic = base64_decode($this->academic) ?: $academic->id;
         $this->course = request()->query('_course') ? base64_decode(request()->query('_course')) : 1;
         if ($this->selectCourse == null) {
@@ -87,11 +91,6 @@ class SubjectHandleView extends Component
             ->with(['course', 'curriculum'])
             ->where('academic_id', $this->academic)
             ->groupBy(['course_id', 'year_level', 'curriculum_id'])->get();
-        /* $this->dispatchBrowserEvent('swal:alert', [
-            'title' => 'System Bug!',
-            'text' => json_encode($data),
-            'type' => 'Warning',
-        ]); */
         try {
             $academic = AcademicYear::find($this->academic);
             $current_academic =  strtoupper(str_replace(' ', '-', $academic->semester)) . '-' . $academic->school_year;
@@ -111,14 +110,6 @@ class SubjectHandleView extends Component
                     #ADD TO THE ZIP FOLDER
                     $zip->addFromString($fileName . '.xlsx', file_get_contents($fileContents)); // Add the file to the zip archive
                 }
-                /*  foreach ($courses as $key => $_course) {
-                    $_file_name = $current_academic . '-' . $_course->course_code;
-                    //$_file_export = new CourseStudentEnrolled($_course); // Old Model for Export List of Enrollee
-                    $_file_export = new StudentEnrolledList($_course);
-                    $fileContents = Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX)->getFile();
-                    $zip->addFromString($_file_name . '.xlsx', file_get_contents($fileContents)); // Add the file to the zip archive
-                    //echo $_file_name . '.xlsx has been added to the zip archive<br>';
-                } */
                 $zip->close();
                 return redirect(asset($zipFileName));
                 //unlink($zipFileName);
@@ -130,6 +121,33 @@ class SubjectHandleView extends Component
                 'title' => 'System Bug!',
                 'text' => $th->getMessage(),
                 'type' => 'Warning',
+            ]);
+        }
+    }
+    function importTeachingLoad()
+    {
+        //$this->dispatchBrowserEvent('show-loading');
+        $this->validate([
+            'fileImport' => 'required',
+        ]);
+
+        try {
+            $fileName = $this->fileImport->getClientOriginalName();
+            $fileName = "/registrar/scheduled-import/" . $fileName;
+            $this->fileImport->store($fileName, 'public');
+            Excel::import(new SubjectScheduleImport(), $this->fileImport);
+            //$this->dispatchBrowserEvent('hide-loading');
+            $this->dispatchBrowserEvent('swal:alert', [
+                'title' => 'Success!',
+                'text' => "Uploading Complete",
+                'type' => 'success',
+            ]);
+        } catch (\Throwable $th) {
+            //$this->dispatchBrowserEvent('hide-loading');
+            $this->dispatchBrowserEvent('swal:alert', [
+                'title' => 'System Bug!',
+                'text' => $th->getMessage(),
+                'type' => 'warning',
             ]);
         }
     }

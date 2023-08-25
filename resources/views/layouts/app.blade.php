@@ -422,6 +422,15 @@
         })
         /* toastr.success("{{ session('message') }}") */
         @endif
+        window.addEventListener('show-loading', () => {
+            document.getElementById('loading').style.display = 'block';
+            console.log('block')
+        });
+
+        window.addEventListener('hide-loading', () => {
+            document.getElementById('loading').style.display = 'none';
+            console.log('none')
+        });
     </script>
     @yield('script')
 </body>
