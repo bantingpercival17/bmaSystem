@@ -24,14 +24,15 @@ class SubjectHandleView extends Component
     public $selectedCurriculum = null;
     public $selectCourse = null;
     public $selectCurriculum = null;
-    public $fileImport = null;
+    public $fileImport;
     public function render()
     {
         $courseLists = CourseOffer::all();
         $curriculumLists = Curriculum::where('is_removed', false)->orderBy('id', 'desc')->get();
-        $academic = Auth::user()->staff->current_academic();
+        $academic = AcademicYear::where('is_active', true)->first();
+        $academic = $this->academic ?: $academic;
         $this->academic = request()->query('_academic') ? base64_decode(request()->query('_academic')) : $academic->id; // Check the parameter
-        $academic = base64_decode($this->academic) ?: $academic->id;
+        $this->academic = AcademicYear::find($this->academic);
         $this->course = request()->query('_course') ? base64_decode(request()->query('_course')) : 1;
         if ($this->selectCourse == null) {
             $course = CourseOffer::find($this->course);
@@ -48,10 +49,10 @@ class SubjectHandleView extends Component
         $levels = [11, 12];
         $levels = $this->course != 3 ? [4, 3, 2, 1] : $levels;
         $subjectLists = [];
-        $academic = AcademicYear::find($this->academic);
+        $academic = AcademicYear::find($this->academic->id);
         foreach ($levels as $key => $value) {
             $subjectData = CurriculumSubject::with(['subject', 'sectionList' => function ($query) {
-                $query->where('academic_id', $this->academic);
+                $query->where('academic_id', $this->academic->id);
             }])
                 ->where('curriculum_subjects.course_id', $this->selectCourse)
                 ->where('curriculum_subjects.curriculum_id', $this->selectCurriculum)
@@ -89,10 +90,10 @@ class SubjectHandleView extends Component
     {
         $data = EnrollmentAssessment::select('course_id', 'year_level', 'curriculum_id', 'academic_id')
             ->with(['course', 'curriculum'])
-            ->where('academic_id', $this->academic)
+            ->where('academic_id', $this->academic->id)
             ->groupBy(['course_id', 'year_level', 'curriculum_id'])->get();
         try {
-            $academic = AcademicYear::find($this->academic);
+            $academic = AcademicYear::find($this->academic->id);
             $current_academic =  strtoupper(str_replace(' ', '-', $academic->semester)) . '-' . $academic->school_year;
             $_file_name = 'storage/department/registrar/zip-file/' . $current_academic . '-TEACHING-LOAD-TEMPLATES-' . date('Ymdhms');
             // Create a new zip archive
@@ -126,24 +127,24 @@ class SubjectHandleView extends Component
     }
     function importTeachingLoad()
     {
-        //$this->dispatchBrowserEvent('show-loading');
+
         $this->validate([
             'fileImport' => 'required',
         ]);
-
         try {
+            $this->dispatchBrowserEvent('show-loading');
             $fileName = $this->fileImport->getClientOriginalName();
             $fileName = "/registrar/scheduled-import/" . $fileName;
             $this->fileImport->store($fileName, 'public');
             Excel::import(new SubjectScheduleImport(), $this->fileImport);
-            //$this->dispatchBrowserEvent('hide-loading');
+            $this->dispatchBrowserEvent('hide-loading');
             $this->dispatchBrowserEvent('swal:alert', [
                 'title' => 'Success!',
                 'text' => "Uploading Complete",
                 'type' => 'success',
             ]);
         } catch (\Throwable $th) {
-            //$this->dispatchBrowserEvent('hide-loading');
+            $this->dispatchBrowserEvent('hide-loading');
             $this->dispatchBrowserEvent('swal:alert', [
                 'title' => 'System Bug!',
                 'text' => $th->getMessage(),

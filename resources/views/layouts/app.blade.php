@@ -423,12 +423,18 @@
         /* toastr.success("{{ session('message') }}") */
         @endif
         window.addEventListener('show-loading', () => {
-            document.getElementById('loading').style.display = 'block';
+            const boxes = document.getElementsByClassName("loader");
+            boxes[0].classList.remove("animate__fadeOut");
+            boxes[0].classList.remove("d-none");
+            boxes[0].classList.add("animate__fadeIn");
             console.log('block')
         });
 
         window.addEventListener('hide-loading', () => {
-            document.getElementById('loading').style.display = 'none';
+            const boxes = document.getElementsByClassName("loader");
+            boxes[0].classList.remove("animate__fadeIn");
+            boxes[0].classList.add("animate__fadeOut");
+            boxes[0].classList.add("d-none");
             console.log('none')
         });
     </script>

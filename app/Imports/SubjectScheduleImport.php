@@ -4,11 +4,13 @@ namespace App\Imports;
 
 use App\Models\Section;
 use App\Models\SubjectClass;
+use App\Models\SubjectClassSchedule;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
 class SubjectScheduleImport implements ToCollection
 {
@@ -45,13 +47,13 @@ class SubjectScheduleImport implements ToCollection
                         );
                         if ($user) {
                             if ($checkTeachingLoad) {
-                                $this->classSchedule($checkTeachingLoad, $collection);
-                                //$checkTeachingLoad->update($subjectClassDetail); // Update Teaching Load
+                                $checkTeachingLoad->update($subjectClassDetail); // Update Teaching Load
+                                $this->classSchedule($checkTeachingLoad, $value);
                                 $dataToLog[] = 'PROCESS STATUS: ' . $value[3] . " updated to section of " . $section->section_name . ' Successfully Completed';
                                 $_feedback_message = $value[3] . " updated to section of " . $section->section_name . ' Successfully Completed<br>';
                             } else {
                                 $subject = SubjectClass::create($subjectClassDetail);
-                                $this->classSchedule($subject, $collection);
+                                $this->classSchedule($subject, $value);
                                 //SubjectClass::create($subjectClassDetail); // Save Teaching Load
                                 $dataToLog[] = 'PROCESS STATUS: ' . $value[3] . " saved to section of " . $section->section_name . ' Successfully Completed';
                                 $_feedback_message =  $value[3] . " saved to section of " . $section->section_name . ' Successfully Completed<br>';
@@ -127,5 +129,47 @@ class SubjectScheduleImport implements ToCollection
     }
     function classSchedule($class, $collection)
     {
+        $days = array(
+            'Monday' => $collection[7],
+            'Tuesday' => $collection[8],
+            'Wednesday' => $collection[9],
+            'Thursday' => $collection[10],
+            'Friday' => $collection[11]
+        );
+        SubjectClassSchedule::where('subject_class_id', $class->id)->update(['is_removed' => true]);
+        foreach ($days as $day => $value) {
+            if ($value !== null) {
+                $separateTimeByComa =  explode(',', $value); // Seperate value if they use Coma
+                if (count($separateTimeByComa) > 0) {
+                    foreach ($separateTimeByComa as $key => $value1) {
+                        $this->storeSchedule($value1, $class, $day);
+                    }
+                } else {
+                    $this->storeSchedule($value, $class, $day);
+                }
+            }
+        }
+    }
+    function storeSchedule($value, $class, $day)
+    {
+        $separateTimeByDash = explode('-', $value);
+        $startTime = $separateTimeByDash[0];
+        $endTime = $separateTimeByDash[1];
+        $classSchedule = SubjectClassSchedule::where('subject_class_id', $class->id)
+            ->where('day', $day)->where('start_time', $startTime . ':00')->where('end_time', $endTime . ':00')->first();
+        if (!$classSchedule) {
+            $schedule = array(
+                'subject_class_id' => $class->id,
+                'day' => $day,
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'created_by' => Auth::user()->name,
+                'is_removed' => false
+            );
+            SubjectClassSchedule::create($schedule);
+        } else {
+            $classSchedule->is_removed = false;
+            $classSchedule->save();
+        }
     }
 }
