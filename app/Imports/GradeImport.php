@@ -18,6 +18,7 @@ class GradeImport implements ToCollection
     /**
      * @param Collection $collection
      */
+    public $section;
     public function __construct($_section)
     {
         $this->section = Crypt::decrypt($_section);
@@ -168,10 +169,10 @@ class GradeImport implements ToCollection
                         foreach ($_headers as $column => $header) {
                             if ($column > 5) {
                                 // Fetch the Headers
-                                $_data_to_log[] .= PHP_EOL; // Next line in log file
+                                //$_data_to_log[] .= PHP_EOL; // Next line in log file
                                 $_data_to_log[] = 'Header: ' . trim($header);
                                 $_data_header = $this->header_checker_v2(strtoupper(strtolower($header)));
-                                $_data_to_log[] .= PHP_EOL; // Next line in log file
+                                //$_data_to_log[] .= PHP_EOL; // Next line in log file
                                 $_data_to_log[] = 'Section: ' . $this->section;
                                 $_data_to_log[] = 'Student: ' . $_account->student_id;
                                 if ($_data_header['type'] != null) {
@@ -184,16 +185,18 @@ class GradeImport implements ToCollection
                                     // Score Details
                                     $_data_to_log[] = 'Header status: ' . implode(':', $_data_header);
                                     $_check_details = GradeEncode::where($_score_details)->first();
-                                    if ($_check_details) {
-                                        // Update Score
-                                        $_save = GradeEncode::where($_score_details)->update(['score' => floatval($_data[$column]), 'is_removed' => 0]);
-                                        $_data_to_log[] = 'Updated Grades';
-                                    } else {
-                                        // Save Score
-                                        $_score_details['score'] = floatval($_data[$column]);
-                                        $_score_details['is_removed'] = 0;
-                                        $_save = GradeEncode::create($_score_details);
-                                        $_data_to_log[] = 'Saved Grades:' . floatval($_data[$column]);
+                                    if ($_data[$column] !== null) {
+                                        if ($_check_details) {
+                                            // Update Score
+                                            $_save = GradeEncode::where($_score_details)->update(['score' => floatval($_data[$column]), 'is_removed' => 0]);
+                                            $_data_to_log[] = 'Updated Grades';
+                                        } else {
+                                            // Save Score
+                                            $_score_details['score'] = floatval($_data[$column]);
+                                            $_score_details['is_removed'] = 0;
+                                            $_save = GradeEncode::create($_score_details);
+                                            $_data_to_log[] = 'Saved Grades:' . floatval($_data[$column]);
+                                        }
                                     }
                                 } else {
                                     $_data_to_log[] = 'Header Status: Invalid ';
@@ -202,7 +205,7 @@ class GradeImport implements ToCollection
                                 // $_data_to_log[] .= PHP_EOL; // Next line in log file
                             }
                         }
-                        $_data_to_log[] .= PHP_EOL; // Next line in log file
+                        //$_data_to_log[] .= PHP_EOL; // Next line in log file
                     } else {
                         $_data_to_log[] = 'Section : ' . $_data[5] . ' | Invalid Section'; // Email Status
                     }
@@ -212,7 +215,7 @@ class GradeImport implements ToCollection
                 $_data_to_log[] = 'Email : ' . $_data[5] . ' | Missing Student'; // Email Status
             }
 
-            $_data_to_log[] .= PHP_EOL; // Next line in log file
+            //$_data_to_log[] .= PHP_EOL; // Next line in log file
         }
         // Config for the Log Activities
         $_data_to_log = implode(' - ', $_data_to_log);

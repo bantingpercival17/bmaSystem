@@ -265,8 +265,8 @@ class TeacherController extends Controller
             ->orderBy('student_details.last_name', 'ASC')
             ->where('ss.is_removed', false)
             ->get();
-        $_file_name = $_subject->curriculum_subject->subject->subject_code . "-" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_subject->section->section_name))) . '-EXPORT-GRADE-' . date('dmYhms');
-        $_respond =  Excel::download(new GradeTemplate($_students, $_subject), $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+        $_file_name = $_subject->curriculum_subject->subject->subject_code . "-" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_subject->section->section_name))) . '-'.strtoupper($_request->_period).'-' . date('dmYhms');
+        $_respond =  Excel::download(new GradeTemplate($_students, $_subject), $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
         ob_end_clean();
         return $_respond;
     }

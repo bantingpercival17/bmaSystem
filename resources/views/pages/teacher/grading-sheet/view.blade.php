@@ -46,10 +46,10 @@
 
                                     <div class="row ">
                                         <div class="col-md-8">
-                                            <div class="form-group">
+                                            <div class="form-group ">
                                                 <input type="hidden" name="_section"
                                                     value="{{ Crypt::encrypt($_subject->id) }}">
-                                                <input class="form-control form-control-sm" type="file" id="customFile"
+                                                <input class="form-control form-control-sm border border-primary" type="file" id="customFile"
                                                     name="_file_grade" required {{ $_grade_status }}>
                                             </div>
                                         </div>
@@ -66,8 +66,8 @@
                                 <small class="fw-bolder text-muted">
                                     DOWNLOAD TEMPLATE
                                 </small> <br>
-                                <label for="" class="fw-bolder"><a
-                                        href="{{ route('teacher.export-grade') . '?_subject=' . request()->input('_subject') . '&_period=' . request()->input('_period') }}">export-grade.xlsx</a></label>
+                                <label for="" class=""><a class="badge bg-primary"
+                                        href="{{ route('teacher.export-grade') . '?_subject=' . request()->input('_subject') . '&_period=' . request()->input('_period') }}">Grading Sheet Template.xlsx</a></label>
 
                             </div>
                         </div>
@@ -145,7 +145,7 @@
                                             <input type="hidden" name="_form" value="{{ $_subject_data->form }}">
                                             <div class="form-group row">
                                                 <div class="col-md">
-                                                    <label for="" class="form-control">FORM
+                                                    <label for="" class="form-control border border-primary">FORM
                                                         {{ strtoupper($_subject_data->form) }}</label>
                                                 </div>
                                                 <div class="col-md">
@@ -210,7 +210,7 @@
                                 @csrf
                                 <div class="row">
                                     <div class="form-group col-md">
-                                        <label for="" class="form-control">
+                                        <label for="" class="form-control border border-primary">
                                             {{ request()->input('_period') == 'midterm' ? 'Form AD-01 Midterm' : 'Form AD-02 Finals' }}
                                         </label>
                                         <input type="hidden" name="_form" value="ad1">
