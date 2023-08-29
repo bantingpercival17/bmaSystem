@@ -275,7 +275,7 @@ class StudentController extends Controller
                 'household_income' =>  $_request->household_income,
                 'dswd_listahan' => $_request->dswd_beneficiary,
                 'homeownership' => $_request->home_ownership,
-                'car_ownership' => $_request->carOwnership,
+                'car_ownership' => $_request->car_ownership,
 
                 'available_devices' => serialize($_request->available_device),
                 'available_connection' => $_request->available_connection,
