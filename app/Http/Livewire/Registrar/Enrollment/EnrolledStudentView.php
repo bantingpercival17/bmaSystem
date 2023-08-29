@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Registrar\Enrollment;
 
 use App\Models\CourseOffer;
+use App\Models\EnrollmentAssessment;
 use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -20,6 +21,10 @@ class EnrolledStudentView extends Component
     public $sections = [];
     public $selectSection = 'ALL SECTION';
     public $showData;
+    public $enrollmentCancellation = null;
+    public $enrollmentDate;
+    public $enrollmentReason;
+    public $enrollmentType;
     public function render()
     {
         $courses = CourseOffer::orderBy('id', 'desc')->get();
@@ -82,5 +87,12 @@ class EnrolledStudentView extends Component
             ->whereNull('student_cancellations.id')
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC'); */
+    }
+    function enrollment_cancellation($data)
+    {
+        $this->enrollmentCancellation = EnrollmentAssessment::find($data);
+    }
+    function enrollment_cancellation_store() {
+        
     }
 }
