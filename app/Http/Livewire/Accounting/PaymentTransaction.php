@@ -197,7 +197,8 @@ class PaymentTransaction extends Component
                 $fees->save();
             }
             $paymentTransaction = ModelsPaymentTransaction::create($paymentDetails);
-            if ($paymentTransaction) {
+            // TODO: Change into Payment Transaction History
+            if (count($this->paymentAssessment->payment_transaction) < 1) {
                 // The Auto Section
                 $this->setStudentSection($this->paymentAssessment);
                 $this->setStudentAccount($this->paymentAssessment->enrollment_assessment);
@@ -243,7 +244,7 @@ class PaymentTransaction extends Component
             $oldValidation = StudentSection::where('section_id', $section->id)
                 ->where('student_id', $enrollment->student->id)
                 ->where('is_removed', false)->first(); // Verify if the Student will save on Section
-            if (!$oldValidation || !$enrollment->student_section) {
+            if (!$enrollment->student_section) {
                 StudentSection::create([
                     'student_id' => $enrollment->student->id,
                     'section_id' => $section->id,
