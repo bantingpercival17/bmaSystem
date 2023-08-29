@@ -4,7 +4,9 @@ namespace App\Http\Livewire\Registrar\Enrollment;
 
 use App\Models\CourseOffer;
 use App\Models\EnrollmentAssessment;
+use App\Models\StudentCancellation;
 use App\Models\StudentDetails;
+use App\Models\StudentSection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -21,7 +23,7 @@ class EnrolledStudentView extends Component
     public $sections = [];
     public $selectSection = 'ALL SECTION';
     public $showData;
-    public $enrollmentCancellation = null;
+    public $enrollmentData;
     public $enrollmentDate;
     public $enrollmentReason;
     public $enrollmentType;
@@ -90,9 +92,23 @@ class EnrolledStudentView extends Component
     }
     function enrollment_cancellation($data)
     {
-        $this->enrollmentCancellation = EnrollmentAssessment::find($data);
+        $this->enrollmentData = EnrollmentAssessment::find($data);
     }
-    function enrollment_cancellation_store() {
-        
+    function enrollmentCancellationStore()
+    {
+      /*   $data = array(
+            'enrollment_id' => $this->enrollmentData->id,
+            'type_of_cancellations' => $this->enrollmentType,
+            'date_of_cancellation' => $this->enrollmentDate,
+            'cancellation_evidence' => '',
+            'staff_id' => auth()->user()->staff->id
+        );
+        StudentSection::where('enrollment_id', $this->enrollmentData->id)->where('is_removed', false)->get();
+        StudentCancellation::create($data); */
+        $this->dispatchBrowserEvent('swal:alert', [
+            'title' => 'Enrollment Cancellation!',
+            'text' => 'Successfully Transact!.',
+            'type' => 'success',
+        ]);
     }
 }

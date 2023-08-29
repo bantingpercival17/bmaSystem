@@ -165,8 +165,9 @@
                                                 </small>
                                             </div>
                                         </div>
-                                        <a class="badge bg-danger text-white float-end mt-2" data-bs-toggle="modal" data-bs-target=".view-modal"
-                                            wire:click="enrollment_cancellation({{ $data->enrollment_status->id }})">
+                                        <a class="badge bg-danger text-white float-end mt-2" data-bs-toggle="modal"
+                                            data-bs-target=".view-modal"
+                                            wire:click="enrollment_cancellation('{{ $data->enrollment_status->id }}')">
                                             ENROLLMENT CANCELLATION
                                         </a>
                                     </div>
@@ -237,24 +238,28 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title fw-bolder">ENROLLMENT CANCELLATION</h5>
+                <h5 class="modal-title fw-bolder text-primary">ENROLLMENT CANCELLATION</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
-                <form wire:submit.prevent="enrollment_cancellation_store">
+                <div {{-- wire:submit.prevent="enrollmentCancellationStore" --}}>
+                    {{$enrollmentData}}
                     <div class="form-group">
-                        <span class="fw-bolder text-muted">TYPE OF CANCELLATION</span>
+                        <small class="fw-bolder text-primary">TYPE OF CANCELLATION</small>
                         <select wire:model="enrollmentType" class="form-select form-select-sm border border-primary">
                             <option value="dropped">Dropping Form</option>
                             <option value="withdrawn">Withdrawal Form</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <span class="fw-bolder text-muted">DATE OF CANCELLATION</span>
-                       <input type="date" wire:model="enrollmentDate" class="form-control form-control-sm border border-primary">
+                        <small class="fw-bolder text-primary">DATE OF CANCELLATION</small>
+                        <input type="date" wire:model="enrollmentDate"
+                            class="form-control form-control-sm border border-primary">
                     </div>
-                </form>
+                    <button wire:click="enrollmentCancellationStore"
+                        class="btn btn-primary btn-sm float-end">SUBMIT</button>
+                </div>
             </div>
         </div>
     </div>
