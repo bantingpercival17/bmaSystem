@@ -84,9 +84,10 @@ class AdministratorController extends Controller
         } else {
             $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
         }
+        $sectionLists = Section::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
         //return $_students;
         //$_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
-        return view('pages.administrator.student.view', compact('_academics', '_course', '_students'));
+        return view('pages.administrator.student.view', compact('_academics', '_course', '_students', 'sectionLists'));
     } /* View Student  */
     public function student_profile(Request $_request)
     {
@@ -768,5 +769,12 @@ class AdministratorController extends Controller
         $pdf = PDF::loadView("widgets.report.employee.employee-qr-code", compact('_employee'));
         $file_name = strtoupper('Qr code generate: ' . $_data);
         return $pdf->setPaper([0, 0, 612, 396], 'portrait')->stream($file_name . '.pdf');
+    }
+    function generateQrcodeBySection(Request $_request)
+    {
+        $section = Section::find($_request->section);
+        $filename = $section->section . '-' . $section->academic->semester;
+        $pdf = PDF::loadView("widgets.report.student.student_qrcode_by_section", compact('section'));
+        return $pdf->setPaper([0, 0, 612.00, 1008.00], 'portrait')->stream($filename . '.pdf');
     }
 }

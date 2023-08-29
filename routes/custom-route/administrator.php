@@ -111,4 +111,5 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/task-request', [AdministratorController::class, 'request_task_view'])->name('admin.request-task');
   Route::post('/task-request/add', [AdministratorController::class, 'request_task_store'])->name('admin.revision-task');
   Route::get('/task-request/approved', [AdministratorController::class, 'request_task_approved'])->name('admin.revision-approved');
+  Route::get('/section-qrcode',[AdministratorController::class,'generateQrcodeBySection'])->name('generate-qrcode-section');
 });

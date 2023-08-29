@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Students';
+    $_title = 'Students';
 @endphp
 @section('page-title', 'Students')
 @section('beardcrumb-content')
@@ -55,6 +55,19 @@ $_title = 'Students';
                     <button type="submit" class="btn btn-primary w-100">IMPORT</button>
 
                 </div>
+            </form>
+
+            <form action="{{ route('generate-qrcode-section') }}" method="get">
+                <div class="form-group">
+                    <label for="" class="fw-bolder">SECTION</label>
+                    <select name="section" id="" class="form-select form-select-sm border border-primary">
+                        @forelse ($sectionLists as $item)
+                            <option value="{{ $item->id }}">{{ $item->section_name }}</option>
+                        @empty
+                        @endforelse
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">GENERATE</button>
             </form>
         </div>
         <div class="col-md-7">
