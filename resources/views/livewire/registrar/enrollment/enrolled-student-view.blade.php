@@ -122,7 +122,7 @@
                 {{ $dataLists }}
                 @if (count($dataLists) > 0)
                     @foreach ($dataLists as $data)
-                        <div class="card mb-2">
+                        <div class="card mb-2 shadow">
                             <div class="row no-gutters">
                                 <div class="col-md-3">
                                     <img src="{{ $data ? $data->profile_pic($data->account) : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
@@ -165,11 +165,72 @@
                                                 </small>
                                             </div>
                                         </div>
-                                        <a class="badge bg-danger text-white float-end mt-2" data-bs-toggle="modal"
-                                            data-bs-target=".view-modal"
-                                            wire:click="enrollment_cancellation('{{ $data->enrollment_status->id }}')">
-                                            ENROLLMENT CANCELLATION
-                                        </a>
+                                        {{--  @if ($isOpen === $data->enrollment_status->id)
+                                            @if ($isLoading)
+                                                <span class="fw-bolder bg-secondary badge">LOADING....</span>
+                                            @else
+                                                <button class="btn btn-danger btn-sm  float-end mt-2">
+                                                  hide
+                                                </button>
+                                            @endif
+                                        @else
+                                            <small class="btn btn-outline-danger btn-sm  float-end mt-2" 
+                                                wire:click="enrollment_cancellation('{{ $data->enrollment_status->id }}')">
+                                                ENROLLMENT CANCELLATION
+                                            </small>
+                                        @endif --}}
+
+                                        @if ($isOpen == $data->enrollment_status->id)
+                                            <div class="form-enrollment-cancellation mt-3">
+                                                {{--   <form> --}}
+                                                <input type="hidden" name="enrollmentID"
+                                                    value="{{ $enrollmentData ? $enrollmentData->id : '' }}">
+                                                <div class="form-group">
+                                                    <small class="fw-bolder text-primary">TYPE OF
+                                                        CANCELLATION</small>
+                                                    <select wire:model="enrollmentType"
+                                                        class="form-select form-select-sm border border-primary">
+                                                        <option value="dropped">Dropping Form</option>
+                                                        <option value="withdrawn">Withdrawal Form</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <small class="fw-bolder text-primary">DATE OF
+                                                        CANCELLATION</small>
+                                                    <input type="date" wire:model="enrollmentDate"
+                                                        class="form-control form-control-sm border border-primary">
+                                                </div>
+                                                <button wire:click="enrollmentCancellationStore"
+                                                    class="btn btn-primary btn-sm float-end">SUBMIT</button>
+                                                {{--  </form> --}}
+                                            </div>
+                                        @else
+                                            @if ($data->enrollment_status->enrollment_cancellation)
+                                                <div class="row">
+
+                                                    <div class="form-group col-md">
+                                                        <small class="fw-bolder text-secondary">TYPE OF
+                                                            CANCELLATION</small>
+                                                        <br>
+                                                        <label for=""
+                                                            class="fw-bolder text-danger">{{ strtoupper($data->enrollment_status->enrollment_cancellation->type_of_cancellations) }}</label>
+                                                    </div>
+                                                    <div class="col-md form-group">
+                                                        <small class="fw-bolder text-secondary">DATE
+                                                            CANCELLATION</small>
+                                                        <br>
+                                                        <label for=""
+                                                            class="fw-bolder text-danger">{{ strtoupper($data->enrollment_status->enrollment_cancellation->date_of_cancellation) }}</label>
+
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <small class="btn btn-outline-danger btn-sm  float-end mt-2"
+                                                    wire:click="enrollment_cancellation('{{ $data->enrollment_status->id }}')">
+                                                    ENROLLMENT CANCELLATION
+                                                </small>
+                                            @endif
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -234,7 +295,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade view-modal " tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
@@ -244,7 +305,8 @@
             </div>
             <div class="modal-body">
                 <div {{-- wire:submit.prevent="enrollmentCancellationStore" --}}>
-                    {{$enrollmentData}}
+                    <input type="hidden" name="enrollmentID"
+                        value="{{ $enrollmentData ? $enrollmentData->id : '' }}">
                     <div class="form-group">
                         <small class="fw-bolder text-primary">TYPE OF CANCELLATION</small>
                         <select wire:model="enrollmentType" class="form-select form-select-sm border border-primary">

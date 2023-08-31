@@ -152,6 +152,4 @@
         @endforeach
 
     </div>
-
 </div>
-

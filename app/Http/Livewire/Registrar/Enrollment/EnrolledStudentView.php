@@ -26,7 +26,9 @@ class EnrolledStudentView extends Component
     public $enrollmentData;
     public $enrollmentDate;
     public $enrollmentReason;
-    public $enrollmentType;
+    public $enrollmentType = 'dropped';
+    public $isOpen;
+    public $isLoading = false;
     public function render()
     {
         $courses = CourseOffer::orderBy('id', 'desc')->get();
@@ -92,23 +94,36 @@ class EnrolledStudentView extends Component
     }
     function enrollment_cancellation($data)
     {
+        $this->isLoading = true;
         $this->enrollmentData = EnrollmentAssessment::find($data);
+        $this->isOpen = $data;
+        $this->isLoading = false;
     }
     function enrollmentCancellationStore()
     {
-      /*   $data = array(
+        $data = array(
             'enrollment_id' => $this->enrollmentData->id,
             'type_of_cancellations' => $this->enrollmentType,
             'date_of_cancellation' => $this->enrollmentDate,
             'cancellation_evidence' => '',
             'staff_id' => auth()->user()->staff->id
         );
-        StudentSection::where('enrollment_id', $this->enrollmentData->id)->where('is_removed', false)->get();
-        StudentCancellation::create($data); */
+        if ($this->enrollmentType != 'dropped') {
+            StudentSection::where('enrollment_id', $this->enrollmentData->id)->update(['is_removed' => true]);
+        }
+        StudentCancellation::create($data);
+        $this->isOpen = '';
+        $this->enrollmentType = 'dropped';
+        $this->enrollmentDate = '';
         $this->dispatchBrowserEvent('swal:alert', [
+            'title' => 'Enrollment Cancellation!',
+            'text' => 'Successfully Transact',
+            'type' => 'success',
+        ]);
+        /*  $this->dispatchBrowserEvent('swal:alert', [
             'title' => 'Enrollment Cancellation!',
             'text' => 'Successfully Transact!.',
             'type' => 'success',
-        ]);
+        ]); */
     }
 }
