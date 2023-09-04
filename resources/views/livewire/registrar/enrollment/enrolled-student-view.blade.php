@@ -270,8 +270,8 @@ $pageTitle = 'List of Enrolled Student';
                 <div class="<!-- d-flex justify-content-between -->">
 
                 </div>
-                <a href="{{ route('enrollment.enrolled-list-report') }}?_report=excel-report-2&cancellation=false{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-primary w-100">Total Enrollees</a> <br>
-                <a href="{{ route('enrollment.enrolled-list-report') }}?_report=excel-report-2&cancellation=true{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-primary w-100">Total Remaining Enrollees</a> <br>
+                <a href="{{ route('enrollment.enrolled-list-report') }}?_report=excel-report-2&cancellation=0{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-primary w-100">Total Enrollees</a> <br>
+                <a href="{{ route('enrollment.enrolled-list-report') }}?_report=excel-report-2&cancellation=1{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-primary w-100">Total Remaining Enrollees</a> <br>
                 <a href="{{ route('enrollment.enrolled-list-report') }}?_report=pdf-report{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-danger w-100">PDF</a>
                 <a href="{{ route('enrollment.semestarl-enrollment-list') }}?_report=excel-report{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}" class="badge bg-primary w-100">CHED FORM IN EXCEL</a>
             </div>

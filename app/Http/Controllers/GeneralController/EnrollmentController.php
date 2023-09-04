@@ -56,6 +56,7 @@ class EnrollmentController extends Controller
 
     public function course_enrolled_report(Request $_request)
     {
+        //return $_request->cancellation;
         try {
             $current_academic =  strtoupper(str_replace(' ', '-', Auth::user()->staff->current_academic()->semester)) . '-' . Auth::user()->staff->current_academic()->school_year;
             // Excell Report
@@ -71,8 +72,8 @@ class EnrollmentController extends Controller
             if ($_request->_report == 'excel-report-2') {
                 $courses = CourseOffer::all();
                 $status='';
-                if ($_request->cancellation == 'false') {
-                    $status = 'WITHOUT-CANCELLLATION';
+                if ($_request->cancellation == 0) {
+                    $status = 'WITHOUT-CANCELLLATION-';
                 }
                 $_file_name = 'storage/department/registrar/zip-file/' . $current_academic . '-OFFICIAL-LIST-'.$status . date('Ymdhms');
                 // Create a new zip archive
