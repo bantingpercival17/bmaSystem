@@ -27,6 +27,7 @@ class StudentInformationSheets implements FromCollection, ShouldAutoSize, WithMa
     {
         $this->course = $_course;
         $this->level = $_level;
+        $this->cancel = $cancel;
     }
     public function collection()
     {
