@@ -2,6 +2,7 @@
 
 namespace App\Exports\WorkSheet;
 
+use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -19,7 +20,10 @@ class StudentInformationSheets implements FromCollection, ShouldAutoSize, WithMa
     public $totalRows;
     public $countC = 0;
     public $countS = 0;
-    public function __construct($_course, $_level)
+    public $level;
+    public $course;
+    public $cancel;
+    public function __construct($_course, $_level, $cancel)
     {
         $this->course = $_course;
         $this->level = $_level;
@@ -27,6 +31,9 @@ class StudentInformationSheets implements FromCollection, ShouldAutoSize, WithMa
     public function collection()
     {
         $list = $this->course->enrollment_list_by_year_level($this->level)->get();
+        if ($this->cancel == 'false') {
+            $list = $this->course->enrollment_list_by_year_level_without_cancellation($this->level)->get();
+        }
         $this->totalRows = count($list);
         return $list;
     }

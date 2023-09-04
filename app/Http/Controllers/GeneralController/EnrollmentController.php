@@ -63,14 +63,18 @@ class EnrollmentController extends Controller
                 $_course = CourseOffer::find(base64_decode($_request->_course));
                 $_file_name = $_course->course_code . "_" . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
                 //$_file_export = new CourseStudentEnrolled($_course);
-                $_file_export = new StudentEnrolledList($_course);
+                $_file_export = new StudentEnrolledList($_course,FALSE);
                 $_respond =  Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
                 ob_end_clean();
                 return $_respond;
             }
             if ($_request->_report == 'excel-report-2') {
                 $courses = CourseOffer::all();
-                $_file_name = 'storage/department/registrar/zip-file/' . $current_academic . '-OFFICIAL-LIST-' . date('Ymdhms');
+                $status='';
+                if ($_request->cancellation == 'false') {
+                    $status = 'WITHOUT-CANCELLLATION';
+                }
+                $_file_name = 'storage/department/registrar/zip-file/' . $current_academic . '-OFFICIAL-LIST-'.$status . date('Ymdhms');
                 // Create a new zip archive
                 $zipFileName = $_file_name . '.zip';
                 $zip = new ZipArchive();
@@ -78,7 +82,7 @@ class EnrollmentController extends Controller
                     foreach ($courses as $key => $_course) {
                         $_file_name = $current_academic . '-' . $_course->course_code;
                         //$_file_export = new CourseStudentEnrolled($_course); // Old Model for Export List of Enrollee
-                        $_file_export = new StudentEnrolledList($_course);
+                        $_file_export = new StudentEnrolledList($_course,$_request->cancellation);
                         $fileContents = Excel::download($_file_export, $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX)->getFile();
                         $zip->addFromString($_file_name . '.xlsx', file_get_contents($fileContents)); // Add the file to the zip archive
                         //echo $_file_name . '.xlsx has been added to the zip archive<br>';
