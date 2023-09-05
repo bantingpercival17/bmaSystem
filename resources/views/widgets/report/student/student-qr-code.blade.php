@@ -1,5 +1,5 @@
 {{-- @extends('widgets.report.grade.report_layout_1') --}}
-@extends('widgets.report.app_report_template')
+@extends('widgets.report.layout_report')
 @section('title-report', 'MIDSHIPMAN QR-Code - ' . strtoupper($_student->last_name . ', ' . $_student->first_name))
 @section('form-code', 'QR-CODE')
 @section('style')
@@ -21,12 +21,6 @@
 
 
         }
-
-        .account-table th,
-            {
-            text-align: center;
-        }
-
         .checkbox-container {
             padding-top: 15px;
             font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
@@ -44,20 +38,11 @@
     <div class="content">
         <br>
         <table class="table-content table-2">
-            <thead>
-                <tr>
-                    <th>QR CODE</th>
-                    <td>LAST NAME</td>
-                    <td>FIRST NAME</td>
-                    <td>MIDDLE NAME</td>
-                </tr>
-
-            </thead>
             <tbody>
                 <tr>
-                    <td class="text-center">
+                    <td class="text-center" style="text-align: center;">
                         <img src="data:image/png;base64, {!! base64_encode(
-                            QrCode::style('round', 0.5)->eye('square')->size(140)->generate(
+                            QrCode::style('round', 0.5)->eye('square')->size(100)->generate(
                                     $_student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $_student->last_name)),
                                 ),
                         ) !!} "> <br>
