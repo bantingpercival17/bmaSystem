@@ -181,7 +181,7 @@
                                     $_whole = '-';
                                     $_decimal = '-';
                                 }
-                                
+
                             @endphp
                             <tr>
                                 <td>{{ count($_particular) > $i ? $_particular[$i] : '' }}</td>
@@ -245,7 +245,7 @@
                     </p>
 
                 </div>
-                <label style="float:right"><b>PR # {{ $_data->or_number }}</b></label>
+                <label style="float:right"><b>OR # {{ $_data->or_number }}</b></label>
                 <br>
                 <div class="sub-header">
                     <label><b>PROVISIONAL RECEIPT</b></label>
@@ -291,10 +291,14 @@
                                 </tbody>
                             </table>
                         </li>
-                        <li style="">
+                        <li>
                             <div style="padding: 15xp 15px 0px 0px; text-align: center;">
-                                By: <span
-                                    style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+                                By:
+                                <img src="{{ public_path() . '\assets/img/signature/' . $_data->staff->user->email . '.png' }}"
+                                alt="" style="width:100px; margin:0px;">
+                                <span
+                                    style="font-size:12px; width:70%">{{$_data->staff->first_name. ' '. $_data->staff->last_name}}</span>
                                 <br>
                                 Authorized Representative
                             </div>
