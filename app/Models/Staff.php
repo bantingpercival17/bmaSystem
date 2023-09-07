@@ -37,13 +37,15 @@ class Staff extends Model
     }
     function profile_picture()
     {
-        if (file_exists(public_path('assets/img/staff/' . strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg'))) {
-            $_image = strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg';
-        } else {
-            $_image = 'avatar.png';
+        $_image = 'avatar.png';
+        if ($this->user) {
+            if (file_exists(public_path('assets/img/staff/' . strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg'))) {
+                $_image = strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg';
+            }
         }
         return '/assets/img/staff/' . $_image;
     }
+    
     public function subject_handles()
     {
         return $this->hasMany(SubjectClass::class, 'staff_id')
@@ -183,10 +185,10 @@ class Staff extends Model
                 'role_id' => 3,
                 'role_name' => 'Registrar',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'registrar.dashboard'], /* ['Enrollment', 'registrar.enrollment'], */ ['Enrollment', 'enrollment.view-v2'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance'],['Scholarship Grants','registrar.scholarship-grants']],
+                'role_routes' => [['Dashboard', 'registrar.dashboard'], /* ['Enrollment', 'registrar.enrollment'], */ ['Enrollment', 'enrollment.view-v2'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance'], ['Scholarship Grants', 'registrar.scholarship-grants']],
             ],
             [
-                
+
                 'role_id' => 4,
                 'role_name' => 'Accounting',
                 'role_icon' => 'icon-job',

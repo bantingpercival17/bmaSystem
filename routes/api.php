@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ShipboardTraining;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\StudentSubjectsController;
 use App\Http\Controllers\PaymongoApi;
 use App\Models\ShipboardPerformanceReport;
 use App\Models\User;
@@ -75,6 +76,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // Student API
     Route::get('/student', [StudentController::class, 'student_details']);
     Route::get('/student/information', [StudentController::class, 'student_information']);
+    Route::post('/student/update-information', [StudentController::class, 'student_update_information']);
     Route::get('/student/enrollment', [StudentController::class, 'enrollment_overview']);
     Route::get('/student/enrollment-history', [StudentController::class, 'student_enrollment_history']);
     Route::post('/student/enrollment/registration', [StudentController::class, 'enrollment_application']);
@@ -104,8 +106,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('student/onboard/assessment/questioner', [ShipboardTraining::class, 'student_assessment_answer']);
     Route::post('student/onboard/assessment/finish', [ShipboardTraining::class, 'finish_onboard_assessment']);
     // ACADEMIC
+    Route::get('/student/subject-lists', [StudentSubjectsController::class, 'subject_lists']);
     Route::get('/student/semestral-grade', [StudentController::class, 'semestral_grade']);
+
+    // LOGOUT
     Route::post('/student/logout', [StudentController::class, 'student_logout']);
+    // Route::
+    Route::get('/staff/image', [StudentController::class, 'teacher_image']);
 });
 require __DIR__ . '/additional-api/applicant-api.php';
 require __DIR__ . '/additional-api/attendance-api.php';

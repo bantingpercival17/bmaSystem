@@ -21,6 +21,7 @@ use App\Models\StudentDetails;
 use App\Models\GradePublish;
 use App\Models\ShipboardAssessmentDetails;
 use App\Models\ShipboardExamination;
+use App\Models\Staff;
 use Exception;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
@@ -73,20 +74,145 @@ class StudentController extends Controller
             ], 500);
         }
     }
-    public function student_update_information(Request $_request)
+    public function student_update_information(Request $request)
     {
-        $_fields = $_request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'middle_name' => 'required',
-            'middle_initial' => 'required',
-            'extension_name' => 'required | min:2',
-            'birth_date' => 'required',
-            'birth_place' => 'required',
-            'gender' => 'required',
-            'weight' => 'required',
-            'height' => 'required'
-        ]);
+        $this->student_input_validation($request);
+        try {
+            /* SET THE INPUT FIELDS */
+            /* STUDENT DETAILS */
+            $_student_details = [
+                'last_name' => trim(ucwords(mb_strtolower($request->last_name))),
+                'first_name' => trim(ucwords(mb_strtolower($request->first_name))),
+                'middle_name' => trim(ucwords(mb_strtolower($request->middle_name))),
+                'middle_initial' => trim(ucwords(mb_strtolower($request->middle_initial))),
+                'extention_name' => $request->extension_name,
+                'birthday' => $request->birth_date,
+                'birth_place' => trim(ucwords(mb_strtolower($request->birth_place))),
+                'height' => $request->height,
+                'weight' => $request->weight,
+                'civil_status' => trim(ucwords(mb_strtolower($request->civil_status))),
+                'religion' => trim(ucwords(mb_strtolower($request->religion))),
+                'nationality' => trim(ucwords(mb_strtolower($request->nationality))),
+                'street' => ucwords(mb_strtolower(trim($request->street))),
+                'barangay' => ucwords(mb_strtolower(trim($request->barangay))),
+                'municipality' => ucwords(mb_strtolower(trim($request->municipality))),
+                'province' => ucwords(mb_strtolower(trim($request->province))),
+                'zip_code' => trim(ucwords(mb_strtolower($request->zip_code))),
+                'contact_number' => $request->contact_number,
+                'sex' => $request->gender,
+                'is_removed' => false,
+            ];
+            /* Educational Attainment */
+            $_elementary = ['student_id' => auth()->user()->student_id, 'school_level' => 'Elementary School', 'school_name' => trim(ucwords(mb_strtolower($request->elementary_school_name))), 'school_address' => trim(ucwords(mb_strtolower($request->elementary_school_address))), 'graduated_year' => trim(ucwords(mb_strtolower($request->elementary_school_year))), 'school_category' => 'n/a', 'is_removed' => false];
+            $_high_school = ['student_id'  => auth()->user()->student_id, 'school_level' => 'Junior High School', 'school_name' => trim(ucwords(mb_strtolower($request->junior_high_school_name))), 'school_address' => trim(ucwords(mb_strtolower($request->junior_high_school_address))), 'graduated_year' => trim(ucwords(mb_strtolower($request->junior_high_school_year))), 'school_category' => 'n/a', 'is_removed' => false];
+            $_senior_high_school = ['student_id'  => auth()->user()->student_id, 'school_level' => 'Senior High School', 'school_name' => trim(ucwords(mb_strtolower($request->senior_high_school_name))), 'school_address' => trim(ucwords(mb_strtolower($request->senior_high_school_address))), 'graduated_year' => trim(ucwords(mb_strtolower($request->senior_high_school_year))), 'school_category' => 'n/a', 'is_removed' => false];
+            /* Parent Information */
+            $_parent_info = [
+                'father_last_name' => trim(ucwords(mb_strtolower($request->father_last_name))),
+                'father_first_name' => trim(ucwords(mb_strtolower($request->father_first_name))),
+                'father_middle_name' => trim(ucwords(mb_strtolower($request->father_middle_name))),
+                'father_educational_attainment' => $request->father_educational_attainment,
+                'father_employment_status' => $request->father_employment_status,
+                'father_working_arrangement' => $request->father_working_arrangement,
+                'father_contact_number' => $request->father_contact_number,
+
+                'mother_last_name' => trim(ucwords(mb_strtolower($request->mother_last_name))),
+                'mother_first_name' => trim(ucwords(mb_strtolower($request->mother_first_name))),
+                'mother_middle_name' => trim(ucwords(mb_strtolower($request->mother_middle_name))),
+                'mother_educational_attainment' => $request->mother_educational_attainment,
+                'mother_employment_status' => $request->mother_employment_status,
+                'mother_working_arrangement' => $request->mother_working_arrangement,
+                'mother_contact_number' => $request->mother_contact_number,
+
+                'guardian_last_name' => trim(ucwords(mb_strtolower($request->guardian_last_name))),
+                'guardian_first_name' => trim(ucwords(mb_strtolower($request->guardian_first_name))),
+                'guardian_middle_name' => trim(ucwords(mb_strtolower($request->guardian_middle_name))),
+                'guardian_educational_attainment' => $request->guardian_educational_attainment,
+                'guardian_employment_status' => $request->guardian_employment_status,
+                'guardian_working_arrangement' => $request->guardian_working_arrangement,
+                'guardian_contact_number' => $request->guardian_contact_number,
+                'guardian_address' => $request->guardian_address,
+
+                'household_income' =>  $request->household_income,
+                'dswd_listahan' => $request->dswd_beneficiary,
+                'homeownership' => $request->home_ownership,
+                'car_ownership' => $request->car_ownership,
+
+                'available_devices' => serialize($request->available_device),
+                'available_connection' => $request->available_connection,
+                'available_provider' => serialize($request->available_provider),
+                'learning_modality' => serialize($request->learning_modality),
+                'distance_learning_effect' => serialize($request->distance_learning_effect),
+                'is_removed' => 0
+            ];
+            $_education = [$_elementary, $_high_school];
+
+            if (auth()->user()->student->enrollment_assessment->course_id != 3) {
+                $_education =  [$_elementary, $_high_school, $_senior_high_school];
+            }
+            $_student_validation = StudentDetails::find(Auth::user()->student_id); // Verify if the Student existing
+            if ($_student_validation) {
+                // Update the Student Details
+                $_student_validation->update($_student_details);
+                // Validate the Educational Background
+                $_educational = $_student_validation->educational_background;
+                if (count($_educational) > 0) {
+                    // Update the Educational Background
+                    EducationalDetails::where('student_id', $_student_validation->id)->where(
+                        'is_removed',
+                        false
+                    )->update(['is_removed' => true]);
+                    foreach ($_education as $key => $value) {
+                        $value['student_id'] = $_student_validation->id;
+                        $_data = EducationalDetails::where('student_id', $_student_validation->id)
+                            ->where('school_level', $value['school_level'])
+                            ->where('school_name', $value['school_name'])
+                            ->where('school_address', $value['school_address'])
+                            ->where('graduated_year', $value['graduated_year'])
+                            ->where('is_removed', true)
+                            ->first();
+                        if ($_data) {
+                            $_data->update(['is_removed' => 0]);
+                        } else {
+                            EducationalDetails::create($value);
+                        }
+                    }
+                } else {
+                    // Store a new Educational Background
+                    foreach ($_education as $key => $value) {
+                        $value['student_id'] = $_student_validation->id;
+                        EducationalDetails::create($value);
+                    }
+                }
+                // Parent Details
+                $_parent = $_student_validation->parent_details;
+                if ($_parent) {
+                    $_parent->update(['is_removed' => true]);
+                    $_parent_info += ['student_id' => $_student_validation->id];
+                    ParentDetails::create($_parent_info);
+                } else {
+                    $_parent_info += ['student_id' => $_student_validation->id];
+                    ParentDetails::create($_parent_info);
+                }
+            } else {
+                // Create Student Information
+                $_student_store = StudentDetails::create($_student_details);
+                // Educational Background
+                foreach ($_education as $key => $value) {
+                    $value['student_id'] = $_student_store->id;
+                    EducationalDetails::create($value);
+                }
+                // Additional Details
+                $_parent_info += ['student_id' => $_student_store->id];
+                ParentDetails::create($_parent_info);
+            }
+            return response(['message' => 'Successfully Update Information.'], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
     }
     /* Student Enrollment Procudure */
     public function enrollment_overview(Request $_request)
@@ -138,7 +264,84 @@ class StudentController extends Controller
             ], 500);
         }
     }
-
+    function student_input_validation(Request $request)
+    {
+        $_fields = [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'middle_name' => 'required',
+            'middle_initial' => 'required',
+            'extension_name' => 'required | min:2',
+            'birth_date' => 'required',
+            'birth_place' => 'required',
+            'gender' => 'required',
+            'weight' => 'required',
+            'height' => 'required',
+            'civil_status' => 'required',
+            'religion' => 'required',
+            'nationality' => 'required',
+            'street' => 'required',
+            'barangay' => 'required',
+            'municipality' => 'required',
+            'province' => 'required',
+            'zip_code' => 'required',
+            'personal_email' => 'required',
+            'contact_number' => 'required | numeric| min:12',
+            // FATHER INFORMATION
+            'father_last_name' => 'required | min:2 | max:50',
+            'father_first_name' => 'required | min:2 | max:50',
+            'father_middle_name' => 'required | min:2 | max:50',
+            'father_educational_attainment' => 'required | min:2 | max:100',
+            'father_employment_status' => 'required | min:2 | max:50',
+            'father_working_arrangement' => 'required | min:2 | max:50',
+            'father_contact_number' => 'required | min:2 | max:12',
+            // MOTHER INFORMATION
+            'mother_last_name' => 'required | min:2 | max:50',
+            'mother_first_name' => 'required | min:2 | max:50',
+            'mother_middle_name' => 'required | min:2 | max:50',
+            'mother_educational_attainment' => 'required | min:2 | max:100',
+            'mother_employment_status' => 'required | min:2 | max:50',
+            'mother_working_arrangement' => 'required | min:2 | max:50',
+            'mother_contact_number' => 'required | min:2 | max:12',
+            // GUARDIAN  INFORMATION
+            'guardian_last_name' => 'required | min:2 | max:50',
+            'guardian_first_name' => 'required | min:2 | max:50',
+            'guardian_middle_name' => 'required | min:2 | max:50',
+            'guardian_educational_attainment' => 'required | min:2 | max:50',
+            'guardian_employment_status' => 'required | min:2 | max:50',
+            'guardian_working_arrangement' => 'required | min:2 | max:50',
+            'guardian_contact_number' => 'required| min:2 | max:12',
+            'guardian_address' => 'required',
+            // OTHER DETIALS
+            /*   'household_income' => 'required',
+        'dswd_listahan' => 'required',
+        'homeownership' => 'required',
+        'car_ownership' => 'required', */
+            'elementary_school_name' => 'required|max:100',
+            'elementary_school_address' => 'required|max:255',
+            'elementary_school_year' => 'required|max:100',
+            'junior_high_school_name' => 'required|max:100',
+            'junior_high_school_address' => 'required|max:255',
+            'junior_high_school_year' => 'required|max:100',
+            'household_income' => 'required',
+            'dswd_beneficiary' => 'required',
+            'home_ownership' => 'required',
+            'car_ownership' => 'required',
+            'available_device' => 'required',
+            'available_connection' => 'required',
+            'available_provider' => 'required',
+            'learning_modality' => 'required',
+            'distance_learning_effect' => 'required'
+        ];
+        if (auth()->user()->student->enrollment_assessment->course_id != 3) {
+            $_fields += [
+                'senior_high_school_name' => 'required|max:100',
+                'senior_high_school_address' => 'required|max:255',
+                'senior_high_school_year' => 'required|max:100',
+            ];
+        }
+        $request->validate($_fields);
+    }
     public function enrollment_application(Request $_request)
     {
         $_fields = [
@@ -603,7 +806,7 @@ class StudentController extends Controller
             ], 500);
         }
     }
-    
+
     /* ACADEMIC */
     function semestral_grade(Request $request)
     {
@@ -655,5 +858,12 @@ class StudentController extends Controller
             ->tokens()
             ->delete();
         return response(['message' => ' Logout Success..'], 200);
+    }
+    function teacher_image(Request $request)
+    {
+        $staff = Staff::find($request->staff);
+        $image = $staff->profile_picture();
+        $image = 'http://one.bma.edu.ph' . $image;
+        return response(['image' => $image], 200);
     }
 }
