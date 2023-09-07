@@ -1,4 +1,4 @@
-@extends('app')
+@extends('layouts.app-main')
 @section('page-title', $_curriculum->curriculum_name)
 @section('page-navigation')
     <ol class="breadcrumb ">

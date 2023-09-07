@@ -1,6 +1,6 @@
-@extends('app')
+@extends('layouts.app-main')
 @section('page-title', $_section->section_name)
-@section('page-navigation')
+@section('beardcrumb-content')
     <ol class="breadcrumb ">
         <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="/administrator/classes">Section</a></li>
