@@ -89,7 +89,7 @@ class SubjectClass extends Model
     }
     public function course_syllabus()
     {
-        return $this->hasOne(SubjectClassCourseSyllabus::class, 'subject_id')->where('is_removed', false);
+        return $this->hasOne(SubjectClassCourseSyllabus::class, 'subject_id')->with('syllabus_details')->where('is_removed', false);
     }
 
     public function grade_publish()

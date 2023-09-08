@@ -53,9 +53,11 @@ class StudentSubjectsController extends Controller
         try {
             // Get the Subject
             $subject = SubjectClass::find(base64_decode($request->subject));
+            $subject->curriculum_subjects;
             $lesson =  $subject->course_syllabus;
             $scheduled = $subject->class_schedule;
-            return response(compact('subject', 'lesson', 'scheduled'), 200);
+            
+            return response(compact('subject'), 200);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([
