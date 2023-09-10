@@ -15,13 +15,13 @@
         .page-content {}
 
         .permit-content {
-          /*   border-style: solid;
+            /*   border-style: solid;
             border-width: medium;
             width: 29.8%;
             padding: 10px;
             margin-bottom: 5px;
              display: inline-block; */
-             text-align: center;
+            text-align: center;
         }
 
         .header-permit,
@@ -117,7 +117,7 @@
         <tbody>
             @forelse ($section->student_sections as $student)
                 @php
-                    $modValue = $count % 3;
+                    $modValue = $count % 2;
                     if ($modValue === 0) {
                         echo '<tr>';
                     }
@@ -130,12 +130,18 @@
                 @endphp
                 <td style="width:100%;">
                     <div class="permit-content">
-                        <img src="data:image/png;base64, {!! base64_encode(
+                        <img src="{{ $student->student->profile_picture() }}" alt="" width="40%">
+                        {{--  <img src="data:image/png;base64, {!! base64_encode(
                             QrCode::style('round', 0.5)->eye('square')->size(140)->generate(
                                     $student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $student->student->last_name)),
                                 ),
-                        ) !!} "> <br>
-                        {{ $student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $student->student->last_name)) }}
+                        ) !!} "> --}} <br>
+                        @php
+                            $name = strtoupper($student->student->last_name . ', ' . $student->student->first_name . ' ' . $student->student->middle_initial);
+                            $name = mb_strtolower($student->student->extention_name) != 'n/a' ? strtoupper($student->student->last_name . ' ' . $student->student->extention_name . ', ' . $student->student->first_name . ' ' . $student->student->middle_initial) : $name;
+                        @endphp
+                        {{ $name }}
+                        {{-- {{ $student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $student->student->last_name)) }} --}}
                     </div>
                 </td>
             @empty
