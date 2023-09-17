@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ApplicantEmail;
 use App\Mail\StudentEnrollmentMail;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
@@ -42,13 +43,23 @@ class AuthController extends Controller
 
     public function applicant_registration(Request $_request)
     {
+        /* $_academic = AcademicYear::where('is_active', 1)->first();
+        $applicant = ApplicantAccount::where('name', trim($_request->firstName) . ' ' . trim($_request->lastName))->where('academic_id', $_academic->id)->first();
+        #return $applicant->email;
+        $mail = new ApplicantEmail();
+        try {
+            Mail::to($applicant->email)->bcc('developer@bma.edu.ph')->send($mail->pre_registration_notificaiton($applicant));
+            $message = "Email Sent";
+            return response(['message' => 'Thank you for submitting your application! Your login credentials have been sent to' . $applicant->email], 200);
+        } catch (\Throwable $th) {
+            return response(['error' => $th->getMessage()], 505);
+        } */
         // Validate the input fileds
         $_fields = $_request->validate([
             'firstName' => 'required',
             'lastName' => 'required',
-            'email' => 'required|string|unique:mysql2.applicant_accounts,email',
+            /*   'email' => 'required|string|unique:mysql2.applicant_accounts,email', */
             'contactNumber' => 'required',
-            'password' => 'required|min:6|max:20|confirmed',
             'course' => 'required',
             'birthday' => 'required|string',
             'agreement' => 'required|boolean'
@@ -62,26 +73,38 @@ class AuthController extends Controller
                 ->where('birthday', $_fields['birthday'])
                 ->first();
             $_account = ApplicantAccount::where('name', trim($_fields['firstName']) . ' ' . trim($_fields['lastName']))->where('academic_id', $_academic->id)->first();
-            if ($_applicant || $_account) {
+            /*  if ($_applicant || $_account) {
                 return response(['errors' => array('message' => 'This Applicant is already existing')], 422);
-            }
+            } */
             // Get the number of Applicant Per School Year
             $_transaction_number = ApplicantAccount::where('academic_id', $_academic->id)->count();
             $_details = [
                 'name' => trim($_request->firstName) . ' ' . trim($_request->lastName),
-                'email' => $_request->email,
+                'email' => trim($_request->email),
                 'course_id' => $_request->course,
                 'contact_number' => $_request->contactNumber,
-                'password' => Hash::make($_request->password),
+                'password' => Hash::make('TR-' . date('ymd') . ($_transaction_number + 1)),
                 'applicant_number' => 'TR-' . date('ymd') . ($_transaction_number + 1),
                 'academic_id' => $_academic->id,
                 'is_removed' => 0,
             ];
-            ApplicantAccount::create($_details);
-            return response(['data' => 'Registration Successfully'], 200);
-        } catch (Exception $error) {
-            return response(['error' => $error->getMessage()], 505);
+            try {
+                /*  $user = ApplicantAccount::create($_details); */
+                $user = ApplicantAccount::where('email', $_request->email)->first();
+                $applicant = ApplicantAccount::find($user->id);
+                $mail = new ApplicantEmail();
+                Mail::to('c_holman@gmail.com')->bcc('developer@bma.edu.ph')->send($mail->pre_registration_notificaiton($applicant));
+                $message = "Email Sent";
+                return response(['message' => 'Thank you for submitting your application! Your login credentials have been sent to email address: ' . $applicant->email], 200);
+                #return back()->with('success-message', 'Thank you for submitting your application! Your login credentials have been sent to' . $_request->email);
+            } catch (\Throwable  $error) {
+                $_request->header('User-Agent');
+                return response(['error' => $error->getMessage()], 505);
+            }
+        } catch (\Throwable $error) {
             $_request->header('User-Agent');
+            return response(['error' => $error->getMessage()], 505);
+
             // Create a function to Controler file to save and store the details of bugs
         }
     }
