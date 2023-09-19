@@ -21,11 +21,7 @@ class AuthController extends Controller
 {
     public function applicant_login(Request $_request)
     {
-        $_fields = $_request->validate([
-            'email' => 'required|string',
-            'password' => 'required',
-        ]);
-        try {
+        /* try {
             $credentials = $_request->only('email', 'password');
             $user = Auth::guard('applicant')->attempt($credentials);
             if (!$user) {
@@ -38,22 +34,41 @@ class AuthController extends Controller
             return response([
                 'message' => $error
             ], 402);
+        } */
+        $_fields = $_request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+
+        ]);
+        try {
+            if (!Auth::guard('applicant')->attempt($_fields)) {
+                return response([
+                    'message' => 'Invalid Credentials.'
+                ], 401);
+            }
+            $_data = Auth::guard('applicant')->user();
+            $_student = StudentAccount::find($_data->id);
+            $account = StudentAccount::where('id', $_data->id)->with('student')->first();
+            $student = StudentDetails::find($_data->student_id);
+            $profile_picture =  $student->profile_picture();
+            $student = compact('account', 'profile_picture');
+            return response(
+                [
+                    'student' => $student,
+                    'token' => $_student->createToken('studentToken')->plainTextToken
+                ],
+                200
+            );
+        } catch (\Throwable $error) {
+            //$this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 402);
         }
     }
 
     public function applicant_registration(Request $_request)
     {
-        /* $_academic = AcademicYear::where('is_active', 1)->first();
-        $applicant = ApplicantAccount::where('name', trim($_request->firstName) . ' ' . trim($_request->lastName))->where('academic_id', $_academic->id)->first();
-        #return $applicant->email;
-        $mail = new ApplicantEmail();
-        try {
-            Mail::to($applicant->email)->bcc('developer@bma.edu.ph')->send($mail->pre_registration_notificaiton($applicant));
-            $message = "Email Sent";
-            return response(['message' => 'Thank you for submitting your application! Your login credentials have been sent to' . $applicant->email], 200);
-        } catch (\Throwable $th) {
-            return response(['error' => $th->getMessage()], 505);
-        } */
         // Validate the input fileds
         $_fields = $_request->validate([
             'firstName' => 'required',
@@ -73,9 +88,9 @@ class AuthController extends Controller
                 ->where('birthday', $_fields['birthday'])
                 ->first();
             $_account = ApplicantAccount::where('name', trim($_fields['firstName']) . ' ' . trim($_fields['lastName']))->where('academic_id', $_academic->id)->first();
-            /*  if ($_applicant || $_account) {
+            if ($_applicant || $_account) {
                 return response(['errors' => array('message' => 'This Applicant is already existing')], 422);
-            } */
+            }
             // Get the number of Applicant Per School Year
             $_transaction_number = ApplicantAccount::where('academic_id', $_academic->id)->count();
             $_details = [
@@ -83,17 +98,17 @@ class AuthController extends Controller
                 'email' => trim($_request->email),
                 'course_id' => $_request->course,
                 'contact_number' => $_request->contactNumber,
-                'password' => Hash::make('TR-' . date('ymd') . ($_transaction_number + 1)),
-                'applicant_number' => 'TR-' . date('ymd') . ($_transaction_number + 1),
+                'password' => Hash::make('AN-' . date('ymd') . ($_transaction_number + 1)),
+                'applicant_number' => 'AN-' . date('ymd') . ($_transaction_number + 1),
                 'academic_id' => $_academic->id,
                 'is_removed' => 0,
             ];
             try {
-                /*  $user = ApplicantAccount::create($_details); */
-                $user = ApplicantAccount::where('email', $_request->email)->first();
+                $user = ApplicantAccount::create($_details);
+                /* $user = ApplicantAccount::where('email', $_request->email)->first(); */
                 $applicant = ApplicantAccount::find($user->id);
                 $mail = new ApplicantEmail();
-                Mail::to('c_holman@gmail.com')->bcc('developer@bma.edu.ph')->send($mail->pre_registration_notificaiton($applicant));
+                Mail::to($_request->email)->bcc('developer@bma.edu.ph')->send($mail->pre_registration_notificaiton($applicant));
                 $message = "Email Sent";
                 return response(['message' => 'Thank you for submitting your application! Your login credentials have been sent to email address: ' . $applicant->email], 200);
                 #return back()->with('success-message', 'Thank you for submitting your application! Your login credentials have been sent to' . $_request->email);
@@ -160,9 +175,10 @@ class AuthController extends Controller
                 ],
                 200
             );
-        } catch (Expression $error) {
+        } catch (\Throwable $error) {
+            //$this->debugTrackerStudent($error);
             return response([
-                'message' => $error
+                'message' => $error->getMessage()
             ], 402);
         }
     }

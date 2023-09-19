@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Registrar\Applicant;
 
+use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\CourseOffer;
 use Illuminate\Support\Facades\DB;
@@ -14,14 +15,24 @@ class ApplicantView extends Component
     public $selectedCourse = 'ALL COURSE';
     public $searchInput;
     public $dataLists = [];
-    public $academic;
+    public $academic = null;
     public function render()
     {
-        $filterContent = array('registered', 'registration', 'for_checking', 'not_qualified', 'qualified_for_entrance_examination');
+        $filterContent = array('pre-registered', 'registered', 'registration', 'for_checking', 'not_qualified', 'qualified_for_entrance_examination');
         $filterCourses = CourseOffer::all();
-        $this->academic =  request()->query('_academic') ?: $this->academic;
+        $this->academic = $this->academicValue();
         $this->filterData();
         return view('livewire.registrar.applicant.applicant-view', compact('filterContent', 'filterCourses'));
+    }
+    function academicValue()
+    {
+        if ($this->academic === null) {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        } else {
+            $data =  request()->query('_academic') ?: $this->academic;
+        }
+        return $data;
     }
     function categoryCourse()
     {
@@ -36,8 +47,7 @@ class ApplicantView extends Component
     {
         $this->dataLists = [];
         $query = ApplicantAccount::select('applicant_accounts.*')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')
-            ->where('applicant_accounts.is_removed',false)
+            ->where('applicant_accounts.is_removed', false)
             ->where('applicant_accounts.academic_id', base64_decode($this->academic));
         // Sort By Courses
         if ($this->selectCourse != 'ALL COURSE') {
@@ -56,8 +66,12 @@ class ApplicantView extends Component
             }
         }
         switch ($this->selectCategories) {
-            case 'registered':
+            case 'pre-registered':
                 $this->dataLists = $query->get();
+                break;
+            case 'registered':
+                $this->dataLists = $query->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')
+                    ->get();
                 break;
             case 'registration':
                 $this->dataLists = $query->leftJoin('applicant_documents', 'applicant_documents.applicant_id', 'applicant_accounts.id')

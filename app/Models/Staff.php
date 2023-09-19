@@ -45,7 +45,7 @@ class Staff extends Model
         }
         return '/assets/img/staff/' . $_image;
     }
-    
+
     public function subject_handles()
     {
         return $this->hasMany(SubjectClass::class, 'staff_id')
@@ -173,7 +173,7 @@ class Staff extends Model
                 'role_id' => 1,
                 'role_name' => 'Administrator',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination'], ['Revision Task', 'admin.request-task']],
+                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Applicants', 'applicant.overview'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination'], ['Revision Task', 'admin.request-task']],
             ],
             [
                 'role_id' => 2,
@@ -185,7 +185,7 @@ class Staff extends Model
                 'role_id' => 3,
                 'role_name' => 'Registrar',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'registrar.dashboard'], /* ['Enrollment', 'registrar.enrollment'], */ ['Enrollment', 'enrollment.view-v2'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance'], ['Scholarship Grants', 'registrar.scholarship-grants']],
+                'role_routes' => [['Dashboard', 'registrar.dashboard'], /* ['Enrollment', 'registrar.enrollment'], */ ['Enrollment', 'enrollment.view-v2'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Applicants', 'applicant.overview'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance'], ['Scholarship Grants', 'registrar.scholarship-grants']],
             ],
             [
 
