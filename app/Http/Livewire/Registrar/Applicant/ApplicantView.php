@@ -10,7 +10,7 @@ use Livewire\Component;
 
 class ApplicantView extends Component
 {
-    public $selectCategories = 'for_checking';
+    public $selectCategories = 'created_accounts';
     public $selectCourse = 'ALL COURSE';
     public $selectedCourse = 'ALL COURSE';
     public $searchInput;
@@ -18,7 +18,7 @@ class ApplicantView extends Component
     public $academic = null;
     public function render()
     {
-        $filterContent = array('pre-registered', 'registered', 'registration', 'for_checking', 'not_qualified', 'qualified_for_entrance_examination');
+        $filterContent = array('created_accounts', 'registered_applicants', /* 'registration_with_document', */ 'for_checking', 'not_qualified', 'qualified_for_entrance_examination');
         $filterCourses = CourseOffer::all();
         $this->academic = $this->academicValue();
         $this->filterData();
@@ -66,37 +66,42 @@ class ApplicantView extends Component
             }
         }
         switch ($this->selectCategories) {
-            case 'pre-registered':
-                $this->dataLists = $query->get();
-                break;
-            case 'registered':
-                $this->dataLists = $query->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')
+            case 'created_accounts':
+                $this->dataLists = $query->leftJoin('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')
+                    ->whereNull('bma_website.applicant_detials.applicant_id')
                     ->get();
                 break;
-            case 'registration':
-                $this->dataLists = $query->leftJoin('applicant_documents', 'applicant_documents.applicant_id', 'applicant_accounts.id')
-                    ->whereNull('applicant_documents.applicant_id')->get();
+                /*   case 'registered_applicants':
+                $this->dataLists = $query->join('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')
+                    ->get();
+                break; */
+            case 'registered_applicants':
+                $this->dataLists = $query
+                    ->join('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')
+                    ->leftJoin('bma_website.applicant_documents', 'bma_website.applicant_documents.applicant_id', 'applicant_accounts.id')
+                    ->whereNull('bma_website.applicant_documents.applicant_id')->get();
                 break;
             case 'for_checking':
-                $this->dataLists = $query->join('applicant_documents', 'applicant_documents.applicant_id', '=', 'applicant_accounts.id')
+                $this->dataLists = $query->join('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')
+                    ->join('bma_website.applicant_documents', 'bma_website.applicant_documents.applicant_id', '=', 'applicant_accounts.id')
                     ->select('applicant_accounts.*', DB::raw('(SELECT COUNT(`is_approved`)
-                FROM `applicant_documents`
-                WHERE `applicant_documents`.`applicant_id` = `applicant_accounts`.`id`
-                  AND `applicant_documents`.`is_removed` = 0
-                  AND `applicant_documents`.`is_approved` = 1) AS ApprovedDocuments'), DB::raw('(
+                FROM `bma_website.applicant_documents`
+                WHERE `bma_website.applicant_documents`.`applicant_id` = `applicant_accounts`.`id`
+                  AND `bma_website.applicant_documents`.`is_removed` = 0
+                  AND `bma_website.applicant_documents`.`is_approved` = 1) AS ApprovedDocuments'), DB::raw('(
                     SELECT COUNT(bma_portal.documents.id)
                     FROM bma_portal.documents
                     WHERE bma_portal.documents.department_id = 2
                       AND bma_portal.documents.is_removed = false
                       AND bma_portal.documents.year_level = (
-                          SELECT IF(bma_website.applicant_accounts.course_id = 3, 11, 4) as result
-                          FROM bma_website.applicant_accounts
-                          WHERE bma_website.applicant_accounts.id = 1
+                          SELECT IF(bma_portal.applicant_accounts.course_id = 3, 11, 4) as result
+                          FROM bma_portal.applicant_accounts
+                          WHERE bma_portal.applicant_accounts.id = 1
                       ))as documentCount'))
                     ->leftJoin('applicant_not_qualifieds as anq', 'anq.applicant_id', 'applicant_accounts.id')
                     ->whereNull('anq.applicant_id')
                     ->groupBy('applicant_accounts.id')
-                    ->havingRaw('COUNT(applicant_documents.applicant_id) >= documentCount and ApprovedDocuments < documentCount')
+                    ->havingRaw('COUNT(bma_website.applicant_documents.applicant_id) >= documentCount and ApprovedDocuments < documentCount')
                     ->get();
                 break;
             case 'not_qualified':

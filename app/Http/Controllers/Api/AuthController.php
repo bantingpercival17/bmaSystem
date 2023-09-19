@@ -47,15 +47,14 @@ class AuthController extends Controller
                 ], 401);
             }
             $_data = Auth::guard('applicant')->user();
-            $_student = StudentAccount::find($_data->id);
+            /*    $_student = StudentAccount::find($_data->id);
             $account = StudentAccount::where('id', $_data->id)->with('student')->first();
             $student = StudentDetails::find($_data->student_id);
             $profile_picture =  $student->profile_picture();
-            $student = compact('account', 'profile_picture');
+            $student = compact('account', 'profile_picture'); */
             return response(
                 [
-                    'student' => $student,
-                    'token' => $_student->createToken('studentToken')->plainTextToken
+                    'data' => $_data
                 ],
                 200
             );
@@ -123,32 +122,6 @@ class AuthController extends Controller
             // Create a function to Controler file to save and store the details of bugs
         }
     }
-    public function register(Request $_request)
-    {
-        $_fields = $_request->validate([
-            'name' => 'required',
-            'email' => 'required|string|unique:mysql2.applicant_accounts,email',
-            'password' => 'required|string|confirmed',
-            'course' => 'required'
-        ]);
-        $_academic = AcademicYear::where('is_active', 1)->first();
-        //return $_academic->id;
-        $_applicant = ApplicantAccount::create([
-            'name' => $_fields['name'],
-            'email' => $_fields['email'],
-            'password' => bcrypt($_fields['password']),
-            'applicant_nunber' => '',
-            'course_id' => $_fields['course'],
-            'academic_id' => $_academic->id
-        ]);
-        $_token = $_applicant->createToken('myapptoken')->plainTextToken;
-        $_reponse = [
-            'user' => $_applicant,
-            'token' => $_token
-        ];
-        return response($_reponse, 201);
-    }
-
     public function student_login(Request $_request)
     {
         $_fields = $_request->validate([
