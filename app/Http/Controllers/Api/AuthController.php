@@ -10,8 +10,6 @@ use App\Models\ApplicantAccount;
 use App\Models\ApplicantDetials;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
-use Exception;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -21,20 +19,6 @@ class AuthController extends Controller
 {
     public function applicant_login(Request $_request)
     {
-        /* try {
-            $credentials = $_request->only('email', 'password');
-            $user = Auth::guard('applicant')->attempt($credentials);
-            if (!$user) {
-                return response(['message' => 'These credentials do not match our records'], 401);
-            }
-            $account = ApplicantAccount::where('email', $_fields['email'])->first();
-            $token = $account->createToken('applicantToken')->plainTextToken; // Get the secure Token
-            return response(['token' => $token], 200);
-        } catch (Expression $error) {
-            return response([
-                'message' => $error
-            ], 402);
-        } */
         $_fields = $_request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
@@ -47,19 +31,17 @@ class AuthController extends Controller
                 ], 401);
             }
             $_data = Auth::guard('applicant')->user();
-            /*    $_student = StudentAccount::find($_data->id);
-            $account = StudentAccount::where('id', $_data->id)->with('student')->first();
-            $student = StudentDetails::find($_data->student_id);
-            $profile_picture =  $student->profile_picture();
-            $student = compact('account', 'profile_picture'); */
+            $account = ApplicantAccount::find($_data->id);
+            $token = $account->createToken('applicantToken')->plainTextToken;
             return response(
                 [
-                    'data' => $_data
+                    'data' => $_data,
+                    'token' => $token
                 ],
                 200
             );
         } catch (\Throwable $error) {
-            //$this->debugTrackerStudent($error);
+            $this->debugTrackerUser($error);
             return response([
                 'message' => $error->getMessage()
             ], 402);

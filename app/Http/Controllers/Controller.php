@@ -164,6 +164,20 @@ class Controller extends BaseController
         );
         DebugReport::create($_data);
     }
+    public function debugTrackerUser($error)
+    {
+        $_current_url = sprintf('%s://%s/%s', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'], trim($_SERVER['REQUEST_URI'], '/\\'));
+
+        $_data = array(
+            'type_of_user' => 'student',
+            'user_name' => 'Api User',
+            'user_ip_address' => $_SERVER['REMOTE_ADDR'] . ', ' . $_SERVER['HTTP_USER_AGENT'],
+            'error_message' => $error->getMessage(),
+            'url_error' => $_current_url,
+            'is_status' => 0,
+        );
+        DebugReport::create($_data);
+    }
     public function saveFiles($_file, $_path = 'public', $_folder = 'extra')
     {
         if (!$_file) {

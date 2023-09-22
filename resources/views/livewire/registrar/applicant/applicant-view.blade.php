@@ -78,13 +78,17 @@
                             No. Result: <b>{{ count($dataLists) }}</b>
                         </div>
                     @endif
+
+                </div>
+                <div class="">
+                    {{ $dataLists }}
                 </div>
                 <div class="data-content">
                     @forelse ($dataLists as $data)
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-9">
+                                    <div class="col-lg-9 col-md-12">
                                         <p class="fw-bolder text-muted mb-0">
                                             <span class="badge bg-primary">{{ $data->course->course_name }}</span>
                                             |
@@ -98,7 +102,7 @@
                                             <span>{{ $data ? $data->email : '-' }}</span> <br>
                                         </div>
                                     </div>
-                                    <div class="col-md">
+                                    <div class="col-lg-3 col-md-12">
                                         <small>APPLICATION DATE</small>
                                         <div class="badge bg-primary w-100">
 
