@@ -31,11 +31,13 @@ class AuthController extends Controller
                 ], 401);
             }
             $_data = Auth::guard('applicant')->user();
-            $account = ApplicantAccount::find($_data->id);
+            $account = ApplicantAccount::with('applicant')->find($_data->id);
+            $profile_picture = $account->image ? json_decode($account->image->file_links)[0] : 'http://bma.edu.ph/img/student-picture/midship-man.jpg';
+            $student = compact('account', 'profile_picture');
             $token = $account->createToken('applicantToken')->plainTextToken;
             return response(
                 [
-                    'data' => $_data,
+                    'student' => $student,
                     'token' => $token
                 ],
                 200

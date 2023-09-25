@@ -18,13 +18,6 @@
                             </div>
                             <div class="col-md ps-0">
                                 <div class="card-body p-3 me-2">
-                                    <p class="float-end">
-                                        <small class="badge bg-info" data-bs-toggle="modal"
-                                            data-bs-target=".modal-change-course" data-bs-toggle="change course"
-                                            title="">
-                                            CHANGE COURSE
-                                        </small>
-                                    </p>
                                     <label for=""
                                         class="fw-bolder text-primary h4">{{ $profile ? ($profile->applicant ? strtoupper($profile->applicant->last_name . ', ' . $profile->applicant->first_name) : strtoupper($profile->name)) : 'MIDSHIPMAN NAME' }}</label>
                                     <p class="mb-0">
@@ -34,9 +27,16 @@
                                         <small class="badge bg-primary">
                                             {{ $profile->applicant_number }}
                                         </small>
+                                        <small class="badge bg-primary">
+                                            {{ $profile->email }}
+                                        </small>
                                     </p>
-                                    <p>
-
+                                    <div class="mt-2">
+                                        <small class="badge  border border-secondary text-secondary"
+                                            data-bs-toggle="modal" data-bs-target=".modal-change-course"
+                                            data-bs-toggle="change course" title="">
+                                            CHANGE COURSE
+                                        </small>
                                         @if ($profile->is_alumnia)
                                             <span class="badge bg-primary float-end">
                                                 BMA SENIOR HIGH ALUMNUS
@@ -44,86 +44,46 @@
                                         @else
                                             @if ($profile->applicant)
                                                 @if ($profile->senior_high_school())
-                                                    <button
-                                                        class="btn btn-outline-primary btn-sm float-end rounded-pill"
+                                                    <button class="badge border border-primary text-primary"
                                                         id="btn-alumnia" data-id="{{ base64_encode($profile->id) }}">
                                                         BMA
                                                         SENIOR HIGH ALUMNUS</button>
                                                 @endif
                                                 @if (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph')
-                                                    <button class="btn btn-primary btn-sm float-end"
+                                                    <button class="badge border border-primary text-primary"
                                                         wire:click="dialogBoxSHS({{ $profile->id }})">BMA</button>
                                                 @endif
                                             @endif
-
                                         @endif
-
-                                    </p>
+                                        <small class="badge  border border-info text-info"title="Reset Password"
+                                            wire:click="resetPassword('{{ $profile->id }}')">
+                                            RESET PASSWORD
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {{-- <table class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
-                        <thead class="d-flex">
-                            <tr>
-                                <td class="nav-link  {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }} "
-                                wire:click="swtchTab('overiew')">OVERVIEW</td>
-                                <td class="nav-link  {{ $activeTab == 'profile' ? 'active' : 'text-muted' }} "
-                                wire:click="swtchTab('profile')">PROFILE</td>
-                                <td class="nav-link  {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }} "
-                                wire:click="swtchTab('overiew')">OVERVIEW</td>
-
-                            </tr>
-                        </thead>
-                    </table> --}}
-                    {{--  <div class="table-responsive mt-4">
-                        <table id="basic-table" class="table  mb-0" role="grid">
-                            <tbody>
-                                <tr class="text-center">
-                                    <td {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('overiew')">OVERVIEW</td>
-                                    <td {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('profile')">PROFILE</td>
-                                    <td {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('documents')">DOCUMENTS</td>
-                                    <td {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                                        href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">
-                                        ENTRANCE
-                                        EXAMINATION</td>
-                                    <td {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div> --}}
                     <div class="table-responsive ">
                         <table class="nav nav-underline bg-soft-primary text-center" aria-label="Secondary navigation">
                             <thead class="d-flex">
                                 <tr>
                                     <td class="nav-link {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
                                         wire:click="swtchTab('overiew')">OVERVIEW</td>
-                                    {{--  <td class="nav-link  {{ $activeCard == 'overview' ? 'active' : 'text-muted' }} "
-                                        wire:click="swtchTab('overview')">OVERVIEW</td> --}}
                                 </tr>
                                 <tr>
                                     <td class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
                                         wire:click="swtchTab('profile')">PROFILE</td>
-                                    {{--  <td class="nav-link  {{ $activeCard == 'transaction' ? 'active' : 'text-muted' }} "
-                                        wire:click="swtchTab('transaction')">TRANSACTION</td> --}}
                                 </tr>
                                 <tr>
                                     <td class="nav-link {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
                                         wire:click="swtchTab('documents')">DOCUMENTS</td>
-                                    {{--  <td class="nav-link  {{ $activeCard == 'history' ? 'active' : 'text-muted' }} "
-                                        wire:click="swtchTab('history')">PAYMENT HISTORY</td> --}}
                                 </tr>
                                 <tr>
                                     <td class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
                                         href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">
                                         ENTRANCE
                                         EXAMINATION</td>
-                                    {{--  <td class="nav-link  {{ $activeCard == 'online-payment' ? 'active' : 'text-muted' }} "
-                                        wire:click="swtchTab('online-payment')">ONLINE PAYMENT</td> --}}
 
                                 </tr>
                                 <tr>
@@ -139,24 +99,6 @@
                             </thead>
                         </table>
                     </div>
-
-                    {{-- <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
-
-                        <div class="d-flex" id="head-check">
-                            <a class="nav-link {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('overiew')">OVERVIEW</a>
-                            <a class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('profile')">PROFILE</a>
-                            <a class="nav-link {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('documents')">DOCUMENTS</a>
-
-                            <a class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                                href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">ENTRANCE
-                                EXAMINATION</a>
-                            <a class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</a>
-                        </div>
-                    </nav> --}}
                     <div class="mt-4">
                         @if ($activeTab == 'profile')
                             @include('livewire.registrar.applicant.profile-components.information')

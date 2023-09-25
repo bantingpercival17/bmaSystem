@@ -17,7 +17,7 @@ class ApplicantController extends Controller
     public function applicant_information()
     {
         $data = auth()->user();
-        $data = ApplicantAccount::with('applicant')->find($data->id);
+        $data = ApplicantAccount::with('applicant')->with('course')->with('academic')->find($data->id);
         $_level = Auth::user()->course_id == 3 ? 11 : 4;
         $listOfDocuments =  Documents::where('year_level', $_level)
             ->where('department_id', 2)

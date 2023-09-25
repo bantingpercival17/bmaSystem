@@ -7,6 +7,7 @@ use App\Models\ApplicantAlumnia;
 use App\Models\CourseOffer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
 class ApplicantProfileView extends Component
@@ -136,6 +137,19 @@ class ApplicantProfileView extends Component
         $this->dispatchBrowserEvent('swal:alert', [
             'title' => 'Complete!',
             'text' => 'Successfully Transact',
+            'type' => 'success',
+        ]);
+    }
+    function resetPassword($applicant)
+    {
+        $applicant = ApplicantAccount::find($applicant);
+        $length = 5;
+        $_password = 'BMA-' . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+        $applicant->password = Hash::make($_password);
+        $applicant->save();
+        $this->dispatchBrowserEvent('swal:alert', [
+            'title' => 'Applicant Reset Password Complete!',
+            'text' => 'Password: ' . $_password,
             'type' => 'success',
         ]);
     }
