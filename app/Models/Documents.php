@@ -27,6 +27,10 @@ class Documents extends Model
         return $this->hasOne(ApplicantDocuments::class, 'document_id')
             ->where('applicant_id', base64_decode(request()->input('_applicant')))->where('is_removed', false);
     }
+    public function applicant_requirements_v2()
+    {
+        return $this->hasOne(ApplicantDocuments::class, 'document_id')->where('is_removed', false);
+    }
     public function student_document_requirement()
     {
         return $this->hasOne(DocumentRequirements::class, 'document_id')->where('student_id', base64_decode(request()->input('_midshipman')))->where('is_removed', false);

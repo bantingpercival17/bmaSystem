@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Registrar\Applicant;
 
+use App\Http\Livewire\Components\ModalComponent;
+use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantAlumnia;
 use App\Models\CourseOffer;
@@ -12,23 +14,42 @@ use Livewire\Component;
 
 class ApplicantProfileView extends Component
 {
-    public $selectCategories = 'created_accounts';
+    public $selectCategories = 'for_checking';
     public $selectCourse = 'ALL COURSE';
     public $selectedCourse = 'ALL COURSE';
+    public $documentLink = null;
     public $searchInput;
-    public $academic;
+    public $academic = null;
     public $profile = [];
-    public $activeTab  = 'documents';
+    public $activeTab  = 'profile';
     protected $listeners = ['bmaAlumnia'];
+    public $modalComponent;
+
+    public function mount()
+    {
+        $this->modalComponent = new ModalComponent();
+    }
     public function render()
     {
         $filterContent = array('created_accounts', 'registered_applicants', /* 'registration_with_document', */ 'for_checking', 'not_qualified', 'qualified_for_entrance_examination');
         $filterCourses = CourseOffer::all();
-        $this->academic =  request()->query('_academic') ?: $this->academic;
+        $this->academic = $this->academicValue();
         $this->profile = request()->query('_applicant') ? ApplicantAccount::find(base64_decode(request()->query('_applicant'))) : $this->profile;
         $this->selectCategories =  request()->query('_catergory') ?: $this->selectCategories;
-        $dataLists = $this->filterData();
+        $applicantView = new ApplicantView();
+        #$dataLists = $this->filterData();
+        $dataLists = $applicantView->filterApplicantData($this->searchInput, $this->selectCourse, $this->selectCategories, $this->academic);
         return view('livewire.registrar.applicant.applicant-profile-view', compact('filterContent', 'filterCourses', 'dataLists'));
+    }
+    function academicValue()
+    {
+        if ($this->academic === null) {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        } else {
+            $data =  request()->query('_academic') ?: $this->academic;
+        }
+        return $data;
     }
     function categoryCourse()
     {
@@ -152,5 +173,11 @@ class ApplicantProfileView extends Component
             'text' => 'Password: ' . $_password,
             'type' => 'success',
         ]);
+    }
+    function showDocuments($data)
+    {
+        $this->modalComponent->openModal();
+        $this->documentLink = null;
+        $this->documentLink = $data;
     }
 }

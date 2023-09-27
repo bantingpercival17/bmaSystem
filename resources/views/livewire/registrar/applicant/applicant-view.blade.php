@@ -6,41 +6,6 @@
     <div class="col-md-12">
         <p class="display-6 fw-bolder text-primary">{{ $pageTitle }}</p>
         <div class="row">
-            <div class="col-lg-4">
-                <p class="h4 text-info fw-bolder">FILTER SELECTION</p>
-                <div class="row">
-                    <div class="col-12">
-                        <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
-                        <div class="form-group search-input">
-                            <input type="search" class="form-control border border-primary"
-                                placeholder="Search Pattern: Lastname, Firstname" wire:model="searchInput">
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <small class="text-primary"><b>CATEGORY</b></small>
-                        <div class="form-group search-input">
-                            <select class="form-select border border-primary" wire:model="selectCategories">
-                                @foreach ($filterContent as $item)
-                                    <option value="{{ $item }}">{{ ucwords(str_replace('_', ' ', $item)) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <small class="text-primary"><b>COURSE</b></small>
-                        <div class="form-group  search-input ">
-                            <select wire:model="selectCourse" class="form-select border border-primary"
-                                wire:click="categoryCourse">
-                                <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
-                                @foreach ($filterCourses as $course)
-                                    <option value="{{ $course->id }}">{{ ucwords($course->course_name) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="col-lg-8">
                 <div class="filter-section m-0 p-0">
                     <small class="fw-bolder text-info">FILTER DETAILS:</small>
@@ -131,6 +96,41 @@
                             </div>
                         </div>
                     @endforelse
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <p class="h4 text-info fw-bolder">FILTER SELECTION</p>
+                <div class="row">
+                    <div class="col-12">
+                        <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
+                        <div class="form-group search-input">
+                            <input type="search" class="form-control border border-primary"
+                                placeholder="Search Pattern: Lastname, Firstname" wire:model="searchInput">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <small class="text-primary"><b>CATEGORY</b></small>
+                        <div class="form-group search-input">
+                            <select class="form-select border border-primary" wire:model="selectCategories">
+                                @foreach ($filterContent as $item)
+                                    <option value="{{ $item }}">{{ ucwords(str_replace('_', ' ', $item)) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <small class="text-primary"><b>COURSE</b></small>
+                        <div class="form-group  search-input ">
+                            <select wire:model="selectCourse" class="form-select border border-primary"
+                                wire:click="categoryCourse">
+                                <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
+                                @foreach ($filterCourses as $course)
+                                    <option value="{{ $course->id }}">{{ ucwords($course->course_name) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
