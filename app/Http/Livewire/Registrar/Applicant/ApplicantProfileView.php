@@ -21,21 +21,17 @@ class ApplicantProfileView extends Component
     public $searchInput;
     public $academic = null;
     public $profile = [];
-    public $activeTab  = 'profile';
+    public $activeTab = 'profile';
     protected $listeners = ['bmaAlumnia'];
-    public $modalComponent;
+    public $showModal = false;
 
-    public function mount()
-    {
-        $this->modalComponent = new ModalComponent();
-    }
     public function render()
     {
-        $filterContent = array('created_accounts', 'registered_applicants', /* 'registration_with_document', */ 'for_checking', 'not_qualified', 'qualified_for_entrance_examination');
+        $filterContent = ['created_accounts', 'registered_applicants', /* 'registration_with_document', */ 'for_checking', 'not_qualified', 'qualified_for_entrance_examination'];
         $filterCourses = CourseOffer::all();
         $this->academic = $this->academicValue();
         $this->profile = request()->query('_applicant') ? ApplicantAccount::find(base64_decode(request()->query('_applicant'))) : $this->profile;
-        $this->selectCategories =  request()->query('_catergory') ?: $this->selectCategories;
+        $this->selectCategories = request()->query('_catergory') ?: $this->selectCategories;
         $applicantView = new ApplicantView();
         #$dataLists = $this->filterData();
         $dataLists = $applicantView->filterApplicantData($this->searchInput, $this->selectCourse, $this->selectCategories, $this->academic);
@@ -47,7 +43,7 @@ class ApplicantProfileView extends Component
             $_academic = AcademicYear::where('is_active', 1)->first();
             $data = base64_encode($_academic->id);
         } else {
-            $data =  request()->query('_academic') ?: $this->academic;
+            $data = request()->query('_academic') ?: $this->academic;
         }
         return $data;
     }
@@ -74,20 +70,19 @@ class ApplicantProfileView extends Component
             $_student = explode(',', $this->searchInput); // Seperate the Sentence
             $_count = count($_student);
             if ($_count > 1) {
-                $query = $query->where('applicant_detials.last_name', 'like', '%' . $_student[0] . '%')
+                $query = $query
+                    ->where('applicant_detials.last_name', 'like', '%' . $_student[0] . '%')
                     ->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%')
                     ->orderBy('applicant_detials.last_name', 'asc');
             } else {
-                $query = $query->where('applicant_detials.last_name', 'like', '%' . $_student[0] . '%')
-                    ->orderBy('applicant_detials.last_name', 'asc');
+                $query = $query->where('applicant_detials.last_name', 'like', '%' . $_student[0] . '%')->orderBy('applicant_detials.last_name', 'asc');
             }
         }
         switch ($this->selectCategories) {
             case 'created_accounts':
-                $dataLists = $query->leftJoin('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')
-                    ->whereNull('bma_website.applicant_detials.applicant_id');
+                $dataLists = $query->leftJoin('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')->whereNull('bma_website.applicant_detials.applicant_id');
                 break;
-                /*   case 'registered_applicants':
+            /*   case 'registered_applicants':
                 $dataLists = $query->join('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')
                     ;
                 break; */
@@ -98,13 +93,17 @@ class ApplicantProfileView extends Component
                     ->whereNull('bma_website.applicant_documents.applicant_id');
                 break;
             case 'for_checking':
-                $dataLists = $query->join('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')
+                $dataLists = $query
+                    ->join('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')
                     ->join('bma_website.applicant_documents', 'bma_website.applicant_documents.applicant_id', '=', 'applicant_accounts.id')
-                    ->select('applicant_accounts.*', DB::raw('(SELECT COUNT(`is_approved`)
+                    ->select(
+                        'applicant_accounts.*',
+                        DB::raw('(SELECT COUNT(`is_approved`)
                 FROM `bma_website.applicant_documents`
                 WHERE `bma_website.applicant_documents`.`applicant_id` = `applicant_accounts`.`id`
                   AND `bma_website.applicant_documents`.`is_removed` = 0
-                  AND `bma_website.applicant_documents`.`is_approved` = 1) AS ApprovedDocuments'), DB::raw('(
+                  AND `bma_website.applicant_documents`.`is_approved` = 1) AS ApprovedDocuments'),
+                        DB::raw('(
                     SELECT COUNT(bma_portal.documents.id)
                     FROM bma_portal.documents
                     WHERE bma_portal.documents.department_id = 2
@@ -113,20 +112,21 @@ class ApplicantProfileView extends Component
                           SELECT IF(bma_portal.applicant_accounts.course_id = 3, 11, 4) as result
                           FROM bma_portal.applicant_accounts
                           WHERE bma_portal.applicant_accounts.id = 1
-                      ))as documentCount'))
+                      ))as documentCount'),
+                    )
                     ->leftJoin('applicant_not_qualifieds as anq', 'anq.applicant_id', 'applicant_accounts.id')
                     ->whereNull('anq.applicant_id')
                     ->groupBy('applicant_accounts.id')
                     ->havingRaw('COUNT(bma_website.applicant_documents.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
                 break;
             case 'not_qualified':
-                $dataLists = $query->join('applicant_not_qualifieds', 'applicant_not_qualifieds.applicant_id', 'applicant_accounts.id')
-                    ->where('applicant_not_qualifieds.academic_id', base64_decode($this->academic));
+                $dataLists = $query->join('applicant_not_qualifieds', 'applicant_not_qualifieds.applicant_id', 'applicant_accounts.id')->where('applicant_not_qualifieds.academic_id', base64_decode($this->academic));
                 break;
             case 'qualified_for_entrance_examination':
-                $dataLists = $query->join('applicant_not_qualifieds', 'applicant_not_qualifieds.applicant_id', 'applicant_accounts.id')
+                $dataLists = $query
+                    ->join('applicant_not_qualifieds', 'applicant_not_qualifieds.applicant_id', 'applicant_accounts.id')
                     ->where('applicant_not_qualifieds.academic_id', base64_decode($this->academic))
-                    ->leftJoin('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')/* Applicant Payment */
+                    ->leftJoin('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id') /* Applicant Payment */
                     ->whereNull('applicant_payments.applicant_id');
                 break;
             default:
@@ -153,7 +153,7 @@ class ApplicantProfileView extends Component
     }
     function bmaAlumnia($data)
     {
-        $_data = array('applicant_id' => $data, 'staff_id' => Auth::user()->staff->id);
+        $_data = ['applicant_id' => $data, 'staff_id' => Auth::user()->staff->id];
         ApplicantAlumnia::create($_data);
         $this->dispatchBrowserEvent('swal:alert', [
             'title' => 'Complete!',
@@ -176,8 +176,13 @@ class ApplicantProfileView extends Component
     }
     function showDocuments($data)
     {
-        $this->modalComponent->openModal();
+        $this->showModal = true;
         $this->documentLink = null;
         $this->documentLink = $data;
+    }
+    function hideDocuments()
+    {
+        $this->showModal = false;
+        $this->documentLink = null;
     }
 }
