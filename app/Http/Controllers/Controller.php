@@ -164,6 +164,34 @@ class Controller extends BaseController
         );
         DebugReport::create($_data);
     }
+    public function debugTrackerApplicant($error)
+    {
+        $_current_url = sprintf('%s://%s/%s', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'], trim($_SERVER['REQUEST_URI'], '/\\'));
+
+        $_data = array(
+            'type_of_user' => 'applicant',
+            'user_name' => auth()->user()->name,
+            'user_ip_address' => $_SERVER['REMOTE_ADDR'] . ', ' . $_SERVER['HTTP_USER_AGENT'],
+            'error_message' => $error->getMessage(),
+            'url_error' => $_current_url,
+            'is_status' => 0,
+        );
+        DebugReport::create($_data);
+    }
+    public function debugTrackerUser($error)
+    {
+        $_current_url = sprintf('%s://%s/%s', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'], trim($_SERVER['REQUEST_URI'], '/\\'));
+
+        $_data = array(
+            'type_of_user' => 'student',
+            'user_name' => 'Api User',
+            'user_ip_address' => $_SERVER['REMOTE_ADDR'] . ', ' . $_SERVER['HTTP_USER_AGENT'],
+            'error_message' => $error->getMessage(),
+            'url_error' => $_current_url,
+            'is_status' => 0,
+        );
+        DebugReport::create($_data);
+    }
     public function saveFiles($_file, $_path = 'public', $_folder = 'extra')
     {
         if (!$_file) {
@@ -175,6 +203,24 @@ class Controller extends BaseController
         $length = 12;
         $name = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
         $filename = $_student_number . '/' . $_folder . '/' . $name . '.' . $_file->getClientOriginalExtension();
+        // File Path Format : $_path.'/'.student-number.'/'.$_folder
+        $_path = $_path;
+        Storage::disk($_path)->put($filename, fopen($_file, 'r+'));
+        return URL::to('/') . '/storage/' . $_path . '/' . $filename;
+    }
+    public function saveApplicantFile($_file, $_path = 'public', $_folder = 'extra')
+    {
+        if (!$_file) {
+            return null;
+        }
+        // Get the Academic Folder
+        $academic = AcademicYear::where('is_active', true)->first();
+        // Application Number
+        $_student_number = Auth::user()->applicant_number;
+        // Get the extention of files
+        $length = 12;
+        $name = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+        $filename = $academic->shool_year . '/' . $_student_number . '/' . $_folder . '/' . $name . '.' . $_file->getClientOriginalExtension();
         // File Path Format : $_path.'/'.student-number.'/'.$_folder
         $_path = $_path;
         Storage::disk($_path)->put($filename, fopen($_file, 'r+'));

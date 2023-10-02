@@ -2,6 +2,45 @@
 <div>
     <label for="" class="fw-bolder text-primary h4">EMPLOYEE DETAILS</label>
     <div class="row">
+        <div class="col-lg-8/">
+            <div class="card mb-2">
+                <div class="row no-gutters">
+                    <div class="col-md-3">
+                        <img src="{{ $employee ? asset($employee->profile_picture()) : asset('/assets/img/staff/avatar.png') }}"
+                            class="card-img" alt="#">
+                    </div>
+                    <div class="col-md ps-0">
+                        <div class="card-body p-3 me-2">
+                            <label for=""
+                                class="fw-bolder text-primary h4">{{ $employee ? strtoupper($employee->last_name . ', ' . $employee->first_name) : 'EMPLOYEE NAME' }}</label>
+                            <p class="mb-0">
+                                <small class="fw-bolder badge bg-secondary">
+                                    {{ $employee ? $employee->department . ' DEPARTMENT' : 'DEPARTMENT' }}
+                                </small> -
+                                <small class="badge bg-primary">
+                                    {{ $employee ? $employee->user->email : 'EMAIL' }}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if ($employee)
+                <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
+                    <div class="d-flex" id="head-check">
+                        <a class="nav-link {{ request()->input('view') == 'profile' || !request()->input('view') ? 'active' : 'text-muted' }}"
+                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=profile">PROFILE</a>
+                        <a class="nav-link  {{ request()->input('view') == 'enrollment' ? 'active' : 'text-muted' }}"
+                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=enrollment">ROLE</a>
+                        <a class="nav-link   {{ request()->input('view') == 'account' ? 'active' : 'text-muted' }}"
+                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=account">ATTENDANCE</a>
+                        <a class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
+                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=grades"></a>
+                    </div>
+                </nav>
+            @endif
+
+        </div>
         <div class="col-lg-4">
             <form action="" method="get" class="form-group mt-2">
                 <small class="fw-bolder text-primary">SEARCH EMPLOYEE</small>
@@ -59,44 +98,6 @@
             </div>
 
         </div>
-        <div class="col-lg">
-            <div class="card mb-2">
-                <div class="row no-gutters">
-                    <div class="col-md-3">
-                        <img src="{{ $employee ? asset($employee->profile_picture()) : asset('/assets/img/staff/avatar.png') }}"
-                            class="card-img" alt="#">
-                    </div>
-                    <div class="col-md ps-0">
-                        <div class="card-body p-3 me-2">
-                            <label for=""
-                                class="fw-bolder text-primary h4">{{ $employee ? strtoupper($employee->last_name . ', ' . $employee->first_name) : 'EMPLOYEE NAME' }}</label>
-                            <p class="mb-0">
-                                <small class="fw-bolder badge bg-secondary">
-                                    {{ $employee ? $employee->department . ' DEPARTMENT' : 'DEPARTMENT' }}
-                                </small> -
-                                <small class="badge bg-primary">
-                                    {{ $employee ? $employee->user->email : 'EMAIL' }}
-                                </small>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @if ($employee)
-                <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
-                    <div class="d-flex" id="head-check">
-                        <a class="nav-link {{ request()->input('view') == 'profile' || !request()->input('view') ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=profile">PROFILE</a>
-                        <a class="nav-link  {{ request()->input('view') == 'enrollment' ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=enrollment">ROLE</a>
-                        <a class="nav-link   {{ request()->input('view') == 'account' ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=account">ATTENDANCE</a>
-                        <a class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=grades"></a>
-                    </div>
-                </nav>
-            @endif
 
-        </div>
     </div>
 </div>

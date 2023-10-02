@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
 {
     use HasApiTokens, HasFactory/* , Notifiable */;
-    
+
     protected $connection = 'mysql2';
     protected $fillable = [
         'name',
@@ -19,7 +19,9 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
         'password',
         'applicant_number',
         'course_id',
-        'academic_id'
+        'academic_id',
+        'contact_number',
+        'is_removed'
     ];
 
     protected $hidden = [
@@ -53,6 +55,18 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     public function is_alumnia()
     {
         return $this->hasOne(ApplicantAlumnia::class, 'applicant_id')->where('is_removed', false);
+    }
+    function document_requirements()
+    {
+        $_level = $this->course_id == 3 ? 11 : 4;
+        $id = $this->id;
+        return Documents::where('department_id', 2)
+            ->with(['applicant_requirements_v2' => function ($query) use ($id) {
+                $query->where('applicant_id', $id);
+            }])
+            ->where('year_level', $_level)
+            ->where('is_removed', false)
+            ->orderBy('id')->get();
     }
     public function empty_documents()
     {

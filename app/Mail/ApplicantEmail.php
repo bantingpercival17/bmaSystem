@@ -35,7 +35,7 @@ class ApplicantEmail extends Mailable
     // Pre Registration Notification Email
     public function pre_registration_notificaiton($_applicant)
     {
-        return $this->from(Auth::user()->email, 'Baliwag Maritime Academy, Inc.')
+        return $this->from('support@bma.edu.ph', 'Baliwag Maritime Academy, Inc.')
             ->subject("PRE-REGISTRATION : " . $_applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.pre-registration-notification')
             ->with(['data' => $_applicant]);

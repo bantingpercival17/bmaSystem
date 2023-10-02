@@ -12,7 +12,7 @@ class SubjectClass extends Model
 
     public function staff()
     {
-        return $this->belongsTo(Staff::class, 'staff_id');
+        return $this->belongsTo(Staff::class, 'staff_id')->select('id','first_name','last_name','user_id')->with('user');
     }
     public function academic()
     {
@@ -28,7 +28,7 @@ class SubjectClass extends Model
     }
     public function curriculum_subjects()
     {
-        return $this->belongsTo(CurriculumSubject::class, 'curriculum_subject_id')->with('subject');
+        return $this->belongsTo(CurriculumSubject::class, 'curriculum_subject_id')->select('id','subject_id')->with('subject');
     }
     public function submitted_grade($_form, $_period)
     {
@@ -89,7 +89,7 @@ class SubjectClass extends Model
     }
     public function course_syllabus()
     {
-        return $this->hasOne(SubjectClassCourseSyllabus::class, 'subject_id')->where('is_removed', false);
+        return $this->hasOne(SubjectClassCourseSyllabus::class, 'subject_id')->with('syllabus_details')->where('is_removed', false);
     }
 
     public function grade_publish()

@@ -1,30 +1,26 @@
 <div class="card">
+    @livewire('components.modal-component', ['showModal' => $showModal])
     <div class="card-body">
         @if (!$profile->not_qualified)
             <a href="{{ route('applicant.applicant-not-qualified') }}?applicant={{ base64_encode($profile->id) }}"
                 class="badge bg-primary">Not Qualified</a>
         @endif
-        {{--  <a href="{{ route('applicant.applicant-not-qualified') }}?applicant={{ base64_encode($profile->id) }}"
-            class="badge bg-primary">Not Qualified</a> --}}
-        @if (count($profile->empty_documents()) > 0)
-            @foreach ($profile->empty_documents() as $docu)
-                @php
-                    $item = $docu->applicant_document;
-                @endphp
-                <div class="mt-5">
-                    <div class="col-md-12">
-                        <h5 class="fw-bolder text-muted">{{ $docu->document_name }}</h5>
-                    </div>
-                    @if ($item)
-                        @if ($item->is_approved == null)
+
+        @forelse ($profile->document_requirements() as $item)
+            <div class="mt-5">
+                <div class="col-md-12">
+                    <h5 class="fw-bolder text-muted">{{ $item->document_name }}</h5>
+                    @if ($document = $item->applicant_requirements_v2)
+                        @if ($document->is_approved == null)
                             <form class="row" action="{{ route('document-verification') }}">
                                 <div class="col-md-8">
-                                    <input type="hidden" name="_document" value="{{ base64_encode($item->id) }}">
-                                    <input type="text" class="form-control form-control-sm rounded-pill mt-2"
-                                        name="_comment" placeholder="Comment!" required>
+                                    <input type="hidden" name="_document" value="{{ base64_encode($document->id) }}">
+                                    <input type="text"
+                                        class="form-control form-control-sm border border-primary mt-2" name="_comment"
+                                        placeholder="Comment!" required>
                                 </div>
                                 <div class="col-md">
-                                    <a href="{{ route('document-verification') }}?_document={{ base64_encode($item->id) }}&_verification_status=1"
+                                    <a href="{{ route('document-verification') }}?_document={{ base64_encode($document->id) }}&_verification_status=1"
                                         class="mt-2 btn btn-outline-primary btn-sm rounded-pill "
                                         data-bs-toggle="tooltip" title=""
                                         data-bs-original-title="Approved Document">
@@ -56,9 +52,8 @@
                                                 stroke-linejoin="round"></path>
                                         </svg>
                                     </button>
-                                    <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2"
-                                        data-bs-toggle="modal" data-bs-target=".document-view-modal"
-                                        data-document-url="{{ json_decode($item->file_links)[0] }}"
+                                    <a class="btn btn-outline-info btn-sm rounded-pill mt-2"
+                                        wire:click="showDocuments('{{ json_decode($document->file_links)[0] }}')"
                                         data-bs-toggle="tooltip" title="" data-bs-original-title="View Image">
                                         <svg width="20" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -76,7 +71,7 @@
                             </form>
                         @endif
 
-                        @switch($item->is_approved)
+                        @switch($document->is_approved)
                             @case(1)
                                 <div class="row mt-2">
                                     <div class="col-md-8">
@@ -85,13 +80,13 @@
                                             <small>APPROVED DATE:</small>
                                             <span role="button" data-bs-toggle="popover" data-trigger="focus" class="fw-bolder"
                                                 title="APPROVED DETAILS"
-                                                data-bs-content="Approved By: {{ $item->staff ? $item->staff->user->name : '-' }} Approved Date: {{ $item->created_at->format('F d,Y') }}">{{ $item->created_at->format('F d,Y') }}</span>
+                                                data-bs-content="Approved By: {{ $document->staff ? $document->staff->user->name : '-' }} Approved Date: {{ $document->created_at->format('F d,Y') }}">{{ $document->created_at->format('F d,Y') }}</span>
                                         </span>
                                     </div>
                                     <div class="col-md">
-                                        <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2 w-100"
-                                            data-bs-toggle="modal" data-bs-target=".document-view-modal"
-                                            data-document-url="{{ json_decode($item->file_links)[0] }}">
+                                        <a class="btn btn-outline-info btn-sm rounded-pill mt-2 w-100" data-bs-toggle="modal"
+                                            data-bs-target=".document-view-modal"
+                                            data-document-url="{{ json_decode($document->file_links)[0] }}">
                                             <svg width="20" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -117,13 +112,13 @@
                                             <small>REMARKS: </small>
                                             <span role="button" data-bs-toggle="popover" data-trigger="focus"
                                                 class="fw-bolder" title="APPROVED DETAILS"
-                                                data-bs-content="Approved By: {{ $item->staff ? $item->staff->user->name : '-' }} Approved Date: {{ $item->updated_at->format('F d,Y') }}">{{ $item->feedback }}</span>
+                                                data-bs-content="Approved By: {{ $document->staff ? $document->staff->user->name : '-' }} Approved Date: {{ $document->updated_at->format('F d,Y') }}">{{ $document->feedback }}</span>
                                         </span>
                                     </div>
                                     <div class="col-md">
-                                        <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2 w-100"
-                                            data-bs-toggle="modal" data-bs-target=".document-view-modal"
-                                            data-document-url="{{ json_decode($item->file_links)[0] }}"
+                                        <a class="btn btn-outline-info btn-sm rounded-pill mt-2 w-100" data-bs-toggle="modal"
+                                            data-bs-target=".document-view-modal"
+                                            data-document-url="{{ json_decode($document->file_links)[0] }}"
                                             data-bs-toggle="tooltip" title="" data-bs-original-title="View Image">
 
                                             <svg width="20" viewBox="0 0 24 24" fill="none"
@@ -149,8 +144,7 @@
                         <div class="row">
                             <div class="col-md-10">
                                 <p>Missing Document</p>
-
-                                @if ($sent = $profile->sent_notification($docu->id))
+                                @if ($sent = $profile->sent_notification($item->id))
                                     <div class="row">
                                         <div class="col-md-12">
                                             <small class="text-primary fw-bolder h6">APPLICANT NOTIFIED</small>
@@ -167,12 +161,10 @@
                                         </div>
                                     </div>
                                 @endif
-                                {{-- @if ($profile->sent_notification($docu->id))
-                    @endif --}}
                             </div>
                             <div class="col-md">
-                                <a class="btn btn-outline-warning btn-sm rounded-pill btn-form-document mt-2"
-                                    href="{{ route('document-notification') }}?_applicant={{ base64_encode($profile->id) }}&document={{ $docu->id }}"
+                                <a class="btn btn-outline-warning btn-sm rounded-pill mt-2"
+                                    href="{{ route('document-notification') }}?_applicant={{ base64_encode($profile->id) }}&document={{ $item->id }}"
                                     data-bs-toggle="tooltip" title=""
                                     data-bs-original-title="Send a Notification">
                                     <svg width="20" viewBox="0 0 24 24" fill="none"
@@ -187,8 +179,30 @@
                         </div>
                     @endif
                 </div>
-            @endforeach
-        @else
+            </div>
+            @empty
+            @endforelse
+        </div>
+        @if ($showModal)
+            <div class="fixed inset-0 flex items-center justify-center z-50">
+                <div class="fw-bolder h3">Hello Modal</div>
+                <div class="modal fade show" style="display: block">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel1">Document Review</h5>
+                                <button type="button" class="btn-close" wire:click="hideDocuments">
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="{{ $documentLink }}" style=" width: 100%; " alt="">
+                                {{-- <iframe src="{{ $documentLink }}" class="i"
+                                   style=" width: 100%; height:100vh;" >
+                                </iframe> --}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         @endif
     </div>
-</div>

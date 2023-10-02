@@ -15,20 +15,11 @@
                                     <img src="{{ json_decode($profile->image->file_links)[0] }}"
                                         class="avatar-130 rounded" alt="applicant-profile">
                                 @endif
-                                {{-- <img src="{{ $_student ? $_student->profile_picture() : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                            class="card-img" alt="#"> --}}
                             </div>
                             <div class="col-md ps-0">
                                 <div class="card-body p-3 me-2">
-                                    <p class="float-end">
-                                        <small class="badge bg-info" data-bs-toggle="modal"
-                                            data-bs-target=".modal-change-course" data-bs-toggle="change course"
-                                            title="">
-                                            CHANGE COURSE
-                                        </small>
-                                    </p>
                                     <label for=""
-                                        class="fw-bolder text-primary h4">{{ $profile ? strtoupper($profile->applicant->last_name . ', ' . $profile->applicant->first_name) : 'MIDSHIPMAN NAME' }}</label>
+                                        class="fw-bolder text-primary h4">{{ $profile ? ($profile->applicant ? strtoupper($profile->applicant->last_name . ', ' . $profile->applicant->first_name) : strtoupper($profile->name)) : 'MIDSHIPMAN NAME' }}</label>
                                     <p class="mb-0">
                                         <small class="fw-bolder badge {{ $profile->color_course() }}">
                                             {{ $profile->course->course_name }}
@@ -36,95 +27,78 @@
                                         <small class="badge bg-primary">
                                             {{ $profile->applicant_number }}
                                         </small>
+                                        <small class="badge bg-primary">
+                                            {{ $profile->email }}
+                                        </small>
                                     </p>
-                                    <p>
-
+                                    <div class="mt-2">
+                                        <small class="badge  border border-secondary text-secondary"
+                                            data-bs-toggle="modal" data-bs-target=".modal-change-course"
+                                            data-bs-toggle="change course" title="">
+                                            CHANGE COURSE
+                                        </small>
                                         @if ($profile->is_alumnia)
                                             <span class="badge bg-primary float-end">
                                                 BMA SENIOR HIGH ALUMNUS
                                             </span>
                                         @else
-                                            @if ($profile->senior_high_school())
-                                                <button class="btn btn-outline-primary btn-sm float-end rounded-pill"
-                                                    id="btn-alumnia" data-id="{{ base64_encode($profile->id) }}"> BMA
-                                                    SENIOR HIGH ALUMNUS</button>
-                                            @endif
-                                            @if (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph')
-                                                <button class="btn btn-primary btn-sm float-end"
-                                                    wire:click="dialogBoxSHS({{ $profile->id }})">BMA</button>
+                                            @if ($profile->applicant)
+                                                @if ($profile->senior_high_school())
+                                                    <button class="badge border border-primary text-primary"
+                                                        id="btn-alumnia" data-id="{{ base64_encode($profile->id) }}">
+                                                        BMA
+                                                        SENIOR HIGH ALUMNUS</button>
+                                                @endif
+                                                @if (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph')
+                                                    <button class="badge border border-primary text-primary"
+                                                        wire:click="dialogBoxSHS({{ $profile->id }})">BMA</button>
+                                                @endif
                                             @endif
                                         @endif
-
-                                    </p>
+                                        <small class="badge  border border-info text-info"title="Reset Password"
+                                            wire:click="resetPassword('{{ $profile->id }}')">
+                                            RESET PASSWORD
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {{-- <table class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
-                        <thead class="d-flex">
-                            <tr>
-                                <td class="nav-link  {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }} "
-                                wire:click="swtchTab('overiew')">OVERVIEW</td>
-                                <td class="nav-link  {{ $activeTab == 'profile' ? 'active' : 'text-muted' }} "
-                                wire:click="swtchTab('profile')">PROFILE</td>
-                                <td class="nav-link  {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }} "
-                                wire:click="swtchTab('overiew')">OVERVIEW</td>
+                    <div class="table-responsive ">
+                        <table class="nav nav-underline bg-soft-primary text-center" aria-label="Secondary navigation">
+                            <thead class="d-flex">
+                                <tr>
+                                    <td class="nav-link {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
+                                        wire:click="swtchTab('overiew')">OVERVIEW</td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
+                                        wire:click="swtchTab('profile')">PROFILE</td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-link {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
+                                        wire:click="swtchTab('documents')">DOCUMENTS</td>
+                                </tr>
+                                <tr>
+                                    <td class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
+                                        href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">
+                                        ENTRANCE
+                                        EXAMINATION</td>
 
-                            </tr>
-                        </thead>
-                    </table> --}}
-                    <table class="nav nav-underline bg-soft-primary p-0 text-center" aria-label="Secondary navigation">
-                        <thead class="d-flex">
-                            <tr>
-                                <td class="nav-link {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
-                                    wire:click="swtchTab('overiew')">OVERVIEW</td>
-                                {{--  <td class="nav-link  {{ $activeCard == 'overview' ? 'active' : 'text-muted' }} "
-                                    wire:click="swtchTab('overview')">OVERVIEW</td> --}}
-                            </tr>
-                            <tr>
-                                <td class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
-                                    wire:click="swtchTab('profile')">PROFILE</td>
-                                {{--  <td class="nav-link  {{ $activeCard == 'transaction' ? 'active' : 'text-muted' }} "
-                                    wire:click="swtchTab('transaction')">TRANSACTION</td> --}}
-                            </tr>
-                            <tr>
-                                <td class="nav-link {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
-                                    wire:click="swtchTab('documents')">DOCUMENTS</td>
-                                {{--  <td class="nav-link  {{ $activeCard == 'history' ? 'active' : 'text-muted' }} "
-                                    wire:click="swtchTab('history')">PAYMENT HISTORY</td> --}}
-                            </tr>
-                            <tr>
-                                <td class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                                    href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">
-                                    ENTRANCE
-                                    EXAMINATION</td>
-                                {{--  <td class="nav-link  {{ $activeCard == 'online-payment' ? 'active' : 'text-muted' }} "
-                                    wire:click="swtchTab('online-payment')">ONLINE PAYMENT</td> --}}
+                                </tr>
+                                <tr>
+                                    <td class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
+                                        wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</td>
 
-                            </tr>
-                            <tr>
-                                <td class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
-                                    wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</td>
-                            </tr>
-                        </thead>
-                    </table>
-                    <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
+                                </tr>
+                                <tr>
+                                    <td class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
+                                        wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</td>
 
-                        <div class="d-flex" id="head-check">
-                            <a class="nav-link {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('overiew')">OVERVIEW</a>
-                            <a class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('profile')">PROFILE</a>
-                            <a class="nav-link {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('documents')">DOCUMENTS</a>
-
-                            <a class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                                href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">ENTRANCE
-                                EXAMINATION</a>
-                            <a class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
-                                wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</a>
-                        </div>
-                    </nav>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                     <div class="mt-4">
                         @if ($activeTab == 'profile')
                             @include('livewire.registrar.applicant.profile-components.information')
@@ -169,7 +143,7 @@
                     <div class="col-12">
                         <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                         <div class="form-group search-input">
-                            <input type="search" class="form-control" placeholder="Search Pattern: Lastname, Firstname"
+                            <input type="search" class="form-control border border-primary" placeholder="Search Pattern: Lastname, Firstname"
                                 wire:model="searchInput">
                         </div>
                     </div>
@@ -251,8 +225,13 @@
                                         </div>
                                         <div class="col-md p-1">
                                             <div class="card-body p-2">
-                                                <small
-                                                    class="text-primary fw-bolder">{{ strtoupper($data->applicant->last_name . ', ' . $data->applicant->first_name) }}</small>
+                                                @if ($data->applicant)
+                                                    <small
+                                                        class="text-primary fw-bolder">{{ strtoupper($data->applicant->last_name . ', ' . $data->applicant->first_name) }}</small>
+                                                @else
+                                                    <small
+                                                        class="text-primary fw-bolder">{{ strtoupper($data->name) }}</small>
+                                                @endif
                                                 <br>
                                                 <small
                                                     class="badge {{ $data->color_course() }}">{{ $data->course->course_name }}</small>

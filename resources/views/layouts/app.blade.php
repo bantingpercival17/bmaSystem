@@ -248,6 +248,7 @@
     @if (Auth::user())
     @if (request()->is('executive/scanner'))
     @livewire('components.top-navigation-scanner')
+    <livewire:modal-component />
     {{ $slot }}
     @else
     @livewire('components.side-navigation-menu')
