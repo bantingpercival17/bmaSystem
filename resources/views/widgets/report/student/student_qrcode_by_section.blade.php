@@ -135,7 +135,7 @@
                                     $student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $student->student->last_name)),
                                 ),
                         ) !!} "> <br>
-                        {{ $student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $student->student->last_name)) }}
+                        {{ $student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $student->student->last_name.'-'.$student->student->first_name)) }}
                     </div>
                 </td>
             @empty
