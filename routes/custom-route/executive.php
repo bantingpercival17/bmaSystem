@@ -3,6 +3,7 @@
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ExecutiveOfficeController;
 use App\Http\Livewire\Executive\Attendance\ScannerView;
+use App\Http\Livewire\Registrar\Student\StudentProfileView;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('executive')->middleware(['auth'])->group(function () {

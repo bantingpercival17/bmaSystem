@@ -2,8 +2,6 @@
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Livewire\Registrar\Student\StudentProfileView;
-use App\Mail\OnboardingScheduleEmail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
