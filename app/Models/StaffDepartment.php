@@ -14,6 +14,15 @@ class StaffDepartment extends Model
         'role_id',
         'department_id',
         'position',
+        'is_active',
         'is_removed'
     ];
+    function department()
+    {
+        return $this->hasOne(Department::class, 'department_id');
+    }
+    function role()
+    {
+        return $this->hasOne(Role::class, 'role_id');
+    }
 }

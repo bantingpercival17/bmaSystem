@@ -386,4 +386,8 @@ class Staff extends Model
     {
         return ApplicantMedicalAppointment::where('appointment_date', $date)->where('is_removed', false)->count();
     }
+    function roles()
+    {
+        return $this->hasMany(StaffDepartment::class)->where('is_removed', false);
+    }
 }

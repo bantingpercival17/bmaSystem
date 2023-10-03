@@ -39,19 +39,16 @@
                             wire:click="switchCard('profile')">PROFILE</a>
                         <a class="nav-link  {{ $activeCard == 'role' ? 'active' : 'text-muted' }}"
                             wire:click="switchCard('role')">ROLE</a>
-                        <a
-
-
-
-                        class="nav-link   {{ $activeCard == 'role' ? 'active' : 'text-muted' }}"
+                        <a class="nav-link   {{ $activeCard == 'attendance' ? 'active' : 'text-muted' }}"
                             wire:click="switchCard('attendance')">ATTENDANCE</a>
-                        <a class="nav-link   {{ $activeCard == 'grades' ? 'active' : 'text-muted' }}"></a>
                     </div>
                 </nav>
 
                 <div class="mt-4">
                     @if ($activeCard == 'profile')
                         @include('livewire.employee-components.profile')
+                    @elseif ($activeCard == 'role')
+                        @include('livewire.employee-components.role-view')
                     @endif
                 </div>
             @endif
@@ -96,26 +93,6 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="row no-gutters">
-                                <div class="col-md-4">
-                                    <img class="img-fluid avatar avatar-100 avatar-rounded me-2"
-                                        src="{{ asset($item->profile_picture()) }}" alt="User Avatar">
-                                </div>
-                                <div class="col-md-8 p-1">
-                                    <div class="card">
-                                        <div class="card-body p-2">
-                                            <small
-                                                class="text-primary fw-bolder">{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</small>
-                                            <br>
-                                            <span class="badge bg-secondary">{{ $item->department }}</span>
-                                            <a class="badge bg-primary"
-                                                wire:click="setEmployee({{ $item->id }})">VIEW</a>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                        </div> --}}
                     </a>
                 @empty
                     <div class="card  mb-2">
