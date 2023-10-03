@@ -213,6 +213,16 @@ class OnboardTrainingController extends Controller
             return back()->with('error', $error->getMessage());
         }
     }
+    public function onboard_narative_summary_report_v2(Request $_request)
+    {
+        try {
+            $_generate_report = new OnboardTrainingReport();
+            $_data = StudentDetails::find(base64_decode($_request->_midshipman));
+            return $_generate_report->narative_summary_report_v2($_data);
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
     public function onboard_monthly_summary_report(Request $_request)
     {
         try {

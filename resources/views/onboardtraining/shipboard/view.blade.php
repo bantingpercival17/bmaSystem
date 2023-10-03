@@ -119,11 +119,11 @@
                 @if (count($_midshipman->shipboard_training->performance_report) > 0)
                     <div class="card">
                         <div class="card-body">
-                            <div class="header-title d-flex justify-content-between">
+                            <div class="header-title ">
                                 <span class="h5 text-primary fw-bolder">MONTHLY OBT PERFORMANCE MONITORING REPORT
                                     (MOPM)</span>
-                                <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
-                                    class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
+                                <a href="{{ route('onboard.narative-summary-report-v2') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
+                                    class="badge bg-primary float-end" target="_blank">GENERATE REPORT</a>
                             </div>
                             <div class="table-responsive mt-4">
                                 <table id="basic-table" class="table table-striped mb-0" role="grid"

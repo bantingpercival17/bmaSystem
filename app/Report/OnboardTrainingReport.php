@@ -24,6 +24,16 @@ class OnboardTrainingReport
         $file_name = 'NARATIVE MONITORING REPORT' . '.pdf';
         return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
     }
+    public function narative_summary_report_v2($_data)
+    {
+        // Set the Layout for the report
+        $_layout = $this->path . '.narative-summary-report-v2';
+        // Import PDF Class
+        $pdf = PDF::loadView($_layout, compact('_data'));
+        // Set the Filename of report
+        $file_name = 'NARATIVE MONITORING REPORT' . '.pdf';
+        return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
+    }
     public function monthly_summary_report($_data)
     {
         // Set the Layout for the report
