@@ -17,10 +17,13 @@ class CreateStaffDepartmentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('staff_id');
             $table->foreign('staff_id')->references('id')->on('staff');
-            $table->string('department');
+            $table->unsignedBigInteger('department_id');
+            $table->foreign('department_id')->references('id')->on('departments');
             $table->unsignedBigInteger('role_id');
             $table->foreign('role_id')->references('id')->on('roles');
-            $table->boolean('is_removed')->nullable();
+            $table->string('position')->nullable();
+            $table->boolean('is_active')->default(0);
+            $table->boolean('is_removed')->default(0);
             $table->timestamps();
         });
     }

@@ -7,32 +7,38 @@ use Livewire\Component;
 
 class EmployeeView extends Component
 {
-    public $employeeList = [];
     public $searchInput;
-    public $employee = [];
+    public $activeCard = 'profile';
     public function render()
     {
-        $employeeList = $this->employeeList;
-        $employee = $this->employee;
+        $employee = $this->setEmployee(base64_decode(request()->query('employee')));
+        $employeeList = $this->searchEmployee($this->searchInput);
         return view('livewire.employee-view', compact('employeeList', 'employee'));
     }
-    function searchEmployee()
+    function searchEmployee($searchInput)
     {
-        if ($this->searchInput) {
-            $this->employeeList = Staff::where('last_name', 'like', '%' . $this->searchInput . '%')->orWhere('last_name', 'like', '%' . $this->searchInput . '%')
-                ->orderBy('last_name', 'asc')
-                ->get();
-        } else {
-            $this->employeeList = [];
+        $data = [];
+        if ($searchInput) {
+            $value = explode(',', $searchInput);
+            if (count($value) > 1) {
+                $data = Staff::where('last_name', 'like', '%' . $value[0] . '%')->where('first_name', 'like', '%' . $value[0] . '%');
+            } else {
+                $data = Staff::where('last_name', 'like', '%' . $searchInput . '%');
+            }
+            $data = $data->orderBy('last_name', 'asc')->get();
         }
+        return $data;
     }
     function setEmployee($data)
     {
-        $employee = Staff::find($data);
-       
-        if ($employee) {
-            $this->employee = $employee;
-            $this->employeeList = [];
+        $employee = [];
+        if ($data != '') {
+            $employee = Staff::find($data);
         }
+        return $employee;
+    }
+    function switchCard($data)
+    {
+        $this->activeCard = $data;
     }
 }

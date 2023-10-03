@@ -12,7 +12,8 @@ class StaffDepartment extends Model
     protected $fillable = [
         'staff_id',
         'role_id',
-        'department',
+        'department_id',
+        'position',
         'is_removed'
     ];
 }
