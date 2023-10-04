@@ -19,10 +19,10 @@ class StaffDepartment extends Model
     ];
     function department()
     {
-        return $this->hasOne(Department::class, 'department_id');
+        return $this->belongsTo(Department::class, 'department_id');
     }
     function role()
     {
-        return $this->hasOne(Role::class, 'role_id');
+        return $this->belongsTo(Role::class, 'role_id');
     }
 }

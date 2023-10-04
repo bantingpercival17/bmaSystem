@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Role;
 use App\Models\Staff;
 use App\Models\StaffDepartment;
+use App\Models\User;
 use Livewire\Component;
 
 class EmployeeView extends Component
@@ -14,17 +15,19 @@ class EmployeeView extends Component
     public $employee;
     public $formRole = false;
     public $activeCard = 'profile';
-    public $department;
-    public $role;
+    public $department = 1;
+    public $role = 1;
     public $position;
-    public $status;
+    public $status = 1;
+    public $testingValue;
     public function render()
     {
         $this->employee = request()->query('employee') ? $this->setEmployee(base64_decode(request()->query('employee'))) : $this->employee;
         $employeeList = $this->searchEmployee($this->searchInput);
         $departmentList = Department::where('is_removed', false)->get();
+        $employeeRoles = $this->employee ? $this->employee->roles : [];
         $roles = Role::all();
-        return view('livewire.employee-view', compact('employeeList', 'departmentList', 'roles'));
+        return view('livewire.employee-view', compact('employeeList', 'departmentList', 'roles', 'employeeRoles'));
     }
     function searchEmployee($searchInput)
     {
@@ -62,9 +65,33 @@ class EmployeeView extends Component
             'staff_id' => $this->employee->id,
             'role_id' => $this->role,
             'department_id' => $this->department,
-            'position' => $this->position,
+            'position' => strtoupper($this->position),
             'is_active' => $this->status
         );
-        StaffDepartment::create($roleDetails);
+        $user = User::find($this->employee->user_id);
+        $hasAllRoles = false;
+
+        foreach ($this->employee->user->roles as $role) {
+            if ($role->id == $this->role) {
+                $hasAllRoles = true;
+                break; // Exit the loop early if the user does not have a role
+            }
+        }
+        if (!$hasAllRoles) {
+            $user->attachRole($this->role);
+        }
+        $verifyData = StaffDepartment::where([
+            'staff_id' => $this->employee->id,
+            'role_id' => $this->role,
+            'department_id' => $this->department,
+            'position' => strtoupper($this->position),
+        ])->first();
+        if (!$verifyData) {
+            StaffDepartment::create($roleDetails);
+        }
+        $this->role = 1;
+        $this->department = 1;
+        $this->status = 1;
+        $this->position =  '';
     }
 }
