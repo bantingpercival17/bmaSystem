@@ -12,7 +12,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
 {
     use HasApiTokens, HasFactory/* , Notifiable */;
 
-    protected $connection = 'mysql2';
+    protected $connection = 'mysql';
     protected $fillable = [
         'name',
         'email',
