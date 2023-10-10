@@ -70,7 +70,8 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
                 $_data->student->middle_name . ' ' . $_data->student->extetion,
             $_parents ? $_parents->guardian_first_name . ' ' . $_parents->guardian_last_name : '',
             $_parents ? $_parents->guardian_contact_number : '',
-            strtoupper($_data->student->street . ' ' . $_data->student->barangay) . ' ' .
+            $_parents ? $_parents->guardian_address :
+                strtoupper($_data->student->street . ' ' . $_data->student->barangay) . ' ' .
                 strtoupper($_data->student->municipality) . ' ' .
                 strtoupper($_data->student->province),
             $_data->student->id_verification ? $_data->student->id_verification->picture_approved === 1 ? 'VERIFIED' : 'INVALID' : '',
