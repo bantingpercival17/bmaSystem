@@ -13,7 +13,28 @@ use Illuminate\Support\Facades\Storage;
 class StudentDetails extends Model
 {
     use HasFactory;
-    protected $fillable = ['first_name', 'last_name', 'middle_name', 'extention_name', 'birthday', 'birth_place', 'sex', 'nationality', 'religion', 'civil_status', 'street', 'barangay', 'municipality', 'province', 'zip_code', 'is_removed'];
+    protected $fillable = [
+        "first_name",
+        "last_name",
+        "middle_name",
+        "extention_name",
+        "birthday",
+        "birth_place",
+        "sex",
+        "nationality",
+        "religion",
+        "civil_status",
+        "street",
+        "barangay",
+        "municipality",
+        "province",
+        "zip_code",
+        "contact_number",
+        'middle_initial',
+        'height',
+        'weight',
+        "is_removed"
+    ];
     /* This portal the Back-end Side */
     public function profile_pic($_data)
     {

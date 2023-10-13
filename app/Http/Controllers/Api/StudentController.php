@@ -37,7 +37,7 @@ class StudentController extends Controller
             $student = StudentAccount::where('id', $account->id)
                 ->with('student')
                 ->first();
-            $student = StudentDetails::find($student->student_id);
+            $student = StudentDetails::with('parent_details')->find($student->student_id);
             $profile_picture = $student->profile_picture();
             return response(['account' => $student, 'profile_picture' => $profile_picture], 200);
         } catch (\Throwable $error) {
@@ -80,7 +80,7 @@ class StudentController extends Controller
         try {
             /* SET THE INPUT FIELDS */
             /* STUDENT DETAILS */
-            $_student_details = [
+            $studentDetails = [
                 'last_name' => trim(ucwords(mb_strtolower($request->last_name))),
                 'first_name' => trim(ucwords(mb_strtolower($request->first_name))),
                 'middle_name' => trim(ucwords(mb_strtolower($request->middle_name))),
@@ -150,21 +150,17 @@ class StudentController extends Controller
             if (auth()->user()->student->enrollment_assessment->course_id != 3) {
                 $_education =  [$_elementary, $_high_school, $_senior_high_school];
             }
-            $_student_validation = StudentDetails::find(Auth::user()->student_id); // Verify if the Student existing
-            if ($_student_validation) {
-                // Update the Student Details
-                $_student_validation->update($_student_details);
-                // Validate the Educational Background
-                $_educational = $_student_validation->educational_background;
-                if (count($_educational) > 0) {
-                    // Update the Educational Background
-                    EducationalDetails::where('student_id', $_student_validation->id)->where(
-                        'is_removed',
-                        false
-                    )->update(['is_removed' => true]);
+            $studentValidation = StudentDetails::find(Auth::user()->student_id); // Verify if the Student existing
+            if ($studentValidation) {
+                $studentValidation->update($studentDetails); # Update the Student Details
+                # GET THE LIST OF EDUCATION DETAILS
+                $education = $studentValidation->educational_background;
+                if (count($education) > 0) {
+                    EducationalDetails::where('student_id', $studentValidation->id)
+                        ->where('is_removed', false)->update(['is_removed' => true]); # Set into hide the all Educational Details
                     foreach ($_education as $key => $value) {
-                        $value['student_id'] = $_student_validation->id;
-                        $_data = EducationalDetails::where('student_id', $_student_validation->id)
+                        $value['student_id'] = $studentValidation->id; # Set the index value of student id
+                        $_data = EducationalDetails::where('student_id', $studentValidation->id)
                             ->where('school_level', $value['school_level'])
                             ->where('school_name', $value['school_name'])
                             ->where('school_address', $value['school_address'])
@@ -172,31 +168,33 @@ class StudentController extends Controller
                             ->where('is_removed', true)
                             ->first();
                         if ($_data) {
-                            $_data->update(['is_removed' => 0]);
+                            # Verify the Data is exsiting if yes it will update into show data
+                            $_data->update(['is_removed' => false]);
                         } else {
+                            # if not Create a new Data
                             EducationalDetails::create($value);
                         }
                     }
                 } else {
                     // Store a new Educational Background
                     foreach ($_education as $key => $value) {
-                        $value['student_id'] = $_student_validation->id;
+                        $value['student_id'] = $studentValidation->id;
                         EducationalDetails::create($value);
                     }
                 }
-                // Parent Details
-                $_parent = $_student_validation->parent_details;
+                # Parent Details
+                $_parent = $studentValidation->parent_details;
                 if ($_parent) {
                     $_parent->update(['is_removed' => true]);
-                    $_parent_info += ['student_id' => $_student_validation->id];
+                    $_parent_info += ['student_id' => $studentValidation->id];
                     ParentDetails::create($_parent_info);
                 } else {
-                    $_parent_info += ['student_id' => $_student_validation->id];
+                    $_parent_info += ['student_id' => $studentValidation->id];
                     ParentDetails::create($_parent_info);
                 }
             } else {
                 // Create Student Information
-                $_student_store = StudentDetails::create($_student_details);
+                $_student_store = StudentDetails::create($studentDetails);
                 // Educational Background
                 foreach ($_education as $key => $value) {
                     $value['student_id'] = $_student_store->id;
@@ -206,6 +204,7 @@ class StudentController extends Controller
                 $_parent_info += ['student_id' => $_student_store->id];
                 ParentDetails::create($_parent_info);
             }
+            #return StudentDetails::with(['educational_background', 'parent_details'])->find(Auth::user()->student_id);
             return response(['message' => 'Successfully Update Information.'], 200);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
