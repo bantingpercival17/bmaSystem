@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Mews\Captcha\Facades\Captcha;
 
 class AuthController extends Controller
 {
@@ -34,7 +35,7 @@ class AuthController extends Controller
             $account = ApplicantAccount::with('applicant')->find($_data->id);
             $profile_picture = $account->image ? json_decode($account->image->file_links)[0] : 'http://bma.edu.ph/img/student-picture/midship-man.jpg';
             $student = compact('account', 'profile_picture');
-            $token = $account->createToken('applicantToken')->plainTextToken;
+            $token = Auth::guard('applicant')->user()->createToken('applicantToken')->plainTextToken;
             return response(
                 [
                     'student' => $student,
@@ -60,6 +61,7 @@ class AuthController extends Controller
             'contactNumber' => 'required',
             'course' => 'required',
             'birthday' => 'required|string',
+            'captcha' => 'required',
             'agreement' => 'required|boolean'
         ]);
         try {
@@ -88,7 +90,6 @@ class AuthController extends Controller
             ];
             try {
                 $user = ApplicantAccount::create($_details);
-                /* $user = ApplicantAccount::where('email', $_request->email)->first(); */
                 $applicant = ApplicantAccount::find($user->id);
                 $mail = new ApplicantEmail();
                 Mail::to($_request->email)->bcc('developer@bma.edu.ph')->send($mail->pre_registration_notificaiton($applicant));

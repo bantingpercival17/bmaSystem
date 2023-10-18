@@ -12,9 +12,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         return 'valid';
     });
     Route::get('/applicant/information', [ApplicantController::class, 'applicant_information']);
-    Route::post('/applicant/store-information', [ApplicantController::class, 'applicant_store_information']);
+    Route::post('/applicant/information', [ApplicantController::class, 'applicant_store_information']);
     Route::get('/applicant/registration-form', [ApplicantController::class, 'applicant_registration_form']);
-    Route::post('/applicant/document-requirement-upload',[ApplicantController::class,'file_upload']);
+    Route::post('/applicant/document-requirement-upload', [ApplicantController::class, 'file_upload']);
+    Route::post('/applicant/payment-transaction', [ApplicantController::class, 'payment_transaction']);
     Route::post('/applicant/logout', [ApplicantController::class, 'applicant_logout']);
 });
 /* Route::middleware('auth:sanctum,applicant')->group(function () {

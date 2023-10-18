@@ -7,6 +7,7 @@ use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
+use App\Models\ApplicantPayment;
 use App\Models\Documents;
 use App\Report\ApplicantReport;
 use Exception;
@@ -26,8 +27,11 @@ class ApplicantController extends Controller
             ->where('documents.is_removed', false)
             ->get();
         $documents = $data->applicant_documents;
-        $documents = compact('documents', 'listOfDocuments');
-        return response(['data' => $data, 'documents' => $documents], 200);
+        $approvedDocuments = $data->applicant_documents_status();
+        $documents = compact('documents', 'listOfDocuments', 'approvedDocuments');
+        $payment = $data->payments;
+        $examination = compact('payment');
+        return response(['data' => $data, 'documents' => $documents, 'examination' => $examination], 200);
     }
     public function applicant_store_information(Request $_request)
     {
@@ -137,6 +141,15 @@ class ApplicantController extends Controller
             'file' => 'required| mimes:jpg,bmp,png',
         ]);
         try {
+            # If verify the Document Data
+            $documentChecker = ApplicantDocuments::where([
+                'applicant_id' => Auth::user()->id,
+                'document_id' => $request->document, 'is_removed' => false
+            ])->first();
+            if ($documentChecker) {
+                $documentChecker->is_removed = true;
+                $documentChecker->save();
+            }
             $fileLink = $this->saveApplicantFile($request->file, 'bma-applicants', 'documents');
             $_data = [
                 'applicant_id' => Auth::user()->id,
@@ -146,6 +159,38 @@ class ApplicantController extends Controller
             ];
             $data = ApplicantDocuments::create($_data);
             return $data;
+        } catch (\Throwable $error) {
+            $this->debugTrackerApplicant($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function payment_transaction(Request $request)
+    {
+        $request->validate([
+            'transaction_date' => 'required',
+            'amount_paid' => 'required',
+            'reference_number' => 'required',
+            'file' => 'required| mimes:jpg,bmp,png',
+        ]);
+        try {
+            $user = auth()->user();
+            $paymentHistory = ApplicantPayment::find($user->id);
+            if ($paymentHistory) {
+                $paymentHistory->is_removed = true;
+                $paymentHistory->save();
+            }
+            $fileLink = $this->saveApplicantFile($request->file, 'bma-applicants', 'proofOfPayment');
+            $data = array(
+                'applicant_id' => $user->id,
+                'amount_paid'  => str_replace(',', '', $request->amount_paid),
+                'reference_number' => $request->reference_number,
+                'transaction_type' => 'entrance-examination-payment',
+                'reciept_attach_path' => $fileLink
+            );
+            ApplicantPayment::create($data);
+            return response(['message' => 'Successfully Submit of your Payment'], 200);
         } catch (\Throwable $error) {
             $this->debugTrackerApplicant($error);
             return response([

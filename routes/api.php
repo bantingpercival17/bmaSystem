@@ -1,19 +1,15 @@
 <?php
 
-use App\Http\Controllers\Api\ApplicantController;
-use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ShipboardTraining;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\StudentSubjectsController;
 use App\Http\Controllers\PaymongoApi;
-use App\Models\ShipboardPerformanceReport;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
-
+use Mews\Captcha\Facades\Captcha;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,15 +21,21 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
-//Route::post('/login', [AuthController::class, 'login']);
-//Route::post('/register', [AuthController::class, 'register']);
-
-//Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
-/* Route::middleware('auth:applicant')->group(function () {
-    Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
-}); */
-
-
+Route::get('/form-recaptcha', function () {
+    try {
+        $captcha = Captcha::src('default');
+        /*  return response()->json([
+            'captcha' => $captcha['sensitive'],
+            'captcha_image' => $captcha['image'],
+        ]); */
+        return response()->json(['captcha' => Captcha::img()]);
+    } catch (\Throwable $error) {
+        return response([
+            'message' => $error->getMessage()
+        ], 402);
+    }
+    /* return response()->json(['captcha' => Captcha::img()]); */
+});
 Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
 Route::post('/student/forget-password', [AuthController::class, 'student_forget_password']);
 Route::get('/csrf-token', function (Request $request) {
@@ -107,7 +109,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('student/onboard/assessment/finish', [ShipboardTraining::class, 'finish_onboard_assessment']);
     // ACADEMIC
     Route::get('/student/subject-lists', [StudentSubjectsController::class, 'subject_lists']);
-    Route::get('/student/subject-lists/view',[StudentSubjectsController::class,'subject_view']);
+    Route::get('/student/subject-lists/view', [StudentSubjectsController::class, 'subject_view']);
     Route::get('/student/semestral-grade', [StudentController::class, 'semestral_grade']);
 
     // LOGOUT

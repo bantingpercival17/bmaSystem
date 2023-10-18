@@ -12,7 +12,8 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
 {
     use HasApiTokens, HasFactory/* , Notifiable */;
 
-    protected $connection = 'mysql2';
+    protected $connection = 'mysql';
+    protected $table = 'applicant_accounts';
     protected $fillable = [
         'name',
         'email',
@@ -43,7 +44,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
 
     public function applicant_documents()
     {
-        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false)->orderBy('document_id');
+        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false)->with('staff')->orderBy('document_id');
     }
     public function applicant_documents_status()
     {
