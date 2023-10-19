@@ -29,7 +29,7 @@ class ApplicantController extends Controller
         $documents = $data->applicant_documents;
         $approvedDocuments = $data->applicant_documents_status();
         $documents = compact('documents', 'listOfDocuments', 'approvedDocuments');
-        $payment = $data->payments;
+        $payment = $data->payment;
         $examination = compact('payment');
         return response(['data' => $data, 'documents' => $documents, 'examination' => $examination], 200);
     }
@@ -170,13 +170,13 @@ class ApplicantController extends Controller
     {
         $request->validate([
             'transaction_date' => 'required',
-            'amount_paid' => 'required',
+            'amount_paid' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
             'reference_number' => 'required',
             'file' => 'required| mimes:jpg,bmp,png',
         ]);
         try {
             $user = auth()->user();
-            $paymentHistory = ApplicantPayment::find($user->id);
+            $paymentHistory = ApplicantPayment::where('applicant_id', $user->id)->where('is_removed', false)->first();
             if ($paymentHistory) {
                 $paymentHistory->is_removed = true;
                 $paymentHistory->save();

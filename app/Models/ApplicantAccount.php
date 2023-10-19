@@ -94,7 +94,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     }
     public function applicant_payments()
     {
-        return $this->select('applicant_accounts.*')->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')->whereNull('is_approved')->where('applicant_payments.is_removed', false)->get();
+        return $this->select('applicant_accounts.*')->join('bma_website.applicant_payments', 'bma_website.applicant_payments.applicant_id', 'applicant_accounts.id')->whereNull('is_approved')->where('bma_website.applicant_payments.is_removed', false)->get();
     }
     public function payment()
     {
