@@ -22,6 +22,6 @@ class ExaminationCategory extends Model
     }
     public function question()
     {
-        return $this->hasMany(ExaminationQuestion::class, 'category_id');
+        return $this->hasMany(ExaminationQuestion::class, 'category_id')->where('is_removed', false);
     }
 }

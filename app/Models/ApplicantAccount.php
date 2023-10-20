@@ -92,9 +92,9 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
         //return ApplicantAccount::where('name', 'like', '%' . $_data . '%')->with('applicant_details')->get();
         return $this->where('name', 'like', '%' . request()->input('_applicants') . '%')->orWhere('applicant_number', 'like', '%' . request()->input('_applicants') . '%')->get();
     }
-    public function applicant_payments()
+    public function  applicant_payments()
     {
-        return $this->select('applicant_accounts.*')->join('bma_website.applicant_payments', 'bma_website.applicant_payments.applicant_id', 'applicant_accounts.id')->whereNull('is_approved')->where('bma_website.applicant_payments.is_removed', false)->get();
+        return $this->select('applicant_accounts.*')->join(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id')->whereNull('is_approved')->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)->get();
     }
     public function payment()
     {

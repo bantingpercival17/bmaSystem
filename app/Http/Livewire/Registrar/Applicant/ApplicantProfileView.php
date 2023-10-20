@@ -33,6 +33,11 @@ class ApplicantProfileView extends Component
         $this->profile = request()->query('_applicant') ? ApplicantAccount::find(base64_decode(request()->query('_applicant'))) : $this->profile;
         $this->selectCategories = request()->query('_catergory') ?: $this->selectCategories;
         $applicantView = new ApplicantView();
+        if ($this->profile) {
+            $approvedDocuments = $this->profile->applicant_documents_status();
+            $this->activeTab = $approvedDocuments ? $this->activeTab : 'documents';
+        }
+
         #$dataLists = $this->filterData();
         $dataLists = $applicantView->filterApplicantData($this->searchInput, $this->selectCourse, $this->selectCategories, $this->academic);
         return view('livewire.registrar.applicant.applicant-profile-view', compact('filterContent', 'filterCourses', 'dataLists'));

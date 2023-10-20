@@ -7,8 +7,10 @@ use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
+use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantPayment;
 use App\Models\Documents;
+use App\Models\Examination;
 use App\Report\ApplicantReport;
 use Exception;
 use Illuminate\Http\Request;
@@ -30,7 +32,8 @@ class ApplicantController extends Controller
         $approvedDocuments = $data->applicant_documents_status();
         $documents = compact('documents', 'listOfDocuments', 'approvedDocuments');
         $payment = $data->payment;
-        $examination = compact('payment');
+        $examinationDetails = $payment ? $data->applicant_examination : [];
+        $examination = compact('payment', 'examinationDetails');
         return response(['data' => $data, 'documents' => $documents, 'examination' => $examination], 200);
     }
     public function applicant_store_information(Request $_request)
@@ -150,7 +153,7 @@ class ApplicantController extends Controller
                 $documentChecker->is_removed = true;
                 $documentChecker->save();
             }
-            $fileLink = $this->saveApplicantFile($request->file, 'bma-applicants', 'documents');
+            $fileLink[] = $this->saveApplicantFile($request->file, 'bma-applicants', 'documents');
             $_data = [
                 'applicant_id' => Auth::user()->id,
                 'document_id' => $request->document,
@@ -195,6 +198,42 @@ class ApplicantController extends Controller
             $this->debugTrackerApplicant($error);
             return response([
                 'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function examination_verification(Request $request)
+    {
+        $request->validate([
+            'examination' => 'required'
+        ]);
+        try {
+            $user = auth()->user();
+            $examinationVerification = ApplicantEntranceExamination::where('applicant_id', $user->id)->where('examination_code', $request->examination)->where('is_removed', false)->first();
+            if (!$examinationVerification) {
+                return response(['errors' => ['examination' => ['Examination Code is Invalid']]], 422);
+            }
+            $examinationVerification->is_finish = 0;
+            $examinationVerification->examination_start = now();
+            $examinationVerification->save();
+            return response(['data' => 'Examination Code Verified'], 200);
+        } catch (\Throwable $th) {
+            $this->debugTrackerApplicant($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    function examination_questions()
+    {
+        try {
+            $user = auth()->user();
+            $department = $user->course_id === 3 ? 'SENIOR HIGHSCHOOL' : 'COLLEGE';
+            $examination = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department', $department)->first();
+            return response([], 200);
+        } catch (\Throwable $th) {
+            $this->debugTrackerApplicant($th);
+            return response([
+                'message' => $th->getMessage()
             ], 500);
         }
     }
