@@ -97,17 +97,21 @@ footer {
 
 #footer {
     position: fixed;
-    left: 0;
-    right: 0;
+    left: 10px;
+    right: 10px;
     color: #aaa;
     font-size: 0.9em;
 }
 
 #footer {
-    text-align: right;
-    bottom: 10px;
+    bottom: 40px;
 }
-
+.timestamp{
+    float: left;
+}
+.page-number{
+    float: right;
+}
 .page-number::after {
     content: "Page " counter(page);
 }

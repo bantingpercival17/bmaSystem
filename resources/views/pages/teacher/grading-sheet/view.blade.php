@@ -2,8 +2,8 @@
 @section('page-title', 'Grading Sheet')
 @section('page-content')
     @php
-    $_subject_data = $_subject->submitted_grade('ad1', request()->input('_period'));
-    $_grade_status = $_subject_data ? $_subject_data->is_approved === 1 ? 'disabled' : '' : '';
+        $_subject_data = $_subject->submitted_grade('ad1', request()->input('_period'));
+        $_grade_status = $_subject_data ? ($_subject_data->is_approved === 1 ? 'disabled' : '') : '';
     @endphp
     <div class="card p-0">
         <div class="card-body">
@@ -49,8 +49,9 @@
                                             <div class="form-group ">
                                                 <input type="hidden" name="_section"
                                                     value="{{ Crypt::encrypt($_subject->id) }}">
-                                                <input class="form-control form-control-sm border border-primary" type="file" id="customFile"
-                                                    name="_file_grade" required {{ $_grade_status }}>
+                                                <input class="form-control form-control-sm border border-primary"
+                                                    type="file" id="customFile" name="_file_grade" required
+                                                    {{ $_grade_status }}>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -67,7 +68,8 @@
                                     DOWNLOAD TEMPLATE
                                 </small> <br>
                                 <label for="" class=""><a class="badge bg-primary"
-                                        href="{{ route('teacher.export-grade') . '?_subject=' . request()->input('_subject') . '&_period=' . request()->input('_period') }}">Grading Sheet Template.xlsx</a></label>
+                                        href="{{ route('teacher.export-grade') . '?_subject=' . request()->input('_subject') . '&_period=' . request()->input('_period') }}">Grading
+                                        Sheet Template.xlsx</a></label>
 
                             </div>
                         </div>
@@ -230,6 +232,9 @@
         </div>
     </div>
 
+    @php
+        $cNum = 1;
+    @endphp
     <div class="card p-0">
         <div class="card-body table-responsive p-0">
             <main class="main-table">
@@ -251,6 +256,9 @@
                                 <th class="pin text-primary fw-bolder">STUDENT NO. - COMPLETE NAME</th>
                                 @foreach ($_columns as $col)
                                     @for ($i = 1; $i <= $col[2]; $i++)
+                                        @php
+                                            $cNum += 1;
+                                        @endphp
                                         <th class=" text-center table-bordered text-primary fw-bolder">
                                             {{ strtoupper($col[1]) . $i }}
                                         </th>
@@ -262,25 +270,33 @@
                             @if ($_students->count() > 0)
                                 @foreach ($_students as $_key => $_student)
                                     <tr>
-                                        <th class="text-primary fw-bolder">
+                                        <th
+                                            class={{ $_student->student->enrollment_assessment_paid->enrollment_cancellation ? 'text-danger fw-bolder' : 'text-primary fw-bolder' }}>
                                             {{ $_student->student->account ? $_student->student->account->student_number : '-' }}
                                             -
                                             {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
                                         </th>
-                                        @foreach ($_columns as $col)
-                                            @for ($i = 1; $i <= $col[2]; $i++)
-                                                <td class="text-center table-bordered">
-                                                    @php
-                                                        $_score = $_student->student->subject_score([$_subject->id, request()->input('_period'), $col[1] . $i]);
-                                                    @endphp
-                                                    <input type="text" class="score-cell"
-                                                        style="width: 38px; font-size:12px" value="{{ $_score }}"
-                                                        data-student="{{ $_student->student->id }}"
-                                                        data-category="{{ $col[1] . $i }}"
-                                                        data-section="{{ $_subject->id }}" {{ $_grade_status }}>
-                                                </td>
-                                            @endfor
-                                        @endforeach
+                                        @if ($_student->student->enrollment_assessment_paid->enrollment_cancellation)
+                                            <td colspan="{{ $cNum }}" class="text-danger fw-bolder">STUDENT
+                                                DROPPED</td>
+                                        @else
+                                            @foreach ($_columns as $col)
+                                                @for ($i = 1; $i <= $col[2]; $i++)
+                                                    <td class="text-center table-bordered">
+                                                        @php
+                                                            $_score = $_student->student->subject_score([$_subject->id, request()->input('_period'), $col[1] . $i]);
+                                                        @endphp
+                                                        <input type="text" class="score-cell"
+                                                            style="width: 38px; font-size:12px"
+                                                            value="{{ $_score }}"
+                                                            data-student="{{ $_student->student->id }}"
+                                                            data-category="{{ $col[1] . $i }}"
+                                                            data-section="{{ $_subject->id }}" {{ $_grade_status }}>
+                                                    </td>
+                                                @endfor
+                                            @endforeach
+                                        @endif
+
 
                                     </tr>
                                 @endforeach

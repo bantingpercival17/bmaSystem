@@ -81,7 +81,10 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
             ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
-            ->whereNull('student_cancellations.id')
+            ->where(function ($query) {
+                $query->whereNull('student_cancellations.id')
+                    ->orWhere('student_cancellations.type_of_cancellations','dropped');
+            })
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
         if ($data === 1) {
@@ -103,7 +106,7 @@ class CourseOffer extends Model
             ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('enrollment_assessments.year_level', $data)
             ->where('enrollment_assessments.is_removed', false)
-            ->where('payment_transactions.is_removed', false)/* 
+            ->where('payment_transactions.is_removed', false)/*
             ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
             ->whereNull('student_cancellations.id') */
             ->groupBy('enrollment_assessments.id')
