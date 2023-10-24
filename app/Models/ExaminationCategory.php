@@ -24,4 +24,8 @@ class ExaminationCategory extends Model
     {
         return $this->hasMany(ExaminationQuestion::class, 'category_id')->where('is_removed', false);
     }
+    function question_lists()
+    {
+        return $this->hasMany(ExaminationQuestion::class, 'category_id')->select('id','category_id','question','image_path')->with('choices_v2')->where('is_removed', false);
+    }
 }

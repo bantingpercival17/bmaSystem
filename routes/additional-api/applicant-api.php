@@ -18,6 +18,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/applicant/payment-transaction', [ApplicantController::class, 'payment_transaction']);
     Route::post('/applicant/examination', [ApplicantController::class, 'examination_verification']);
     Route::get('/applicant/examination', [ApplicantController::class, 'examination_questions']);
+    Route::post('/applicant/examination/answer', [ApplicantController::class, 'examination_answer']);
+    Route::post('/applicant/examination/finish', [ApplicantController::class, 'examination_finish']);
     Route::post('/applicant/logout', [ApplicantController::class, 'applicant_logout']);
 });
 /* Route::middleware('auth:sanctum,applicant')->group(function () {

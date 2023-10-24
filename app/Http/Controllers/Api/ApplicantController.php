@@ -8,6 +8,8 @@ use App\Models\ApplicantAccount;
 use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
 use App\Models\ApplicantEntranceExamination;
+use App\Models\ApplicantExaminationAnswer;
+use App\Models\ApplicantExaminationEssay;
 use App\Models\ApplicantPayment;
 use App\Models\Documents;
 use App\Models\Examination;
@@ -223,13 +225,68 @@ class ApplicantController extends Controller
             ], 500);
         }
     }
-    function examination_questions()
+    function examination_questions(Request $request)
     {
         try {
             $user = auth()->user();
             $department = $user->course_id === 3 ? 'SENIOR HIGHSCHOOL' : 'COLLEGE';
             $examination = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department', $department)->first();
-            return response([], 200);
+            $questionLists =  $examination->category_lists;
+            $applicantExamination = ApplicantEntranceExamination::where('applicant_id', $user->id)->where('examination_code', base64_decode($request->code))->first();
+            if ($applicantExamination) {
+                return response(['examinationDetails' => $applicantExamination, 'questionLists' => $questionLists], 200);
+            } else {
+                return response(['message' => 'Invalid Examination Code'], 401);
+            }
+        } catch (\Throwable $th) {
+            $this->debugTrackerApplicant($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    function examination_answer(Request $request)
+    {
+        try {
+            $verify = ApplicantExaminationAnswer::where('examination_id', $request->examination)->where('question_id', $request->question)->first();
+            if ($verify) {
+                $verify->choices_id = $request->choices;
+                $verify->save();
+            } else {
+                ApplicantExaminationAnswer::create([
+                    'examination_id' => $request->examination,
+                    'question_id' => $request->question,
+                    'choices_id' => $request->choices,
+                ]);
+            }
+        } catch (\Throwable $th) {
+            $this->debugTrackerApplicant($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    function examination_finish(Request $request)
+    {
+        try {
+            // Find Examination the Request examination id
+            $examination = ApplicantEntranceExamination::find($request->examination);
+            $examination->is_finish = true;
+            $examination->save();
+            // If the Student Finish the Examination On Essay
+            $essay = ApplicantExaminationEssay::where('examination_id', $request->examination)->first();
+            if ($essay) {
+                $essay->essay_answer =  base64_encode($request->essay);
+                $essay->save();
+            } else {
+                ApplicantExaminationEssay::create([
+                    'examination_id' => $request->examination,
+                    'essay_answer' => base64_encode($request->essay),
+                    'is_removed' => false
+                ]);
+            }
+
+            return response(['data' => 'Examination Complete'], 200);
         } catch (\Throwable $th) {
             $this->debugTrackerApplicant($th);
             return response([
