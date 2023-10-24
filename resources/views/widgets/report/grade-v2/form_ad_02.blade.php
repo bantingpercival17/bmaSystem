@@ -68,40 +68,50 @@
                             <td style="padding-left: 10px;">
                                 {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
                             </td>
-                            <td class="text-center">
-                                {{ $_student->student->period_final_grade('midterm') }}
-                            </td>
-                            <td class="text-center">
-                                <b>
-                                    {{ $_student->student->point_grade('midterm') }}</b>
-                            </td>
-                            <td class="text-center">
-                                @if ($_subject->academic_id >= 5)
-                                    {{ $_student->student->total_final_grade() }}
-                                @else
-                                    {{ $_student->student->period_final_grade('finals') }}</b>
-                                @endif
 
-                            </td>
-                            <td class="text-center">
-                                <b>
-                                    @if ($_subject->academic_id >= 5)
-                                        {{ $_student->student->total_final_grade() !== '' ? $_student->student->point_grade('finals') : 'INC' }}
-                                    @else
-                                        {{ $_student->student->point_grade('finals') }}
+                            @if ($_student->student->enrollment_assessment_paid->enrollment_cancellation)
+                                <td colspan="5" class="text-danger fw-bolder text-center">STUDENT
+                                    DROPPED</td>
+                            @else
+                                <td class="text-center">
+                                    {{ $_student->student->period_final_grade('midterm') }}
+                                </td>
+                                <td class="text-center">
+                                    @if ($_student->student->point_grade('midterm') !== '')
+                                        <b>
+                                            {{ $_student->student->point_grade('midterm') }}</b>
                                     @endif
-                                </b>
-                            </td>
-                            <td class="text-center fw-bolder">
-                                <b>
+                                </td>
+                                <td class="text-center">
+
                                     @if ($_subject->academic_id >= 5)
-                                        {{ $_student->student->total_final_grade() !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : '' }}
+                                        {{ $_student->student->total_final_grade() }}
                                     @else
-                                        {{ $_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED' }}
+                                        {{ $_student->student->period_final_grade('finals') }}</b>
                                     @endif
 
-                                </b>
-                            </td>
+                                </td>
+                                <td class="text-center">
+                                    <b>
+                                        @if ($_subject->academic_id >= 5)
+                                            {{ $_student->student->total_final_grade() !== '' ? $_student->student->point_grade('finals') : 'INC' }}
+                                        @else
+                                            {{ $_student->student->point_grade('finals') }}
+                                        @endif
+                                    </b>
+                                </td>
+                                <td class="text-center fw-bolder">
+                                    <b>
+                                        @if ($_subject->academic_id >= 5)
+                                            {{ $_student->student->total_final_grade() !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : '' }}
+                                        @else
+                                            {{ $_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED' }}
+                                        @endif
+
+                                    </b>
+                                </td>
+                            @endif
+
                         </tr>
                         @if ($contentNumber >= $contentCount)
                             @php

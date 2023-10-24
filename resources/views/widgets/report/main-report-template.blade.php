@@ -12,7 +12,7 @@
 
 <body>
     <header>
-        <label for="" class="form-code">BMA FORM  @yield('form-code')</label>
+        <label for="" class="form-code">BMA FORM @yield('form-code')</label>
         <div class="text-center">
             <img src="{{ public_path() . '/assets/image/report-header.png' }}" alt="page-header">
         </div>
@@ -21,6 +21,15 @@
         @yield('content')
     </div>
     <div id="footer">
+        <div class="timestamp">
+            <span>
+            @if (Auth::user())
+            GENERETED BY: <b>{{Auth::user()->name}}</b>
+            @endif
+
+            </span> <br>
+            <span>DATE: <b>{{now()}}</b></span>
+        </div>
         <div class="page-number"></div>
     </div>
 </body>

@@ -9,4 +9,9 @@ class ApplicantExaminationAnswer extends Model
 {
     use HasFactory;
     protected $connection = 'mysql2';
+    protected $fillable = [
+        'examination_id',
+        'question_id',
+        'choices_id'
+    ];
 }

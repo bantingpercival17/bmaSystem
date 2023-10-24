@@ -46,7 +46,7 @@
 
                 </div>
                 <div class="">
-                    {{ $dataLists }}
+                   {{--  {{ $dataLists }} --}}
                 </div>
                 <div class="data-content">
                     @forelse ($dataLists as $data)

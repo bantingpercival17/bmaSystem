@@ -25,6 +25,7 @@ use App\Models\Documents;
 use App\Models\EducationalDetails;
 use App\Models\EnrollmentAssessment;
 use App\Models\Examination;
+use App\Models\ExaminationCategory;
 use App\Models\ParentDetails;
 use App\Models\PaymentAssessment;
 use App\Models\PaymentTransaction;
@@ -677,7 +678,12 @@ class AdministratorController extends Controller
         Excel::import(new ImportExamination($_request->exam), $_file);
         return back()->with('success', 'Excel File Successfully Imported');
     }
-
+    function examination_category_view(Request $request)
+    {
+        $category =  ExaminationCategory::find(base64_decode($request->_view));
+        #return $category->question;
+        return view('pages.administrator.examination.question_view', compact('category'));
+    }
     public function student_account_details(Request $_request)
     {
         $_student = StudentDetails::find(90);
