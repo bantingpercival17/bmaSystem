@@ -135,10 +135,6 @@
                             QrCode::style('round', 0.5)->eye('square')->size(140)->generate(
                                     $student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $student->student->last_name)),
                                 ),
-<<<<<<< HEAD
-                        ) !!} "> <br>
-                        {{ $student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $student->student->last_name.'-'.$student->student->first_name)) }}
-=======
                         ) !!} "> --}} <br>
                         @php
                             $name = strtoupper($student->student->last_name . ', ' . $student->student->first_name . ' ' . $student->student->middle_initial);
@@ -146,7 +142,6 @@
                         @endphp
                         {{ $name }}
                         {{-- {{ $student->student->account->student_number . '.' . mb_strtolower(str_replace(' ', '', $student->student->last_name)) }} --}}
->>>>>>> 7d39c10837b01f42506176c354756752f2f55d5a
                     </div>
                 </td>
             @empty
