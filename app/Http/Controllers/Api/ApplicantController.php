@@ -10,10 +10,13 @@ use App\Models\ApplicantDocuments;
 use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantExaminationAnswer;
 use App\Models\ApplicantExaminationEssay;
+use App\Models\ApplicantExaminationSchedule;
 use App\Models\ApplicantPayment;
 use App\Models\Documents;
 use App\Models\Examination;
+use App\Models\ExaminationCategory;
 use App\Report\ApplicantReport;
+use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +38,32 @@ class ApplicantController extends Controller
         $documents = compact('documents', 'listOfDocuments', 'approvedDocuments');
         $payment = $data->payment;
         $examinationDetails = $payment ? $data->applicant_examination : [];
-        $examination = compact('payment', 'examinationDetails');
+        $examinationSchedule = $examinationDetails ? $data->examination_schedule : [];
+        $examinationResult = [];
+        $finalResult = [];
+        if ($examinationDetails) {
+            if ($examinationDetails->finish) {
+                $user = auth()->user();
+                $department = $user->course_id === 3 ? 'SENIOR HIGHSCHOOL' : 'COLLEGE';
+                $examinationCategory = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department', $department)->with('categories')->first();
+                $finalResult = $examinationDetails->examination_result();
+                foreach ($examinationCategory->categories as $key => $value) {
+                    $score = ApplicantExaminationAnswer::join(env('DB_DATABASE') . '.examination_questions as examination_question', 'examination_question.id', 'applicant_examination_answers.question_id')
+                        ->join(env('DB_DATABASE') . '.examination_question_choices as choices', 'choices.id', 'applicant_examination_answers.choices_id')
+                        ->where('applicant_examination_answers.examination_id', $examinationDetails->id)
+                        ->where('examination_question.category_id', $value->id)
+                        ->where('applicant_examination_answers.is_removed', false)
+                        ->where('choices.is_answer', true)
+                        ->get();
+                    $examinationResult[] = array(
+                        'examinationCategory' => $value->category_name,
+                        'totalItems' => count($value->question),
+                        'score' => count($score)
+                    );
+                }
+            }
+        }
+        $examination = compact('payment', 'examinationDetails', 'examinationSchedule', 'examinationResult', 'finalResult');
         return response(['data' => $data, 'documents' => $documents, 'examination' => $examination], 200);
     }
     public function applicant_store_information(Request $_request)
@@ -196,6 +224,35 @@ class ApplicantController extends Controller
             );
             ApplicantPayment::create($data);
             return response(['message' => 'Successfully Submit of your Payment'], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerApplicant($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function examination_scheduled(Request $request)
+    {
+        $request->validate([
+            'schedule' => 'required',
+            'schedule_time' => 'required|',
+        ]);
+        try {
+            $user = auth()->user();
+            $schedule = ApplicantExaminationSchedule::where('applicant_id', $user->id)->where('is_removed', false)->first();
+            $dateString = $request->schedule;
+            $date = DateTime::createFromFormat('D M d Y', $dateString);
+            $formattedDate = $date->format('Y-m-d');
+            $scheduleDate =  $formattedDate . ' ' . $request->schedule_time . ':00';
+            //return response(['message' => $scheduleDate]);
+            if (!$schedule) {
+                ApplicantExaminationSchedule::create([
+                    'applicant_id' => $user->id,
+                    'examination_id' => $user->applicant_examination->id,
+                    'schedule_date' => $scheduleDate
+                ]);
+            }
+            return response(['message' => 'Examination Scheduled Save.']);
         } catch (\Throwable $error) {
             $this->debugTrackerApplicant($error);
             return response([
