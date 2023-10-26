@@ -37,7 +37,6 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             'FIRST NAME',
             'MIDDLE NAME',
             'EXTENSION NAME',
-            'FULL NAME',
             'GUARDIAN NAME',
             'GUARDIAN CONTACT NUMBER',
             'GUARDIAN ADDRESS',
@@ -63,11 +62,8 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             $_data->student->account ?  $_data->student->account->email : "-",
             $_data->student->last_name,
             $_data->student->first_name,
-            $_data->student->middle_name,
+            $_data->student->middle_initial,
             $_data->student->extention_name,
-            $_data->student->last_name . ", " .
-                $_data->student->first_name . ' ' .
-                $_data->student->middle_name . ' ' . $_data->student->extetion,
             $_parents ? $_parents->guardian_first_name . ' ' . $_parents->guardian_last_name : '',
             $_parents ? $_parents->guardian_contact_number : '',
             $_parents ? $_parents->guardian_address :
@@ -82,7 +78,7 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getStyle('A1:Z1')->applyFromArray([
+                $event->sheet->getStyle('A1:F1')->applyFromArray([
                     'font' => [
                         'bold' => true,
                     ],
