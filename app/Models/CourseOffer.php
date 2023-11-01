@@ -83,7 +83,7 @@ class CourseOffer extends Model
             ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
             ->where(function ($query) {
                 $query->whereNull('student_cancellations.id')
-                    ->orWhere('student_cancellations.type_of_cancellations','dropped');
+                    ->orWhere('student_cancellations.type_of_cancellations', 'dropped');
             })
             ->groupBy('enrollment_assessments.id')
             ->orderBy('payment_transactions.created_at', 'DESC');
@@ -847,8 +847,8 @@ class CourseOffer extends Model
                     '(SELECT ((COUNT(eqc.is_answer)/' .
                         $_item .
                         ")*100) as exam_result
-                FROM bma_website.applicant_examination_answers as aea
-                inner join bma_portal.examination_question_choices as eqc
+                FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
+                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -904,8 +904,8 @@ class CourseOffer extends Model
                     '(SELECT ((COUNT(eqc.is_answer)/' .
                         $_item .
                         ")*100) as exam_result
-                FROM bma_website.applicant_examination_answers as aea
-                inner join bma_portal.examination_question_choices as eqc
+                FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
+                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -1012,8 +1012,7 @@ class CourseOffer extends Model
                 '>=',
                 $_documents,
             )
-            ->where('applicant_payments.is_approved', 0)
-            ;
+            ->where('applicant_payments.is_approved', 0);
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
@@ -1063,8 +1062,8 @@ class CourseOffer extends Model
                     '(SELECT ((COUNT(eqc.is_answer)/' .
                         $_item .
                         ")*100) as exam_result
-                FROM bma_website.applicant_examination_answers as aea
-                inner join bma_portal.examination_question_choices as eqc
+                FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
+                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -1123,8 +1122,8 @@ class CourseOffer extends Model
                     '(SELECT ((COUNT(eqc.is_answer)/' .
                         $_item .
                         ")*100) as exam_result
-                FROM bma_website.applicant_examination_answers as aea
-                inner join bma_portal.examination_question_choices as eqc
+                FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
+                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -1183,8 +1182,8 @@ class CourseOffer extends Model
                     '(SELECT ((COUNT(eqc.is_answer)/' .
                         $_item .
                         ")*100) as exam_result
-                FROM bma_website.applicant_examination_answers as aea
-                inner join bma_portal.examination_question_choices as eqc
+                FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
+                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -1244,8 +1243,8 @@ class CourseOffer extends Model
                     '(SELECT ((COUNT(eqc.is_answer)/' .
                         $_item .
                         ")*100) as exam_result
-                FROM bma_website.applicant_examination_answers as aea
-                inner join bma_portal.examination_question_choices as eqc
+                FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
+                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),

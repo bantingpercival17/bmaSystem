@@ -95,8 +95,8 @@ class ApplicantView extends Component
             case 'created_accounts':
                 $dataLists = $query->leftJoin($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                     ->whereNull($this->tblApplicantDetails . '.applicant_id');
-                /*  $dataLists = $query->leftJoin('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')
-                    ->whereNull('bma_website.applicant_detials.applicant_id'); */
+                /*  $dataLists = $query->leftJoin(env('DB_DATABASE_SECOND').'.applicant_detials', env('DB_DATABASE_SECOND').'.applicant_detials.applicant_id', 'applicant_accounts.id')
+                    ->whereNull(env('DB_DATABASE_SECOND').'.applicant_detials.applicant_id'); */
                 break;
             case 'registered_applicants':
                 $dataLists = $query
