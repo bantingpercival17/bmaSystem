@@ -8,8 +8,8 @@ class GradingSheetReport
 {
     public $student;
     public $subject;
-    public $legal = [];
-    public $super_legal = [];
+    public $legal = "";
+    public $super_legal = "";
     public function __construct($_student, $_subject)
     {
         $this->student = $_student;
