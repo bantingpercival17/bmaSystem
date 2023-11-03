@@ -383,7 +383,7 @@ class StudentDetails extends Model
             ->where('type', 'like', 'Q%')
             ->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'Q1']);
-        return $cellOne >= 0 ? number_format($computetion, 2) : '';
+        return $cellOne !== null ? number_format($computetion, 2) : '';
     }
     public function oral_average($_period)
     {
@@ -398,7 +398,7 @@ class StudentDetails extends Model
             ->where('type', 'like', 'O%')
             ->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'O1']);
-        return $cellOne >= 0 ? number_format($computetion, 2) : '';
+        return $cellOne !== null ? number_format($computetion, 2) : '';
     }
     public function research_work_average($_period)
     {
@@ -413,7 +413,7 @@ class StudentDetails extends Model
             ->where('type', 'like', 'R%')
             ->average('score') * $_percent;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, 'R1']);
-        return $cellOne >= 0 ? number_format($computetion, 2) : '';
+        return $cellOne !== null ? number_format($computetion, 2) : '';
     }
     public function examination_average($_period)
     {
@@ -422,7 +422,7 @@ class StudentDetails extends Model
         $_percent = $_subject_class->academic->id > 4 ? 0.45 : 0.55;
         $cellOne = $this->subject_score([$_subject_class->id, $_period, strtoupper($_period)[0] . 'E1']);
         $computetion = $cellOne * $_percent;
-        return $cellOne >= 0 ? number_format($computetion, 2) : '';
+        return $cellOne !== null ? number_format($computetion, 2) : '';
     }
     public function lecture_grade_v2($_period)
     {

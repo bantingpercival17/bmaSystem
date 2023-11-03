@@ -43,7 +43,11 @@ class DeanController extends Controller
             $_students = $_subject->section->student_sections;
         }
         $_report = new GradingSheetReport($_students, $_subject);
-        return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+        if ($_request->version) {
+            return $_report->form_ad_01_v1_1($_request->_period);
+        } else {
+            return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+        }
     }
     public function e_clearance_view(Request $_request)
     {

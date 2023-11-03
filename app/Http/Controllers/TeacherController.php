@@ -110,7 +110,12 @@ class TeacherController extends Controller
         if ($_request->_preview) {
             // Report View
             $_report = new GradingSheetReport($_students, $_subject);
-            return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+            if ($_request->version) {
+
+                return $_report->form_ad_01_v1($_columns);
+            } else {
+                return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+            }
         } else {
             // Grading Sheet
             return view('pages.teacher.grading-sheet.view', compact('_subject', '_students', '_columns'));
@@ -265,7 +270,7 @@ class TeacherController extends Controller
             ->orderBy('student_details.last_name', 'ASC')
             ->where('ss.is_removed', false)
             ->get();
-        $_file_name = $_subject->curriculum_subject->subject->subject_code . "-" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_subject->section->section_name))) . '-'.strtoupper($_request->_period).'-' . date('dmYhms');
+        $_file_name = $_subject->curriculum_subject->subject->subject_code . "-" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_subject->section->section_name))) . '-' . strtoupper($_request->_period) . '-' . date('dmYhms');
         $_respond =  Excel::download(new GradeTemplate($_students, $_subject), $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
         ob_end_clean();
         return $_respond;
