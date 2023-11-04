@@ -101,6 +101,12 @@
                                 data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period=finals&_preview=pdf&_form=ad2">
                                 FORM AD-02
                             </span>
+                            {{-- <span type="button" class="badge bg-info btn-form-grade" data-bs-toggle="modal" data-bs-target=".grade-view-modal" data-grade-url="{{ route('teacher.grading-sheet-report') }}?class={{ base64_encode($_subject->id) }}&period={{ request()->input('_period') }}&form=ad1">
+                            FORM AD-01
+                        </span>
+                        <span type="button" class="badge bg-primary btn-form-grade mt-2" data-bs-toggle="modal" data-bs-target=".grade-view-modal" data-grade-url="{{ route('teacher.grading-sheet-report') }}?class={{ base64_encode($_subject->id) }}&period=finals&form=ad2">
+                            FORM AD-02
+                        </span> --}}
                         </div>
                     </div>
                     <div class="form-group m-0 p-0">
@@ -256,10 +262,7 @@
                                 <th class="pin text-primary fw-bolder">STUDENT NO. - COMPLETE NAME</th>
                                 @foreach ($_columns as $col)
                                     @for ($i = 1; $i <= $col[2]; $i++)
-                                        @php
-                                            $cNum += 1;
-                                        @endphp
-                                        <th class=" text-center table-bordered text-primary fw-bolder">
+                                        @php $cNum +=1; @endphp <th class=" text-center table-bordered text-primary fw-bolder">
                                             {{ strtoupper($col[1]) . $i }}
                                         </th>
                                     @endfor
@@ -276,7 +279,7 @@
                                             -
                                             {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
                                         </th>
-                                        @if ($_student->student->enrollment_assessment_paid->enrollment_cancellation)
+                                        @if ($_student->student->enrollment_academic_year($subject->academic->id)->enrollment_cancellation)
                                             <td colspan="{{ $cNum }}" class="text-danger fw-bolder">STUDENT
                                                 DROPPED</td>
                                         @else
@@ -314,8 +317,15 @@
     <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
-                </iframe>
+                <div class="modal-header">
+                    <label for="" class="h6 fw-bolder text-primary">GRADE PRE-VIEW</label>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body p-0">
+                    <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
+                    </iframe>
+                </div>
             </div>
         </div>
     </div>
@@ -323,9 +333,16 @@
 @endsection
 @section('js')
     <script>
+        let previewLink = null
         $(document).on('click', '.btn-form-grade', function(evt) {
-            console.log($(this).data('grade-url'))
-            $('.form-view').attr('src', $(this).data('grade-url'))
+            if (previewLink != null) {
+                previewLink = null
+                $('.form-view').attr('src', previewLink)
+            }
+            previewLink = $(this).data('grade-url')
+            $('.form-view').attr('src', previewLink)
+
+
         });
         $(document).on('keydown', '.score-cell', function(e) {
             // Allow the numberica number only the inputs

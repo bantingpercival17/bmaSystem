@@ -75,6 +75,15 @@ class StudentDetails extends Model
             ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
             ->orderBy('enrollment_assessments.id', 'desc');
     }
+    function enrollment_academic_year($academic)
+    {
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+            ->select('enrollment_assessments.*')
+            ->where('enrollment_assessments.academic_id', $academic)
+            ->where('enrollment_assessments.is_removed', 0)
+            ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+            ->orderBy('enrollment_assessments.id', 'desc')->first();
+    }
     /* Enrollment Assessment Base on the Selected Academic Year */
     public function enrollment_assessment_v2()
     {
@@ -259,9 +268,9 @@ class StudentDetails extends Model
     }
     public function subject_average_score($_data)
     {
-        $_subject_class = SubjectClass::find($_data[0]);
+        $subjectClass = SubjectClass::find($_data[0]);
         // Set the for Formula by Academic
-        if ($_subject_class->academic_id > 4) {
+        if ($subjectClass->academic_id > 4) {
             $_percent = $_data['2'] == 'Q' ? 0.15 : ($_data['2'] == 'O' || $_data['2'] == 'R' ? 0.2 : 0.45);
         } else {
             $_percent = $_data['2'] == 'Q' || $_data['2'] == 'O' || $_data['2'] == 'R' ? 0.15 : 0.55;
@@ -284,16 +293,16 @@ class StudentDetails extends Model
         foreach ($_categories as $key => $value) {
             $_tScore += $this->subject_average_score([$_data[0], $_data[1], $value]);
         }
-        $_subject_class = SubjectClass::find($_data[0]);
-        $_percent = $_subject_class->academic_id > 4 ? 0.5 : 0.4;
+        $subjectClass = SubjectClass::find($_data[0]);
+        $_percent = $subjectClass->academic_id > 4 ? 0.5 : 0.4;
         return $_tScore * $_percent;
     }
 
     public function laboratory_grade($_data)
     {
         // Get the Percentage
-        $_subject_class = SubjectClass::find($_data[0]);
-        $_percent = $_subject_class->academic_id > 4 ? 0.5 : 0.6;
+        $subjectClass = SubjectClass::find($_data[0]);
+        $_percent = $subjectClass->academic_id > 4 ? 0.5 : 0.6;
         // Compute Laboratory Grades
         return $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $_data[0])
@@ -320,9 +329,9 @@ class StudentDetails extends Model
         $midtermLaboratoryItem = $this->laboratory_item([$_data, 'midterm']);
         $finalGradeLecture = $this->lecture_grade([$_data, 'finals']);
         $finalGradeLaboratory = $this->laboratory_grade([$_data, 'finals']);
-        $_subject_class = SubjectClass::find($_data);
-        if ($_subject_class->academic_id >= 5) {
-            if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
+        $subjectClass = SubjectClass::find($_data);
+        if ($subjectClass->academic_id >= 5) {
+            if ($subjectClass->curriculum_subject->subject->laboratory_hours > 0) {
                 if ($midtermGradeLecture > 0) {
                     $_final_grade = $_period == 'midterm' ? $midtermGradeLecture + $midtermGradeLaboratory : $finalGradeLecture + $finalGradeLaboratory;
                 } else {
@@ -370,69 +379,62 @@ class StudentDetails extends Model
         return $_percentage;
     }
     /* Formula Revision */
-    public function quizzes_average($_period)
+    public function quizzes_average($_period, $subjectClass)
     {
-        $_subject_class = base64_decode(request()->input('_subject'));
-        $_subject_class = SubjectClass::find($_subject_class);
         $_percent = 0.15;
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
-            ->where('subject_class_id', $_subject_class->id)
+            ->where('subject_class_id', $subjectClass->id)
             ->where('period', $_period)
             ->where('is_removed', false)
             ->where('type', 'like', 'Q%')
             ->average('score') * $_percent;
-        $cellOne = $this->subject_score([$_subject_class->id, $_period, 'Q1']);
+        $cellOne = $this->subject_score([$subjectClass->id, $_period, 'Q1']);
         return $cellOne !== null ? number_format($computetion, 2) : '';
     }
-    public function oral_average($_period)
+    public function oral_average($_period, $subjectClass)
     {
-        $_subject_class = base64_decode(request()->input('_subject'));
-        $_subject_class = SubjectClass::find($_subject_class);
-        $_percent = $_subject_class->academic->id > 4 ? 0.2 : 0.15;
+
+        $_percent = $subjectClass->academic->id > 4 ? 0.2 : 0.15;
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
-            ->where('subject_class_id', $_subject_class->id)
+            ->where('subject_class_id', $subjectClass->id)
             ->where('period', $_period)
             ->where('is_removed', false)
             ->where('type', 'like', 'O%')
             ->average('score') * $_percent;
-        $cellOne = $this->subject_score([$_subject_class->id, $_period, 'O1']);
+        $cellOne = $this->subject_score([$subjectClass->id, $_period, 'O1']);
         return $cellOne !== null ? number_format($computetion, 2) : '';
     }
-    public function research_work_average($_period)
+    public function research_work_average($_period, $subjectClass)
     {
-        $_subject_class = base64_decode(request()->input('_subject'));
-        $_subject_class = SubjectClass::find($_subject_class);
-        $_percent = $_subject_class->academic->id > 4 ? 0.2 : 0.15;
+        $_percent = $subjectClass->academic->id > 4 ? 0.2 : 0.15;
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
-            ->where('subject_class_id', $_subject_class->id)
+            ->where('subject_class_id', $subjectClass->id)
             ->where('period', $_period)
             ->where('is_removed', false)
             ->where('type', 'like', 'R%')
             ->average('score') * $_percent;
-        $cellOne = $this->subject_score([$_subject_class->id, $_period, 'R1']);
+        $cellOne = $this->subject_score([$subjectClass->id, $_period, 'R1']);
         return $cellOne !== null ? number_format($computetion, 2) : '';
     }
-    public function examination_average($_period)
+    public function examination_average($_period, $subjectClass)
     {
-        $_subject_class = base64_decode(request()->input('_subject'));
-        $_subject_class = SubjectClass::find($_subject_class);
-        $_percent = $_subject_class->academic->id > 4 ? 0.45 : 0.55;
-        $cellOne = $this->subject_score([$_subject_class->id, $_period, strtoupper($_period)[0] . 'E1']);
+        $subjectClass = base64_decode(request()->input('_subject'));
+        $subjectClass = SubjectClass::find($subjectClass);
+        $_percent = $subjectClass->academic->id > 4 ? 0.45 : 0.55;
+        $cellOne = $this->subject_score([$subjectClass->id, $_period, strtoupper($_period)[0] . 'E1']);
         $computetion = $cellOne * $_percent;
         return $cellOne !== null ? number_format($computetion, 2) : '';
     }
-    public function lecture_grade_v2($_period)
+    public function lecture_grade_v2($period, $subjectClass)
     {
-        $_subject_class = base64_decode(request()->input('_subject'));
-        $_subject_class = SubjectClass::find($_subject_class);
-        $quiz = $this->quizzes_average($_period);
-        $oral = $this->oral_average($_period);
-        $research = $this->research_work_average($_period);
-        $examination = $this->examination_average($_period);
-        $_percent = $_subject_class->academic_id > 4 ? 0.5 : 0.4;
+        $quiz = $this->quizzes_average($period, $subjectClass);
+        $oral = $this->oral_average($period, $subjectClass);
+        $research = $this->research_work_average($period, $subjectClass);
+        $examination = $this->examination_average($period, $subjectClass);
+        $_percent = $subjectClass->academic_id > 4 ? 0.5 : 0.4;
         $grade = '';
         if ($quiz !== '' && $oral !== '' && $research !== '' && $examination !== '') {
             $grade = ($quiz + $oral + $research + $examination) * $_percent;
@@ -441,57 +443,52 @@ class StudentDetails extends Model
         return $grade;
     }
 
-    public function laboratory_grade_v2($_period)
+    public function laboratory_grade_v2($period, $subjectClass)
     {
-        $_subject_class = base64_decode(request()->input('_subject'));
-        $_subject_class = SubjectClass::find($_subject_class);
-        $_percent = $_subject_class->academic_id > 4 ? 0.5 : 0.6;
+        $_percent =  $subjectClass->academic_id > 4 ? 0.5 : 0.6;
         // Compute Laboratory Grades
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
-            ->where('subject_class_id', $_subject_class->id)
-            ->where('period', $_period)
+            ->where('subject_class_id', $subjectClass->id)
+            ->where('period', $period)
             ->where('type', 'like', 'A%')
             ->where('is_removed', false)
             ->average('score') * $_percent;
-        $cellOne = $this->subject_score([$_subject_class->id, $_period, 'A1']);
+        $cellOne = $this->subject_score([$subjectClass->id, $period, 'A1']);
         return $cellOne ? number_format($computetion, 2) : '';
     }
-    public function period_final_grade($_period)
+    public function period_final_grade($_period, $subjectClass)
     {
-        // Get the Subject Class
-        $_subject_class = SubjectClass::find(base64_decode(request()->input('_subject')));
         // Final Grade
         $final_grade = '';
         // New Formula
-        if ($_subject_class->academic_id >= 5) {
+        if ($subjectClass->academic_id >= 5) {
             // Full Computetion Lecture & Laboratory
-            if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0 && $_subject_class->curriculum_subject->subject->lecture_hours > 0) {
-                if ($this->lecture_grade_v2($_period) !== '' && $this->laboratory_grade_v2($_period) !== '') {
-                    $final_grade = number_format($this->lecture_grade_v2($_period) + $this->laboratory_grade_v2($_period), 2);
+            if ($subjectClass->curriculum_subject->subject->laboratory_hours > 0 && $subjectClass->curriculum_subject->subject->lecture_hours > 0) {
+                if ($this->lecture_grade_v2($_period, $subjectClass) !== '' && $this->laboratory_grade_v2($_period, $subjectClass) !== '') {
+                    $final_grade = number_format($this->lecture_grade_v2($_period, $subjectClass) + $this->laboratory_grade_v2($_period, $subjectClass), 2);
                 }
             } else {
                 // Laboratory
-                if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
-                    if ($this->laboratory_grade_v2($_period) !== '') {
-                        $final_grade = number_format($this->laboratory_grade_v2($_period) / 0.5, 2);
+                if ($subjectClass->curriculum_subject->subject->laboratory_hours > 0) {
+                    if ($this->laboratory_grade_v2($_period, $subjectClass) !== '') {
+                        $final_grade = number_format($this->laboratory_grade_v2($_period, $subjectClass) / 0.5, 2);
                     }
                 }
                 // Lecture
-                if ($_subject_class->curriculum_subject->subject->lecture_hours > 0) {
-                    if ($this->lecture_grade_v2($_period) !== '') {
-                        $final_grade = number_format($this->lecture_grade_v2($_period) / 0.5, 2);
+                if ($subjectClass->curriculum_subject->subject->lecture_hours > 0) {
+                    if ($this->lecture_grade_v2($_period, $subjectClass) !== '') {
+                        $final_grade = number_format($this->lecture_grade_v2($_period, $subjectClass) / 0.5, 2);
                     }
                 }
             }
         } else {
-            // Old Fornula
-
-            $midtermGradeLecture = $this->lecture_grade_v2('midterm');
-            $midtermGradeLaboratory = $this->laboratory_grade_v2('midterm');
+            // Old Formula
+            $midtermGradeLecture = $this->lecture_grade_v2('midterm', $subjectClass);
+            $midtermGradeLaboratory = $this->laboratory_grade_v2('midterm', $subjectClass);
             $midtermLaboratoryItem = $this->laboratory_item('midterm');
-            $finalGradeLecture = $this->lecture_grade_v2('finals');
-            $finalGradeLaboratory = $this->laboratory_grade_v2('finals');
+            $finalGradeLecture = $this->lecture_grade_v2('finals', $subjectClass);
+            $finalGradeLaboratory = $this->laboratory_grade_v2('finals', $subjectClass);
             if ($_period == 'midterm') {
                 if ($midtermLaboratoryItem > 0) {
                     $final_grade = $midtermGradeLecture + $midtermGradeLaboratory; // Midterm Grade Formula With Laboratory
@@ -520,75 +517,73 @@ class StudentDetails extends Model
         }
         return $final_grade;
     }
-    public function course_outcome_avarage()
+    public function course_outcome_avarage($subjectClass)
     {
-        $_subject_class = base64_decode(request()->input('_subject'));
-        $_subject_class = SubjectClass::find($_subject_class);
+        $subjectClass = base64_decode(request()->input('_subject'));
+        $subjectClass = SubjectClass::find($subjectClass);
         $_period = request()->input('_period');
         $computetion = $this->hasMany(GradeEncode::class, 'student_id')
-            ->where('subject_class_id', $_subject_class->id)
+            ->where('subject_class_id', $subjectClass->id)
             ->where('period', $_period)
             ->where('type', 'like', 'CO%')
             ->where('is_removed', false)
             ->average('score');
-        $cellOne = $this->subject_score([$_subject_class->id, $_period, 'CO1']);
+        $cellOne = $this->subject_score([$subjectClass->id, $_period, 'CO1']);
         return $cellOne ? number_format($computetion, 2) : '';
     }
-    public function total_final_grade()
+    public function total_final_grade($subjectClass)
     {
-        $_subject_class = SubjectClass::find(base64_decode(request()->input('_subject')));
         $total_final_grade = '';
         // Final Grade
-        $midterm_grade = $this->period_final_grade('midterm');
-        $finals_grade = $this->period_final_grade('finals'); // Finals Grade
-        $course_outcome_assessment = $this->course_outcome_avarage(); // Course Outcome
+        $midterm_grade = $this->period_final_grade('midterm', $subjectClass);
+        $finals_grade = $this->period_final_grade('finals', $subjectClass); // Finals Grade
+        $course_outcome_assessment = $this->course_outcome_avarage($subjectClass); // Course Outcome
         if ($midterm_grade !== '' && $finals_grade !== '' && $course_outcome_assessment !== '') {
             $total_final_grade = $midterm_grade * 0.32 + $finals_grade * 0.33 + $course_outcome_assessment * 0.35;
             $total_final_grade = number_format($total_final_grade, 2);
         }
         return $total_final_grade;
     }
-    public function point_grade($_period)
+    public function point_grade($_period, $subjectClass)
     {
-        $_subject_class = SubjectClass::find(base64_decode(request()->input('_subject')));
         // Period Grade
-        $grade = $this->period_final_grade($_period);
-        if ($_subject_class->academic_id >= 5 && $_period == 'finals') {
-            $grade = $this->total_final_grade();
+        $grade = $this->period_final_grade($_period, $subjectClass);
+        if ($subjectClass->academic_id >= 5 && $_period == 'finals') {
+            $grade = $this->total_final_grade($subjectClass);
         }
         // Final Grade
         $final_grade = '';
-        if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0 && $_subject_class->curriculum_subject->subject->lecture_hours > 0) {
-            if ($this->lecture_grade_v2($_period) !== '' && $this->laboratory_grade_v2($_period) !== '') {
+        if ($subjectClass->curriculum_subject->subject->laboratory_hours > 0 && $subjectClass->curriculum_subject->subject->lecture_hours > 0) {
+            if ($this->lecture_grade_v2($_period, $subjectClass) !== '' && $this->laboratory_grade_v2($_period, $subjectClass) !== '') {
                 $final_grade = $grade !== '' ? number_format($this->percentage_grade($grade), 2) : 'INC';
-                if ($_period == 'finals' && $this->total_final_grade() === '') {
+                if ($_period == 'finals' && $this->total_final_grade($subjectClass) === '') {
                     $final_grade = 'INC';
                 }
-            } else {
+            } /* else {
                 $final_grade = 'INC';
-            }
+            } */
         } else {
             // Laboratory
-            if ($_subject_class->curriculum_subject->subject->laboratory_hours > 0) {
-                if ($this->laboratory_grade_v2($_period) !== '') {
+            if ($subjectClass->curriculum_subject->subject->laboratory_hours > 0) {
+                if ($this->laboratory_grade_v2($_period, $subjectClass) !== '') {
                     $final_grade = $grade !== '' ? number_format($this->percentage_grade($grade), 2) : 'INC';
-                    if ($_period == 'finals' && $this->total_final_grade() === '') {
+                    if ($_period == 'finals' && $this->total_final_grade($subjectClass) === '') {
                         $final_grade = 'INC';
                     }
-                } else {
+                } /* else {
                     $final_grade = 'INC';
-                }
+                } */
             }
             // Lecture
-            if ($_subject_class->curriculum_subject->subject->lecture_hours > 0) {
-                if ($this->lecture_grade_v2($_period) !== '') {
+            if ($subjectClass->curriculum_subject->subject->lecture_hours > 0) {
+                if ($this->lecture_grade_v2($_period, $subjectClass) !== '') {
                     $final_grade = $grade !== '' ? number_format($this->percentage_grade($grade), 2) : 'INC';
-                    if ($_period == 'finals' && $this->total_final_grade() === '') {
+                    if ($_period == 'finals' && $this->total_final_grade($subjectClass) === '') {
                         $final_grade = 'INC';
                     }
-                } else {
+                } /* else {
                     $final_grade = 'INC';
-                }
+                } */
             }
         }
 

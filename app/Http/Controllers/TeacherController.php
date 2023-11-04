@@ -112,13 +112,33 @@ class TeacherController extends Controller
             $_report = new GradingSheetReport($_students, $_subject);
             if ($_request->version) {
 
-                return $_report->form_ad_01_v1($_columns);
+                return $_report->form_ad_01_v1_1($_request->_period);
             } else {
-                return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+                return $_request->_form == "ad1" ? $_report->form_ad_01_v1_1($_request->_period) : $_report->form_ad_02();
             }
         } else {
             // Grading Sheet
             return view('pages.teacher.grading-sheet.view', compact('_subject', '_students', '_columns'));
+        }
+    }
+    function subject_grading_view_report(Request $request)
+    {
+        try {
+            // Get the Subject Class Details
+            $subjectClass = SubjectClass::find(base64_decode($request->class));
+            // Get Subject Details base on the Subject Class Model
+            $subject = $subjectClass->curriculum_subject->subject;
+            // Get the Student List
+            $studentLists = $subject->subject_code == 'BRDGE' ? $subjectClass->section->student_with_bdg_sections : $subjectClass->section->student_sections;
+            // Call the Grading Sheet Report for Generate PDF Report
+            $pdfReport = new GradingSheetReport($studentLists, $subjectClass);
+
+            return $pdfReport->form_ad_01_v1_1($request->period);
+            // Return PDF report base on the form type if AD-01 or AD-02
+            #return $request->form == 'ad1' ? $pdfReport->form_ad_01_v1_1($request->period) : $pdfReport->form_ad_02();
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return  $th->getMessage();
         }
     }
     public function subject_grading_sheet_nstp(Request $_request)

@@ -83,7 +83,7 @@
                         <td style="padding-left: 10px;">
                             {{ strtoupper($student->student->last_name . ', ' . $student->student->first_name) }}
                         </td>
-                        @if ($student->student->enrollment_assessment_paid->enrollment_cancellation)
+                        @if ($student->student->enrollment_academic_year($subject->academic->id)->enrollment_cancellation)
                             <td colspan="{{ $totalColSpan }}" class="text-danger fw-bolder text-center">STUDENT
                                 DROPPED</td>
                         @else
@@ -100,58 +100,58 @@
                                             <b>
                                                 @if ($headerCount == 4)
                                                     <!--Quiz Average-->
-                                                    {{ $student->student->quizzes_average($period) }}
+                                                    {{ $student->student->quizzes_average($period, $subject) }}
                                                 @elseif($headerCount == 6)
                                                     <!-- Oral Average -->
-                                                    {{ $student->student->oral_average($period) }}
+                                                    {{ $student->student->oral_average($period, $subject) }}
                                                 @elseif($headerCount == 8)
-                                                    {{ $student->student->research_work_average($period) }}
+                                                    {{ $student->student->research_work_average($period, $subject) }}
                                                 @elseif($headerCount == 9)
                                                     {{ $student->student->subject_score([$subject->id, $period, strtoupper($period)[0] . 'E1']) }}
                                                 @elseif($headerCount == 10)
-                                                    {{ $student->student->examination_average($period) }}
+                                                    {{ $student->student->examination_average($period, $subject) }}
                                                 @else
                                                     @if (!$subject->curriculum_subject->subject->laboratory_hours > 0)
                                                         @if ($headerCount == 11)
-                                                            {{ $student->student->period_final_grade($period) }}
+                                                            {{ $student->student->period_final_grade($period, $subject) }}
                                                         @elseif($headerCount == 12)
                                                             @if ($period == 'midterm')
-                                                                {{ $student->student->point_grade($period) }}
+                                                                {{ $student->student->point_grade($period, $subject) }}
                                                             @else
                                                                 @if ($subject->academic->id >= 5)
-                                                                    {{ $student->student->course_outcome_avarage() }}
+                                                                    {{ $student->student->course_outcome_avarage($subject) }}
                                                                 @endif
                                                             @endif
                                                         @elseif($headerCount == 13)
                                                             @if ($subject->academic->id >= 5)
-                                                                {{ $student->student->total_final_grade() }}
+                                                                {{ $student->student->total_final_grade($subject) }}
                                                             @endif
                                                         @elseif($headerCount == 14)
-                                                            {{ $student->student->point_grade($period) }}
+                                                            {{ $student->student->point_grade($period, $subject) }}
                                                         @else
                                                             {{ $headerCount }}
                                                         @endif
                                                     @else
                                                         @if ($headerCount == 11)
-                                                            {{ $student->student->lecture_grade_v2($period) }}
+                                                            {{ $student->student->lecture_grade_v2($period, $subject) }}
                                                         @elseif($headerCount == 13)
-                                                            {{ $student->student->laboratory_grade_v2($period) }}
+                                                            {{ $student->student->laboratory_grade_v2($period, $subject) }}
                                                         @elseif($headerCount == 14)
-                                                            {{ $student->student->period_final_grade($period) }}
+                                                            {{ $student->student->period_final_grade($period, $subject) }}
                                                         @elseif($headerCount == 15)
                                                             @if ($period == 'midterm')
-                                                                {{ $student->student->point_grade($period) }}
+                                                                {{ $student->student->point_grade($period, $subject) }}
                                                             @else
                                                                 @if ($subject->academic->id >= 5)
-                                                                    {{ $student->student->course_outcome_avarage() }}
+                                                                    {{ $student->student->course_outcome_avarage($subject) }}
                                                                 @endif
                                                             @endif
                                                         @elseif($headerCount == 16)
                                                             @if ($subject->academic->id >= 5)
-                                                                {{ $student->student->total_final_grade() }}
+                                                                {{ $student->student->total_final_grade($subject) }}
                                                             @endif
                                                         @elseif($headerCount == 17)
-                                                            {{ $student->student->point_grade($period) }}
+                                                            {{ $student->student->point_grade($period, $subject) }}
                                                         @else
                                                             {{ $headerCount }}
                                                         @endif
@@ -175,56 +175,6 @@
             </tbody>
         </table>
         {{-- Signatories --}}
-        <div class="signatories">
-            <br>
-            <table class="table table-header ">
-                <tbody>
-                    <tr>
-                        <td>
-                            PREPARED BY:
-                        </td>
-                        <td>
-                            VALIDATED BY:
-                        </td>
-                        <td>
-                            APPROVED BY:
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <u>
-                                <b>{{ strtoupper($subject->staff->first_name . ' ' . $subject->staff->last_name) }}</b>
-                            </u>
-                        </td>
-                        <td>
-                            <u>
-                                @if ($subject->finals_grade_submission)
-                                    <b>{{ strtoupper($subject->finals_grade_submission->approved_by) }}</b>
-                                @endif
-
-                            </u>
-                        </td>
-                        <td>
-                            <u>
-                                <b>
-                                    {{ strtoupper('Capt. Maximo PestaÑo') }}
-                                </b>
-                            </u>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><small>Subject Teacher</small> </td>
-                        <td><small>Department Head</small> </td>
-                        <td><small>Dean of Maritime Studies</small> </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        @include('widgets.report.grade-v2.form_ad_signatories')
     </div>
 @endsection
