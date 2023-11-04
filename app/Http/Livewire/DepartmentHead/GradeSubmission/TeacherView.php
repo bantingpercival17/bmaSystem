@@ -31,7 +31,7 @@ class TeacherView extends Component
         # Get Department Head Id
         $department =  Role::where('name', 'department-head')->first();
         $user = Auth::user();
-        # Get the Details of the Department Head 
+        # Get the Details of the Department Head
         $department = StaffDepartment::where('role_id', $department->id)->where('staff_id', $this->user->staff->id)->where('is_active', true)->first();
         # Find the Teacher Role and get the ID
         $teacherRole = Role::where('name', 'teacher')->first();
@@ -108,7 +108,7 @@ class TeacherView extends Component
     function showDocuments($data, $period, $form)
     {
         $link = route('department-head.report-view') . '?_subject=' . base64_encode($data) . '&_preview=pdf&_period=' . $period . '&_form=' . $form;
-        /* 
+        /*
         {{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=midterm&_preview=pdf&_form=ad1"
         */
         $this->showModal = true;

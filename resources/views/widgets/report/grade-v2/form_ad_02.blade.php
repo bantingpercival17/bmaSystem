@@ -94,7 +94,7 @@
                                 <td class="text-center">
                                     <b>
                                         @if ($subject->academic_id >= 5)
-                                            {{ $_student->student->total_final_grade($subject) !== '' ? $_student->student->point_grade('finals', $subject) : 'INC' }}
+                                            {{ $_student->student->total_final_grade($subject) !== '' ? $_student->student->point_grade('finals', $subject) : '' }}
                                         @else
                                             {{ $_student->student->point_grade('finals', $subject) }}
                                         @endif

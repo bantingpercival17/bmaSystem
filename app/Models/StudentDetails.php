@@ -395,7 +395,7 @@ class StudentDetails extends Model
     public function oral_average($_period, $subjectClass)
     {
 
-        $_percent = $subjectClass->academic->id > 4 ? 0.2 : 0.15;
+        $_percent = $subjectClass->academic_id > 4 ? 0.2 : 0.15;
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $subjectClass->id)
@@ -408,7 +408,7 @@ class StudentDetails extends Model
     }
     public function research_work_average($_period, $subjectClass)
     {
-        $_percent = $subjectClass->academic->id > 4 ? 0.2 : 0.15;
+        $_percent = $subjectClass->academic_id > 4 ? 0.2 : 0.15;
         $computetion =
             $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $subjectClass->id)
@@ -421,9 +421,7 @@ class StudentDetails extends Model
     }
     public function examination_average($_period, $subjectClass)
     {
-        $subjectClass = base64_decode(request()->input('_subject'));
-        $subjectClass = SubjectClass::find($subjectClass);
-        $_percent = $subjectClass->academic->id > 4 ? 0.45 : 0.55;
+        $_percent = $subjectClass->academic_id > 4 ? 0.45 : 0.55;
         $cellOne = $this->subject_score([$subjectClass->id, $_period, strtoupper($_period)[0] . 'E1']);
         $computetion = $cellOne * $_percent;
         return $cellOne !== null ? number_format($computetion, 2) : '';
@@ -519,8 +517,6 @@ class StudentDetails extends Model
     }
     public function course_outcome_avarage($subjectClass)
     {
-        $subjectClass = base64_decode(request()->input('_subject'));
-        $subjectClass = SubjectClass::find($subjectClass);
         $_period = request()->input('_period');
         $computetion = $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $subjectClass->id)
