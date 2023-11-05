@@ -5,7 +5,7 @@
         </span>
     </div>
     <div class="card-body">
-        @forelse ($staffView->subject_handles as $item)
+        @forelse ($staffView->subject_handles_v2($academic) as $item)
             <div class="d-flex flex-wrap align-items-center justify-content-between">
                 <div class="d-flex flex-wrap align-items-center">
                     <div class="mb-sm-0">

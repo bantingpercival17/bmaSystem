@@ -35,7 +35,7 @@
                                                 <span class="fw-bolder">
                                                     @php
                                                         $_counts = 0;
-                                                        foreach ($employee->grade_submission_midterm as $_count) {
+                                                        foreach ($employee->grade_submission_v2($academic,'midterm') as $_count) {
                                                             if (!empty($_count->midterm_grade_submission)) {
                                                                 $_counts += 1;
                                                             }
@@ -44,7 +44,7 @@
                                                     <span class="text-info fw-bolder">{{ $_counts }}</span><small>
                                                         out of</small>
                                                     <span class="text-primary fw-bolder">
-                                                        {{ count($employee->subject_handles) }}
+                                                        {{ count($employee->subject_handles_v2($academic)) }}
                                                     </span>
                                                     <small>Submitted Grade</small>
                                                 </span>
@@ -55,7 +55,7 @@
                                                 <span class="fw-bolder">
                                                     @php
                                                         $_finals_counts = 0;
-                                                        foreach ($employee->grade_submission_finals as $_finals) {
+                                                        foreach ($employee->grade_submission_v2($academic,'midterm') as $_finals) {
                                                             if (!empty($_finals->finals_grade_submission)) {
                                                                 $_finals_counts += 1;
                                                             }
@@ -64,7 +64,7 @@
                                                     <span class="text-info fw-bolder">{{ $_finals_counts }}</span>
                                                     <small> out of</small>
                                                     <span class="text-primary fw-bolder">
-                                                        {{ count($employee->subject_handles) }}
+                                                        {{ count($employee->subject_handles_v2($academic)) }}
                                                     </span>
                                                     <small>Submitted Grade</small>
                                                 </span>
@@ -152,7 +152,7 @@
             <div class="data-content mt-4">
                 @forelse ($teacherLists as $item)
                     <a
-                        href="{{ route('department-head.grade-submission-v2') . '?staff=' . base64_encode($item->id) . (request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '') }}">
+                        href="{{ route('department-head.grade-submission-v2') . '?staff=' . base64_encode($item->id) . ($academic ? '&_academic=' . $academic : '') }}">
                         <div class="card mb-2 shadow mb-3">
                             <div class="row no-gutters">
                                 <div class="col-md-4 text-center">

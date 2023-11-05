@@ -11,7 +11,7 @@ Route::prefix('department-head')->middleware(['auth', 'department-head'])->group
     Route::get('/grade-submission/report-view', [DepartmentHeadController::class, 'subject_report_view'])->name('department-head.report-view');
     Route::post('/grade-submission/verification', [DepartmentHeadController::class, 'submission_verification'])->name('department-head.submission-verification');
     Route::get('/v2/grade-submission', TeacherView::class)->name('department-head.grade-submission-v2');
-
+Route::get('/v2/subject-grade-report',[DepartmentHeadController::class,'suject_grade_report_view'])->name('department-head.subject-grade-report-view');
     Route::get('/semestral-clearance', [DepartmentHeadController::class, 'e_clearance_view'])->name('department-head.e-clearance'); // List of Clearance
     Route::get('/semestral-clearance/view', [DepartmentHeadController::class, 'section_view_e_clearance'])->name('department-head.e-clearance-view'); // List of Clearance
     Route::post('/semestral-clearance/store', [DepartmentHeadController::class, 'store_student_clearance'])->name('department-head.store-e-clearance');

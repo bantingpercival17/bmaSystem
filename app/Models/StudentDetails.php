@@ -517,14 +517,13 @@ class StudentDetails extends Model
     }
     public function course_outcome_avarage($subjectClass)
     {
-        $_period = request()->input('_period');
         $computetion = $this->hasMany(GradeEncode::class, 'student_id')
             ->where('subject_class_id', $subjectClass->id)
-            ->where('period', $_period)
+            ->where('period', 'finals')
             ->where('type', 'like', 'CO%')
             ->where('is_removed', false)
             ->average('score');
-        $cellOne = $this->subject_score([$subjectClass->id, $_period, 'CO1']);
+        $cellOne = $this->subject_score([$subjectClass->id, 'finals', 'CO1']);
         return $cellOne ? number_format($computetion, 2) : '';
     }
     public function total_final_grade($subjectClass)
