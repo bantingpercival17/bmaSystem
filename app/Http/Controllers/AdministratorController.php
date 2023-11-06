@@ -69,7 +69,7 @@ class AdministratorController extends Controller
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
-        $_total_applicants = ApplicantAccount::join('bma_website.applicant_detials', 'bma_website.applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
+        $_total_applicants = ApplicantAccount::join(env('DB_DATABASE_SECOND').'.applicant_detials', env('DB_DATABASE_SECOND').'.applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
         return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population', '_total_applicants'));
     }
 

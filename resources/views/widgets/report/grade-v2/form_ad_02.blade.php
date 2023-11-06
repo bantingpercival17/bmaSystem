@@ -1,5 +1,5 @@
 @extends('widgets.report.main-report-template')
-@section('title-report', 'FORM AD 02 - GRADING SHEET : ' . $_subject->curriculum_subject->subject->subject_code)
+@section('title-report', 'FORM AD 02 - GRADING SHEET : ' . $subject->curriculum_subject->subject->subject_code)
 @section('form-code', 'AD - 02')
 @section('content')
     <div class="page-content">
@@ -12,20 +12,20 @@
             <tbody>
                 <tr>
                     <td style="width: 60%"><small>SUBJECT :</small>
-                        <span><b>{{ $_subject->curriculum_subject->subject->subject_code }}</b></span>
+                        <span><b>{{ $subject->curriculum_subject->subject->subject_code }}</b></span>
                     </td>
                     <td><small>SCHOOL YEAR:</small>
-                        <span><b>{{ $_subject->academic->school_year . ' | ' . $_subject->academic->semester }}</b></span>
+                        <span><b>{{ $subject->academic->school_year . ' | ' . $subject->academic->semester }}</b></span>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <small>COURSE:</small>
-                        <span><b>{{ $_subject->section->section_name }}</b></span>
+                        <span><b>{{ $subject->section->section_name }}</b></span>
                     </td>
                     <td>
                         <small>TEACHER:</small>
-                        <span><b>{{ $_subject->staff->first_name . ' ' . $_subject->staff->last_name }}</b></span>
+                        <span><b>{{ $subject->staff->first_name . ' ' . $subject->staff->last_name }}</b></span>
                     </td>
                 </tr>
             </tbody>
@@ -55,8 +55,8 @@
                 </tr>
             </thead>
             <tbody>
-                @if ($_students->count() > 0)
-                    @foreach ($_students as $_key => $_student)
+                @if ($students->count() > 0)
+                    @foreach ($students as $_key => $_student)
                         @php
                             $contentNumber += 1;
                         @endphp
@@ -69,43 +69,43 @@
                                 {{ strtoupper($_student->student->last_name . ', ' . $_student->student->first_name) }}
                             </td>
 
-                            @if ($_student->student->enrollment_assessment_paid->enrollment_cancellation)
+                            @if ($_student->student->enrollment_academic_year($subject->academic->id)->enrollment_cancellation)
                                 <td colspan="5" class="text-danger fw-bolder text-center">STUDENT
                                     DROPPED</td>
                             @else
                                 <td class="text-center">
-                                    {{ $_student->student->period_final_grade('midterm') }}
+                                    {{ $_student->student->period_final_grade('midterm', $subject) }}
                                 </td>
                                 <td class="text-center">
-                                    @if ($_student->student->point_grade('midterm') !== '')
+                                    @if ($_student->student->point_grade('midterm', $subject) !== '')
                                         <b>
-                                            {{ $_student->student->point_grade('midterm') }}</b>
+                                            {{ $_student->student->point_grade('midterm', $subject) }}</b>
                                     @endif
                                 </td>
                                 <td class="text-center">
 
-                                    @if ($_subject->academic_id >= 5)
-                                        {{ $_student->student->total_final_grade() }}
+                                    @if ($subject->academic_id >= 5)
+                                        {{ $_student->student->total_final_grade($subject) }}
                                     @else
-                                        {{ $_student->student->period_final_grade('finals') }}</b>
+                                        {{ $_student->student->period_final_grade('finals', $subject) }}</b>
                                     @endif
 
                                 </td>
                                 <td class="text-center">
                                     <b>
-                                        @if ($_subject->academic_id >= 5)
-                                            {{ $_student->student->total_final_grade() !== '' ? $_student->student->point_grade('finals') : 'INC' }}
+                                        @if ($subject->academic_id >= 5)
+                                            {{ $_student->student->total_final_grade($subject) !== '' ? $_student->student->point_grade('finals', $subject) : '' }}
                                         @else
-                                            {{ $_student->student->point_grade('finals') }}
+                                            {{ $_student->student->point_grade('finals', $subject) }}
                                         @endif
                                     </b>
                                 </td>
                                 <td class="text-center fw-bolder">
                                     <b>
-                                        @if ($_subject->academic_id >= 5)
-                                            {{ $_student->student->total_final_grade() !== '' ? ($_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED') : '' }}
+                                        @if ($subject->academic_id >= 5)
+                                            {{ $_student->student->total_final_grade($subject) !== '' ? ($_student->student->point_grade('finals', $subject) >= 5 ? 'FAILED' : 'PASSED') : '' }}
                                         @else
-                                            {{ $_student->student->point_grade('finals') >= 5 ? 'FAILED' : 'PASSED' }}
+                                            {{ $_student->student->point_grade('finals', $subject) >= 5 ? 'FAILED' : 'PASSED' }}
                                         @endif
 
                                     </b>
@@ -123,46 +123,8 @@
 
             </tbody>
         </table>
-        <div class="signatories">
-            <br>
-            <table class="table table-header ">
-                <tbody>
-                    <tr>
-                        <td>
-                            PREPARED BY:
-                        </td>
-                        <td>
-                            VALIDATED BY:
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <u>
-                                <b>{{ strtoupper($_subject->staff->first_name . ' ' . $_subject->staff->last_name) }}</b>
-                            </u>
-                        </td>
-                        <td>
-                            <u>
-                                @if ($_subject->finals_grade_submission)
-                                    <b>{{ strtoupper($_subject->finals_grade_submission->approved_by) }}</b>
-                                @endif
-
-                            </u>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><small>Subject Teacher</small> </td>
-                        <td><small>Department Head</small> </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        {{-- Signatories --}}
+        @include('widgets.report.grade-v2.form_ad_signatories')
     </div>
 
 @endsection

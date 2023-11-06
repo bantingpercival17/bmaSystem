@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\DepartmentHead\GradeSubmission;
 
+use App\Models\AcademicYear;
 use App\Models\Role;
 use App\Models\Staff;
 use App\Models\StaffDepartment;
@@ -22,16 +23,19 @@ class TeacherView extends Component
     public $finalsCard = false;
     public $showModal = false;
     public $documentLink = null;
+    public $academic;
     function mount()
     {
         $this->user = Auth::user();
     }
     public function render()
     {
+        # Get the academic year
+        $this->academic = $this->academicValue();
         # Get Department Head Id
         $department =  Role::where('name', 'department-head')->first();
         $user = Auth::user();
-        # Get the Details of the Department Head 
+        # Get the Details of the Department Head
         $department = StaffDepartment::where('role_id', $department->id)->where('staff_id', $this->user->staff->id)->where('is_active', true)->first();
         # Find the Teacher Role and get the ID
         $teacherRole = Role::where('name', 'teacher')->first();
@@ -61,11 +65,15 @@ class TeacherView extends Component
             'staff_departments.department_id'
         )
             ->join('staff_departments', 'staff_departments.staff_id', 'staff.id')
+            ->join('subject_classes', 'subject_classes.staff_id', 'staff.id')
+            ->where('subject_classes.academic_id', base64_decode($this->academic))
+            ->where('subject_classes.is_removed', false)
             ->where('staff_departments.role_id', $teacherRole->id)
             ->where('staff_departments.department_id', $department->department_id)
             ->where('staff.is_removed', false)
             ->orderBy('staff.last_name', 'asc')
-            ->orderBy('staff.first_name', 'asc');
+            ->orderBy('staff.first_name', 'asc')
+            ->groupBy('staff.id');
         # Search Staff Name
         if ($searchInput != '') {
             $value = explode(',', $searchInput); # Seperate the Word by coma
@@ -84,6 +92,18 @@ class TeacherView extends Component
         $teachers = $teachers->get();
         # Return value to the main function
         return $teachers;
+    }
+    function academicValue()
+    {
+        $data = $this->academic;
+        if ($this->academic == '') {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        }
+        if (request()->query('_academic')) {
+            $data = request()->query('_academic') ?: $this->academic;
+        }
+        return $data;
     }
     function setEmployee($data)
     {
@@ -107,8 +127,8 @@ class TeacherView extends Component
     }
     function showDocuments($data, $period, $form)
     {
-        $link = route('department-head.report-view') . '?_subject=' . base64_encode($data) . '&_preview=pdf&_period=' . $period . '&_form=' . $form;
-        /* 
+        $link = route('department-head.subject-grade-report-view') . '?class=' . base64_encode($data) . '&period=' . $period . '&form=' . $form;
+        /*
         {{ route('department-head.report-view') }}?_subject={{ base64_encode($_subject_class->id) }}&_period=midterm&_preview=pdf&_form=ad1"
         */
         $this->showModal = true;

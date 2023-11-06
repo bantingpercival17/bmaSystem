@@ -1,9 +1,8 @@
 @if ($subjectView)
     <div class="card shadow">
         <div class="card-header p-4">
-            <span class="float-end badge bg-primary"
-                wire:click="showDocuments('{{ $subjectView->id }}','finals','ad2')">FORM
-                AD-02</span>
+            <a class="float-end badge bg-primary" wire:click="showDocuments('{{ $subjectView->id }}','finals','ad2')">FORM
+                AD-02</a>
             <p class="h5 text-primary fw-bolder">
                 {{ $subjectView ? $subjectView->section->section_name : 'Section Name' }} -
                 {{ $subjectView ? $subjectView->curriculum_subject->subject->subject_code : 'Subject Name' }}
@@ -18,8 +17,8 @@
     <div class="card shadow">
         <div class="card-header p-4">
             @if ($midtermCard)
-                <span class="float-end badge bg-primary"
-                    wire:click="showDocuments('{{ $subjectView->id }}','midterm','ad1')">FORM AD-01 MIDTERM</span>
+                <a class="float-end badge bg-primary"
+                    wire:click="showDocuments('{{ $subjectView->id }}','midterm','ad1')">FORM AD-01 MIDTERM</a>
             @else
                 <span class="float-end badge bg-secondary">NO GRADE SUBMISSION</span>
             @endif
@@ -29,7 +28,7 @@
         </div>
         @if ($midtermCard)
             <div class="card-body">
-                {{--  <span class="text-muted fw-bolder">GRADING SHEET DETAILS</span> --}}
+                {{-- <span class="text-muted fw-bolder">GRADING SHEET DETAILS</span> --}}
                 @forelse ($subjectView->midterm_grade_remarks as $item)
                     <div class="row">
                         <div class="col-md-12">
@@ -109,7 +108,8 @@
     <div class="card shadow">
         <div class="card-header p-4">
             @if ($finalsCard)
-                <span class="float-end badge bg-primary" wire:click="showDocuments('{{ $subjectView->id }}','finals','ad1')">FORM AD-01 FINALS</span>
+                <a class="float-end badge bg-primary"
+                    wire:click="showDocuments('{{ $subjectView->id }}','finals','ad1')">FORM AD-01 FINALS</a>
             @else
                 <span class="float-end badge bg-secondary">NO GRADE SUBMISSION</span>
             @endif
@@ -119,7 +119,7 @@
         </div>
         @if ($finalsCard)
             <div class="card-body">
-                {{--  <span class="text-muted fw-bolder">GRADING SHEET DETAILS</span> --}}
+                {{-- <span class="text-muted fw-bolder">GRADING SHEET DETAILS</span> --}}
                 @forelse ($subjectView->finals_grade_remarks as $item)
                     <div class="row">
                         <div class="col-md-12">
@@ -198,21 +198,22 @@
     </div>
     @if ($showModal)
         <div class="fixed inset-0 flex items-center justify-center z-50">
-            <div class="modal fade show" style="display: block">
+            <div class="modal fade show"
+                style="display: block;
+            background-color: rgb(0 0 0 / 77%);
+            width: 100%;
+            height: 100%;">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header p-2">
-                            <h5 class="modal-title" id="exampleModalLabel1">GRADE PREVIEW</h5>
+                            <h5 class="text-primary fw-bolder">GRADE PREVIEW</h5>
                             <button type="button" class="btn-close" wire:click="hideDocuments">
                             </button>
                         </div>
                         <div class="modal-body p-0">
-                            {{--   <img src="{{ $documentLink }}" style=" width: 100%; " alt=""> --}}
-                           {{--  <iframe src="{{ $documentLink }}" class="i" style=" width: 100%; height:100vh;">
-                            </iframe> --}}
-                            <iframe class="form-view iframe-placeholder"src="{{ $documentLink }}" width="100%"
-                        height="600px">
-                    </iframe>
+                            <iframe class="form-view iframe-placeholder" src="{{ $documentLink }}" width="100%"
+                                height="600px">
+                            </iframe>
                         </div>
                     </div>
                 </div>

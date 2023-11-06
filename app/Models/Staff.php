@@ -52,17 +52,15 @@ class Staff extends Model
             ->where('academic_id', Auth::user()->staff->current_academic()->id)
             ->where('is_removed', false);
     }
+    public function subject_handles_v2($academic)
+    {
+        return $this->hasMany(SubjectClass::class, 'staff_id')
+            ->where('academic_id',base64_decode($academic))
+            ->where('is_removed', false)->get();
+    }
     public function grade_submission_midterm()
     {
         return $this->hasMany(SubjectClass::class, 'staff_id')->with('midterm_grade_submission')
-            ->where('subject_classes.academic_id', Auth::user()->staff->current_academic()->id)
-            ->where('subject_classes.is_removed', false);
-        return $this->hasMany(SubjectClass::class, 'staff_id')
-            ->leftJoin('grade_submissions as gs', 'gs.subject_class_id', 'subject_classes.id')
-            ->where('gs.form', 'ad1')
-            ->where('gs.period', 'midterm')
-            /*  ->where('gs.is_approved',true) *//* ->orWhere('gs.is_approved','=','null') */
-            ->with('midterm_grade_submission')
             ->where('subject_classes.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('subject_classes.is_removed', false);
     }
@@ -71,6 +69,14 @@ class Staff extends Model
         return $this->hasMany(SubjectClass::class, 'staff_id')->with('finals_grade_submission')
             ->where('subject_classes.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('subject_classes.is_removed', false);
+    }
+    // Grade Submission Version
+    function grade_submission_v2($academic, $period)
+    {
+        $gradeSubmission = $period == 'midterm' ? 'midterm_grade_submission' : 'finals_grade_submission';
+        return $this->hasMany(SubjectClass::class, 'staff_id')->with($gradeSubmission)
+        ->where('subject_classes.academic_id', base64_decode($academic))
+        ->where('subject_classes.is_removed', false)->get();
     }
     // Staff Attendance
     public function attendance()

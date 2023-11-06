@@ -65,7 +65,7 @@ class ApplicantEntranceExamination extends Model
         $_percent = $this->applicant->course_id != 3 ? $_transmutation_college : $_transmutation_shs;
         $_item =  $this->applicant->course_id == 3 ? 100 : 200;
         /*   return  $this->hasMany(ApplicantExaminationAnswer::class, 'examination_id')
-            ->join('bma_portal.examination_question_choices as eqc', 'eqc.id', 'bma_website.applicant_examination_answers.choices_id')
+            ->join(env("DB_DATABASE").'.examination_question_choices as eqc', 'eqc.id', env('DB_DATABASE_SECOND').'.applicant_examination_answers.choices_id')
             ->where('eqc.is_answer', true)->count(); */
         $_grade = $this->hasMany(ApplicantExaminationAnswer::class, 'examination_id')
             ->join(env('DB_DATABASE') . '.examination_question_choices as eqc', 'eqc.id', env('DB_DATABASE_SECOND') . '.applicant_examination_answers.choices_id')
