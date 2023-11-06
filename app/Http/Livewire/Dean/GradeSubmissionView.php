@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Dean;
 
 use App\Models\AcademicYear;
 use App\Models\CourseOffer;
+use App\Models\Section;
 use Livewire\Component;
 
 class GradeSubmissionView extends Component
@@ -18,7 +19,8 @@ class GradeSubmissionView extends Component
         # Get the academic year
         $this->academic = $this->academicValue();
         $courses = CourseOffer::all();
-        return view('livewire.dean.grade-submission-view',compact( 'courses'));
+        $sectionList = $this->sectionList($this->academic);
+        return view('livewire.dean.grade-submission-view', compact('courses', 'sectionList'));
     }
     function academicValue()
     {
@@ -32,5 +34,13 @@ class GradeSubmissionView extends Component
         }
         return $data;
     }
-
+    function sectionList($academic)
+    {
+        $section = Section::where('academic_id', base64_decode($academic))
+            ->where('is_removed', false)
+            ->where('course_id', '!=', 3)
+            ->orderBy('section_name', 'asc')
+            ->get();
+        return $section;
+    }
 }
