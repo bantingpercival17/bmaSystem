@@ -46,7 +46,7 @@ class DeanController extends Controller
         if ($_request->version) {
             return $_report->form_ad_01_v1_1($_request->_period);
         } else {
-            return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+            return $_request->_form == "ad1" ? $_report->form_ad_01_v1($_request->_period) : $_report->form_ad_02();
         }
     }
     public function e_clearance_view(Request $_request)
