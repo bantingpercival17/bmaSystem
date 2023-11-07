@@ -15,6 +15,7 @@ use App\Report\GradingSheetReport;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use ZipArchive;
 
 class DeanController extends Controller
 {
@@ -71,9 +72,66 @@ class DeanController extends Controller
     {
         try {
             $section = Section::find(base64_decode($section));
+            $current_academic =  strtoupper(str_replace(' ', '-', $section->academic->semester)) . '-' . $section->academic->school_year;
+            $filename = strtoupper(str_replace('/', '', $section->section_name)) . '-GRADE-FORM-AD02-' . $current_academic;
+            // Create a new zip archive
+            $zipFileName = $filename . '.zip';
+            $zip = new ZipArchive();
+            if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+                echo "Create Zip";
+                foreach ($section->subject_class as $key => $subjectClass) {
+                    $subject = $subjectClass->curriculum_subject->subject;
+                    // Get the Student List
+                    $studentLists = $subject->subject_code == 'BRDGE' ? $subjectClass->section->student_with_bdg_sections : $subjectClass->section->student_sections;
+                    // Call the Grading Sheet Report for Generate PDF Report
+                    $pdfReport = new GradingSheetReport($studentLists, $subjectClass);
+                    $filename = strtoupper($subjectClass->curriculum_subject->subject->subject_code) . "-FORM_AD_01_MIDTERM-" . $current_academic . '.pdf';
+                    $report = $pdfReport->form_ad_01_output('MIDTERM');
+                    $zip->addFromString($filename, $report); // Add the file to the zip archive
+
+                }
+                $zip->close();
+                return redirect(asset($zipFileName));
+                //unlink($zipFileName);
+            } else {
+                return back()->with('error', "Failed to create the zip archive.");
+            }
         } catch (\Throwable $th) {
             $this->debugTracker($th);
-            return  $th->getMessage();
+            return back()->with('error', 'Error while opening the zip archive: ' . $th->getMessage());
+        }
+    }
+    function section_export_grade_ad02($section)
+    {
+        try {
+            $section = Section::find(base64_decode($section));
+            $current_academic =  strtoupper(str_replace(' ', '-', $section->academic->semester)) . '-' . $section->academic->school_year;
+            $filename = strtoupper(str_replace('/', '', $section->section_name)) . '-GRADE-FORM-AD02-' . $current_academic;
+            // Create a new zip archive
+            $zipFileName = $filename . '.zip';
+            $zip = new ZipArchive();
+            if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+                echo "Create Zip";
+                foreach ($section->subject_class as $key => $subjectClass) {
+                    $subject = $subjectClass->curriculum_subject->subject;
+                    // Get the Student List
+                    $studentLists = $subject->subject_code == 'BRDGE' ? $subjectClass->section->student_with_bdg_sections : $subjectClass->section->student_sections;
+                    // Call the Grading Sheet Report for Generate PDF Report
+                    $pdfReport = new GradingSheetReport($studentLists, $subjectClass);
+                    $filename = strtoupper($subjectClass->curriculum_subject->subject->subject_code) . "-FORM_AD_02-" . $current_academic . '.pdf';
+                    $report = $pdfReport->form_ad_02_output();
+                    $zip->addFromString($filename, $report); // Add the file to the zip archive
+
+                }
+                $zip->close();
+                return redirect(asset($zipFileName));
+                //unlink($zipFileName);
+            } else {
+                return back()->with('error', "Failed to create the zip archive.");
+            }
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('error', 'Error while opening the zip archive: ' . $th->getMessage());
         }
     }
 
@@ -151,11 +209,10 @@ class DeanController extends Controller
     {
         try {
             $_subject_class = SubjectClass::find(base64_decode($_request->subject_class));
-
             $students = $_subject_class->section->student_sections;
             foreach ($students as $key => $student) {
-                $midterm_grade = $student->student->period_final_grade('midterm');
-                $final_grade = $_subject_class->academic_id >= 5 ? $student->student->total_final_grade() : $student->student->period_final_grade('finals');
+                $midterm_grade = $student->student->period_final_grade('midterm', $_subject_class);
+                $final_grade = $_subject_class->academic_id >= 5 ? $student->student->total_final_grade($_subject_class) : $student->student->period_final_grade('finals', $_subject_class);
                 $data = array(
                     'student_id' => $student->student->id,
                     'subject_class_id' => $_subject_class->id,

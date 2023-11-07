@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Grade Verification';
+    $_title = 'Grade Verification';
 @endphp
 @section('page-title', $_title)
 @section('page-mode', 'dark-mode')
@@ -17,7 +17,7 @@ $_title = 'Grade Verification';
         <li class="breadcrumb-item active" aria-current="page">
             <a
                 href="{{ route('dean.grade-verification-view') }}?_academic={{ base64_encode(Auth::user()->staff->current_academic()->id) }}">
-                {{ Auth::user()->staff->current_academic()->semester .' | ' .Auth::user()->staff->current_academic()->school_year }}
+                {{ Auth::user()->staff->current_academic()->semester . ' | ' . Auth::user()->staff->current_academic()->school_year }}
             </a>
         </li>
     @else
@@ -34,7 +34,7 @@ $_title = 'Grade Verification';
 
 @endsection
 @section('page-content')
-
+    <a href="{{ route('dean.grade-submission-v2') }}" class="btn btn-primary">New Version</a>
     <div class="row">
         @foreach ($_course as $course)
             <div class="card">

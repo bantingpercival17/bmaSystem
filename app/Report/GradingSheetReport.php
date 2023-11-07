@@ -61,7 +61,7 @@ class GradingSheetReport
         $totalColSpan = $this->subject->curriculum_subject->subject->laboratory_hours > 0 ? ($period == 'midterm' ? 44 : 46) : ($period == 'midterm' ? 32 : 43);
         $columns = $this->form_ad_header($period);
         $pdf = PDF::loadView("widgets.report.grade-v2.form_ad_01_v1", compact('students', 'subject', 'columns', 'totalColSpan', 'contentNumber', 'contentCount', 'period'));
-        $file_name = strtoupper($this->subject->curriculum_subject->subject->subject_code) . " - FORM AD 01";
+        $file_name = strtoupper($this->subject->curriculum_subject->subject->subject_code) . " - FORM AD 01 - " . strtoupper($period);
         return $pdf->setPaper($this->super_legal, 'landscape')->stream($file_name . '.pdf');
     }
     public function form_ad_02()
@@ -123,5 +123,25 @@ class GradingSheetReport
         }
 
         return array($mainHeader, $subHeader);
+    }
+    public function form_ad_01_output($period)
+    {
+        $subject = $this->subject;
+        $students = $this->student;
+        $contentNumber = 0;
+        $contentCount = 20;
+        $totalColSpan = $this->subject->curriculum_subject->subject->laboratory_hours > 0 ? ($period == 'midterm' ? 44 : 46) : ($period == 'midterm' ? 32 : 43);
+        $columns = $this->form_ad_header($period);
+        $pdf = PDF::loadView("widgets.report.grade-v2.form_ad_01_v1", compact('students', 'subject', 'columns', 'totalColSpan', 'contentNumber', 'contentCount', 'period'));
+        $file_name = strtoupper($this->subject->curriculum_subject->subject->subject_code) . "-FORM_AD_01-" . strtoupper($period);
+        return $pdf->setPaper($this->super_legal, 'landscape')->output();
+    }
+    function form_ad_02_output()
+    {
+        $subject = $this->subject;
+        $students = $this->student;
+        $pdf = PDF::loadView("widgets.report.grade-v2.form_ad_02", compact('students', 'subject'));
+        $file_name = strtoupper($this->subject->curriculum_subject->subject->subject_code) . "-FORM_AD_02-" . strtoupper($this->subject->academic->semester . "_" . $this->subject->academic->school_year);
+        return $pdf->setPaper($this->legal, 'portrait')->output();
     }
 }

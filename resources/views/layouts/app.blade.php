@@ -438,6 +438,9 @@
             boxes[0].classList.add("d-none");
             console.log('none')
         });
+        $(document).on('click', '.btn-form-grade', function(evt) {
+            $('.form-view').attr('src', $(this).data('grade-url'))
+        });
     </script>
     @yield('script')
 </body>
