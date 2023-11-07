@@ -32,6 +32,9 @@
                                                 <a href="{{ route('dean.grade-publish') }}?subject_class='{{ base64_encode($subjectClass->id) }}'&_subject={{ base64_encode($subjectClass->id) }}&_status=1&_period=finals"
                                                     class="btn btn-info btn-sm text-white w-100  mt-2">PUBLISH</a>
                                             @else
+                                                {{-- {{ $subjectClass->grade_final_verification->updated_at }} <br>
+                                                {{ $subjectClass->midterm_grade_submission->updated_at }} <br>
+                                                {{ $subjectClass->finals_grade_submission->updated_at }} --}}
                                                 @if (strtotime($subjectClass->grade_final_verification->updated_at) <
                                                         strtotime($subjectClass->midterm_grade_submission->updated_at) ||
                                                         strtotime($subjectClass->grade_final_verification->updated_at) <

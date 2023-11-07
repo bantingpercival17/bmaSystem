@@ -209,6 +209,9 @@ class DeanController extends Controller
     {
         try {
             $_subject_class = SubjectClass::find(base64_decode($_request->subject_class));
+            $grade = GradeVerification::where('subject_class_id', $_subject_class->id)->where('is_removed', false)->first();
+            $grade->is_removed = false;
+            $grade->save();
             $students = $_subject_class->section->student_sections;
             foreach ($students as $key => $student) {
                 $midterm_grade = $student->student->period_final_grade('midterm', $_subject_class);
