@@ -83,7 +83,7 @@
             <div class="card-footer p-3">
                 <form class="mt-3" action="{{ route('department-head.submission-verification') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="submission"
+                    <input type="hidden" name="_submission"
                         value="{{ base64_encode($subjectView->midterm_grade_submission->id) }}">
                     <input type="hidden" name="status" value="0">
                     <input type="text" class="form-control border border-primary" placeholder="Remarks"
@@ -95,7 +95,7 @@
                 </form>
                 <form action="{{ route('department-head.submission-verification') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="submission"
+                    <input type="hidden" name="_submission"
                         value="{{ base64_encode($subjectView->midterm_grade_submission->id) }}">
                     <input type="hidden" name="status" value="1">
                     <button class="btn btn-primary btn-sm float-end mt-2" type="submit">APPROVED

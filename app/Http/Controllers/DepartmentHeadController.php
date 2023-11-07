@@ -45,7 +45,7 @@ class DepartmentHeadController extends Controller
             $_students = $_subject->section->student_sections;
         }
         $_report = new GradingSheetReport($_students, $_subject);
-        return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+        return $_request->_form == "ad1" ? $_report->form_ad_01_v1_1($_request->_period) : $_report->form_ad_02();
     }
     function suject_grade_report_view(Request $request)
     {
