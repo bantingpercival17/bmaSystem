@@ -316,6 +316,16 @@ class ApplicantController extends Controller
             return back()->with('error', $error->getMessage());
         }
     }
+    public function appllicant_examination_result_v2(Request $request)
+    {
+        try {
+            $examination = ApplicantEntranceExamination::find(base64_decode($request->examination));
+            $report = new ApplicantReport();
+            return $report->applicant_examination_result_v2($examination);
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
     public function briefing_notification(Request $_request)
     {
         $applicant_email = [
@@ -578,7 +588,7 @@ class ApplicantController extends Controller
             $account = ApplicantNotQualified::where('applicant_id', $applicant_account->id)->where('is_removed', false)->first();
             $account->is_removed = true;
             $account->save();
-            
+
             return back()->with('success', 'Successfully Transact');
         } catch (\Throwable $th) {
             $this->debugTracker($th);

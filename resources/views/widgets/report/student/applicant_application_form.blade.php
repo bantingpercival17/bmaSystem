@@ -55,21 +55,25 @@
                     </td>
                     <td>
                         <small>HEIGHT: </small> <br>
-                        <b>{{ $_account->applicant->height }} Ft/In </b>
+                        <b>{{ $_account->applicant->height ? number_format($_account->applicant->height / 30.48, 1) . ' Ft/In' : '' }}
+                        </b>
                     </td>
                     <td>
                         <small>WEIGHT: </small> <br>
-                        <b> -{{ $_account->applicant->weight }} Kg</b>
+                        <b> {{ $_account->applicant->weight ? number_format($_account->applicant->weight / 2.205, 2) . ' Kg' : '' }}
+                        </b>
                     </td>
                     <td>
                         @php
                             $bmi = 0;
                             if ($_account->applicant->weight > 0 && $_account->applicant->height) {
-                                $bmi = 0;
+                                $weight = $_account->applicant->weight / 2.205;
+                                $height = $_account->applicant->height;
+                                $bmi = ($weight / $height / $height) * 10000;
                             }
                         @endphp
                         <small>BMI: </small> <br>
-                        <b> {{ $bmi }}</b>
+                        <b> {{ number_format($bmi, 2) }}</b>
                     </td>
                 </tr>
                 <tr class="m-0 p-0">

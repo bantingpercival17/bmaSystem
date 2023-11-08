@@ -34,6 +34,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/applicants/overview', ApplicantView::class)->name('applicant.overview');
     Route::get('/applicants/profile-view', ApplicantProfileView::class)->name('applicant.profile-view');
+    Route::get('/applicant/examination-logs-v2', [ApplicantController::class, 'applicant_examination_log_v2'])->name('applicant-examination-log-v2');
+    Route::get('/applicant/examination-result-v2', [ApplicantController::class, 'appllicant_examination_result_v2'])->name('applicant-examination-result-v2');
     Route::get('/applicants/verified', function () {
         $applicant = new ApplicantReport();
         return $applicant->applicant_vefied_list();

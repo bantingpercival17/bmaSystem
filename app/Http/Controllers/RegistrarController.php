@@ -8,6 +8,7 @@ use App\Exports\CurriculumSummaryGradeSheet;
 use App\Exports\SubjectScheduleTemplate;
 use App\Exports\SubjectScheduleWorkbook;
 use App\Exports\SummaryGradeSheet;
+use App\Http\Livewire\Registrar\Applicant\ApplicantView;
 use App\Imports\StudentSection as ImportsStudentSection;
 use App\Imports\SubjectScheduleImport;
 use App\Models\AcademicYear;
@@ -52,7 +53,26 @@ class RegistrarController extends Controller
             $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
             $_total_population = Auth::user()->staff->enrollment_count();
             $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
-            return view('pages.registrar.dashboard.view', compact('_academics', '_courses', '_total_population', '_total_applicants'));
+            $mainHeader = array(
+                array('COURSE', 1, NULL),
+                array('PRE-REGISTRATION', 1, NULL),
+                array('INFORMATION VERIFICATION', 3, NULL),
+                array('BMA-ALUMNUS', 1, NULL),
+                array('ENTRANCE EXAMINATION PAYMENT', 3, NULL),
+            );
+            $subHeader = array(
+                array('', 1, NULL),
+                array('', 1, 'registered_applicants'),
+                array('FOR CHECKING', 1, 'for_checking'),
+                array('QUALIFIED', 1, 'qualified'),
+                array('NOT QUALIFIED', 1, 'not_qualified'),
+                array('', 1, 'bma_alumnus'),
+                array('FOR PAYMENT', 1, 'qualified_for_entrance_examination'),
+                array('FOR VERIFICATION', 1, 'examination_payment'),
+                array('PAYMENT VERIFIED', 1, 'entrance_examination'),
+            );
+            $tableHeader = array($mainHeader, $subHeader);
+            return view('pages.registrar.dashboard.view', compact('_academics', '_courses', '_total_population', '_total_applicants', 'tableHeader'));
         } catch (Exception $err) {
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
@@ -411,7 +431,7 @@ class RegistrarController extends Controller
             if ($_request->file('upload-file')) {
                 Storage::disk('public')->put($_file_name, fopen($_request->file('upload-file'), 'r+'));
                 Excel::import(new SubjectScheduleImport(), $_request->file('upload-file'));
-               // return back()->with('success', 'Successfully Upload the Class Scheduled');
+                // return back()->with('success', 'Successfully Upload the Class Scheduled');
             }
         } catch (Exception $err) {
             $this->debugTracker($err);
@@ -646,7 +666,7 @@ class RegistrarController extends Controller
             $_student_list = $_section->student_sections;
             foreach ($_student_list as $student) {
                 $verify = StudentSection::where('student_id', $student->student_id)->where('section_id', $_section->id)->whereNull('enrollment_id')
-                ->where('is_removed', false)->first();
+                    ->where('is_removed', false)->first();
                 //echo json_encode( $verify). "<br>";
                 if ($verify) {
                     $enrollment = EnrollmentAssessment::where('student_id', $student->student_id)->where('academic_id', $_section->academic_id)->where('is_removed', false)->first();

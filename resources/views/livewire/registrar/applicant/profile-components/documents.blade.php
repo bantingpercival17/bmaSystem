@@ -85,8 +85,8 @@
                                     </div>
                                     <div class="col-md">
                                         <a class="btn btn-outline-info btn-sm rounded-pill mt-2 w-100" data-bs-toggle="modal"
-                                            data-bs-target=".document-view-modal"
-                                            data-document-url="{{ json_decode($document->file_links)[0] }}">
+                                            wire:click="showDocuments('{{ json_decode($document->file_links)[0] }}')"
+                                            data-bs-toggle="tooltip" title="" data-bs-original-title="View Image">
                                             <svg width="20" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -117,10 +117,8 @@
                                     </div>
                                     <div class="col-md">
                                         <a class="btn btn-outline-info btn-sm rounded-pill mt-2 w-100" data-bs-toggle="modal"
-                                            data-bs-target=".document-view-modal"
-                                            data-document-url="{{ json_decode($document->file_links)[0] }}"
+                                            wire:click="showDocuments('{{ json_decode($document->file_links)[0] }}')"
                                             data-bs-toggle="tooltip" title="" data-bs-original-title="View Image">
-
                                             <svg width="20" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -186,19 +184,22 @@
         @if ($showModal)
             <div class="fixed inset-0 flex items-center justify-center z-50">
                 <div class="fw-bolder h3">Hello Modal</div>
-                <div class="modal fade show" style="display: block">
+                <div class="modal fade show"
+                    style="display: block;   background-color: rgb(0 0 0 / 77%);
+            width: 100%;
+            height: 100%;">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel1">Document Review</h5>
+                            <div class="modal-header p-3">
+                                <h5 class="fw-bolder text-primary" id="exampleModalLabel1">Document Review</h5>
                                 <button type="button" class="btn-close" wire:click="hideDocuments">
                                 </button>
                             </div>
                             <div class="modal-body">
                                 <img src="{{ $documentLink }}" style=" width: 100%; " alt="">
                                 {{-- <iframe src="{{ $documentLink }}" class="i"
-                                   style=" width: 100%; height:100vh;" >
-                                </iframe> --}}
+                        style=" width: 100%; height:100vh;" >
+                        </iframe> --}}
                             </div>
                         </div>
                     </div>

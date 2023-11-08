@@ -8,6 +8,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class ApplicantReport
 {
+    public $path;
+    public $legal;
 
     public function __construct()
     {
@@ -45,6 +47,19 @@ class ApplicantReport
         // Set the Filename of report
 
         $file_name = 'EXAMINATION RESULT - ' . $_data->applicant_number . '-' . date('Ymd') . '.pdf';
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    public function applicant_examination_result_v2($data)
+    {
+        // Set the Layout for the report
+        $_layout = $this->path . '.examination-result-v2';
+        $_department = $data->applicant->course_id == 3 ? 'SENIOR HIGHSCHOOL' : 'COLLEGE';
+        $_examination = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department', $_department)->first();
+        $_examination_categories = $_examination->categories;
+        // Import PDF Class
+        $pdf = PDF::loadView($_layout, compact('data', '_examination_categories'));
+        // Set the Filename of report
+        $file_name = 'EXAMINATION RESULT - ' . $data->applicant->applicant_number . '-' . date('Ymd') . '.pdf';
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
     function applicant_vefied_list()

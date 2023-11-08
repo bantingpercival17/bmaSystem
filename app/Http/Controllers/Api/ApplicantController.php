@@ -42,7 +42,7 @@ class ApplicantController extends Controller
         $examinationResult = [];
         $finalResult = [];
         if ($examinationDetails) {
-            if ($examinationDetails->finish) {
+            if ($examinationDetails->is_finish) {
                 $user = auth()->user();
                 $department = $user->course_id === 3 ? 'SENIOR HIGHSCHOOL' : 'COLLEGE';
                 $examinationCategory = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department', $department)->with('categories')->first();

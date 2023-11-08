@@ -13,6 +13,7 @@ class CourseOffer extends Model
     use HasFactory;
     protected $connection = 'mysql';
     protected $fillable = ['course_name', 'course_code', 'school_level', 'is_removed'];
+
     public function course_subject($_data)
     {
         return $this->hasMany(CurriculumSubject::class, 'course_id')
@@ -493,7 +494,168 @@ class CourseOffer extends Model
     }
 
     /* Applicant Model */
+    #Applicant Count Dashboard Version 3
+    function applicant_count_per_category($category)
+    {
+        $applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
+        $tblDocuments = env('DB_DATABASE') . '.documents';
+        $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
+        $tblApplicantDocuments = env('DB_DATABASE_SECOND') . '.applicant_documents';
+        $tblApplicantNotQualifieds = env('DB_DATABASE_SECOND') . '.applicant_not_qualifieds';
+        $tblApplicantPayment = env('DB_DATABASE_SECOND') . '.applicant_payments';
+        $tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
+        $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+        $query = $this->hasMany(ApplicantAccount::class, 'course_id')
+            ->select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
+            ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id);
+        // Sort By Courses
 
+        switch ($category) {
+            case 'created_accounts':
+                $query = $query->leftJoin($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->whereNull($tblApplicantDetails . '.applicant_id');
+                break;
+            case 'registered_applicants':
+                $query = $query
+                    ->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->leftJoin($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                    ->whereNull($tblApplicantDocuments . '.applicant_id');
+                break;
+            case 'for_checking':
+                $query = $query
+                    ->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                    ->select(
+                        'applicant_accounts.*',
+                        DB::raw('(SELECT COUNT(' . $tblApplicantDocuments . '.is_approved)
+                        FROM ' . $tblApplicantDocuments . '
+                        WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+                        AND ' . $tblApplicantDocuments . '.is_removed = 0
+                        AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                        DB::raw('(
+                            SELECT COUNT(' . $tblDocuments . '.id)
+                            FROM ' . $tblDocuments . '
+                            WHERE ' . $tblDocuments . '.department_id = 2
+                            AND ' . $tblDocuments . '.is_removed = false
+                            AND ' . $tblDocuments . '.year_level = (
+                                SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) as result
+                                FROM ' . $applicantAccountTable . '
+                                WHERE ' . $applicantAccountTable . '.id = ' . $tblApplicantDetails . '.applicant_id
+                        )) as documentCount')
+                    )
+                    ->leftJoin($tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
+                    ->whereNull('anq.applicant_id')
+                    ->groupBy('applicant_accounts.id')
+                    ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
+                break;
+            case 'bma_alumnus':
+                $query = $query->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantAlumia . '.is_removed', false);
+                break;
+            case 'not_qualified':
+                $query = $query->join($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', $applicantAccountTable . '.id')
+                    ->where($tblApplicantNotQualifieds . '.academic_id', Auth::user()->staff->current_academic()->id);
+                break;
+            case 'qualified':
+                $query = $query
+                    ->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                    ->select(
+                        'applicant_accounts.*',
+                        DB::raw('(SELECT COUNT(' . $tblApplicantDocuments . '.is_approved)
+                    FROM ' . $tblApplicantDocuments . '
+                    WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+                    AND ' . $tblApplicantDocuments . '.is_removed = 0
+                    AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                        DB::raw('(
+                        SELECT COUNT(' . $tblDocuments . '.id)
+                        FROM ' . $tblDocuments . '
+                        WHERE ' . $tblDocuments . '.department_id = 2
+                        AND ' . $tblDocuments . '.is_removed = false
+                        AND ' . $tblDocuments . '.year_level = (
+                            SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) as result
+                            FROM ' . $applicantAccountTable . '
+                            WHERE ' . $applicantAccountTable . '.id = ' . $tblApplicantDetails . '.applicant_id
+                        )) as documentCount')
+                    )
+                    ->leftJoin($tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
+                    ->whereNull('anq.applicant_id')
+                    ->groupBy('applicant_accounts.id')
+                    ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments = documentCount');
+
+                break;
+            case 'qualified_for_entrance_examination':
+                $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                    ->select('applicant_accounts.*', DB::raw('(SELECT COUNT(' . $tblApplicantDocuments . '.is_approved)
+                            FROM ' . $tblApplicantDocuments . '
+                            WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+                            AND ' . $tblApplicantDocuments . '.is_removed = 0
+                            AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'), DB::raw('(
+                                SELECT COUNT(' . $tblDocuments . '.id)
+                                FROM ' . $tblDocuments . '
+                                WHERE ' . $tblDocuments . '.department_id = 2
+                                AND ' . $tblDocuments . '.is_removed = false
+                                AND ' . $tblDocuments . '.year_level = (
+                                    SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) as result
+                                    FROM ' . $applicantAccountTable . '
+                                    WHERE ' . $applicantAccountTable . '.id = ' . $tblApplicantDetails . '.applicant_id
+                                ))as documentCount'))
+                    ->leftJoin($tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
+                    ->leftJoin($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                    ->leftJoin($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantAlumia . '.applicant_id')
+                    ->whereNull($tblApplicantPayment . '.applicant_id')
+                    ->whereNull('anq.applicant_id')
+                    ->groupBy('applicant_accounts.id')
+                    ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments = documentCount');
+
+                break;
+            case 'examination_payment':
+                $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                    ->select('applicant_accounts.*', DB::raw('(SELECT COUNT(' . $tblApplicantDocuments . '.is_approved)
+                        FROM ' . $tblApplicantDocuments . '
+                        WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+                        AND ' . $tblApplicantDocuments . '.is_removed = 0
+                        AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'), DB::raw('(
+                            SELECT COUNT(' . $tblDocuments . '.id)
+                            FROM ' . $tblDocuments . '
+                            WHERE ' . $tblDocuments . '.department_id = 2
+                            AND ' . $tblDocuments . '.is_removed = false
+                            AND ' . $tblDocuments . '.year_level = (
+                                SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) as result
+                                FROM ' . $applicantAccountTable . '
+                                WHERE ' . $applicantAccountTable . '.id = ' . $tblApplicantDetails . '.applicant_id
+                            ))as documentCount'))
+                    ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                    ->where(function ($query) {
+                        $query->whereNull(env('DB_DATABASE_SECOND') . '.applicant_payments' . '.is_approved')
+                            ->orWhere(env('DB_DATABASE_SECOND') . '.applicant_payments' . '.is_approved', false);
+                    })
+                    ->where($tblApplicantPayment . '.is_removed', false)
+
+                    ->groupBy('applicant_accounts.id')
+                    ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments = documentCount');
+                break;
+
+            case 'entrance_examination':
+                $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantPayment . '.is_approved', true)
+                    ->where($tblApplicantPayment . '.is_removed', false)
+                    ->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantExamination . '.is_removed', false)
+                    ->whereNull($tblApplicantExamination . '.is_finish')
+                    ->groupBy($tblApplicantExamination . '.applicant_id');
+                break;
+
+            default:
+                break;
+        }
+        return $query->get();
+    }
     #Pre-Registration Applicant without a files
     public function applicant_pre_registrations()
     {
@@ -502,14 +664,14 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id') # Applicant Account
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
-            ->leftJoin('applicant_documents', 'applicant_documents.applicant_id', 'applicant_accounts.id')
-            ->whereNull('applicant_documents.applicant_id');
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_documents', env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+            ->whereNull(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id');
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -520,8 +682,8 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id') # Applicant Account
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
-            ->join('applicant_documents', 'applicant_documents.applicant_id', 'applicant_accounts.id');
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_documents', env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id');
 
         return $_query;
     }
@@ -538,14 +700,14 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id') # Applicant Account
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
             ->having(DB::raw('COUNT(sd.id)'), '<', $_documents); # Applicant Documents
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -562,7 +724,7 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id') # Applicant Account
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
             ->leftJoin('applicant_not_qualifieds', 'applicant_not_qualifieds.applicant_id', 'applicant_accounts.id')
             ->having(DB::raw('COUNT(sd.id)'), '>=', $_documents) # Applicant Documents
@@ -571,10 +733,10 @@ class CourseOffer extends Model
                 function ($_subQuery) {
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '<',
                 $_documents,
@@ -583,7 +745,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -596,7 +758,7 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id') # Applicant Account
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->join('applicant_not_qualifieds', 'applicant_not_qualifieds.applicant_id', 'applicant_accounts.id')
             ->where('applicant_not_qualifieds.is_removed', false)
             /*  ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id')
@@ -606,7 +768,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -624,15 +786,15 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id') # Applicant Account
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -645,7 +807,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -662,15 +824,15 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id') # Applicant Account
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -681,7 +843,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -698,15 +860,15 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id') # Applicant Account
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -721,7 +883,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -738,16 +900,16 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     # Applicant Documents
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -762,7 +924,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -779,16 +941,16 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     # Applicant Documents
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -803,7 +965,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -822,16 +984,16 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     # Applicant Documents
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -848,7 +1010,7 @@ class CourseOffer extends Model
                         $_item .
                         ")*100) as exam_result
                 FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
-                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
+                inner join " . env('DB_DATABASE') . ".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -860,7 +1022,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -879,16 +1041,16 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     # Applicant Documents
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -905,7 +1067,7 @@ class CourseOffer extends Model
                         $_item .
                         ")*100) as exam_result
                 FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
-                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
+                inner join " . env('DB_DATABASE') . ".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -917,7 +1079,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -937,21 +1099,21 @@ class CourseOffer extends Model
                 function ($_subQuery) {
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
             )
-            /*  ->orderBy('applicant_detials.last_name', 'asc') */
+            /*  ->orderBy(env('DB_DATABASE_SECOND').'.applicant_detials.last_name', 'asc') */
             ->groupBy('applicant_accounts.id');
 
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -963,23 +1125,23 @@ class CourseOffer extends Model
             ->where('is_removed', false)
             ->count();
         $_query = $this->hasMany(ApplicantAccount::class, 'course_id')
-            ->select('applicant_accounts.*', 'applicant_detials.last_name')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')
+            ->select('applicant_accounts.*', env('DB_DATABASE_SECOND') . '.applicant_detials.last_name')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->where(
                 function ($_subQuery) {
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
             )
-            ->groupBy('applicant_accounts.id')->orderBy('applicant_detials.last_name', 'asc');
+            ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'asc');
         return $_query;
     }
     /* Entrance Examination Payment */
@@ -1004,10 +1166,10 @@ class CourseOffer extends Model
                 function ($_subQuery) {
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -1037,16 +1199,16 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     # Applicant Documents
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -1063,7 +1225,7 @@ class CourseOffer extends Model
                         $_item .
                         ")*100) as exam_result
                 FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
-                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
+                inner join " . env('DB_DATABASE') . ".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -1078,7 +1240,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -1097,16 +1259,16 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     # Applicant Documents
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -1123,7 +1285,7 @@ class CourseOffer extends Model
                         $_item .
                         ")*100) as exam_result
                 FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
-                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
+                inner join " . env('DB_DATABASE') . ".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -1139,7 +1301,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -1157,16 +1319,16 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     # Applicant Documents
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -1183,7 +1345,7 @@ class CourseOffer extends Model
                         $_item .
                         ")*100) as exam_result
                 FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
-                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
+                inner join " . env('DB_DATABASE') . ".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -1200,7 +1362,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }
@@ -1218,16 +1380,16 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id') # Join Applicant Details
             ->where(
                 function ($_subQuery) {
                     # Applicant Documents
                     $_subQuery
                         ->select(DB::raw('count("is_approved")'))
-                        ->from('applicant_documents')
-                        ->whereColumn('applicant_documents.applicant_id', 'applicant_accounts.id')
-                        ->where('applicant_documents.is_removed', false)
-                        ->where('applicant_documents.is_approved', true);
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_documents')
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_documents.applicant_id', 'applicant_accounts.id')
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_removed', false)
+                        ->where(env('DB_DATABASE_SECOND') . '.applicant_documents.is_approved', true);
                 },
                 '>=',
                 $_documents,
@@ -1244,7 +1406,7 @@ class CourseOffer extends Model
                         $_item .
                         ")*100) as exam_result
                 FROM " . env('DB_DATABASE_SECOND') . ".applicant_examination_answers as aea
-                inner join ".env('DB_DATABASE').".examination_question_choices as eqc
+                inner join " . env('DB_DATABASE') . ".examination_question_choices as eqc
                 on eqc.id = aea.choices_id
                 where eqc.is_answer = true and aea.examination_id = applicant_entrance_examinations.id)",
                 ),
@@ -1261,7 +1423,7 @@ class CourseOffer extends Model
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
             $_count = count($_student);
-            $_query = $_count > 0 ? $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where('applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
+            $_query = $_count > 0 ? $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%') : $_query->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'like', '%' . trim($_student[0]) . '%')->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%');
         }
         return $_query;
     }

@@ -160,7 +160,7 @@
                                     } catch (\Throwable $th) {
                                         $_bmi = '';
                                     }
-                                    
+
                                 @endphp
                                 <b>{{ $_bmi }}</b>
                             </td>
@@ -262,7 +262,7 @@
                     $_provider = ['own mobile data', 'own broadband (DSL, Wireless Fiber, Satellite)', 'computer shop', 'other places outside the home with internet connection (library, barangay,municipal hall neighbor, relatives)', 'none'];
                     $_learning_modality = ['online learning', 'Blended', 'Face-to-Face'];
                     $_inputs = ['lack of available gadgets / equipment', 'insufficient load/data allowance', 'existing health condition/s', 'difficulty in independent learning', 'conflict with other activities (i.e. house chores)', 'none or lack of available space for studying', 'distractions (i.e. social media, noise from community/ neighbor)', 'none'];
-                    
+
                 @endphp
                 <table class="form-rg-table">
                     <tbody>
@@ -755,7 +755,7 @@
                                     <td class="text-center">
                                         @php
                                             $_particular_amount = $_enrollment_assessment->course_id == 3 ? $item->fees : $_course_semestral_fee->particular_tags($item->particular_tag);
-                                            
+
                                             $_total_payment += $_particular_amount;
                                         @endphp
                                         <b> {{ number_format($_particular_amount, 2) }}</b>
@@ -779,7 +779,7 @@
                             @endif
                         @endif
                         @php
-                            
+
                         @endphp
                         <tr>
                             <td class="text-center"><b>TOTAL PAYMENT</b> </td>

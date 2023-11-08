@@ -75,7 +75,7 @@ class ApplicantEntranceExamination extends Model
         }
         #$percent = ($_grade / $_item) * 100;
         $passing = $this->applicant->course_id == 3 ? 20 : 65;
-        $examinationResult = $_percent <= $passing ? true : false;
+        $examinationResult = $_percentage >= $passing ? true : false;
         return [$_grade, $_percentage, $examinationResult];
     }
     public function choice_answer($_data)

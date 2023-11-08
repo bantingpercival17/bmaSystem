@@ -36,20 +36,16 @@ class ApplicantView extends Component
     }
     public function render()
     {
-        $filterContent = array('created_accounts', 'registered_applicants', /* 'registration_with_document', */ 'for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination', 'examination_payment', 'entrance_examination');
+        $filterContent = array('created_accounts', 'registered_applicants', 'for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination', 'examination_payment', 'entrance_examination');
         $filterCourses = CourseOffer::all();
         $this->academic = $this->academicValue();
+        $this->selectCourse = $this->getCourse();
+        $this->selectCategories = $this->getCategories();
         $dataLists = $this->filterApplicantData($this->searchInput, $this->selectCourse, $this->selectCategories, $this->academic);
         return view('livewire.registrar.applicant.applicant-view', compact('filterContent', 'filterCourses', 'dataLists'));
     }
     function academicValue()
     {
-        /*  if ($this->academic === null) {
-            $_academic = AcademicYear::where('is_active', 1)->first();
-            $data = base64_encode($_academic->id);
-        } else {
-            $data =  request()->query('_academic') ?: $this->academic;
-        } */
         $data = $this->academic;
         if ($this->academic == '') {
             $_academic = AcademicYear::where('is_active', 1)->first();
@@ -57,6 +53,22 @@ class ApplicantView extends Component
         }
         if (request()->query('_academic')) {
             $data = request()->query('_academic') ?: $this->academic;
+        }
+        return $data;
+    }
+    function getCourse()
+    {
+        $data = $this->selectCourse;
+        if (request()->query('_course')) {
+            $data = base64_decode(request()->query('_course')) ?: $this->selectCourse;
+        }
+        return $data;
+    }
+    function getCategories()
+    {
+        $data = $this->selectCategories;
+        if (request()->query('_category')) {
+            $data = request()->query('_category') ?: $this->selectCategories;
         }
         return $data;
     }
@@ -71,10 +83,11 @@ class ApplicantView extends Component
     }
     function filterApplicantData($searchInput, $selectCourse, $selectCategories, $academic)
     {
-        $dataLists = [];
+
         $query = ApplicantAccount::select('applicant_accounts.*')
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_accounts.academic_id', base64_decode($academic));
+        $dataLists = $query;
         // Sort By Courses
         if ($selectCourse != 'ALL COURSE') {
             $query = $query->where('applicant_accounts.course_id', $selectCourse);
@@ -229,7 +242,6 @@ class ApplicantView extends Component
                     ->groupBy($this->tblApplicantExamination . '.applicant_id');
                 break;
             default:
-                $dataLists = [];
                 break;
         }
         return $dataLists->get();

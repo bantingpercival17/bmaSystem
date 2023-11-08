@@ -11,9 +11,9 @@
                     <div class="card mb-2">
                         <div class="row no-gutters">
                             <div class="col-md-3">
-                                @if ($profile->image)
-                                    <img src="{{ json_decode($profile->image->file_links)[0] }}"
-                                        class="avatar-130 rounded" alt="applicant-profile">
+                                @if ($profile->profile_picture())
+                                    <img src="{{ $profile->profile_picture() }}" class="avatar-130 rounded"
+                                        alt="applicant-profile">
                                 @endif
                             </div>
                             <div class="col-md ps-0">
@@ -80,11 +80,10 @@
                                         wire:click="swtchTab('documents')">DOCUMENTS</td>
                                 </tr>
                                 <tr>
-                                    <td class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                                        href="{{ route('registrar.student-profile') }}?student={{ base64_encode($profile->id) }}&view=grades">
-                                        ENTRANCE
-                                        EXAMINATION</td>
-
+                                    <td class="nav-link {{ $activeTab == 'examination' ? 'active' : 'text-muted' }}"
+                                        wire:click="swtchTab('examination')">
+                                        ENTRANCE EXAMINATION
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
@@ -106,14 +105,8 @@
                         @if ($activeTab == 'documents')
                             @include('livewire.registrar.applicant.profile-components.documents')
                         @endif
-                        @if ($activeTab == 'account')
+                        @if ($activeTab == 'examination')
                             @include('livewire.registrar.applicant.profile-components.entrance-examination')
-                        @endif
-                        @if ($activeTab == 'grades')
-                            @include('pages.administrator.student.profile-tab-content.grade-view')
-                        @endif
-                        @if ($activeTab == 'medical')
-                            @include('livewire.registrar.applicant.profile-components.medical-view')
                         @endif
                     </div>
                 @else
@@ -141,11 +134,11 @@
             <div class="col-lg-4">
                 <div class="row">
                     <div class="col-12">
-                        {{$academic}}
+                        {{ $academic }}
                         <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                         <div class="form-group search-input">
-                            <input type="search" class="form-control border border-primary" placeholder="Search Pattern: Lastname, Firstname"
-                                wire:model="searchInput">
+                            <input type="search" class="form-control border border-primary"
+                                placeholder="Search Pattern: Lastname, Firstname" wire:model="searchInput">
                         </div>
                     </div>
                     <div class="col-12">
