@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\GradeTemplate;
+use App\Imports\GradeBulkImport;
 use App\Imports\GradeImport;
 use App\Mail\GradeSubmissionMail;
 use App\Mail\GradeVerificationMail;
@@ -267,15 +268,20 @@ class TeacherController extends Controller
     }
     public function subject_grade_bulk_upload(Request $_request)
     {
+        /*    $_request->validate([
+            'file_inpute' => 'required|mimes:xlsx,xls',
+        ]); */
         $_section = SubjectClass::find(Crypt::decrypt($_request->_section));
         $_path = '/teacher/grade-sheet/' . $_section->academic->school_year . '/' . $_section->academic->semester . '/' . str_replace('/', '', $_section->section->section_name) . "/";
         $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_name . date('dmyhis'));
-        $_file_extention =  $_request->file('_file_grade')->getClientOriginalExtension();
+        $_file_extention =  $_request->file('file_input')->getClientOriginalExtension();
         $_file_name = $_file_name . "." . $_file_extention;
-
-        if ($_request->file('_file_grade')) {
-            Storage::disk('public')->put($_file_name, fopen($_request->file('_file_grade'), 'r+'));
-            Excel::import(new GradeImport($_request->_section), $_request->file('_file_grade'));
+        //return  $_request->file('file_input');
+        if ($_request->file('file_input')) {
+            Storage::disk('local')->put($_file_name, fopen($_request->file('file_input'), 'r+'));
+            //Excel::import(new GradeImport($_request->_section), $_request->file('file_input'));
+            Excel::import(new GradeBulkImport($_request->_section), storage_path('app' . $_file_name));
+            
             return back()->with('success', 'Successfully Upload your Grades');
         }
     }
