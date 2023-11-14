@@ -35,7 +35,7 @@
                                                 <span class="fw-bolder">
                                                     @php
                                                         $_counts = 0;
-                                                        foreach ($employee->grade_submission_v2($academic,'midterm') as $_count) {
+                                                        foreach ($employee->grade_submission_v2($academic, 'midterm') as $_count) {
                                                             if (!empty($_count->midterm_grade_submission)) {
                                                                 $_counts += 1;
                                                             }
@@ -55,7 +55,7 @@
                                                 <span class="fw-bolder">
                                                     @php
                                                         $_finals_counts = 0;
-                                                        foreach ($employee->grade_submission_v2($academic,'midterm') as $_finals) {
+                                                        foreach ($employee->grade_submission_v2($academic, 'midterm') as $_finals) {
                                                             if (!empty($_finals->finals_grade_submission)) {
                                                                 $_finals_counts += 1;
                                                             }
@@ -94,7 +94,28 @@
             </div>
         </div>
         <div class="col-lg-4">
+            <p class="h4 text-info fw-bolder">FILTER SELECTION</p>
 
+            <div class="col-12">
+                <small class="text-primary"><b>STATUS</b></small>
+                <div class="form-group search-input">
+                    <select class="form-select form-select-sm border border-primary" wire:model="selectCategories">
+                        @foreach ($filterContent as $item)
+                            <option value="{{ $item }}">{{ ucwords(str_replace('_', ' ', $item)) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-12">
+                <small class="text-primary"><b>TERM</b></small>
+                <div class="form-group search-input">
+                    <select class="form-select form-select-sm border border-primary" wire:model="selectPeriod">
+                        <option value="midterm">MIDTERM</option>
+                        <option value="finals">FINALS</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 @else
@@ -148,8 +169,37 @@
                 <input type="text" wire:model='teacherListSearch'
                     class="form-control form-control-sm border border-primary"
                     placeholder="Search Pattern: Last Name, First Name">
+
+                <a class="badge bg-primary float-end mt-3 mb-3" wire:click="filterDialog">{{ $filterButton }}</a>
             </div>
-            <div class="data-content mt-4">
+            @if ($filterBox)
+                <div class="filter-section mt-2">
+                    <p class="h6 text-info fw-bolder">FILTER SELECTION</p>
+                    <div>
+                        <small class="text-primary"><b>STATUS</b></small>
+                        <div class="form-group search-input">
+                            <select class="form-select form-select-sm border border-primary"
+                                wire:model="selectCategories">
+                                @foreach ($filterContent as $item)
+                                    <option value="{{ $item }}">{{ ucwords(str_replace('_', ' ', $item)) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <small class="text-primary"><b>TERM</b></small>
+                        <div class="form-group search-input">
+                            <select class="form-select form-select-sm border border-primary" wire:model="selectPeriod">
+                                <option value="midterm">MIDTERM</option>
+                                <option value="finals">FINALS</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            @endif
+            <br>
+            <div class="data-content mt-5">
                 @forelse ($teacherLists as $item)
                     <a
                         href="{{ route('department-head.grade-submission-v2') . '?staff=' . base64_encode($item->id) . ($academic ? '&_academic=' . $academic : '') }}">

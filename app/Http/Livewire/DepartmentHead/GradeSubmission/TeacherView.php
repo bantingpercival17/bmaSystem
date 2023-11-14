@@ -15,6 +15,8 @@ class TeacherView extends Component
 {
     public $viewPage = false;
     public $teacherListSearch;
+    public $selectPeriod = 'midterm';
+    public $selectCategories = 'For Verification';
     public $staffView;
     public $subjectView;
     public $activeCard = 'overview';
@@ -24,6 +26,8 @@ class TeacherView extends Component
     public $showModal = false;
     public $documentLink = null;
     public $academic;
+    public $filterBox = false;
+    public $filterButton = 'Show Filter';
     function mount()
     {
         $this->user = Auth::user();
@@ -40,18 +44,19 @@ class TeacherView extends Component
         # Find the Teacher Role and get the ID
         $teacherRole = Role::where('name', 'teacher')->first();
         # Get all the Teacher base on the Role and Department
-        $teacherLists = $this->teacherLists($this->teacherListSearch, $teacherRole, $department);
-
+        $teacherLists = $this->teacherLists($this->teacherListSearch, $teacherRole, $department, $this->selectCategories, $this->selectPeriod);
+        # Set Category for Filter Instructor
+        $filterContent = array('All', 'For Verification', 'Not yet Submit', 'Verfied');
         if (request()->query('staff')) {
             $this->staffView =  request()->query('staff') ? $this->setEmployee(base64_decode(request()->query('staff'))) : $this->staffView;
             $this->viewPage = true;
         }
         $this->subjectView = request()->query('subject') ? $this->setSubjectClass(base64_decode(request()->query('subject'))) : $this->subjectView;
         # Set the view and the need list
-        return view('livewire.department-head.grade-submission.teacher-view', compact('teacherLists', 'teacherRole', 'department'));
+        return view('livewire.department-head.grade-submission.teacher-view', compact('teacherLists', 'teacherRole', 'department', 'filterContent'));
     }
 
-    function teacherLists($searchInput, $teacherRole, $department)
+    function teacherLists($searchInput, $teacherRole, $department, $categories, $period)
     {
         # Get the Staff Model and Select the following columns
         # and Join to the Staff Department with the conditions datas
@@ -86,6 +91,25 @@ class TeacherView extends Component
             } else {
                 $teachers = $teachers->where('staff.last_name', 'like', '%' . $value[0] . '%')
                     ->orderBy('staff.last_name', 'asc');
+            }
+        }
+        # Sort by Categories and Period
+        if ($categories !== 'All') {
+            /*  $teachers = $teachers->join('grade_submissions', 'grade_submissions.subject_class_id', 'subject_classes.id')
+                ->where('grade_submissions.period', $period); */
+            if ($categories == 'For Verification') {
+                $teachers = $teachers->join('grade_submissions', 'grade_submissions.subject_class_id', 'subject_classes.id')
+                    ->where('grade_submissions.period', $period)
+                    ->whereNull('grade_submissions.is_approved');
+                # code...
+            } elseif ($categories == 'Not yet Submitted') {
+                $teachers = $teachers->leftJoin('grade_submissions', 'grade_submissions.subject_class_id', 'subject_classes.id')
+                    ->where('grade_submissions.period', $period)
+                    ->whereNull('grade_submissions.subject_class_id');
+            } elseif ($categories == 'Verfied') {
+                $teachers = $teachers->join('grade_submissions', 'grade_submissions.subject_class_id', 'subject_classes.id')
+                    ->where('grade_submissions.period', $period)
+                    ->where('grade_submissions.is_approved', true);
             }
         }
         # Get the List of Teachers
@@ -160,5 +184,15 @@ class TeacherView extends Component
             'method' => $value['method'],
             'params' => ['data' => $data],
         ]);
+    }
+    function filterDialog()
+    {
+        if ($this->filterBox != true) {
+            $this->filterButton = 'Hide Filter';
+            $this->filterBox = true;
+        } else {
+            $this->filterButton = 'Show Filter';
+            $this->filterBox = false;
+        }
     }
 }
