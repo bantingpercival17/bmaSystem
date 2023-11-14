@@ -96,14 +96,14 @@ class TeacherView extends Component
         }
         # Sort by Categories and Period
         if ($categories !== 'All') {
-            /*  $teachers = $teachers->join('grade_submissions', 'grade_submissions.subject_class_id', 'subject_classes.id')
-                ->where('grade_submissions.period', $period); */
             if ($categories == 'For Verification') {
                 $teachers = $teachers->join('grade_submissions', 'grade_submissions.subject_class_id', 'subject_classes.id')
                     ->where('grade_submissions.period', $period)
                     ->whereNull('grade_submissions.is_approved');
                 # code...
-            } elseif ($categories == 'Not yet Submitted') {
+            } elseif (strtoupper($categories) == strtoupper('Not Yet Submitted')) {
+                /* $teachers = $teachers->join('grade_submissions', 'grade_submissions.subject_class_id', 'subject_classes.id')
+                    ->where('grade_submissions.period', $period); */
                 $teachers = $teachers->leftJoin('grade_submissions', 'grade_submissions.subject_class_id', 'subject_classes.id')
                     ->where('grade_submissions.period', $period)
                     ->whereNull('grade_submissions.subject_class_id');

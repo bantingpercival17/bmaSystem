@@ -102,9 +102,7 @@ class Staff extends Model
     public function current_academic()
     {
         $academic = AcademicYear::where('is_active', 1)->first();
-        if (request()->input('_academic')) {
-            $academic = AcademicYear::find(base64_decode(request()->input('_academic')));
-        }
+
         # Get the id of Teacher Role
         $role = Role::where('name', 'teacher')->first();
         $teacher = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
@@ -117,6 +115,9 @@ class Staff extends Model
         $admin = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
         if ($admin) {
             $academic = AcademicYear::where('is_active', 1)->first();
+        }
+        if (request()->input('_academic')) {
+            $academic = AcademicYear::find(base64_decode(request()->input('_academic')));
         }
         return $academic;
     }
