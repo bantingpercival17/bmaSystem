@@ -81,21 +81,24 @@
                 @endforelse
             </div>
             <div class="card-footer p-3">
-                <form class="mt-3" action="{{ route('department-head.submission-verification') }}" method="POST">
+                <form class="mt-3" action="{{ route('department-head.submission-verification-v2') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="_submission"
+                    <input type="hidden" name="submission"
                         value="{{ base64_encode($subjectView->midterm_grade_submission->id) }}">
                     <input type="hidden" name="status" value="0">
                     <input type="text" class="form-control border border-primary" placeholder="Remarks"
-                        name="comments" required>
+                        name="comments">
+                    @error('comments')
+                        <span class="badge bg-danger">{{ $message }}</span>
+                    @enderror
                     <div class="">
                         <button class="btn btn-outline-primary btn-sm float-end ms-2 mt-2" type="submit" value="0"
                             name="status">DISAPPROVED</button>
                     </div>
                 </form>
-                <form action="{{ route('department-head.submission-verification') }}" method="POST">
+                <form action="{{ route('department-head.submission-verification-v2') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="_submission"
+                    <input type="hidden" name="submission"
                         value="{{ base64_encode($subjectView->midterm_grade_submission->id) }}">
                     <input type="hidden" name="status" value="1">
                     <button class="btn btn-primary btn-sm float-end mt-2" type="submit">APPROVED
@@ -173,19 +176,22 @@
                 @endforelse
             </div>
             <div class="card-footer p-3">
-                <form class="mt-3" action="{{ route('department-head.submission-verification') }}" method="POST">
+                <form class="mt-3" action="{{ route('department-head.submission-verification-v2') }}" method="POST">
                     @csrf
                     <input type="hidden" name="submission"
                         value="{{ base64_encode($subjectView->finals_grade_submission->id) }}">
                     <input type="hidden" name="status" value="0">
                     <input type="text" class="form-control border border-primary" placeholder="Remarks"
-                        name="comments" required>
+                        name="comments">
+                    @error('comments')
+                        <span class="badge bg-danger">{{ $message }}</span>
+                    @enderror
                     <div class="">
                         <button class="btn btn-outline-primary btn-sm float-end ms-2 mt-2" type="submit"
                             value="0" name="status">DISAPPROVED</button>
                     </div>
                 </form>
-                <form action="{{ route('department-head.submission-verification') }}" method="POST">
+                <form action="{{ route('department-head.submission-verification-v2') }}" method="POST">
                     @csrf
                     <input type="hidden" name="submission"
                         value="{{ base64_encode($subjectView->finals_grade_submission->id) }}">

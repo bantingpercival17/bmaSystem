@@ -230,4 +230,44 @@ class DepartmentHeadController extends Controller
         }
         return back()->with('success', $_subject . " " . $_section . " Verified..");
     }
+    public function submission_verification_v2(Request $request)
+    {
+        //return $request->status;
+        if ($request->status == 0) {
+            $request->validate([
+                'comments' => 'required'
+            ]);
+        }
+        try {
+            $grade_submission = GradeSubmission::find(base64_decode($request->submission));
+            $subject = $grade_submission->subject_class->curriculum_subject->subject->subject_code;
+            $section =  $grade_submission->subject_class->section->section_name;
+            $grade_submission->is_approved = $request->status;
+            $grade_submission->comments = $request->comments;
+            $grade_submission->approved_by = Auth::user()->name;
+            $grade_submission->save();
+            if ($request->status === 0) {
+                if ($grade_submission->subject_class->grade_final_verification) {
+                    $grade_submission->subject_class->grade_final_verification->update(['is_removed' => true]);
+                }
+            }
+            return back()->with('success', $subject . " " . $section . " Verified..");
+            return $grade_submission;
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+        /*   $_grade_submission = GradeSubmission::find(base64_decode($_request->_submission));
+        $_subject = $_grade_submission->subject_class->curriculum_subject->subject->subject_code;
+        $_section =  $_grade_submission->subject_class->section->section_name;
+        $_grade_submission->is_approved = $_request->_status;
+        $_grade_submission->comments = $_request->_comments;
+        $_grade_submission->approved_by = Auth::user()->name;
+        $_grade_submission->save();
+        if ($_request->_status === 0) {
+            if ($_grade_submission->subject_class->grade_final_verification) {
+                $_grade_submission->subject_class->grade_final_verification->update(['is_removed' => true]);
+            }
+        }
+        return back()->with('success', $_subject . " " . $_section . " Verified.."); */
+    }
 }
