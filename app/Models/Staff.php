@@ -55,7 +55,7 @@ class Staff extends Model
     public function subject_handles_v2($academic)
     {
         return $this->hasMany(SubjectClass::class, 'staff_id')
-            ->where('academic_id',base64_decode($academic))
+            ->where('academic_id', base64_decode($academic))
             ->where('is_removed', false)->get();
     }
     public function grade_submission_midterm()
@@ -75,8 +75,8 @@ class Staff extends Model
     {
         $gradeSubmission = $period == 'midterm' ? 'midterm_grade_submission' : 'finals_grade_submission';
         return $this->hasMany(SubjectClass::class, 'staff_id')->with($gradeSubmission)
-        ->where('subject_classes.academic_id', base64_decode($academic))
-        ->where('subject_classes.is_removed', false)->get();
+            ->where('subject_classes.academic_id', base64_decode($academic))
+            ->where('subject_classes.is_removed', false)->get();
     }
     // Staff Attendance
     public function attendance()
@@ -101,12 +101,43 @@ class Staff extends Model
     }
     public function current_academic()
     {
-        $_academic = request()->input('_academic') ? AcademicYear::find(base64_decode(request()->input('_academic'))) : AcademicYear::where('is_active', 1)->first();
-        return $_academic;
+        $academic = AcademicYear::where('is_active', 1)->first();
+        if (request()->input('_academic')) {
+            $academic = AcademicYear::find(base64_decode(request()->input('_academic')));
+        }
+        # Get the id of Teacher Role
+        $role = Role::where('name', 'teacher')->first();
+        $teacher = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
+        if ($teacher) {
+            $academic =  SubjectClass::select('academic_years.*')
+                ->join('academic_years', 'academic_years.id', 'subject_classes.academic_id')
+                ->where('subject_classes.staff_id', $this->id)->groupBy('subject_classes.academic_id')->orderBy('academic_years.id', 'desc')->first();
+        }
+        $role = Role::where('name', 'superadministrator')->first();
+        $admin = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
+        if ($admin) {
+            $academic = AcademicYear::where('is_active', 1)->first();
+        }
+        return $academic;
     }
     public function academics()
     {
-        return AcademicYear::where('is_removed', false)->orderBy('id', 'Desc')->get();
+        # Get the id of Teacher Role
+        $role = Role::where('name', 'teacher')->first();
+        $teacher = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
+        $role = Role::where('name', 'superadministrator')->first();
+        $admin = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
+        $subjectClass = SubjectClass::select('academic_years.*')
+            ->join('academic_years', 'academic_years.id', 'subject_classes.academic_id')
+            ->where('subject_classes.staff_id', $this->id)->groupBy('subject_classes.academic_id')->get();
+        $academicList =  AcademicYear::where('is_removed', false)->orderBy('id', 'Desc')->get();
+        if ($teacher) {
+            $academicList = $subjectClass;
+        }
+        if ($admin) {
+            $academicList = AcademicYear::where('is_removed', false)->orderBy('id', 'Desc')->get();
+        }
+        return $academicList;
     }
     public function convert_year_level($_data)
     {
