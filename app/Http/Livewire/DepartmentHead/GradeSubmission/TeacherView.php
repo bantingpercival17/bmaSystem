@@ -34,11 +34,12 @@ class TeacherView extends Component
     }
     public function render()
     {
-        # Get the academic year
-        $this->academic = $this->academicValue();
+
         # Get Department Head Id
         $department =  Role::where('name', 'department-head')->first();
         $user = Auth::user();
+        # Get the academic year
+        $this->academic = $this->academicValue($this->user);
         # Get the Details of the Department Head
         $department = StaffDepartment::where('role_id', $department->id)->where('staff_id', $this->user->staff->id)->where('is_active', true)->first();
         # Find the Teacher Role and get the ID
@@ -117,12 +118,18 @@ class TeacherView extends Component
         # Return value to the main function
         return $teachers;
     }
-    function academicValue()
+    function academicValue($user)
     {
         $data = $this->academic;
         if ($this->academic == '') {
+            $role = Role::where('name', 'teacher')->first();
+            $teacher = StaffDepartment::where('staff_id', $user->staff->id)->where('role_id', $role->id)->first();
+            $academic =  SubjectClass::select('academic_years.*')
+                ->join('academic_years', 'academic_years.id', 'subject_classes.academic_id')
+                ->where('subject_classes.staff_id', $user->staff->id)->groupBy('subject_classes.academic_id')->orderBy('academic_years.id', 'desc')->first();
+
             $_academic = AcademicYear::where('is_active', 1)->first();
-            $data = base64_encode($_academic->id);
+            $data =  base64_encode($academic->id);
         }
         if (request()->query('_academic')) {
             $data = request()->query('_academic') ?: $this->academic;

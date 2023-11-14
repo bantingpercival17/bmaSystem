@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-lg-8">
             <p class="display-6 fw-bolder text-primary">{{ strtoupper($pageTitle) }}</p>
-
+            {{-- {{ $academic }} --}}
             <div class="form-search">
                 <small class="fw-bolder text-primary">SEARCH TEACHER / INSTRUCTION NAME</small>
                 <input type="text" wire:model='teacherListSearch'
@@ -174,6 +174,7 @@
             </div>
             @if ($filterBox)
                 <div class="filter-section mt-2">
+
                     <p class="h6 text-info fw-bolder">FILTER SELECTION</p>
                     <div>
                         <small class="text-primary"><b>STATUS</b></small>
