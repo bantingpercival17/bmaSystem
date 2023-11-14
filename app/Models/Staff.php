@@ -129,7 +129,7 @@ class Staff extends Model
         $admin = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
         $subjectClass = SubjectClass::select('academic_years.*')
             ->join('academic_years', 'academic_years.id', 'subject_classes.academic_id')
-            ->where('subject_classes.staff_id', $this->id)->groupBy('subject_classes.academic_id')->get();
+            ->where('subject_classes.staff_id', $this->id)->groupBy('subject_classes.academic_id')->orderBy('academic_years.id', 'desc')->get();
         $academicList =  AcademicYear::where('is_removed', false)->orderBy('id', 'Desc')->get();
         if ($teacher) {
             $academicList = $subjectClass;
