@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Dompdf\Css\Color;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -17,6 +18,8 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
     /**
      * @return \Illuminate\Support\Collection
      */
+    public $section;
+    public $curriculum;
     public function __construct($_section)
     {
         $this->section = $_section;
@@ -40,23 +43,17 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             'GUARDIAN NAME',
             'GUARDIAN CONTACT NUMBER',
             'GUARDIAN ADDRESS',
-            'ID VERIFICATION PICTURE',
-            'ID VERIFICATION SIGNATURE',
-
+            'PICTURE',
+            'SIGNATURE',
+            'QR-CODE',
         ];
     }
     public function map($_data): array
     {
-        /*  if ($_data->student->account) {
-            $_student_number = $_data->student->account->student_number;
-            $image = QrCode::format('png')
-                // ->merge('img/t.jpg', 0.1, true)
-                ->size(200)->errorCorrection('H')
-                ->generate($_student_number . "." . mb_strtolower(str_replace(' ', '', $_data->student->last_name)));
-            $output_file = '/student/qr-code/' . $this->section->section_name . '/' . $_student_number . '.png';
-            Storage::disk('local')->put($output_file, $image);
-        } */
-        $_parents = $_data->student->parent_details;
+        $parents = $_data->student->parent_details;
+        $guardianName = $parents ? $parents->guardian_first_name . ' ' . $parents->guardian_last_name : '';
+        $guardianContactNumber = $parents ? $parents->guardian_contact_number : '';
+        $guardianAddress = $parents ? $parents->guardian_address : '';
         return [
             $_data->student->account ? $_data->student->account->student_number : '',
             $_data->student->account ?  $_data->student->account->email : "-",
@@ -64,21 +61,28 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
             $_data->student->first_name,
             $_data->student->middle_initial,
             $_data->student->extention_name,
-            $_parents ? $_parents->guardian_first_name . ' ' . $_parents->guardian_last_name : '',
-            $_parents ? $_parents->guardian_contact_number : '',
-            $_parents ? $_parents->guardian_address :
-                strtoupper($_data->student->street . ' ' . $_data->student->barangay) . ' ' .
-                strtoupper($_data->student->municipality) . ' ' .
-                strtoupper($_data->student->province),
-            $_data->student->id_verification ? $_data->student->id_verification->picture_approved === 1 ? 'VERIFIED' : 'INVALID' : '',
-            $_data->student->id_verification ? $_data->student->id_verification->signature_approved === 1 ? 'VERIFIED' : 'INVALID' : '',
+            $guardianName,
+            $guardianContactNumber,
+            $guardianAddress,
+            '',
+            '',
+            ''
+
         ];
     }
     public function registerEvents(): array
     {
+
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $event->sheet->getStyle('A1:F1')->applyFromArray([
+                $cells = 'A1:K1';
+                $event->sheet->getStyle($cells)->getAlignment()
+                    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
+                    ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)
+                    ->setWrapText(true);
+                $event->sheet->getStyle($cells)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+                $event->sheet->getStyle($cells)->getFill()->getStartColor()->setARGB('18995B'); // Hex color code
+                $event->sheet->getStyle('A1:K1')->applyFromArray([
                     'font' => [
                         'bold' => true,
                     ],
