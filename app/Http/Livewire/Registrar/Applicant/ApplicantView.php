@@ -23,6 +23,7 @@ class ApplicantView extends Component
     public $tblApplicantPayment;
     public $tblApplicantAlumia;
     public $tblApplicantExamination;
+    public $tblApplicantExaminationAnswer;
     public function __construct()
     {
         $this->applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
@@ -33,10 +34,17 @@ class ApplicantView extends Component
         $this->tblApplicantPayment = env('DB_DATABASE_SECOND') . '.applicant_payments';
         $this->tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
         $this->tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+        $this->tblApplicantExaminationAnswer = env('DB_DATABASE_SECOND') . '.applicant_examination_answers';
     }
     public function render()
     {
-        $filterContent = array('created_accounts', 'registered_applicants', 'for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination', 'examination_payment', 'entrance_examination');
+        $filterContent = array(
+            array('User Accounts', array('created_accounts', 'registered_applicants')),
+            array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination')),
+            array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'took_the_exam')),
+            array('Briefing Orientation', array('For Scheduled', 'Attended', 'Briefing'))
+        );
+        //$filterContent = array('created_accounts', 'registered_applicants', 'for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination', 'examination_payment', 'entrance_examination', 'examination_passed');
         $filterCourses = CourseOffer::all();
         $this->academic = $this->academicValue();
         $this->selectCourse = $this->getCourse();
@@ -96,20 +104,196 @@ class ApplicantView extends Component
             $_student = explode(',', $searchInput); // Seperate the Sentence
             $_count = count($_student);
             if ($_count > 1) {
-                $query = $query->where('applicant_detials.last_name', 'like', '%' . $_student[0] . '%')
-                    ->where('applicant_detials.first_name', 'like', '%' . trim($_student[1]) . '%')
-                    ->orderBy('applicant_detials.last_name', 'asc');
+                $query = $query->where(env('DB_DATABASE_SECOND') . '.last_name', 'like', '%' . $_student[0] . '%')
+                    ->where(env('DB_DATABASE_SECOND') . '.first_name', 'like', '%' . trim($_student[1]) . '%')
+                    ->orderBy(env('DB_DATABASE_SECOND') . '.last_name', 'asc');
             } else {
-                $query = $query->where('applicant_detials.last_name', 'like', '%' . $_student[0] . '%')
-                    ->orderBy('applicant_detials.last_name', 'asc');
+                $query = $query->where(env('DB_DATABASE_SECOND') . '.last_name', 'like', '%' . $_student[0] . '%')
+                    ->orderBy(env('DB_DATABASE_SECOND') . '.last_name', 'asc');
             }
         }
-        switch ($selectCategories) {
+        if ($selectCategories == 'created_accounts') {
+            $dataLists = $query->leftJoin($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($this->tblApplicantDetails . '.applicant_id');
+        }
+        if ($selectCategories == 'registered_applicants') {
+            $dataLists = $query
+                ->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->leftJoin($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($this->tblApplicantDocuments . '.applicant_id');
+        }
+        if ($selectCategories == 'for_checking') {
+            $dataLists = $query
+                ->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                ->select(
+                    'applicant_accounts.*',
+                    DB::raw('(SELECT COUNT(' . $this->tblApplicantDocuments . '.is_approved)
+                FROM ' . $this->tblApplicantDocuments . '
+                WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+                AND ' . $this->tblApplicantDocuments . '.is_removed = 0
+                AND ' . $this->tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                    DB::raw('(
+                    SELECT COUNT(' . $this->tblDocuments . '.id)
+                    FROM ' . $this->tblDocuments . '
+                    WHERE ' . $this->tblDocuments . '.department_id = 2
+                    AND ' . $this->tblDocuments . '.is_removed = false
+                    AND ' . $this->tblDocuments . '.year_level = (
+                        SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) as result
+                        FROM ' . $this->applicantAccountTable . '
+                        WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDetails . '.applicant_id
+                )) as documentCount')
+                )
+                ->leftJoin($this->tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
+                ->whereNull('anq.applicant_id')
+                ->groupBy('applicant_accounts.id')
+                ->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
+        }
+        if ($selectCategories == 'not_qualified') {
+            $dataLists = $query->join($this->tblApplicantNotQualifieds, $this->tblApplicantNotQualifieds . '.applicant_id', $this->applicantAccountTable . '.id')
+                ->where($this->tblApplicantNotQualifieds . '.academic_id', base64_decode($academic));
+        }
+        if ($selectCategories == 'qualified') {
+            $dataLists = $query
+                ->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                ->select(
+                    'applicant_accounts.*',
+                    DB::raw('(SELECT COUNT(' . $this->tblApplicantDocuments . '.is_approved)
+            FROM ' . $this->tblApplicantDocuments . '
+            WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+            AND ' . $this->tblApplicantDocuments . '.is_removed = 0
+            AND ' . $this->tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                    DB::raw('(
+                SELECT COUNT(' . $this->tblDocuments . '.id)
+                FROM ' . $this->tblDocuments . '
+                WHERE ' . $this->tblDocuments . '.department_id = 2
+                AND ' . $this->tblDocuments . '.is_removed = false
+                AND ' . $this->tblDocuments . '.year_level = (
+                    SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) as result
+                    FROM ' . $this->applicantAccountTable . '
+                    WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDetails . '.applicant_id
+                )) as documentCount')
+                )
+                ->leftJoin($this->tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
+                ->whereNull('anq.applicant_id')
+                ->groupBy('applicant_accounts.id')
+                ->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments = documentCount');
+        }
+        if ($selectCategories == 'qualified_for_entrance_examination') {
+            $dataLists = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                ->select('applicant_accounts.*', DB::raw('(SELECT COUNT(' . $this->tblApplicantDocuments . '.is_approved)
+                            FROM ' . $this->tblApplicantDocuments . '
+                            WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+                            AND ' . $this->tblApplicantDocuments . '.is_removed = 0
+                            AND ' . $this->tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'), DB::raw('(
+                                SELECT COUNT(' . $this->tblDocuments . '.id)
+                                FROM ' . $this->tblDocuments . '
+                                WHERE ' . $this->tblDocuments . '.department_id = 2
+                                AND ' . $this->tblDocuments . '.is_removed = false
+                                AND ' . $this->tblDocuments . '.year_level = (
+                                    SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) as result
+                                    FROM ' . $this->applicantAccountTable . '
+                                    WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDetails . '.applicant_id
+                                ))as documentCount'))
+                ->leftJoin($this->tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
+                ->leftJoin($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->leftJoin($this->tblApplicantAlumia, $this->tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantAlumia . '.applicant_id')
+                ->whereNull($this->tblApplicantPayment . '.applicant_id')
+                ->whereNull('anq.applicant_id')
+                ->groupBy('applicant_accounts.id')
+                ->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments = documentCount');
+        }
+        if ($selectCategories == 'examination_payment') {
+            $dataLists = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                ->select('applicant_accounts.*', DB::raw('(SELECT COUNT(' . $this->tblApplicantDocuments . '.is_approved)
+                        FROM ' . $this->tblApplicantDocuments . '
+                        WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+                        AND ' . $this->tblApplicantDocuments . '.is_removed = 0
+                        AND ' . $this->tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'), DB::raw('(
+                            SELECT COUNT(' . $this->tblDocuments . '.id)
+                            FROM ' . $this->tblDocuments . '
+                            WHERE ' . $this->tblDocuments . '.department_id = 2
+                            AND ' . $this->tblDocuments . '.is_removed = false
+                            AND ' . $this->tblDocuments . '.year_level = (
+                                SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) as result
+                                FROM ' . $this->applicantAccountTable . '
+                                WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDetails . '.applicant_id
+                            ))as documentCount'))
+                ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where(function ($query) {
+                    $query->whereNull($this->tblApplicantPayment . '.is_approved')
+                        ->orWhere($this->tblApplicantPayment . '.is_approved', false);
+                })
+                ->where($this->tblApplicantPayment . '.is_removed', false)
+
+                ->groupBy('applicant_accounts.id')
+                ->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments = documentCount');
+        }
+        if ($selectCategories == 'entrance_examination') {
+            $dataLists = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantPayment . '.is_approved', true)
+                ->where($this->tblApplicantPayment . '.is_removed', false)
+                ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantExamination . '.is_removed', false)
+                ->whereNull($this->tblApplicantExamination . '.is_finish')
+                ->groupBy($this->tblApplicantExamination . '.applicant_id');
+        }
+        if ($selectCategories == 'examination_passed') {
+            $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantPayment . '.is_approved', true)
+                ->where($this->tblApplicantPayment . '.is_removed', false)
+                ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantExamination . '.is_removed', false)
+                ->where($this->tblApplicantExamination . '.is_finish', true)
+                ->where(function ($query) {
+                    $query->select(DB::raw('COUNT(*)'))
+                        ->from($this->tblApplicantExaminationAnswer)
+                        ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', $this->tblApplicantExaminationAnswer . '.choices_id')
+                        ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                        ->whereColumn($this->tblApplicantExaminationAnswer . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+                }, '>=', function ($query) {
+                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+                })
+                ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.created_at', 'desc');;
+        }
+        if ($selectCategories == 'examination_failed') {
+            $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantPayment . '.is_approved', true)
+                ->where($this->tblApplicantPayment . '.is_removed', false)
+                ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantExamination . '.is_removed', false)
+                ->where($this->tblApplicantExamination . '.is_finish', true)
+                ->where(function ($query) {
+                    $query->select(DB::raw('COUNT(*)'))
+                        ->from($this->tblApplicantExaminationAnswer)
+                        ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', $this->tblApplicantExaminationAnswer . '.choices_id')
+                        ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                        ->whereColumn($this->tblApplicantExaminationAnswer . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+                }, '<', function ($query) {
+                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+                })
+                ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.created_at', 'desc');;
+        }
+        if ($selectCategories == 'took_the_exam') {
+            $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantPayment . '.is_approved', true)
+                ->where($this->tblApplicantPayment . '.is_removed', false)
+                ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantExamination . '.is_removed', false)
+                ->where($this->tblApplicantExamination . '.is_finish', true)
+                ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.created_at', 'desc');
+        }
+        /* switch ($selectCategories) {
             case 'created_accounts':
-                $dataLists = $query->leftJoin($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
-                    ->whereNull($this->tblApplicantDetails . '.applicant_id');
-                /*  $dataLists = $query->leftJoin(env('DB_DATABASE_SECOND').'.applicant_detials', env('DB_DATABASE_SECOND').'.applicant_detials.applicant_id', 'applicant_accounts.id')
-                    ->whereNull(env('DB_DATABASE_SECOND').'.applicant_detials.applicant_id'); */
+
                 break;
             case 'registered_applicants':
                 $dataLists = $query
@@ -241,9 +425,54 @@ class ApplicantView extends Component
                     ->whereNull($this->tblApplicantExamination . '.is_finish')
                     ->groupBy($this->tblApplicantExamination . '.applicant_id');
                 break;
+            case 'examination_passed':
+                $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                    ->where($this->tblApplicantPayment . '.is_approved', true)
+                    ->where($this->tblApplicantPayment . '.is_removed', false)
+                    ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                    ->where($this->tblApplicantExamination . '.is_removed', false)
+                    ->where($this->tblApplicantExamination . '.is_finish', true)
+                    ->where(function ($query) {
+                        $query->select(DB::raw('COUNT(*)'))
+                            ->from($this->tblApplicantExaminationAnswer)
+                            ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', $this->tblApplicantExaminationAnswer . '.choices_id')
+                            ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                            ->whereColumn($this->tblApplicantExaminationAnswer . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+                    }, '>=', function ($query) {
+                        $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 65)'));
+                    })
+                    ->groupBy('applicant_accounts.id');
+            case 'examination_failed':
+                $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                    ->where($this->tblApplicantPayment . '.is_approved', true)
+                    ->where($this->tblApplicantPayment . '.is_removed', false)
+                    ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                    ->where($this->tblApplicantExamination . '.is_removed', false)
+                    ->where($this->tblApplicantExamination . '.is_finish', true)
+                    ->where(function ($query) {
+                        $query->select(DB::raw('COUNT(*)'))
+                            ->from($this->tblApplicantExaminationAnswer)
+                            ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', $this->tblApplicantExaminationAnswer . '.choices_id')
+                            ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                            ->whereColumn($this->tblApplicantExaminationAnswer . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+                    }, '<', function ($query) {
+                        $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 75)'));
+                    })
+                    ->groupBy('applicant_accounts.id');
+            case 'took_the_exam':
+                $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                    ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                    ->where($this->tblApplicantPayment . '.is_approved', true)
+                    ->where($this->tblApplicantPayment . '.is_removed', false)
+                    ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                    ->where($this->tblApplicantExamination . '.is_removed', false)
+                    ->where($this->tblApplicantExamination . '.is_finish', true)
+                    ->groupBy('applicant_accounts.id');
             default:
                 break;
-        }
+        } */
         return $dataLists->get();
     }
 }

@@ -46,14 +46,14 @@
 
                 </div>
                 <div class="">
-                   {{--  {{ $dataLists }} --}}
+                    {{--  {{ $dataLists }} --}}
                 </div>
                 <div class="data-content">
                     @forelse ($dataLists as $data)
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-9 col-md-12">
+                                    <div class="col-lg-8 col-md-12">
                                         <p class="fw-bolder text-muted mb-0">
                                             <span class="badge bg-primary">{{ $data->course->course_name }}</span>
                                             |
@@ -67,19 +67,105 @@
                                             <span>{{ $data ? $data->email : '-' }}</span> <br>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-12">
-                                        <small>APPLICATION DATE</small>
-                                        <div class="badge bg-primary w-100">
+                                    <div class="col-lg-4 col-md-12">
+                                        @if ($selectCategories != 'created_accounts' && $selectCategories != 'registered_applicants')
+                                            @if (
+                                                $selectCategories == 'examination_passed' ||
+                                                    $selectCategories == 'examination_failed' ||
+                                                    $selectCategories == 'took_the_exam')
+                                                <div class="form-view">
+                                                    <small class="text-muted fw-bolder">EXAMINATION DATE:</small>
+                                                    <small
+                                                        class="badge bg-info">{{ $data->applicant_examination->updated_at->format('F d, Y') }}</small>
+                                                    <div class="row">
+                                                        <div class="col-md">
+                                                            <small class="fw-bolder">SCORE</small>
+                                                            <h3 class="text-primary fw-bolder ">
 
-                                            <span>{{ $data->created_at->format('F d, Y') }}</span>
-                                        </div>
+                                                                {{ $data->applicant_examination->examination_result()[0] }}
+                                                            </h3>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <small class="fw-bolder">PERCENTILE</small>
+                                                            <h3 class="text-primary fw-bolder">
 
-                                        <a href="{{ route('applicant-removed') }}?_applicant={{ base64_encode($data->id) }}"
-                                            class="badge bg-danger text-white w-100">REMOVE
-                                        </a>
+                                                                {{ $data->applicant_examination->examination_result()[1] }}
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @else
+                                            <small>APPLICATION DATE</small>
+                                            <div class="badge bg-primary w-100">
+
+                                                <span>{{ $data->created_at->format('F d, Y') }}</span>
+                                            </div>
+
+                                            <a href="{{ route('applicant-removed') }}?_applicant={{ base64_encode($data->id) }}"
+                                                class="badge bg-danger text-white w-100">REMOVE
+                                            </a>
+                                        @endif
+
                                     </div>
                                 </div>
                             </div>
+                            @if ($selectCategories == 'examination_passed')
+                                <div class="card-footer">
+                                    @if (!$data->schedule_orientation)
+                                        <small class="text-muted fw-bolder">ORIENTATION SCHEDULED</small>
+                                        <form action="{{ route('applicant.orientation-scheduled') }}" method="post">
+                                            @csrf
+                                            <input type="hidden" name="applicant"
+                                                value="{{ base64_encode($data->id) }}">
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <small class="text-muted fw-bolder">CATEGORY</small>
+                                                    <select name="category" id=""
+                                                        class="form-select form-select-sm">
+                                                        <option value="in-person">IN-PERSON ORIENTATION</option>
+                                                        <option value="online">ONLINE ORIENTATION</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md">
+                                                    <small class="text-muted fw-bolder">DATE</small>
+                                                    <input type="date" class="form-control form-control-sm"
+                                                        name="date">
+                                                </div>
+                                                <div class="col-md">
+                                                    <small class="text-muted fw-bolder">TIME</small>
+                                                    <input type="time" class="form-control form-control-sm"
+                                                        name="time">
+                                                </div>
+                                            </div>
+                                            <div class="float-end mt-2">
+                                                <button type="submit" class="btn btn-primary btn-sm">SUBMIT</button>
+                                            </div>
+                                        </form>
+                                    @else
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <small class="text-muted fw-bolder">CATEGORY</small> <br>
+                                                    <label for=""
+                                                        class="text-info fw-bolder">{{ strtoupper($data->schedule_orientation->category) }}
+                                                        ORIENTATION</label>
+                                                </div>
+                                                <div class="col-md">
+                                                    <small class="text-muted fw-bolder">DATE</small><br>
+                                                    <label for=""
+                                                        class="text-info fw-bolder">{{ $data->schedule_orientation->schedule_date }}</label>
+                                                </div>
+                                                <div class="col-md">
+                                                    <small class="text-muted fw-bolder">TIME</small><br>
+                                                    <label for=""
+                                                        class="text-info fw-bolder">{{ $data->schedule_orientation->schedule_time }}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     @empty
                         <div class="card">
@@ -113,8 +199,13 @@
                         <div class="form-group search-input">
                             <select class="form-select border border-primary" wire:model="selectCategories">
                                 @foreach ($filterContent as $item)
-                                    <option value="{{ $item }}">{{ ucwords(str_replace('_', ' ', $item)) }}
-                                    </option>
+                                    <optgroup label="{{ $item[0] }}">
+                                        @foreach ($item[1] as $item)
+                                            <option value="{{ $item }}">
+                                                {{ ucwords(str_replace('_', ' ', $item)) }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
                                 @endforeach
                             </select>
                         </div>

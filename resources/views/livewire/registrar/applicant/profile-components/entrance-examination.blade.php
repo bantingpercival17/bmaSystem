@@ -11,40 +11,6 @@
             <div class="card-body">
                 {{-- Examination Scheduled --}}
                 @if ($profile->examination_schedule)
-                    <a href="{{ route('applicant-examination-result') }}?_applicant={{ base64_encode($profile->id) }}"
-                        class="btn btn-primary btn-sm">Examination Result</a>
-                    <a href="{{ route('applicant-examination-log') }}?_applicant={{ base64_encode($profile->id) }}"
-                        class="btn btn-secondary btn-sm">Examination Log</a>
-                    <div class="row">
-                        <div class="col-md">
-                            <div class="form-view">
-                                <small
-                                    class="badge bg-info">{{ $profile->applicant_examination->updated_at->format('F d, Y') }}</small>
-                                <div class="row">
-                                    <div class="col-md">
-                                        <small class="fw-bolder">SCORE</small>
-                                        <h3 class="text-primary fw-bolder mt-3">
-
-                                            {{ $profile->applicant_examination->examination_result()[0] }}
-                                        </h3>
-                                    </div>
-                                    <div class="col-md">
-                                        <small class="fw-bolder">PERCENTILE</small>
-                                        <h3 class="text-primary fw-bolder mt-3">
-
-                                            {{ $profile->applicant_examination->examination_result()[1] }}
-                                        </h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md">
-                            <p>
-
-                            </p>
-                        </div>
-                    </div>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -72,22 +38,28 @@
                                         </td>
                                         <td>
                                             <div class="d-flex justify-content-center">
-                                                <span class="score">
-                                                    <small class="fw-bolder text-muted">
-                                                        SCORE:
-                                                    </small> <br>
-                                                    <span class="text-primary fw-bolder">
-                                                        {{ $item->examination_result()[0] }}
+                                                @if ($item->is_finish === 1)
+                                                    <span class="score">
+                                                        <small class="fw-bolder text-muted">
+                                                            SCORE:
+                                                        </small> <br>
+                                                        <span class="text-primary fw-bolder">
+                                                            {{ $item->examination_result()[0] }}
+                                                        </span>
                                                     </span>
-                                                </span>
-                                                <span class="PERCENTILE">
-                                                    <small class="fw-bolder text-muted">
-                                                        PERCENTILE:
-                                                    </small><br>
-                                                    <span class="text-primary fw-bolder">
-                                                        {{ $item->examination_result()[1] }}
+                                                    <span class="PERCENTILE">
+                                                        <small class="fw-bolder text-muted">
+                                                            PERCENTILE:
+                                                        </small><br>
+                                                        <span class="text-primary fw-bolder">
+                                                            {{ $item->examination_result()[1] }}
+                                                        </span>
                                                     </span>
-                                                </span>
+                                                    <br>
+                                                @else
+                                                    <span class="fw-bolder"></span>
+                                                @endif
+
                                             </div>
 
                                         </td>
@@ -99,16 +71,14 @@
                                                 class="btn btn-outline-primary btn-sm">Logs</a>
                                             @foreach (Auth::user()->roles as $role)
                                                 @if ($role->id == 1)
-                                                    @foreach ($profile->examination_list as $data)
-                                                        @if ($data->is_removed == false)
-                                                            <br>
-                                                            <a href="{{ route('examination.remove') }}?examination={{ $data->id }}"
-                                                                class="btn btn-sm btn-outline-danger">remove</a>
-                                                        @else
-                                                            <br>
-                                                            <span class="badge bg-info">REMOVED</span>
-                                                        @endif
-                                                    @endforeach
+                                                    @if ($item->is_removed == false)
+                                                        <br>
+                                                        <a href="{{ route('examination.remove') }}?examination={{ $item->id }}"
+                                                            class="btn btn-sm btn-outline-danger">remove</a>
+                                                    @else
+                                                        <br>
+                                                        <span class="badge bg-info">REMOVED</span>
+                                                    @endif
                                                 @endif
                                             @endforeach
                                         </td>

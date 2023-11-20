@@ -47,7 +47,7 @@ class ApplicantController extends Controller
                 $department = $user->course_id === 3 ? 'SENIOR HIGHSCHOOL' : 'COLLEGE';
                 $examinationCategory = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department', $department)->with('categories')->first();
                 $finalResult = $examinationDetails->examination_result();
-                foreach ($examinationCategory->categories as $key => $value) {
+                /* foreach ($examinationCategory->categories as $key => $value) {
                     $score = ApplicantExaminationAnswer::join(env('DB_DATABASE') . '.examination_questions as examination_question', 'examination_question.id', 'applicant_examination_answers.question_id')
                         ->join(env('DB_DATABASE') . '.examination_question_choices as choices', 'choices.id', 'applicant_examination_answers.choices_id')
                         ->where('applicant_examination_answers.examination_id', $examinationDetails->id)
@@ -60,7 +60,7 @@ class ApplicantController extends Controller
                         'totalItems' => count($value->question),
                         'score' => count($score)
                     );
-                }
+                } */
             }
         }
         $examination = compact('payment', 'examinationDetails', 'examinationSchedule', 'examinationResult', 'finalResult');
