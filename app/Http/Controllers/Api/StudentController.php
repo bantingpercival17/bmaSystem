@@ -22,6 +22,7 @@ use App\Models\GradePublish;
 use App\Models\ShipboardAssessmentDetails;
 use App\Models\ShipboardExamination;
 use App\Models\Staff;
+use App\Report\Students\StudentReport;
 use Exception;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
@@ -67,6 +68,19 @@ class StudentController extends Controller
         try {
             $data = auth()->user()->student->enrollment_history;
             return response(['data' => $data], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function student_enrollment_coe($data)
+    {
+        try {
+            $assessment = EnrollmentAssessment::find($data);
+            $pdfReport = new StudentReport();
+            return $pdfReport->enrollment_certificate($assessment);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([

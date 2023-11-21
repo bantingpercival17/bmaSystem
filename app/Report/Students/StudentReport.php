@@ -9,6 +9,10 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class StudentReport
 {
+    public $legal;
+    public $crosswise_legal;
+    public $crosswise_short;
+    public $path;
     public function __construct()
     {
 
@@ -26,6 +30,14 @@ class StudentReport
         $_form_number = $_enrollment_assessment->course_id == 3 ? 'FORM RG-04' : 'FORM RG-03';
         $file_name = $_form_number . ' - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    function enrollment_certificate($assessment)
+    {
+        $student = $assessment->student;
+        $pdf = PDF::loadView($this->path . 'student_enrollment_certificate', compact('student', 'assessment'));
+        $formNumber = $assessment->course_id == 3 ? 'FORM RG-04' : 'FORM RG-03';
+        $fileName = $formNumber . ' - ' . strtoupper($student->last_name . ', ' . $student->first_name . ' ' . $student->middle_name);
+        return $pdf->setPaper($this->legal, 'portrait')->stream($fileName . '.pdf');
     }
     public function application_form($_data)
     {
