@@ -21,6 +21,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/applicant/examination', [ApplicantController::class, 'examination_questions']);
     Route::post('/applicant/examination/answer', [ApplicantController::class, 'examination_answer']);
     Route::post('/applicant/examination/finish', [ApplicantController::class, 'examination_finish']);
+    Route::get('/applicant/medical-schedule/{data}', [ApplicantController::class, 'medical_appointment']);
+    Route::get('/applicant/medical-schedule/slot/{data}', [ApplicantController::class, 'medical_appointment_slot']);
     Route::post('/applicant/logout', [ApplicantController::class, 'applicant_logout']);
 });
 /* Route::middleware('auth:sanctum,applicant')->group(function () {

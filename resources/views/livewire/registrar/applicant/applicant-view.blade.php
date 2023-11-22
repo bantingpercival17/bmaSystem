@@ -94,6 +94,19 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                            @elseif($selectCategories == 'expected_attendees')
+                                                <small>BRIEFING DATE</small>
+                                                <div class="badge bg-info w-100">
+                                                    <span>{{ \Carbon\Carbon::parse($data->schedule_orientation->schedule_date . ' ' . $data->schedule_orientation->schedule_time)->format('F d,Y  h:i A') }}
+                                                    </span>
+                                                </div>
+                                                <a href="{{ route('applicant.orientation-attended') }}?applicant={{ $data->id }}"
+                                                    class="btn btn-primary btn-sm w-100 mt-2">Present Participant</a>
+                                            @else
+                                                <small>APPLICATION DATE</small>
+                                                <div class="badge bg-primary w-100">
+                                                    <span>{{ $data->created_at->format('F d, Y') }}</span>
+                                                </div>
                                             @endif
                                         @else
                                             <small>APPLICATION DATE</small>

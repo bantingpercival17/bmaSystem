@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exports\ApplicantMedicalSchedule;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
@@ -11,10 +12,12 @@ use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantExaminationAnswer;
 use App\Models\ApplicantExaminationEssay;
 use App\Models\ApplicantExaminationSchedule;
+use App\Models\ApplicantMedicalAppointment;
 use App\Models\ApplicantPayment;
 use App\Models\Documents;
 use App\Models\Examination;
 use App\Models\ExaminationCategory;
+use App\Models\MedicalAppointmentSchedule;
 use App\Report\ApplicantReport;
 use DateTime;
 use Exception;
@@ -41,13 +44,14 @@ class ApplicantController extends Controller
         $examinationSchedule = $examinationDetails ? $data->examination_schedule : [];
         $examinationResult = [];
         $finalResult = [];
+        /* EXAMINATION DETAILS */
         if ($examinationDetails) {
             if ($examinationDetails->is_finish) {
                 $user = auth()->user();
                 $department = $user->course_id === 3 ? 'SENIOR HIGHSCHOOL' : 'COLLEGE';
                 $examinationCategory = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department', $department)->with('categories')->first();
                 $finalResult = $examinationDetails->examination_result();
-                /* foreach ($examinationCategory->categories as $key => $value) {
+                foreach ($examinationCategory->categories as $key => $value) {
                     $score = ApplicantExaminationAnswer::join(env('DB_DATABASE') . '.examination_questions as examination_question', 'examination_question.id', 'applicant_examination_answers.question_id')
                         ->join(env('DB_DATABASE') . '.examination_question_choices as choices', 'choices.id', 'applicant_examination_answers.choices_id')
                         ->where('applicant_examination_answers.examination_id', $examinationDetails->id)
@@ -60,11 +64,26 @@ class ApplicantController extends Controller
                         'totalItems' => count($value->question),
                         'score' => count($score)
                     );
-                } */
+                }
             }
         }
         $examination = compact('payment', 'examinationDetails', 'examinationSchedule', 'examinationResult', 'finalResult');
-        return response(['data' => $data, 'documents' => $documents, 'examination' => $examination], 200);
+        /* BRIEFING ORIENTATION */
+        $orientation = [];
+        if ($data->schedule_orientation) {
+            $schedule = $data->schedule_orientation;
+            $present = $data->virtual_orientation;
+            $orientation = compact('schedule', 'present');
+        }
+        /* MEDICAL  */
+        $medical_scheduled = MedicalAppointmentSchedule::where('is_close', false)->orderBy('date', 'desc')->get();
+        $medical = compact('medical_scheduled');
+        if ($data->medical_appointment) {
+            $appointment = $data->medical_appointment;
+            $medical_result = $data->medical_result;
+            $medical = compact('appointment', 'medical_result');
+        }
+        return response(['data' => $data, 'documents' => $documents, 'examination' => $examination, 'orientation' => $orientation, 'medical' => $medical], 200);
     }
     public function applicant_store_information(Request $_request)
     {
@@ -344,6 +363,35 @@ class ApplicantController extends Controller
             }
 
             return response(['data' => 'Examination Complete'], 200);
+        } catch (\Throwable $th) {
+            $this->debugTrackerApplicant($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    function medical_appointment($data)
+    {
+        try {
+            $scheduleData = array(
+                'applicant_id' => auth()->user()->id,
+                'appointment_date' => $data,
+                'approved_by' => 7
+            );
+            ApplicantMedicalAppointment::create($scheduleData);
+            return response(['data' => 'Medical Appointment Submitted'], 200);
+        } catch (\Throwable $th) {
+            $this->debugTrackerApplicant($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    function medical_appointment_slot($data)
+    {
+        try {
+            $schedule = MedicalAppointmentSchedule::find($data);
+            return $schedule->number_of_avialable_applicant() == $schedule->capacity ? true : false;
         } catch (\Throwable $th) {
             $this->debugTrackerApplicant($th);
             return response([
