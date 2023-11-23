@@ -83,7 +83,10 @@ class ApplicantController extends Controller
             $medical_result = $data->medical_result;
             $medical = compact('appointment', 'medical_result');
         }
-        return response(['data' => $data, 'documents' => $documents, 'examination' => $examination, 'orientation' => $orientation, 'medical' => $medical], 200);
+        /* ENROLLMENT DETAILS */
+        $enrollment = $data->student_details ?:  [];
+
+        return response(['data' => $data, 'documents' => $documents, 'examination' => $examination, 'orientation' => $orientation, 'medical' => $medical, 'enrollment' => $enrollment], 200);
     }
     public function applicant_store_information(Request $_request)
     {

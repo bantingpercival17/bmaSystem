@@ -228,7 +228,7 @@ class OnboardTrainingController extends Controller
         try {
             $_generate_report = new OnboardTrainingReport();
             $_data = StudentDetails::find(base64_decode($_request->_midshipman));
-            return $_generate_report->monthly_summary_report($_data);
+            return $_generate_report->monthly_summary_report($_data, $_request->_month);
         } catch (Exception $error) {
             return $error->getMessage();
             return back()->with('error', $error->getMessage());

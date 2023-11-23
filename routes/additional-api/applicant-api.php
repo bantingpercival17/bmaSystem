@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApplicantController;
+use App\Http\Controllers\Api\ApplicantEnrollmentController;
 use App\Http\Controllers\Api\AuthController;
 
 Route::post('/applicant/login', [AuthController::class, 'applicant_login']);
@@ -23,6 +24,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/applicant/examination/finish', [ApplicantController::class, 'examination_finish']);
     Route::get('/applicant/medical-schedule/{data}', [ApplicantController::class, 'medical_appointment']);
     Route::get('/applicant/medical-schedule/slot/{data}', [ApplicantController::class, 'medical_appointment_slot']);
+    # ENROLLMENT PROCUDURE 
+    Route::get('/applicant/enrollment',[ApplicantEnrollmentController::class,'enrollment_
+    ']);
     Route::post('/applicant/logout', [ApplicantController::class, 'applicant_logout']);
 });
 /* Route::middleware('auth:sanctum,applicant')->group(function () {

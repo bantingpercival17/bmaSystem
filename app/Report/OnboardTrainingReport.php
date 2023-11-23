@@ -7,6 +7,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 class OnboardTrainingReport
 {
 
+    public $legal;
+    public $path;
     public function __construct()
     {
 
@@ -34,11 +36,11 @@ class OnboardTrainingReport
         $file_name = 'NARATIVE MONITORING REPORT' . '.pdf';
         return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
     }
-    public function monthly_summary_report($_data)
+    public function monthly_summary_report($_data, $month)
     {
         // Set the Layout for the report
         $_layout = $this->path . '.monthly-summary-report';
-        $_documents = $_data->narrative_documents(request()->input('_month'))->get();
+        $_documents = $_data->narrative_documents($month)->get();
         // Import PDF Class
         $pdf = PDF::loadView($_layout, compact('_data', '_documents'));
         // Set the Filename of report

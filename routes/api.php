@@ -103,6 +103,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_store']);
     Route::get('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_report_view']);
     Route::post('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_file_attachment']);
+    Route::get('/student/onboard/performance/view-report/{data}/{version}',[ShipboardTraining::class,'student_onboard_mopm_report']);
     Route::get('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_assessment_view']);
     Route::post('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_assessment_verification']);
     Route::get('student/onboard/assessment/questioner', [ShipboardTraining::class, 'student_onboard_assessment_questioner']);

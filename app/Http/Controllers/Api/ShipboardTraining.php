@@ -14,6 +14,8 @@ use App\Models\ShipBoardInformation;
 use App\Models\ShipboardPerformanceReport;
 use App\Models\ShippingAgencies;
 use App\Models\ShipboardJournal;
+use App\Models\StudentDetails;
+use App\Report\OnboardTrainingReport;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -24,7 +26,8 @@ class ShipboardTraining extends Controller
     {
         try {
             $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->with('document_requirements')->with('performance_report')->get();
-            return response(['data' => compact('shipboard_information')], 200);
+            $narative_report = auth()->user()->student->narative_report;
+            return response(['data' => compact('shipboard_information', 'narative_report')], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
         }
@@ -275,6 +278,29 @@ class ShipboardTraining extends Controller
             return response(['error' => $error->getMessage()], 505);
             $request->header('User-Agent');
             // Create a function to Controler file to save and store the details of bugs
+        }
+    }
+    function student_onboard_mopm_report($data, $version)
+    {
+        try {
+            $user = auth()->user();
+            if ($version == 'v1') {
+                $_generate_report = new OnboardTrainingReport();
+                $student = StudentDetails::find($user->student->id);
+                return $_generate_report->monthly_summary_report($student, $data);
+                #return route('onboard.narative-report-monthly-summary') . '?_midshipman=' . base64_encode(auth()->user()->student_id) . '&_month=' . $data;
+            }
+            if ($version == 'v2') {
+                $generateReport = new OnboardTrainingReport();
+                $student = StudentDetails::find($user->student->id);
+                $narativeReport = ShipboardPerformanceReport::find($data);
+                return $generateReport->monthlySummaryReport($student, $narativeReport);
+            }
+        } catch (\Throwable $th) {
+            $this->debugTrackerStudent($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
         }
     }
     function student_onboard_assessment_view(Request $request)
