@@ -234,7 +234,25 @@ class ShipboardTraining extends Controller
                 ['MDSD FOR THE MONTH', 'while_at_work'],
                 ['COPY THE DAILY JOURNAL', 'while_at_work']
             ];
-            return compact('data', 'documents');
+            $documentsV1 = [];
+            $dataV1 = [];
+            if ($_request->month) {
+                $user = auth()->user();
+                $documentsV1 =  ['Training Record Book', 'Daily Journal', 'Crew List', "Master's Declaration of Safe Departure", 'Picture while at work'];
+                $dataV1 = ShipboardJournal::where([
+                    /*  'student_id' => $user->student->id, */
+                    'month' => $_request->month,
+                    'is_removed' => false,
+                ])->get();
+                $dataV1 = ShipboardJournal::where('student_id', $user->student->id)->where('is_removed', false)->where('month', base64_decode($_request->month))->get();
+                #$dataV1 = $_request->month;
+                /* $_journals = ShipboardJournal::select('month', DB::raw('count(*) as total'))
+                    ->where('student_id', Auth::user()->student_id)
+                    ->groupBy('month')
+                    ->get(); */
+            }
+            $version1 = compact('documentsV1', 'dataV1');
+            return compact('data', 'documents', 'version1');
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
             $_request->header('User-Agent');
