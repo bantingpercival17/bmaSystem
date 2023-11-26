@@ -181,7 +181,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
         $_course_color = $this->course_id == 3 ? 'bg-warning text-white' : $_course_color;
         return $_course_color;
     }
-    function student_details()
+    function student_applicant()
     {
         return $this->hasOne(StudentApplicantDetails::class, 'applicant_id');
     }

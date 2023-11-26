@@ -25,8 +25,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/applicant/medical-schedule/{data}', [ApplicantController::class, 'medical_appointment']);
     Route::get('/applicant/medical-schedule/slot/{data}', [ApplicantController::class, 'medical_appointment_slot']);
     # ENROLLMENT PROCUDURE 
-    Route::get('/applicant/enrollment',[ApplicantEnrollmentController::class,'enrollment_
-    ']);
+    Route::get('/applicant/enrollment',[ApplicantEnrollmentController::class,'enrollment_overview']);
+    Route::get('/applicant/enrollment-registration',[ApplicantEnrollmentController::class,'enrollment_applicant_details']);
+    Route::post('/applicant/enrollment-registration',[ApplicantEnrollmentController::class,'enrollment_application_registration']);
+
     Route::post('/applicant/logout', [ApplicantController::class, 'applicant_logout']);
 });
 /* Route::middleware('auth:sanctum,applicant')->group(function () {
