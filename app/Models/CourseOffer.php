@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class CourseOffer extends Model
 {
@@ -47,11 +48,15 @@ class CourseOffer extends Model
      */
     public function enrollment_list()
     {
+        $academic =  Auth::user()->staff->current_academic()->id;
+        if (Cache::has('academic')) {
+            $academic = base64_decode(Cache::get('academic'));
+        }
         $_query = $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->select('enrollment_assessments.*')
             ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
             ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.academic_id', $academic)
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
             ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
@@ -71,13 +76,17 @@ class CourseOffer extends Model
      */
     public function enrollment_list_by_year_level($data)
     {
+        $academic =  Auth::user()->staff->current_academic()->id;
+        if (Cache::has('academic')) {
+            $academic = base64_decode(Cache::get('academic'));
+        }
         // Index 0 is Year Level
         // Index1 is Curriculum
         $_query = $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->select('enrollment_assessments.*')
             ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
             ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.academic_id', $academic)
             ->where('enrollment_assessments.year_level', $data)
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
@@ -98,6 +107,7 @@ class CourseOffer extends Model
     }
     public function enrollment_list_by_year_level_without_cancellation($data)
     {
+
         // Index 0 is Year Level
         // Index1 is Curriculum
         $_query = $this->hasMany(EnrollmentAssessment::class, 'course_id')
@@ -122,11 +132,15 @@ class CourseOffer extends Model
     }
     public function enrollment_list_by_year_level_with_curriculum($data)
     {
+        $academic =  Auth::user()->staff->current_academic()->id;
+        if (Cache::has('academic')) {
+            $academic = base64_decode(Cache::get('academic'));
+        }
         $_query =  $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->select('enrollment_assessments.*')
             ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
             ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.academic_id', $academic)
             ->where('enrollment_assessments.year_level', $data[0])
             ->where('enrollment_assessments.is_removed', false)
             ->where('payment_transactions.is_removed', false)
@@ -917,9 +931,9 @@ class CourseOffer extends Model
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id') # Applicant Payments
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations', env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id')
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_removed', false)
-            ->whereNull(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_finish');
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            ->whereNull(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish');
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
@@ -958,9 +972,9 @@ class CourseOffer extends Model
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id') # Applicant Payments
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations', env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id')
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_removed', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_finish', false);
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish', false);
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
@@ -1001,9 +1015,9 @@ class CourseOffer extends Model
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id') # Applicant Payments
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations', env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id')
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_removed', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_finish', true)
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish', true)
             ->where(
                 DB::raw(
                     '(SELECT ((COUNT(eqc.is_answer)/' .
@@ -1017,7 +1031,7 @@ class CourseOffer extends Model
                 '>=',
                 $_point,
             )
-            ->orderBy(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.updated_at', 'desc');
+            ->orderBy(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.updated_at', 'desc');
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
@@ -1058,9 +1072,9 @@ class CourseOffer extends Model
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id') # Applicant Payments
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations', env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id')
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_removed', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_finish', true)
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish', true)
             ->where(
                 DB::raw(
                     '(SELECT ((COUNT(eqc.is_answer)/' .
@@ -1074,7 +1088,7 @@ class CourseOffer extends Model
                 '<',
                 $_point,
             )
-            ->orderBy(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.updated_at', 'desc');
+            ->orderBy(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.updated_at', 'desc');
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
@@ -1216,9 +1230,9 @@ class CourseOffer extends Model
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id') # Applicant Payments
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations', env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id') # Entrance Examination
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_removed', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_finish', true)
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id') # Entrance Examination
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish', true)
             ->where(
                 DB::raw(
                     '(SELECT ((COUNT(eqc.is_answer)/' .
@@ -1232,10 +1246,10 @@ class CourseOffer extends Model
                 '>=',
                 $_point,
             ) # Get the Score;
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings', env('DB_DATABASE_SECOND').'.applicant_briefings.applicant_id', 'applicant_accounts.id')
-            ->where(env('DB_DATABASE_SECOND').'.applicant_briefings.is_removed', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_briefings.is_completed', false)
-            ->orderBy(env('DB_DATABASE_SECOND').'.applicant_briefings.updated_at', 'desc');
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_completed', false)
+            ->orderBy(env('DB_DATABASE_SECOND') . '.applicant_briefings.updated_at', 'desc');
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
@@ -1276,9 +1290,9 @@ class CourseOffer extends Model
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id') # Applicant Payments
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations', env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id') # Entrance Examination
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_removed', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_finish', true)
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id') # Entrance Examination
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish', true)
             ->where(
                 DB::raw(
                     '(SELECT ((COUNT(eqc.is_answer)/' .
@@ -1292,11 +1306,11 @@ class CourseOffer extends Model
                 '>=',
                 $_point,
             ) # Get the Score;
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings', env('DB_DATABASE_SECOND').'.applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
-            ->where(env('DB_DATABASE_SECOND').'.applicant_briefings.is_removed', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_briefings.is_completed', true)
-            ->leftJoin(env('DB_DATABASE_SECOND').'.applicant_medical_appointments', env('DB_DATABASE_SECOND').'.applicant_medical_appointments.applicant_id', 'applicant_accounts.id')
-            ->whereNull(env('DB_DATABASE_SECOND').'.applicant_medical_appointments.applicant_id');
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_completed', true)
+            ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments', env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.applicant_id', 'applicant_accounts.id')
+            ->whereNull(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.applicant_id');
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
@@ -1336,9 +1350,9 @@ class CourseOffer extends Model
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id') # Applicant Payments
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations', env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id') # Entrance Examination
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_removed', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_finish', true)
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id') # Entrance Examination
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish', true)
             ->where(
                 DB::raw(
                     '(SELECT ((COUNT(eqc.is_answer)/' .
@@ -1352,11 +1366,11 @@ class CourseOffer extends Model
                 '>=',
                 '50',
             ) # Get the Score;
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings', env('DB_DATABASE_SECOND').'.applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_appointments', env('DB_DATABASE_SECOND').'.applicant_medical_appointments.applicant_id', 'applicant_accounts.id') # Applicant Medical Appointment
-            ->where(env('DB_DATABASE_SECOND').'.applicant_medical_appointments.is_removed', false)
-            ->leftJoin(env('DB_DATABASE_SECOND').'.applicant_medical_results', env('DB_DATABASE_SECOND').'.applicant_medical_results.applicant_id', 'applicant_accounts.id')
-            ->whereNull(env('DB_DATABASE_SECOND').'.applicant_medical_results.applicant_id');
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments', env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.applicant_id', 'applicant_accounts.id') # Applicant Medical Appointment
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.is_removed', false)
+            ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+            ->whereNull(env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id');
 
         //Searching Tool
         if (request()->input('_student')) {
@@ -1397,9 +1411,9 @@ class CourseOffer extends Model
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id') # Applicant Payments
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations', env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id') # Entrance Examination
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_removed', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_entrance_examinations.is_finish', true)
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', 'applicant_accounts.id') # Entrance Examination
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish', true)
             ->where(
                 DB::raw(
                     '(SELECT ((COUNT(eqc.is_answer)/' .
@@ -1413,12 +1427,12 @@ class CourseOffer extends Model
                 '>=',
                 '50',
             ) # Get the Score;
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings', env('DB_DATABASE_SECOND').'.applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_appointments', env('DB_DATABASE_SECOND').'.applicant_medical_appointments.applicant_id', 'applicant_accounts.id') # Applicant Medical Appointment
-            ->where(env('DB_DATABASE_SECOND').'.applicant_medical_appointments.is_removed', false)
-            ->leftJoin(env('DB_DATABASE_SECOND').'.applicant_medical_results', env('DB_DATABASE_SECOND').'.applicant_medical_results.applicant_id', 'applicant_accounts.id')
-            ->whereNotNull(env('DB_DATABASE_SECOND').'.applicant_medical_results.applicant_id')
-            ->where(env('DB_DATABASE_SECOND').'.applicant_medical_results.is_removed', false);
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments', env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.applicant_id', 'applicant_accounts.id') # Applicant Medical Appointment
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.is_removed', false)
+            ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+            ->whereNotNull(env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false);
         //Searching Tool
         if (request()->input('_student')) {
             $_student = explode(',', request()->input('_student'));
@@ -1433,7 +1447,7 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->groupBy('applicant_accounts.id')
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_results as amr', 'amr.applicant_id', 'applicant_accounts.id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results as amr', 'amr.applicant_id', 'applicant_accounts.id')
             ->where('amr.is_removed', false)
             ->where('amr.is_fit', true);
     }
@@ -1472,11 +1486,11 @@ class CourseOffer extends Model
         return $this->hasMany(ApplicantAccount::class, 'course_id')
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_briefings.is_removed', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings', env('DB_DATABASE_SECOND').'.applicant_briefings.applicant_id', 'applicant_accounts.id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false)
-            ->leftJoin(env('DB_DATABASE_SECOND').'.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+            ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
             ->whereNull('ama.applicant_id');
     }
     public function scheduled()
@@ -1485,9 +1499,9 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
             ->where('ab.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
             ->where('ama.is_removed', false)
             ->where('is_approved', false)
             ->groupBy('applicant_accounts.id');
@@ -1498,13 +1512,13 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
             ->where('ab.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
             ->where('ama.is_removed', false)
             ->where('is_approved', true)
-            ->leftJoin(env('DB_DATABASE_SECOND').'.applicant_medical_results', env('DB_DATABASE_SECOND').'.applicant_medical_results.applicant_id', 'ama.applicant_id')
-            ->whereNull(env('DB_DATABASE_SECOND').'.applicant_medical_results.applicant_id')
+            ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'ama.applicant_id')
+            ->whereNull(env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id')
             ->groupBy('applicant_accounts.id');
     }
     public function medical_result_passed()
@@ -1513,14 +1527,14 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
             ->where('ab.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
             ->where('ama.is_removed', false)
             ->where('is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_results', env('DB_DATABASE_SECOND').'.applicant_medical_results.applicant_id', 'ab.applicant_id')
-            ->where(env('DB_DATABASE_SECOND').'.applicant_medical_results.is_fit', true)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_medical_results.is_removed', false)
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'ab.applicant_id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
             ->groupBy('applicant_accounts.id');
     }
     public function medical_result_pending()
@@ -1529,14 +1543,14 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
             ->where('ab.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
             ->where('ama.is_removed', false)
             ->where('is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_results', env('DB_DATABASE_SECOND').'.applicant_medical_results.applicant_id', 'ab.applicant_id')
-            ->where(env('DB_DATABASE_SECOND').'.applicant_medical_results.is_pending', false)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_medical_results.is_removed', false)
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'ab.applicant_id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_pending', false)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
             ->groupBy('applicant_accounts.id');
     }
     public function medical_result_failed()
@@ -1545,14 +1559,14 @@ class CourseOffer extends Model
             ->select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('applicant_accounts.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings as ab', 'ab.applicant_id', 'applicant_accounts.id')
             ->where('ab.is_removed', false)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'ab.applicant_id')
             ->where('ama.is_removed', false)
             ->where('is_approved', true)
-            ->join(env('DB_DATABASE_SECOND').'.applicant_medical_results', env('DB_DATABASE_SECOND').'.applicant_medical_results.applicant_id', 'ab.applicant_id')
-            ->where(env('DB_DATABASE_SECOND').'.applicant_medical_results.is_fit', 2)
-            ->where(env('DB_DATABASE_SECOND').'.applicant_medical_results.is_removed', false)
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'ab.applicant_id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', 2)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
             ->groupBy('applicant_accounts.id');
     }
     public function student_medical_scheduled()
@@ -1729,9 +1743,13 @@ class CourseOffer extends Model
     }
     function enrollment_cancellation($data)
     {
+        $academic =  Auth::user()->staff->current_academic()->id;
+        if (Cache::has('academic')) {
+            $academic = base64_decode(Cache::get('academic'));
+        }
         return   $this->hasMany(EnrollmentAssessment::class, 'course_id')
             ->join('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
+            ->where('enrollment_assessments.academic_id', $academic)
             ->groupBy('enrollment_assessments.id')
             ->where('student_cancellations.type_of_cancellations', $data)
             ->orderBy('student_cancellations.created_at', 'DESC');

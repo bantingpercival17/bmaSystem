@@ -122,7 +122,24 @@
                                                 </small>
                                             </div>
                                         </div>
+                                        <div class="row">
 
+                                            <div class="form-group col-md">
+                                                <small class="fw-bolder text-secondary">TYPE OF
+                                                    CANCELLATION</small>
+                                                <br>
+                                                <label for=""
+                                                    class="fw-bolder text-danger">{{ strtoupper($data->enrollment_status->enrollment_cancellation->type_of_cancellations) }}</label>
+                                            </div>
+                                            <div class="col-md form-group">
+                                                <small class="fw-bolder text-secondary">DATE
+                                                    CANCELLATION</small>
+                                                <br>
+                                                <label for=""
+                                                    class="fw-bolder text-danger">{{ strtoupper($data->enrollment_status->enrollment_cancellation->date_of_cancellation) }}</label>
+
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

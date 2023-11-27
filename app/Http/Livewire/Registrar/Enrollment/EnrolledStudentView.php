@@ -36,7 +36,7 @@ class EnrolledStudentView extends Component
         $courses = CourseOffer::orderBy('id', 'desc')->get();
         $selectCourses = $courses;
         $this->academic = $this->academicValue();
-        $dataLists = $this->filterData($this->academic);
+        $dataLists = $this->filterData(base64_decode($this->academic));
         return view('livewire.registrar.enrollment.enrolled-student-view', compact('selectCourses', 'courses', 'dataLists'));
     }
     function academicValue()
