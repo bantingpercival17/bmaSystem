@@ -12,6 +12,7 @@ use App\Models\PaymentTransaction;
 use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 
 class AssessmentFees extends Component
 {
@@ -27,11 +28,8 @@ class AssessmentFees extends Component
     public function render()
     {
         $this->staff = Auth::user()->staff->id;
-        $_academic = Auth::user()->staff->current_academic();
-        $this->academic =  request()->query('_academic') ?: $this->academic;
-        $academic = base64_decode($this->academic) ?: $_academic->id;
-        $this->academic = $academic;
-        $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->recentStudent($academic);
+        $this->academic =  $this->academicValue();
+        $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->recentStudent(base64_decode($this->academic));
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
         $tuition_fees = [];
         if ($this->profile) {
@@ -85,7 +83,19 @@ class AssessmentFees extends Component
         $particularFees = AdditionalFees::where('is_removed', false)->get();
         return view('livewire.accounting.assessment-fees', compact('studentLists', 'tuition_fees', 'particularFees'));
     }
-
+    function academicValue()
+    {
+        $data = $this->academic;
+        if ($this->academic == '') {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        }
+        if (request()->query('_academic')) {
+            $data = request()->query('_academic') ?: $this->academic;
+        }
+        Cache::put('academic', $data, 60);
+        return $data;
+    }
     function recentStudent($academic)
     {
         return StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
@@ -188,7 +198,7 @@ class AssessmentFees extends Component
                         }
                     }
                 }
-                return redirect(route('accounting.payment-transactions-v2') . "?student=" . base64_encode($this->profile->id))->with('success', 'Payment Assessment Updated');
+                return redirect(route('accounting.payment-transactions-v2') . "?student=" . base64_encode($this->profile->id) . ($this->academic ? '&_academic=' . $this->academic : ''))->with('success', 'Payment Assessment Updated');
             }
         } catch (\Throwable $th) {
             $this->dispatchBrowserEvent('swal:alert', [

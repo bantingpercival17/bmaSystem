@@ -253,6 +253,14 @@ class CourseSemestralFees extends Model
             ->where('semestral_fees.is_removed', false)->get();
         return $_data[0]->fees;
     }
+    function tuition_fee_senior_high()
+    {
+        $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
+            ->selectRaw("sum(pf.particular_amount) as fees")
+            ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
+            ->where('semestral_fees.is_removed', false)->get();
+        return $_tuition_fee[0]->fees;
+    }
     public function miscellaneous()
     {
         $_miscellaneous =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
@@ -300,19 +308,21 @@ class CourseSemestralFees extends Model
     }
     public function total_tuition_fees_with_interest($enrollment_assessment)
     {
-        $_tuition_fees = $this->tuition_fee();
+        $_tuition_fees = $enrollment_assessment->course_id == 3 ? $this->tuition_fee_senior_high() : $this->tuition_fee();
+        #$_tuition_fees = $this->tuition_fee();
         $_miscellaneous = $this->miscellaneous();
         $_additional_fees = $this->additional();
         $total = $this->total_tuition_fees($enrollment_assessment);
         if ($enrollment_assessment->course_id == 3) {
-            return (($_tuition_fees + $_miscellaneous + 710) * 0.20) + $_additional_fees;
+            return $_tuition_fees + 710;
+        } else {
+            return $total + ($total * 0.035);
         }
-        return $total + ($total * 0.035);
     }
     public function upon_enrollment_v2($enrollment_assessment)
     {
         $_number_of_units = $enrollment_assessment->course->units($enrollment_assessment)->units;
-        $_tuition_fees = $this->tuition_fee();
+        $_tuition_fees = $enrollment_assessment->course_id == 3 ? $this->tuition_fee_senior_high() : $this->tuition_fee();
         $_miscellaneous = $this->miscellaneous();
         $_additional_fees = $this->additional();
         if ($enrollment_assessment->course_id == 3) {
@@ -336,14 +346,14 @@ class CourseSemestralFees extends Model
     public function monthly_fees_v2($enrollment_assessment)
     {
         $_number_of_units = $enrollment_assessment->course->units($enrollment_assessment)->units;
-        $_tuition_fees = $this->tuition_fee();
+        $_tuition_fees = $enrollment_assessment->course_id == 3 ? $this->tuition_fee_senior_high() : $this->tuition_fee();
         $_miscellaneous = $this->miscellaneous();
         $_additional_fees = $this->additional();
         $_monthly_fee = 0;
         if ($enrollment_assessment->course_id == 3) {
-            $_total = ($_tuition_fees + $_miscellaneous + $_additional_fees + 710);
-            $_upon_enrollment = (($_tuition_fees + $_miscellaneous + 710) * 0.20) + $_additional_fees;
-            $_monthly_fee = ($_total - $_upon_enrollment) / 4;
+            $_upon_enrollment =  (($_tuition_fees + $_miscellaneous + 710) * 0.20) + $_additional_fees;
+            $total_tuition_fee = $_tuition_fees + 710;
+            $_monthly_fee = ($total_tuition_fee - $_upon_enrollment) / 4;
         } else {
             $_tuition = ($_tuition_fees * $_number_of_units) + $_miscellaneous; // Total Tuition Fee
             $_total_tuition = $_tuition + ($_tuition * 0.035); // Compute the total tuition fee plus the interest

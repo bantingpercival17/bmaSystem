@@ -8,6 +8,7 @@ use App\Models\EducationalDetails;
 use App\Models\EnrollmentApplication;
 use App\Models\EnrollmentAssessment;
 use App\Models\ParentDetails;
+use App\Models\PaymentTrasanctionOnline;
 use App\Models\StudentApplicantDetails;
 use App\Models\StudentDetails;
 use Illuminate\Http\Request;
@@ -24,7 +25,35 @@ class ApplicantEnrollmentController extends Controller
             $enrollment_application = $student ? EnrollmentApplication::with('course')->where('student_id', $student->id)->where('academic_id', $semester->id)->where('is_removed', false)->first() : [];
             $enrollment_assessment = $student ? EnrollmentAssessment::with('course')->where('student_id', $student->id)->where('academic_id', $semester->id)->where('is_removed', false)->first() : [];
             $enrollmentDetails = compact('enrollment_application', 'enrollment_assessment');
-            $tuitionFeeDetails = [];
+            $tuition_assessment = [];
+            $tags = [];
+            $units = [];
+            $total_fees = [];
+            $online_transaction = [];
+            $payment_transaction = [];
+            if ($enrollment_assessment) {
+                $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
+                if ($tuition_fees) {
+                    $tags = $tuition_fees->semestral_fees();
+                    $total_tuition  = $tuition_fees->total_tuition_fees($enrollment_assessment);
+                    $total_tuition_with_interest  = $tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
+                    $upon_enrollment = 0;
+                    $upon_enrollment = $tuition_fees->upon_enrollment_v2($enrollment_assessment);
+                    $monthly = 0;
+                    $monthly = $tuition_fees->monthly_fees_v2($enrollment_assessment);
+                    $total_fees = compact('total_tuition', 'total_tuition_with_interest', 'upon_enrollment', 'monthly');
+                }
+                $tuition_assessment = $enrollment_assessment->enrollment_payment_assessment;
+                $payment_details = array();
+                $units = $enrollment_assessment->course->units($enrollment_assessment)->units;
+                // Payment transaction
+
+                if ($tuition_assessment) {
+                    $online_transaction = $tuition_assessment->online_enrollment_payment;
+                    $payment_transaction = $tuition_assessment->payment_assessment_paid;
+                }
+            }
+            $tuitionFeeDetails =  compact('tuition_assessment', 'tags', 'units', 'total_fees', 'online_transaction', 'payment_transaction');
             $data = compact('enrollmentDetails', 'semester', 'tuitionFeeDetails');
             return response($data, 200);
         } catch (\Throwable $th) {
@@ -272,5 +301,59 @@ class ApplicantEnrollmentController extends Controller
             ];
         }
         $request->validate($_fields);
+    }
+    function enrollment_payment_mode(Request $request)
+    {
+        try {
+            $semester = AcademicYear::where('semester', 'First Semester')->orderBy('id', 'desc')->first();
+            $student = auth()->user()->student_applicant->student_details;
+            // Enrollment Details
+            $enrollment_application = EnrollmentApplication::with('course')->where('student_id', $student->id)->where('academic_id', $semester->id)->where('is_removed', false)->first();
+            $enrollment_application->payment_mode = $request->paymentMode;
+            $enrollment_application->save();
+            return response(['message' => 'Successfully Submitted.'], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function enrollment_payment(Request $request)
+    {
+        $request->validate([
+            'transaction_date' => 'required',
+            'amount_paid' => 'required',
+            'reference_number' => 'required',
+            'file' => 'required',
+        ]);
+        try {
+            // Enrollment Procudure
+            $semester = AcademicYear::where('semester', 'First Semester')->orderBy('id', 'desc')->first();
+            $student = auth()->user()->student_applicant->student_details;
+            // Enrollment Details
+            $enrollment_assessment =  EnrollmentAssessment::with('course')->where('student_id', $student->id)->where('academic_id', $semester->id)->where('is_removed', false)->first();
+            $semester = '/' . $enrollment_assessment->academic->semester . '-' . $enrollment_assessment->academic->school_year;
+            $_file_link = $this->saveApplicantFile($request->file('file'), 'bma-applicants', 'accounting' . $semester);
+            $assessment = $enrollment_assessment->enrollment_payment_assessment;
+            $_payment_data = [
+                'assessment_id' => $assessment->id,
+                'amount_paid' => str_replace(',', '', $request->amount_paid),
+                'reference_number' => $request->reference_number,
+                'transaction_type' => 'Upon Enrollment',
+                'reciept_attach_path' => $_file_link,
+                'is_removed' => 0,
+            ];
+            if ($request->document) {
+                PaymentTrasanctionOnline::find($request->document)->update(['is_removed' => true]);
+            }
+            PaymentTrasanctionOnline::create($_payment_data);
+            return response(['data' => 'done', 'message' => 'Successfully Submitted.'], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
     }
 }

@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 
 class PaymentTransaction extends Component
 {
@@ -53,18 +54,15 @@ class PaymentTransaction extends Component
     public function render()
     {
         $this->staff = auth()->user()->staff->id;
-        $_academic = Auth::user()->staff->current_academic();
-        $this->academic =  request()->query('_academic') ?: $this->academic;
-        $academic = base64_decode($this->academic) ?: $_academic->id;
-
-        $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->recentStudent($academic);
+        $this->academic =  $this->academicValue();
+        $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->recentStudent(base64_decode($this->academic));
         $particularFees = AdditionalFees::where('is_removed', false)->get();
         $scholarshipList = [];
         $additional_fees = [];
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
         if ($this->profile) {
             $this->academicHistory = $this->profile->enrollment_history;
-            $this->academicData = AcademicYear::find($academic);
+            $this->academicData = AcademicYear::find(base64_decode($this->academic));
             if ($this->profile->enrollment_selection($this->academicData->id)) {
                 $this->paymentAssessment = $this->profile->enrollment_selection($this->academicData->id)->payment_assessments;
                 $this->enrollmentAssessment =  $this->profile->enrollment_selection($this->academicData->id);
@@ -77,6 +75,19 @@ class PaymentTransaction extends Component
             $scholarshipList =  Voucher::where('is_removed', false)->get();
         }
         return view('livewire.accounting.payment-transaction', compact('studentLists',  'particularFees', 'scholarshipList', 'additional_fees'));
+    }
+    function academicValue()
+    {
+        $data = $this->academic;
+        if ($this->academic == '') {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        }
+        if (request()->query('_academic')) {
+            $data = request()->query('_academic') ?: $this->academic;
+        }
+        Cache::put('academic', $data, 60);
+        return $data;
     }
     function recentStudent($academic)
     {
