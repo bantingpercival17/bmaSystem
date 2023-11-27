@@ -39,6 +39,7 @@ class ApplicantProfileView extends Component
         }
         #$dataLists = $this->filterData();
         $dataLists = $applicantView->filterApplicantData($this->searchInput, $this->selectCourse, $this->selectCategories, $this->academic);
+        $filterContent = $applicantView->filterContent();
         return view('livewire.registrar.applicant.applicant-profile-view', compact('filterContent', 'filterCourses', 'dataLists'));
     }
     function academicValue()

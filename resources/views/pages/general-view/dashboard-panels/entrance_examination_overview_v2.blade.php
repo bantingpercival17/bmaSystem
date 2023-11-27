@@ -124,45 +124,18 @@
             <div class="table-responsive">
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                     <thead>
-                        @foreach ($tableHeader as $headers)
-                            <tr class="text-center">
-                                @foreach ($headers as $item)
-                                    <th colspan="{{ $item[1] }}">{{ $item[0] }}</th>
-                                @endforeach
-                            </tr>
-                        @endforeach
-                        {{--    <tr class="text-center">
-                            <th rowspan="2">COURSE</th>
-                            <th rowspan="2">PRE-REGISTRATION</th>
-                            <th rowspan="2">INCOMPLETE <br> DOCUMENTS</th>
-                            <th colspan="4">INFORMATION VERIFICATION</th>
-                            <th>BMA-ALUMNUS</th>
-                            <th colspan="2">ENTRANCE EXAMINATION PAYMENT</th>
-                            <th
-                                colspan="{{ Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph' ? 3 : 2 }}">
-                                ENTRANCE EXAMINATION</th>
-                            <th rowspan="2">BRIEFING</th>
-                            <th colspan="3">MEDICAL EXAMINATION</th>
-                            <th rowspan="2">QUALIFIED FOR ENROLLMENT</th>
+                        <tr class="text-center">
+                            @foreach ($tableHeader as $headers)
+                                <th colspan="{{ count($headers[1]) }}">{{ strtoupper($headers[0]) }}</th>
+                            @endforeach
                         </tr>
-                        <tr>
-
-                            <th>FOR CHECKING</th>
-                            <th>QUALIFIED</th>
-                            <th>NOT QUALIFIED</th>
-                            <th>VERIFIED</th>
-                            <th></th>
-                            <th>FOR VERIFICATION</th>
-                            <th>PAYMENT VERIFED</th>
-                            @if (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph')
-                                <th>ONGOING</th>
-                            @endif
-                            <th>PASSED</th>
-                            <th>FAILED</th>
-                            <th>FOR SCHEDULING</th>
-                            <th>SCHEDULED</th>
-                            <th>RESULT</th>
-                        </tr> --}}
+                        <tr class="text-center">
+                            @foreach ($tableHeader as $headers)
+                                @foreach ($headers[1] as $item)
+                                    <th>{{ strtoupper(str_replace('_', ' ', $item)) }}</th>
+                                @endforeach
+                            @endforeach
+                        </tr>
                     </thead>
                     <tbody>
                         @foreach ($_courses as $_course)
@@ -170,15 +143,17 @@
                                 <td class="course-btn" data-course="{{ $_course->id }}">
                                     {{ $_course->course_name }}
                                 </td>
-                                @foreach ($tableHeader[1] as $index => $item)
+                                @foreach ($tableHeader as $index => $headers)
                                     @if ($index > 0)
-                                        <td>
-                                            <a
-                                                href="{{ route('applicant.overview') . '?_course=' . base64_encode($_course->id) . '&_category=' . $item[2] }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
-                                                {{ count($_course->applicant_count_per_category($item[2])) }}
-                                            </a>
+                                        @foreach ($headers[1] as $index => $item)
+                                            <td class="text-center">
+                                                <a
+                                                    href="{{ route('applicant.overview') . '?_course=' . base64_encode($_course->id) . '&_category=' . $item }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                                    {{ count($_course->applicant_count_per_category($item)) }}
+                                                </a>
 
-                                        </td>
+                                            </td>
+                                        @endforeach
                                     @endif
                                 @endforeach
                             </tr>

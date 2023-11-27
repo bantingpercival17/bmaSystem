@@ -144,10 +144,16 @@
                     <div class="col-12">
                         <small class="text-primary"><b>CATEGORY</b></small>
                         <div class="form-group search-input">
-                            <select class="form-select form-select-sm" wire:model="selectCategories">
+                            <select class="form-select border border-primary form-select-sm"
+                                wire:model="selectCategories">
                                 @foreach ($filterContent as $item)
-                                    <option value="{{ $item }}">{{ ucwords(str_replace('_', ' ', $item)) }}
-                                    </option>
+                                    <optgroup label="{{ $item[0] }}">
+                                        @foreach ($item[1] as $item)
+                                            <option value="{{ $item }}">
+                                                {{ ucwords(str_replace('_', ' ', $item)) }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
                                 @endforeach
                             </select>
                         </div>
@@ -155,7 +161,7 @@
                     <div class="col-12">
                         <small class="text-primary"><b>COURSE</b></small>
                         <div class="form-group search-input">
-                            <select wire:model="selectCourse" class="form-select form-select-sm"
+                            <select wire:model="selectCourse" class="form-select form-select-sm border border-primary "
                                 wire:click="categoryCourse">
                                 <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
                                 @foreach ($filterCourses as $course)

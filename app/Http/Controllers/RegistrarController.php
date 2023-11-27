@@ -72,6 +72,16 @@ class RegistrarController extends Controller
                 array('PAYMENT VERIFIED', 1, 'entrance_examination'),
             );
             $tableHeader = array($mainHeader, $subHeader);
+            $tableHeader = array(
+                array('Course', array('')),
+                array('Pre Registration', array('registered_applicants')),
+                array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination')),
+                array('Aluminus', array('bma_senior_high')),
+                array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'took_the_exam')),
+                array('Briefing Orientation', array('expected_attendees', 'total_attendees')),
+                array('Medical Examination', array('for_medical_schedule', 'medical_schedule', 'waiting_for_medical_results', 'medical_result')),
+                array('Enrollment', array('qualified_to_enrollment'))
+            );
             return view('pages.registrar.dashboard.view', compact('_academics', '_courses', '_total_population', '_total_applicants', 'tableHeader'));
         } catch (Exception $err) {
             $this->debugTracker($err);
