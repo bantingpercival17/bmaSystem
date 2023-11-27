@@ -140,12 +140,13 @@ class RegistrarController extends Controller
                     // Create a new Student number and Student Account
                 }
                 // Validate the Enrollment Assessment of the Student
-                $_assessment = EnrollmentAssessment::where('student_id', $_student->id)->where('academic_id', Auth::user()->staff->current_academic()->id)->first();
+                $academic =  $_request->academic ? base64_decode($_request->academic) : Auth::user()->staff->current_academic()->id;
+                $_assessment = EnrollmentAssessment::where('student_id', $_student->id)->where('academic_id', $academic)->first();
                 if (!$_assessment) {
                     // Store Enrollment Assessment
                     $_assessment_details = [
                         "student_id" => $_student->id,
-                        "academic_id" => Auth::user()->staff->current_academic()->id,
+                        "academic_id" => $_request->academic ? base64_decode($_request->academic) : Auth::user()->staff->current_academic()->id,
                         "course_id" => $_request->_course ?: $_student->enrollment_assessment->course_id,
                         "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
                         "year_level" => $_request->_level ?: strval($_year_level),
@@ -163,7 +164,7 @@ class RegistrarController extends Controller
                     } else { // If Onsite Enrollee Store Data
                         $_details = [
                             'student_id' => $_student->id,
-                            'academic_id' => Auth::user()->staff->current_academic()->id,
+                            'academic_id' => $_request->academic ? base64_decode($_request->academic) :  Auth::user()->staff->current_academic()->id,
                             'enrollment_place' => 'onsite',
                             'staff_id' => Auth::user()->staff->id,
                             'is_approved' => 1,
@@ -191,7 +192,7 @@ class RegistrarController extends Controller
                 // Store Enrollment Assessment
                 $_assessment_details = [
                     "student_id" => $_student->id,
-                    "academic_id" => Auth::user()->staff->current_academic()->id,
+                    "academic_id" => $_request->academic ? base64_decode($_request->academic) :  Auth::user()->staff->current_academic()->id,
                     "course_id" => $_request->_course ?: $_student->enrollment_assessment->course_id,
                     "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
                     "year_level" => 4,
@@ -209,7 +210,7 @@ class RegistrarController extends Controller
                 } else { // If Onsite Enrollee Store Data
                     $_details = [
                         'student_id' => $_student->id,
-                        'academic_id' => Auth::user()->staff->current_academic()->id,
+                        'academic_id' => $_request->academic ? base64_decode($_request->academic) :  Auth::user()->staff->current_academic()->id,
                         'enrollment_place' => 'onsite',
                         'staff_id' => Auth::user()->staff->id,
                         'is_approved' => 1,

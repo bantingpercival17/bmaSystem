@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Registrar\Enrollment;
 
+use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\EnrollmentAssessment;
 use App\Models\StudentCancellation;
@@ -9,6 +10,7 @@ use App\Models\StudentDetails;
 use App\Models\StudentSection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 
 class EnrolledStudentView extends Component
 {
@@ -33,11 +35,22 @@ class EnrolledStudentView extends Component
     {
         $courses = CourseOffer::orderBy('id', 'desc')->get();
         $selectCourses = $courses;
-        $_academic = Auth::user()->staff->current_academic();
-        $this->academic =  request()->query('_academic') ?: $this->academic;
-        $academic = base64_decode($this->academic) ?: $_academic->id;
-        $dataLists = $this->filterData($academic);
+        $this->academic = $this->academicValue();
+        $dataLists = $this->filterData($this->academic);
         return view('livewire.registrar.enrollment.enrolled-student-view', compact('selectCourses', 'courses', 'dataLists'));
+    }
+    function academicValue()
+    {
+        $data = $this->academic;
+        if ($this->academic == '') {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        }
+        if (request()->query('_academic')) {
+            $data = request()->query('_academic') ?: $this->academic;
+        }
+        Cache::put('academic', $data, 60);
+        return $data;
     }
     function categoryCourse()
     {
@@ -78,19 +91,6 @@ class EnrolledStudentView extends Component
             $query = $query->where('enrollment_assessments.year_level', $this->selectLevel);
         }
         return $query->paginate(20);
-
-        /*  return $this->hasMany(EnrollmentAssessment::class, 'course_id')
-            ->select('enrollment_assessments.*')
-            ->join('payment_assessments', 'enrollment_assessments.id', 'payment_assessments.enrollment_id')
-            ->join('payment_transactions', 'payment_assessments.id', 'payment_transactions.assessment_id')
-            ->where('enrollment_assessments.academic_id', Auth::user()->staff->current_academic()->id)
-            ->where('enrollment_assessments.year_level', $data)
-            ->where('enrollment_assessments.is_removed', false)
-            ->where('payment_transactions.is_removed', false)
-            ->leftJoin('student_cancellations', 'student_cancellations.enrollment_id', 'enrollment_assessments.id')
-            ->whereNull('student_cancellations.id')
-            ->groupBy('enrollment_assessments.id')
-            ->orderBy('payment_transactions.created_at', 'DESC'); */
     }
     function enrollment_cancellation($data)
     {

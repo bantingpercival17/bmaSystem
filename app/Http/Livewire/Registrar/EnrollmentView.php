@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Registrar;
 
+use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\EnrollmentApplication;
@@ -9,6 +10,7 @@ use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 //use Livewire\WithPagination;
+use Illuminate\Support\Facades\Cache;
 
 class EnrollmentView extends Component
 {
@@ -23,17 +25,14 @@ class EnrollmentView extends Component
         $courseLists = CourseOffer::all();
         $_courses = CourseOffer::all();
         $_curriculums = Curriculum::where('is_removed', false)->get();
-        $_academic = Auth::user()->staff->current_academic();
-        $this->academic =  request()->query('_academic') ?: $this->academic;
-        $academic = base64_decode($this->academic) ?: $_academic->id;
+        $this->academic =  $this->academicValue();
         $studentsList = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
             ->leftJoin('enrollment_applications as ea', 'ea.student_id', 'student_details.id')
-            ->where('ea.academic_id', $academic)
+            ->where('ea.academic_id', base64_decode($this->academic))
             ->whereNull('ea.is_approved')
             ->where('ea.is_removed', false)->paginate(10);
         if ($this->searchInput != '') {
             $query = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'student_details.middle_initial')
-
                 ->where('student_details.is_removed', false);
             $_student = explode(',', $this->searchInput); // Seperate the Sentence
             $_count = count($_student);
@@ -55,6 +54,19 @@ class EnrollmentView extends Component
             $studentsList = $query->paginate(10);
         }
         return view('livewire.registrar.enrollment-view', compact('_courses', 'courseLists', '_curriculums', 'studentsList'));
+    }
+    function academicValue()
+    {
+        $data = $this->academic;
+        if ($this->academic == '') {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        }
+        if (request()->query('_academic')) {
+            $data = request()->query('_academic') ?: $this->academic;
+        }
+        Cache::put('academic', $data, 60);
+        return $data;
     }
     /* Disapproved Application */
     function confirmBox($data, $status)

@@ -83,7 +83,7 @@ $pageTitle = 'List of Enrolled Student';
         <div class="col-lg-8">
             <div class="filter-section m-0 p-0">
                 {{ $showData }}
-                <small class="fw-bolder text-info">FILTER DETAILS:</small>
+                <small class="fw-bolder text-info">FILTER DETAILS: {{$academic}}</small>
                 <div class="row">
                     <div class="col-md-6">
                         <small class="fw-bolder text-muted">COURSE : </small> <br>

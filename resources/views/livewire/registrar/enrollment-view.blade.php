@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-md-8">
-        <p class="display-6 fw-bolder text-primary">ENROLLMENT</p>
+        <p class="display-6 fw-bolder text-primary">ENROLLMENT {{$academic}}</p>
         <div class="row">
             <div class="col">
                 <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>

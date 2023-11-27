@@ -21,8 +21,8 @@ class ApplicantEnrollmentController extends Controller
             $semester = AcademicYear::where('semester', 'First Semester')->orderBy('id', 'desc')->first();
             $student = auth()->user()->student_applicant->student_details;
             // Enrollment Details
-            $enrollment_application = $student ? EnrollmentApplication::where('student_id', $student->id)->where('academic_id', $semester->id)->where('is_removed', false)->first() : [];
-            $enrollment_assessment = $student ? EnrollmentAssessment::where('student_id', $student->id)->where('academic_id', $semester->id)->where('is_removed', false)->first() : [];
+            $enrollment_application = $student ? EnrollmentApplication::with('course')->where('student_id', $student->id)->where('academic_id', $semester->id)->where('is_removed', false)->first() : [];
+            $enrollment_assessment = $student ? EnrollmentAssessment::with('course')->where('student_id', $student->id)->where('academic_id', $semester->id)->where('is_removed', false)->first() : [];
             $enrollmentDetails = compact('enrollment_application', 'enrollment_assessment');
             $tuitionFeeDetails = [];
             $data = compact('enrollmentDetails', 'semester', 'tuitionFeeDetails');

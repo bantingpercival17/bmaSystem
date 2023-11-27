@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class StudentDetails extends Model
 {
@@ -143,9 +144,13 @@ class StudentDetails extends Model
     }
     public function enrollment_application_v2()
     {
+        $data =  Auth::user()->staff->current_academic()->id;
+        if (Cache::has('academic')) {
+            $data = base64_decode(Cache::get('academic'));
+        }
         return $this->hasOne(EnrollmentApplication::class, 'student_id')
             ->where('is_removed', false)
-            ->where('academic_id', Auth::user()->staff->current_academic()->id);
+            ->where('academic_id', $data);
     }
     public function enrollment_application_status($_data)
     {
