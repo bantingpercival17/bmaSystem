@@ -160,13 +160,14 @@ class ApplicantController extends Controller
                 $_document->feedback = $_request->_comment;
                 $_document->save();
                 if ($_request->_comment == 'Sorry you did not meet the Grade requirement') {
-                    $applicant = ApplicantNotQualified::where('applicant_id', $_document->applicant_id)->first();
+                    $applicant = ApplicantNotQualified::where('applicant_id', $_document->applicant_id)->where('is_removed',false)->first();
                     if (!$applicant) {
                         ApplicantNotQualified::create([
                             'applicant_id' => $_document->applicant_id,
                             'course_id' => $_document->account->course_id,
                             'academic_id' => $_document->account->academic_id,
-                            'staff_id' => Auth::user()->staff->id
+                            'staff_id' => Auth::user()->staff->id,
+                            'remarks' => $_request->_comment
                         ]);
                     }
                 }
@@ -187,7 +188,8 @@ class ApplicantController extends Controller
                 'applicant_id' => $applicant->id,
                 'course_id' => $applicant->course_id,
                 'academic_id' => $applicant->academic_id,
-                'staff_id' => Auth::user()->staff->id
+                'staff_id' => Auth::user()->staff->id,
+                'remarks' => $request->comment
             ]);
         }
         return back();

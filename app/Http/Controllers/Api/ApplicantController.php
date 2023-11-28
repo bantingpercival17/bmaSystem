@@ -38,7 +38,8 @@ class ApplicantController extends Controller
             ->get();
         $documents = $data->applicant_documents;
         $approvedDocuments = $data->applicant_documents_status();
-        $documents = compact('documents', 'listOfDocuments', 'approvedDocuments');
+        $disqualification = $data->not_qualified;
+        $documents = compact('documents', 'listOfDocuments', 'approvedDocuments','disqualification');
         $payment = $data->payment;
         $examinationDetails = $payment ? $data->applicant_examination : [];
         $examinationSchedule = $examinationDetails ? $data->examination_schedule : [];
