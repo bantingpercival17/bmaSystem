@@ -66,7 +66,7 @@ class AuthController extends Controller
         ]);
         try {
             // Current Academic
-            $_academic = AcademicYear::where('is_active', 1)->first();
+            $_academic =  AcademicYear::where('semester', 'First Semester')->orderBy('id', 'desc')->first();
             // Applicant Validation
             $_applicant = ApplicantDetials::where('first_name', $_fields['firstName'])
                 ->where('last_name', $_fields['lastName'])
