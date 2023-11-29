@@ -31,6 +31,7 @@ class ParentDetails extends Model
         "guardian_employment_status",
         "guardian_working_arrangement",
         "guardian_contact_number",
+        "guardian_address",
         "household_income",
         "dswd_listahan",
         "homeownership",

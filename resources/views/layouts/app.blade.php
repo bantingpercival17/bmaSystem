@@ -248,6 +248,7 @@
     @if (Auth::user())
     @if (request()->is('executive/scanner'))
     @livewire('components.top-navigation-scanner')
+    <livewire:modal-component />
     {{ $slot }}
     @else
     @livewire('components.side-navigation-menu')
@@ -422,6 +423,24 @@
         })
         /* toastr.success("{{ session('message') }}") */
         @endif
+        window.addEventListener('show-loading', () => {
+            const boxes = document.getElementsByClassName("loader");
+            boxes[0].classList.remove("animate__fadeOut");
+            boxes[0].classList.remove("d-none");
+            boxes[0].classList.add("animate__fadeIn");
+            console.log('block')
+        });
+
+        window.addEventListener('hide-loading', () => {
+            const boxes = document.getElementsByClassName("loader");
+            boxes[0].classList.remove("animate__fadeIn");
+            boxes[0].classList.add("animate__fadeOut");
+            boxes[0].classList.add("d-none");
+            console.log('none')
+        });
+        $(document).on('click', '.btn-form-grade', function(evt) {
+            $('.form-view').attr('src', $(this).data('grade-url'))
+        });
     </script>
     @yield('script')
 </body>

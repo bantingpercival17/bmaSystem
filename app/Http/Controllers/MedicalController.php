@@ -199,4 +199,11 @@ class MedicalController extends Controller
                 ->groupBy('applicant_accounts.id')->get();
         }
     }
+
+    function student_medical_report(Request $request)
+    {
+        $report = new MedicalReport();
+        return $report->student_medical_report($request->academic);
+
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\GradeTemplate;
+use App\Imports\GradeBulkImport;
 use App\Imports\GradeImport;
 use App\Mail\GradeSubmissionMail;
 use App\Mail\GradeVerificationMail;
@@ -110,10 +111,33 @@ class TeacherController extends Controller
         if ($_request->_preview) {
             // Report View
             $_report = new GradingSheetReport($_students, $_subject);
-            return $_request->_form == "ad1" ? $_report->form_ad_01() : $_report->form_ad_02();
+            if ($_request->version) {
+
+                return $_report->form_ad_01_v1_1($_request->_period);
+            } else {
+                return $_request->_form == "ad1" ? $_report->form_ad_01_v1_1($_request->_period) : $_report->form_ad_02();
+            }
         } else {
             // Grading Sheet
             return view('pages.teacher.grading-sheet.view', compact('_subject', '_students', '_columns'));
+        }
+    }
+    function subject_grading_view_report(Request $request)
+    {
+        try {
+            // Get the Subject Class Details
+            $subjectClass = SubjectClass::find(base64_decode($request->class));
+            // Get Subject Details base on the Subject Class Model
+            $subject = $subjectClass->curriculum_subject->subject;
+            // Get the Student List
+            $studentLists = $subject->subject_code == 'BRDGE' ? $subjectClass->section->student_with_bdg_sections : $subjectClass->section->student_sections;
+            // Call the Grading Sheet Report for Generate PDF Report
+            $pdfReport = new GradingSheetReport($studentLists, $subjectClass);
+            // Return PDF report base on the form type if AD-01 or AD-02
+            return $request->form == 'ad1' ? $pdfReport->form_ad_01_v1_1($request->period) : $pdfReport->form_ad_02();
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return  $th->getMessage();
         }
     }
     public function subject_grading_sheet_nstp(Request $_request)
@@ -244,15 +268,20 @@ class TeacherController extends Controller
     }
     public function subject_grade_bulk_upload(Request $_request)
     {
+        /*    $_request->validate([
+            'file_inpute' => 'required|mimes:xlsx,xls',
+        ]); */
         $_section = SubjectClass::find(Crypt::decrypt($_request->_section));
-        $_path = '/teacher/grade-sheet/' . $_section->academic->school_year . '/' . str_replace('/', '', $_section->section->section_name) . "/";
+        $_path = '/teacher/grade-sheet/' . $_section->academic->school_year . '/' . $_section->academic->semester . '/' . str_replace('/', '', $_section->section->section_name) . "/";
         $_file_name = $_path . str_replace(' ', '-', str_replace('/', '', $_section->section->section_name) . " " . $_section->curriculum_subject->subject->subject_name . date('dmyhis'));
-        $_file_extention =  $_request->file('_file_grade')->getClientOriginalExtension();
+        $_file_extention =  $_request->file('file_input')->getClientOriginalExtension();
         $_file_name = $_file_name . "." . $_file_extention;
-
-        if ($_request->file('_file_grade')) {
-            Storage::disk('public')->put($_file_name, fopen($_request->file('_file_grade'), 'r+'));
-            Excel::import(new GradeImport($_request->_section), $_request->file('_file_grade'));
+        //return  $_request->file('file_input');
+        if ($_request->file('file_input')) {
+            Storage::disk('local')->put($_file_name, fopen($_request->file('file_input'), 'r+'));
+            //Excel::import(new GradeImport($_request->_section), $_request->file('file_input'));
+            Excel::import(new GradeBulkImport($_request->_section), storage_path('app' . $_file_name));
+            
             return back()->with('success', 'Successfully Upload your Grades');
         }
     }
@@ -265,8 +294,8 @@ class TeacherController extends Controller
             ->orderBy('student_details.last_name', 'ASC')
             ->where('ss.is_removed', false)
             ->get();
-        $_file_name = $_subject->curriculum_subject->subject->subject_code . "-" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_subject->section->section_name))) . '-EXPORT-GRADE-' . date('dmYhms');
-        $_respond =  Excel::download(new GradeTemplate($_students, $_subject), $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+        $_file_name = $_subject->curriculum_subject->subject->subject_code . "-" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_subject->section->section_name))) . '-' . strtoupper($_request->_period) . '-' . date('dmYhms');
+        $_respond =  Excel::download(new GradeTemplate($_students, $_subject), $_file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
         ob_end_clean();
         return $_respond;
     }

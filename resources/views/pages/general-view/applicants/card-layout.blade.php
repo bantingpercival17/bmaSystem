@@ -232,13 +232,15 @@
 
 
                         </div>
-                        <div class="col-md">
+                        <div class="col-md-3">
                             <small>APPLICATION DATE</small>
                             <div class="badge bg-primary w-100">
 
                                 <span>{{ $_data->created_at->format('F d, Y') }}</span>
                             </div>
-
+                            <a href="{{ route('applicant-reconsideration') }}?_applicant={{ base64_encode($_data->id) }}"
+                                class="badge bg-info w-100">RECONSIDERATION
+                            </a>
                             <a href="{{ route('applicant-removed') }}?_applicant={{ base64_encode($_data->id) }}"
                                 class="badge bg-danger text-white w-100">REMOVE
                             </a>
@@ -350,7 +352,8 @@
 
 
                             <div class="mt-0">
-                                <span>{{ $_data->applicant ? $_data->email : '-' }}</span> <br>
+                                <span> {{ $_data->applicant ? $_data->contact_number : '-' }}</span> <br>
+                                <span>{{ $_data->applicant ? $_data->email : '-' }} - {{ $_data->applicant ? $_data->contact_number : '-' }}</span> <br>
                                 <span class="badge bg-secondary">
                                     @php
                                         echo $_data->applicant->check_duplicate();
@@ -483,6 +486,11 @@
                             {{-- NOTIFICATION BUTTON TO STUDENT --}}
                         </div>
                     </div>
+                </div>
+                <div class="card-footer">
+                 
+                    <a href="{{ route('applicant-examination-reset') }}?_applicant={{ base64_encode($_data->id) }}"
+                        class="btn btn-sm btn-primary float-end">Reset Examination</a>
                 </div>
             </div>
         @endforeach
@@ -912,7 +920,6 @@
                         <div class="col-md">
                             <small>APPLICATION DATE</small>
                             <div class="badge bg-primary w-100">
-
                                 <span>{{ $_data->created_at->format('F d, Y') }}</span>
                             </div>
                         </div>

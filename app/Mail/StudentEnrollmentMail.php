@@ -16,9 +16,9 @@ class StudentEnrollmentMail extends Mailable
      *
      * @return void
      */
-    public function __construct($_data)
+    public function __construct()
     {
-        $this->data = $_data;
+        
     }
 
     /**
@@ -28,12 +28,15 @@ class StudentEnrollmentMail extends Mailable
      */
     public function build()
     {
-        return $this->from('support@bma.edu.ph', 'BMA ENROLLMENT TEAM')
+       /*  return $this->from('support@bma.edu.ph', 'BMA ENROLLMENT TEAM')
             ->subject('Enrollment Details')
-            ->markdown('widgets.mail.student-enrollment-mail')->with(['data' => $this->data]);
-        /* return $this->from('support@bma.edu.ph', "BMA ENROLLMENT TEAM")
-            ->subject("VIRTUAL BRIEFING - APPLICANTS NUMBER: " . $this->applicant->applicant_number)
-            ->markdown('widgets.mail.applicant-mail.briefing-notification')->with(['data' => $this->applicant]); */
-        // return $this->markdown('widgets.mail.applicant-mail.briefing-notification');
+            ->markdown('widgets.mail.student-enrollment-mail')->with(['data' => $this->data]); */
+     
+    }
+    public function student_forget_password($account,$password) {
+        return $this->from('support@bma.edu.ph', 'Baliwag Maritime Academy, Inc.')
+        ->subject("PASSWORD RESET REQUEST : " . $account->student_number)
+        ->markdown('widgets.mail.student-mail.forget-password')
+        ->with(['data' => $account,'password'=>$password]);
     }
 }

@@ -51,7 +51,7 @@ return [
         'bma-applicants' => [
             'driver' => 'local',
             //'root' => storage_path('app/public/bma-applicants'),
-            'root' => '../../bma-portal/storage/bma-applicants',
+            'root' => '../../bma-portal/public/storage/bma-applicants',
             'url' => env('APP_URL') . '/storage/bma-applicants',
             'visibility' => 'public',
         ],

@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-md-8">
-        <p class="display-6 fw-bolder text-primary">ENROLLMENT</p>
+        <p class="display-6 fw-bolder text-primary">ENROLLMENT {{$academic}}</p>
         <div class="row">
             <div class="col">
                 <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
@@ -41,18 +41,6 @@
 
         <div class="search-container">
             @include('pages.registrar.enrollment.widgets.enrollment-card-v2')
-            {{--   <div class="m-5" wire:loading wire:target="searchInput">
-                <div style="color: #79bbb5; align" class="la-ball-square-clockwise-spin la-3x">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-            </div> --}}
             @if (count($studentsList) > 0)
                 @yield('student-enrollment-card')
             @else
@@ -152,6 +140,4 @@
         @endforeach
 
     </div>
-
 </div>
-

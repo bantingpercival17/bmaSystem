@@ -171,8 +171,8 @@ class OnboardTrainingController extends Controller
         $_midshipman = $_request->_midshipman ? StudentDetails::find(base64_decode($_request->_midshipman)) : [];
         $_shipboard_monitoring = $_request->_cadet ? $_student_detials->student_search($_request->_cadet) : $_student_detials->student_shipboard_journals()->paginate(10);
         if ($_midshipman) {
-            $_department = $_midshipman->enrollment_assessment->course_id == 1 ? "MARINE ENGINEERING" : "MARINE TRANSPORTATION";
-            $_assessors = Staff::where('department', $_department)->get();
+            $_department = $_midshipman->enrollment_assessment->course_id == 1 ? "BSMARE" : "BSMT";
+            $_assessors = Staff::where('department', $_department)->where('is_removed', false)->get();
         } else {
             $_assessors = [];
         }
@@ -213,12 +213,35 @@ class OnboardTrainingController extends Controller
             return back()->with('error', $error->getMessage());
         }
     }
+    public function onboard_narative_summary_report_v2(Request $_request)
+    {
+        try {
+            $_generate_report = new OnboardTrainingReport();
+            $_data = StudentDetails::find(base64_decode($_request->_midshipman));
+            return $_generate_report->narative_summary_report_v2($_data);
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
     public function onboard_monthly_summary_report(Request $_request)
     {
         try {
             $_generate_report = new OnboardTrainingReport();
             $_data = StudentDetails::find(base64_decode($_request->_midshipman));
-            return $_generate_report->monthly_summary_report($_data);
+            return $_generate_report->monthly_summary_report($_data, $_request->_month);
+        } catch (Exception $error) {
+            return $error->getMessage();
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    public function onboard_monthly_summary_report_v2(Request $_request)
+    {
+        try {
+            $generateReport = new OnboardTrainingReport();
+            $student = StudentDetails::find(base64_decode($_request->_midshipman));
+            $narativeReport = ShipboardPerformanceReport::find(base64_decode($_request->narativeReport));
+            return $generateReport->monthlySummaryReport($student, $narativeReport);
+            //return $_generate_report->monthly_summary_report($_data);
         } catch (Exception $error) {
             return $error->getMessage();
             return back()->with('error', $error->getMessage());

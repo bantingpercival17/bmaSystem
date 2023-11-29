@@ -16,12 +16,12 @@ class PaymentAdditionalFees extends Model
     }
     function fee_details()
     {
-        return $this->belongsTo(AdditionalFees::class, 'fees_id');
+        return $this->belongsTo(AdditionalFees::class, 'fees_id')->with('particular');
     }
     function fee_total_paid()
     {
         $fee_name = $this->fee_details->particular->particular_name;
-        return  PaymentTransaction::where('assessment_id', $this->assessment_id)
-            ->where('remarks', 'like', '%' . $fee_name . '%')->sum('payment_amount');
+        return  PaymentTransaction::where('assessment_id', $this->assessment_id)->where('is_removed', false)
+            ->where('remarks', 'like', '%' . strtoupper($fee_name) . '%')->sum('payment_amount');
     }
 }

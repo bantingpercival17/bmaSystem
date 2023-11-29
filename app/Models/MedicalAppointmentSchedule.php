@@ -17,4 +17,8 @@ class MedicalAppointmentSchedule extends Model
     {
         return ApplicantMedicalAppointment::where('appointment_date', $this->date)->where('is_approved', true)->count();
     }
+    public function number_of_avialable_applicant()
+    {
+        return ApplicantMedicalAppointment::where('appointment_date', $this->date)->where('is_removed', false)->count();
+    }
 }

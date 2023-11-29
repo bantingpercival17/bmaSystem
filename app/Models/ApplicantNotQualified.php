@@ -9,6 +9,5 @@ class ApplicantNotQualified extends Model
 {
     use HasFactory;
     protected $connection = 'mysql2';
-    protected $fillable = ['applicant_id', 'course_id', 'academic_id', 'staff_id',];
-
+    protected $fillable = ['applicant_id', 'course_id', 'academic_id', 'staff_id', 'remarks'];
 }

@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Topic View';
+    $_title = 'Topic View';
 @endphp
 @section('page-title', $_title)
 @section('page-mode', 'dark-mode')
@@ -23,13 +23,30 @@ $_title = 'Topic View';
 @section('page-content')
     <div class="content">
         <div class="row">
-            <div class="col-md">
+            <div class="col-md-8">
                 <p class="display-6 text-primary">
                     {{ $_topic->learning_outcomes }}
                 </p>
-                <div class="card">
+                <div class="mt-3">
+                    <button class="btn btn-info btn-sm text-white">ADD PRESENTATION</button>
+                </div>
+                <div class="card mt-3">
                     <div class="card-body">
-                        @if ($_topic->materials)
+                        {{--  {{ $_topic->sub_topics }} --}}
+                        @forelse ($_topic->sub_topics as $item)
+                            <div class="card shadow mt-3">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="fw-bolder">{{ $item->sub_topic }}</label>
+                                        {{--  <p>
+                                        {{ $item }}
+                                    </p> --}}
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                        @endforelse
+                        {{--   @if ($_topic->materials)
                             <div class="form-group">
                                 <small class="fw-bolder">PRESENTATION</small>
                                 <p>
@@ -59,7 +76,7 @@ $_title = 'Topic View';
                         @else
                             <p>PLEASE ADD A PRESENTATION FOR THIS COURSE SYLLABUS</p>
                             <p><span class="text-warning">NOTE: <b>INSTRUCTOR</b> can add the PRESENTATION is the creator</span></p>
-                        @endif
+                        @endif --}}
                         {{-- <iframe src="{{ $_topic->materials->presentation_link }}" frameborder="0" width="100%"
                             height="485" allowfullscreen="true" mozallowfullscreen="true"
                             webkitallowfullscreen="true"></iframe> --}}

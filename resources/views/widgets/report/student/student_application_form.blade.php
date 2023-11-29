@@ -1,7 +1,7 @@
 @extends('widgets.report.grade.report_layout_1')
 @php
     $_form_number = $_enrollment_assessment->course_id == 3 ? ' RG-02' : ' RG-01';
-    $_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLGE';
+    $_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLEGE';
 @endphp
 @section('title-report', $_form_number . ' - STUDENT REGISTRATION : ' . strtoupper($_student->last_name . ', ' .
     $_student->first_name . ' ' . $_student->middle_name))
@@ -14,7 +14,7 @@
             {{ $_department . ' - ' . $_enrollment_assessment->course->course_name }}
         </h5>
         <br>
-        <p class="title-header"><b>| PERSONAL INFORMATION</b></p>
+        <h6 for="" class="text-header">A. PERSONAL INFORMATION</h6>
         <table class="table">
             <tbody>
                 <tr>
@@ -36,12 +36,16 @@
                 </tr>
                 <tr>
 
-                    <td> <small>BIRTH PLACE:</small> <b>{{ Str::upper($_student->birth_place) }}</b></td>
+                    <td colspan="2"> <small>BIRTH PLACE:</small> <b>{{ Str::upper($_student->birth_place) }}</b> </td>
                 </tr>
+            </tbody>
+        </table>
+        <table class="table">
+            <tbody>
                 <tr>
                     <td><small>GENDER: </small><b>{{ $_student->sex }}</td>
                     <td><small>HEIGHT: </small><b> {{ $_student->height ?: '-' }} CM</td>
-                    <td><small>WEIGHT: </small><b> {{ $_student->weight ?: '-' }} POUND/S</td>
+                    <td><small>WEIGHT: </small><b> {{ $_student->weight ?: '-' }} LB</td>
                     @php
                         $_cm = $_student->height;
                         $_kg = $_student->weight;
@@ -52,37 +56,31 @@
                             $_height = $_cm * $_cm;
                             $_bmi = number_format($_kg / $_height, 2);
                         }
-                        
+
                     @endphp
-                    <td><small>BMI: </small><b>{{ $_bmi }}</td>
-                    {{--  <td>
-                        @php
-                            $bmi = '-';
-                            if ($_student->weight > 0 && $_student->height) {
-                                $bmi = 0;
-                            }
-                        @endphp
-                        <small>BMI: </small><b> {{ $bmi }}</b>
-                    </td> --}}
+                    <td><small>BMI: </small> <b>{{ $_bmi }}</td>
                 </tr>
-                <tr>
-                    <td colspan="2"><small>RELIGION: </small><b>{{ strtoupper($_student->religion) }}</td>
-                    <td><small>CITIZENSHIP:</small> <b>{{ Str::upper($_student->nationality) }}</b></td>
-                </tr>
+
             </tbody>
 
         </table>
-        <br>
-        <p class="title-header"><b>| CONTACT DETAILS</b></p>
         <table class="table">
             <tbody>
                 <tr>
-                    <td colspan="3">CONTACT NUMBER: <b>{{ $_student->contact_number }}</td>
-                    <td colspan="2">EMAIL ADDRESS: <b>{{ $_student->account->personal_email }}</td>
+                    <td><small>RELIGION: </small><b>{{ strtoupper($_student->religion) }}</td>
+                    <td><small>CITIZENSHIP:</small> <b>{{ Str::upper($_student->nationality) }}</b></td>
                 </tr>
                 <tr>
-                    <td colspan=""><small>ADDRESS:</small>
+                    <td>CONTACT NUMBER: <b>{{ $_student->contact_number }}</td>
+                    <td>EMAIL ADDRESS: <b>{{ $_student->account->personal_email }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table">
             <tbody>
+                <tr>
+                    <td colspan="4"><small>ADDRESS:</small> </td>
+                </tr>
                 <tr class="text-center">
                     <td><b>{{ Str::upper($_student->street) }}</td>
                     <td><b>{{ Str::upper($_student->barangay) }}</b></td>
@@ -96,6 +94,17 @@
                     <td> <small>PROVINCE</small></td>
                 </tr>
             </tbody>
+        </table>
+
+        <br>
+        <table class="table">
+            <tbody>
+
+                <tr>
+
+            <tbody>
+
+            </tbody>
 
             </td>
             </tr>
@@ -103,7 +112,7 @@
             </tbody>
         </table>
         <br>
-        <p class="title-header"><b>| PARENT'S INFOMATION</b></p>
+        <h6 for="" class="text-header">B. PARENT'S INFORMATION</h6>
         <table class="table">
             <tbody>
                 <tr>
@@ -123,7 +132,7 @@
             </tbody>
         </table>
         <br>
-        <p class="title-header"><b>| SCHOOL ATTENDED</b></p>
+        <h6 for="" class="text-header mt-3">C. SCHOOL ATTENDED</h6>
         <br>
         <table class="table">
             @if ($_enrollment_assessment->course_id != 3)

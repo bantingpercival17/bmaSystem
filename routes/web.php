@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\EmployeeController;
-use App\Mail\OnboardingScheduleEmail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
     require __DIR__ . '/custom-route/dean.php'; // Dean Route
     require __DIR__ . '/custom-route/librarian.php'; // Dean Route
     require __DIR__ . '/custom-route/medical.php'; // Medical Route
+
 });
 Route::get('/', [Controller::class, 'index']);
 Route::get('/setup', [Controller::class, 'setup']);

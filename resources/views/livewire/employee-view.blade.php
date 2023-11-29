@@ -1,65 +1,11 @@
-@section('page-title', 'Employee')
+@php
+    $pageTitle = 'Employee Information';
+@endphp
+@section('page-title', $pageTitle)
 <div>
-    <label for="" class="fw-bolder text-primary h4">EMPLOYEE DETAILS</label>
     <div class="row">
-        <div class="col-lg-4">
-            <form action="" method="get" class="form-group mt-2">
-                <small class="fw-bolder text-primary">SEARCH EMPLOYEE</small>
-                <input type="text" class="form-control" wire:model="searchInput" wire:keydown="searchEmployee">
-                <div class=" d-flex justify-content-between mt-2">
-                    <h6 class=" fw-bolder text-muted">
-                        @if (count($employeeList) > 0)
-                            <small class="text-muted">SEARCH RESULT: </small>
-                            <span class="text-info fw-bolder">{{ $searchInput }}</span>
-                        @else
-                        @endif
-                    </h6>
-                    <span class="text-primary h6">
-                        No. Result: <b>{{ count($employeeList) }}</b>
-                    </span>
-
-                </div>
-            </form>
-            <div class="employee-list">
-                @if (count($employeeList) > 0)
-                    @foreach ($employeeList as $item)
-                        <div class="card mb-2">
-                            <div class="row no-gutters">
-                                <div class="col-md-4">
-                                    <img class="img-fluid avatar avatar-100 avatar-rounded me-2"
-                                        src="{{ asset($item->profile_picture()) }}" alt="User Avatar">
-                                </div>
-                                <div class="col-md p-1">
-                                    <div class="card-body p-2">
-                                        <small
-                                            class="text-primary fw-bolder">{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</small>
-                                        <br>
-                                        <span class="badge bg-secondary">{{ $item->department }}</span>
-                                        <a class="badge bg-primary"
-                                            wire:click="setEmployee({{ $item->id }})">VIEW</a>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                @else
-                    <div class="card  mb-2">
-                        <div class="row no-gutters">
-                            <div class="col-md">
-                                <div class="card-body">
-                                    <span class="fw-bolder">NOT FOUND</span>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                @endif
-            </div>
-
-        </div>
-        <div class="col-lg">
+        <div class="col-lg-8">
+            <p class="display-6 fw-bolder text-primary">{{ strtoupper($pageTitle) }}</p>
             <div class="card mb-2">
                 <div class="row no-gutters">
                     <div class="col-md-3">
@@ -74,9 +20,13 @@
                                 <small class="fw-bolder badge bg-secondary">
                                     {{ $employee ? $employee->department . ' DEPARTMENT' : 'DEPARTMENT' }}
                                 </small> -
-                                <small class="badge bg-primary">
+                                <small class="badge bg-secondary">
                                     {{ $employee ? $employee->user->email : 'EMAIL' }}
                                 </small>
+                                @if ($employee)
+                                    <a href="{{ route('admin.staff-qrcode') }}?employee={{ base64_encode($employee->id) }}"
+                                        class="btn btn-primary btn-sm float-end">GENERATE QR-CODE</a>
+                                @endif
                             </p>
                         </div>
                     </div>
@@ -85,18 +35,80 @@
             @if ($employee)
                 <nav class="nav nav-underline bg-soft-primary pb-0 text-center" aria-label="Secondary navigation">
                     <div class="d-flex" id="head-check">
-                        <a class="nav-link {{ request()->input('view') == 'profile' || !request()->input('view') ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=profile">PROFILE</a>
-                        <a class="nav-link  {{ request()->input('view') == 'enrollment' ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=enrollment">ROLE</a>
-                        <a class="nav-link   {{ request()->input('view') == 'account' ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=account">ATTENDANCE</a>
-                        <a class="nav-link   {{ request()->input('view') == 'grades' ? 'active' : 'text-muted' }}"
-                            href="{{ route('registrar.student-profile') }}?student={{ base64_encode($employee->id) }}&view=grades"></a>
+                        <a class="nav-link {{ $activeCard == 'profile' || !$activeCard ? 'active' : 'text-muted' }}"
+                            wire:click="switchCard('profile')">PROFILE</a>
+                        <a class="nav-link  {{ $activeCard == 'role' ? 'active' : 'text-muted' }}"
+                            wire:click="switchCard('role')">ROLE</a>
+                        <a class="nav-link   {{ $activeCard == 'attendance' ? 'active' : 'text-muted' }}"
+                            wire:click="switchCard('attendance')">ATTENDANCE</a>
                     </div>
                 </nav>
+
+                <div class="mt-4">
+                    @if ($activeCard == 'profile')
+                        @include('livewire.employee-components.profile')
+                    @elseif ($activeCard == 'role')
+                        @include('livewire.employee-components.role-view')
+                    @endif
+                </div>
             @endif
 
         </div>
+        <div class="col-lg-4">
+            <form action="" method="get" class="form-group">
+                <label for="" class="text-primary fw-bolder">SEARCH STUDENT</label>
+                <input type="text" class="form-control border border-primary" wire:model="searchInput">
+                <div class=" d-flex justify-content-between mt-2">
+                    <h6 class=" fw-bolder text-muted">
+                        @if ($searchInput != '')
+                            Search Result: <span class="text-primary">{{ $searchInput }}</span>
+                        @else
+                            {{ strtoupper('Recent Search') }}
+                        @endif
+                    </h6>
+                    <span class="text-muted h6">
+                        No. Result: <b>{{ count($employeeList) }}</b>
+                    </span>
+
+                </div>
+            </form>
+            <div class="employee-list">
+                @forelse ($employeeList as $item)
+                    <a href="{{ route('employee.view') }}?employee={{ base64_encode($item->id) }}">
+                        <div class="mb-2 ">
+                            <div class="row no-gutters">
+                                <div class="col-md-4 text-center">
+                                    <img src="{{ $item ? $item->profile_picture() : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                                        class="avatar-100 rounded card-img" alt="student-image">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card shadow shadow-info">
+                                        <div class="card-body">
+                                            <small
+                                                class="text-primary fw-bolder">{{ strtoupper($item->last_name . ', ' . $item->first_name) }}</small>
+                                            <br>
+                                            <span class="badge bg-secondary">{{ $item->department }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                @empty
+                    <div class="card  mb-2">
+                        <div class="row no-gutters">
+                            <div class="col-md">
+                                <div class="card-body">
+                                    <span class="fw-bolder">NOT FOUND</span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforelse
+            </div>
+
+        </div>
+
     </div>
 </div>

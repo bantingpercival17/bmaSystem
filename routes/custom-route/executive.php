@@ -3,6 +3,7 @@
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ExecutiveOfficeController;
 use App\Http\Livewire\Executive\Attendance\ScannerView;
+use App\Http\Livewire\Registrar\Student\StudentProfileView;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('executive')->middleware(['auth'])->group(function () {
@@ -19,12 +20,12 @@ Route::prefix('executive')->middleware(['auth'])->group(function () {
     Route::get('/staff-attendance')->name('exo.staff-attendance');
 
 
-    // Student 
+    // Student
     Route::get('/student-attendance')->name('exo.student-attendance');
     Route::get('/semestral-clearance', [ExecutiveOfficeController::class, 'semestral_clearance_view'])->name('exo.semestral-clearance'); // Course View
     Route::get('/semestral-clearance/view', [ExecutiveOfficeController::class, 'semestral_student_list_view'])->name('exo.semestral-student-list'); // Section view
     Route::post('/semestral-clearance', [ExecutiveOfficeController::class, 'semestral_clearance_store'])->name('exo.semestral-clearance-store');
-
+    Route::get('student',StudentProfileView::class)->name('student.view');
     // Student Onboarding
     Route::get('/student/onboarding', [ExecutiveOfficeController::class, 'onboarding_attendances'])->name('exo.student-onboarding');
     Route::get('/student/onboarding/report', [ExecutiveOfficeController::class, 'onboarding_student_list_report'])->name('exo.onboarding-student-list-report');

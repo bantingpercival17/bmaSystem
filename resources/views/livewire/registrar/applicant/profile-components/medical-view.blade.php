@@ -54,8 +54,18 @@
                 <small class="fw-bolder text-muted">ATTENDED ON ORIENTATION</small>
                 <small
                     class="badge bg-info">{{ $profile->schedule_orientation->schedule_date . ' ' . $profile->schedule_orientation->schedule_time }}</small>
-                <a href="{{ route('applicant.orientation-attended') }}?applicant={{ $profile->id }}"
-                    class="btn btn-primary btn-sm w-100 mt-2">ATTENDED</a>
+
+                @if ($profile->virtual_orientation)
+                    @if ($profile->virtual_orientation->is_completed == 1)
+                        ATTENDED
+                    @else
+                        <a href="{{ route('applicant.orientation-attended') }}?applicant={{ $profile->id }}"
+                            class="btn btn-primary btn-sm w-100 mt-2">ATTENDED</a>
+                    @endif
+                @else
+                    <a href="{{ route('applicant.orientation-attended') }}?applicant={{ $profile->id }}"
+                        class="btn btn-primary btn-sm w-100 mt-2">ATTENDED</a>
+                @endif
             @else
                 <small class="badge bg-secondary"></small>
             @endif

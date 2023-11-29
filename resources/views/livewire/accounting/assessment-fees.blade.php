@@ -1,5 +1,5 @@
 @php
-    $pageTitle = 'Assessment Fee';
+    $pageTitle = 'Assessment Fees';
 @endphp
 @section('page-title', $pageTitle)
 <div>
@@ -156,7 +156,8 @@
                                     <br>
                                     <div class="col-sm">
                                         <select name="mode" wire:model="paymentMode"
-                                            class="form-select form-select-sm payment-mode">
+                                            class="form-select form-select-sm payment-mode"
+                                            wire:change="paymentModeChange($event.target.value)">
                                             <option value="0">Fullpayment</option>
                                             <option value="1">Installment</option>
                                         </select>
@@ -203,22 +204,25 @@
                                 </div>
                             </div>
                             <hr>
-                            <h6 class="text-info fw-bolder">FORWARDED OVER-PAYMENT</h6>
-                            <div class="row">
-                                <div class="form-group col-md">
-                                    <small class="fw-bolder text-muted">FORWARDED AMOUNT</small>
-                                    <label for=""
-                                        class="form-control form-control-sm border border-info">{{ number_format($profile->enrollment_assessment->over_payment() * -1, 2) }}</label>
+                            @if (count($profile->enrollment_history) > 1)
+                                <h6 class="text-info fw-bolder">FORWARDED OVER-PAYMENT</h6>
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <small class="fw-bolder text-muted">FORWARDED AMOUNT</small>
+                                        <label for=""
+                                            class="form-control form-control-sm border border-info">{{ number_format($profile->enrollment_assessment->over_payment() * -1, 2) }}</label>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
+
                             <div class="row">
                                 {{-- <div class="form-group col-md-8">
                                     <small class="form-label">TOTAL AMOUNT</small>
                                     <br>
                                     <label class="h5 text-primary form-label">
                                         {{ number_format($totalSemestralFees, 2) }}
-                                    </label>
-                                </div> --}}
+                            </label>
+                        </div> --}}
                                 <div class="form-group col-md">
                                     <button type="submit" class="btn btn-primary float-end">SUBMIT</button>
                                 </div>
@@ -254,7 +258,8 @@
             </form>
             <div class="student-list">
                 @forelse ($studentLists as $item)
-                    <a href="{{ route('accounting.assessments-v2') }}?student={{ base64_encode($item->id) }}">
+                    <a
+                        href="{{ route('accounting.assessments-v2') }}?student={{ base64_encode($item->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                         <div class="card mb-2 shadow shadow-info">
                             <div class="row no-gutters">
                                 <div class="col-md-4">

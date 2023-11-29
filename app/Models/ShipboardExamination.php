@@ -14,7 +14,10 @@ class ShipboardExamination extends Model
         'staff_id'
     ];
 
-
+    public function assessment_questions()
+    {
+        return $this->hasMany(ShipboardExaminationAnswer::class, 'examination_id')->select('id','question_id')->with('question.choices_v2')->inRandomOrder();
+    }
     public function result()
     {
         return $this->hasMany(ShipboardExaminationAnswer::class, 'examination_id')

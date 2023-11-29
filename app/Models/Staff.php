@@ -37,30 +37,30 @@ class Staff extends Model
     }
     function profile_picture()
     {
-        if (file_exists(public_path('assets/img/staff/' . strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg'))) {
-            $_image = strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg';
-        } else {
-            $_image = 'avatar.png';
+        $_image = 'avatar.png';
+        if ($this->user) {
+            if (file_exists(public_path('assets/img/staff/' . strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg'))) {
+                $_image = strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg';
+            }
         }
         return '/assets/img/staff/' . $_image;
     }
+
     public function subject_handles()
     {
         return $this->hasMany(SubjectClass::class, 'staff_id')
             ->where('academic_id', Auth::user()->staff->current_academic()->id)
             ->where('is_removed', false);
     }
+    public function subject_handles_v2($academic)
+    {
+        return $this->hasMany(SubjectClass::class, 'staff_id')
+            ->where('academic_id', base64_decode($academic))
+            ->where('is_removed', false)->get();
+    }
     public function grade_submission_midterm()
     {
         return $this->hasMany(SubjectClass::class, 'staff_id')->with('midterm_grade_submission')
-            ->where('subject_classes.academic_id', Auth::user()->staff->current_academic()->id)
-            ->where('subject_classes.is_removed', false);
-        return $this->hasMany(SubjectClass::class, 'staff_id')
-            ->leftJoin('grade_submissions as gs', 'gs.subject_class_id', 'subject_classes.id')
-            ->where('gs.form', 'ad1')
-            ->where('gs.period', 'midterm')
-            /*  ->where('gs.is_approved',true) *//* ->orWhere('gs.is_approved','=','null') */
-            ->with('midterm_grade_submission')
             ->where('subject_classes.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('subject_classes.is_removed', false);
     }
@@ -69,6 +69,14 @@ class Staff extends Model
         return $this->hasMany(SubjectClass::class, 'staff_id')->with('finals_grade_submission')
             ->where('subject_classes.academic_id', Auth::user()->staff->current_academic()->id)
             ->where('subject_classes.is_removed', false);
+    }
+    // Grade Submission Version
+    function grade_submission_v2($academic, $period)
+    {
+        $gradeSubmission = $period == 'midterm' ? 'midterm_grade_submission' : 'finals_grade_submission';
+        return $this->hasMany(SubjectClass::class, 'staff_id')->with($gradeSubmission)
+            ->where('subject_classes.academic_id', base64_decode($academic))
+            ->where('subject_classes.is_removed', false)->get();
     }
     // Staff Attendance
     public function attendance()
@@ -93,12 +101,44 @@ class Staff extends Model
     }
     public function current_academic()
     {
-        $_academic = request()->input('_academic') ? AcademicYear::find(base64_decode(request()->input('_academic'))) : AcademicYear::where('is_active', 1)->first();
-        return $_academic;
+        $academic = AcademicYear::where('is_active', 1)->first();
+
+        # Get the id of Teacher Role
+        $role = Role::where('name', 'teacher')->first();
+        $teacher = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
+        if ($teacher) {
+            $academic =  SubjectClass::select('academic_years.*')
+                ->join('academic_years', 'academic_years.id', 'subject_classes.academic_id')
+                ->where('subject_classes.staff_id', $this->id)->groupBy('subject_classes.academic_id')->orderBy('academic_years.id', 'desc')->first();
+        }
+        $role = Role::where('name', 'superadministrator')->first();
+        $admin = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
+        if ($admin) {
+            $academic = AcademicYear::where('is_active', 1)->first();
+        }
+        if (request()->input('_academic')) {
+            $academic = AcademicYear::find(base64_decode(request()->input('_academic')));
+        }
+        return $academic;
     }
     public function academics()
     {
-        return AcademicYear::where('is_removed', false)->orderBy('id', 'Desc')->get();
+        # Get the id of Teacher Role
+        $role = Role::where('name', 'teacher')->first();
+        $teacher = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
+        $role = Role::where('name', 'superadministrator')->first();
+        $admin = StaffDepartment::where('staff_id', $this->id)->where('role_id', $role->id)->first();
+        $subjectClass = SubjectClass::select('academic_years.*')
+            ->join('academic_years', 'academic_years.id', 'subject_classes.academic_id')
+            ->where('subject_classes.staff_id', $this->id)->groupBy('subject_classes.academic_id')->orderBy('academic_years.id', 'desc')->get();
+        $academicList =  AcademicYear::where('is_removed', false)->orderBy('id', 'Desc')->get();
+        if ($teacher) {
+            $academicList = $subjectClass;
+        }
+        if ($admin) {
+            $academicList = AcademicYear::where('is_removed', false)->orderBy('id', 'Desc')->get();
+        }
+        return $academicList;
     }
     public function convert_year_level($_data)
     {
@@ -134,7 +174,7 @@ class Staff extends Model
     }
     public function dean_signature($_department)
     {
-        $_staff = Staff::where('job_description', 'SCHOOL DIRECTOR')->where('department', $_department)->first();
+        $_staff = Staff::where('job_description', 'SCHOOL DIRECTOR')/* ->where('department', $_department) */->first();
         return $_staff->user->email;
     }
 
@@ -171,7 +211,7 @@ class Staff extends Model
                 'role_id' => 1,
                 'role_name' => 'Administrator',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination'], ['Revision Task', 'admin.request-task']],
+                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Applicants', 'applicant.overview'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Subjects', 'admin.subjects'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination'], ['Revision Task', 'admin.request-task']],
             ],
             [
                 'role_id' => 2,
@@ -183,14 +223,14 @@ class Staff extends Model
                 'role_id' => 3,
                 'role_name' => 'Registrar',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'registrar.dashboard'], ['Enrollment', 'registrar.enrollment'], ['Enrollment v2', 'enrollment.view-v2'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance'],['Scholarship Grants','registrar.scholarship-grants']],
+                'role_routes' => [['Dashboard', 'registrar.dashboard'], /* ['Enrollment', 'registrar.enrollment'], */ ['Enrollment', 'enrollment.view-v2'], ['Semestral Grades', 'registrar.semestral-grades'], ['Students', 'registrar.students'], ['Applicants', 'applicant.overview'], ['Section', 'registrar.section-view'], ['Subjects', 'registrar.subject-view'], ['Semestral Clearance', 'registrar.semestral-clearance'], ['Scholarship Grants', 'registrar.scholarship-grants']],
             ],
             [
-                
+
                 'role_id' => 4,
                 'role_name' => 'Accounting',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Assessment v2', 'accounting.assessments-v2'], ['Payment Transaction', 'accounting.payment-transactions'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars'], ['Semestral Clearance', 'accounting.semestral-clearance'], ['Applicant Payment', 'accounting.applicant-transaction'], ['Payroll', 'accounting.payroll-view'], ['Employee', 'accounting.employee-view'], ['Report', 'accounting.report'], ['Void Transaction', 'accounting.payment-void']],
+                'role_routes' => [['Dashboard', 'accounting.dashboard'], ['Assessment', 'accounting.assessments'], ['Assessment v2', 'accounting.assessments-v2'], ['Payment Transaction', 'accounting.payment-transactions-v2'], ['Fees', 'accounting.fees'], ['Particulars', 'accounting.particulars'], ['Semestral Clearance', 'accounting.semestral-clearance'], ['Applicant Payment', 'accounting.applicant-transaction'], ['Payroll', 'accounting.payroll-view'], ['Employee', 'accounting.employee-view'], ['Report', 'accounting.report'], ['Void Transaction', 'accounting.payment-void']],
             ],
             [
                 'role_id' => 5,
@@ -215,7 +255,7 @@ class Staff extends Model
                 'role_id' => 8,
                 'role_name' => 'Executive',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'exo.dashboard'], ['Staff Attendance', 'exo.staff-attendance'], ['Student Onboarding', 'exo.student-onboarding'], ['Semestral Clearance', 'exo.semestral-clearance'], ['Qr Code Scanner', 'exo.qrcode-scanner']],
+                'role_routes' => [['Dashboard', 'exo.dashboard'], ['Student', 'student.view'], ['Staff Attendance', 'exo.staff-attendance'], ['Student Onboarding', 'exo.student-onboarding'], ['Semestral Clearance', 'exo.semestral-clearance'], ['Qr Code Scanner', 'exo.qrcode-scanner']],
             ],
             [
                 'role_id' => 9,
@@ -383,5 +423,9 @@ class Staff extends Model
     public function medical_appointment_slot($date)
     {
         return ApplicantMedicalAppointment::where('appointment_date', $date)->where('is_removed', false)->count();
+    }
+    function roles()
+    {
+        return $this->hasMany(StaffDepartment::class)->where('is_removed', false);
     }
 }

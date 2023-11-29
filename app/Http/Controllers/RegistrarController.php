@@ -8,6 +8,7 @@ use App\Exports\CurriculumSummaryGradeSheet;
 use App\Exports\SubjectScheduleTemplate;
 use App\Exports\SubjectScheduleWorkbook;
 use App\Exports\SummaryGradeSheet;
+use App\Http\Livewire\Registrar\Applicant\ApplicantView;
 use App\Imports\StudentSection as ImportsStudentSection;
 use App\Imports\SubjectScheduleImport;
 use App\Models\AcademicYear;
@@ -52,7 +53,36 @@ class RegistrarController extends Controller
             $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
             $_total_population = Auth::user()->staff->enrollment_count();
             $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
-            return view('pages.registrar.dashboard.view', compact('_academics', '_courses', '_total_population', '_total_applicants'));
+            $mainHeader = array(
+                array('COURSE', 1, NULL),
+                array('PRE-REGISTRATION', 1, NULL),
+                array('INFORMATION VERIFICATION', 3, NULL),
+                array('BMA-ALUMNUS', 1, NULL),
+                array('ENTRANCE EXAMINATION PAYMENT', 3, NULL),
+            );
+            $subHeader = array(
+                array('', 1, NULL),
+                array('', 1, 'registered_applicants'),
+                array('FOR CHECKING', 1, 'for_checking'),
+                array('QUALIFIED', 1, 'qualified'),
+                array('NOT QUALIFIED', 1, 'not_qualified'),
+                array('', 1, 'bma_alumnus'),
+                array('FOR PAYMENT', 1, 'qualified_for_entrance_examination'),
+                array('FOR VERIFICATION', 1, 'examination_payment'),
+                array('PAYMENT VERIFIED', 1, 'entrance_examination'),
+            );
+            $tableHeader = array($mainHeader, $subHeader);
+            $tableHeader = array(
+                array('Course', array('')),
+                array('Pre Registration', array('registered_applicants')),
+                array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination')),
+                array('Aluminus', array('bma_senior_high')),
+                array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'took_the_exam')),
+                array('Briefing Orientation', array('expected_attendees', 'total_attendees')),
+                array('Medical Examination', array('for_medical_schedule', 'medical_schedule', 'waiting_for_medical_results', 'medical_result')),
+                array('Enrollment', array('qualified_to_enrollment'))
+            );
+            return view('pages.registrar.dashboard.view', compact('_academics', '_courses', '_total_population', '_total_applicants', 'tableHeader'));
         } catch (Exception $err) {
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
@@ -120,12 +150,13 @@ class RegistrarController extends Controller
                     // Create a new Student number and Student Account
                 }
                 // Validate the Enrollment Assessment of the Student
-                $_assessment = EnrollmentAssessment::where('student_id', $_student->id)->where('academic_id', Auth::user()->staff->current_academic()->id)->first();
+                $academic =  $_request->academic ? base64_decode($_request->academic) : Auth::user()->staff->current_academic()->id;
+                $_assessment = EnrollmentAssessment::where('student_id', $_student->id)->where('academic_id', $academic)->first();
                 if (!$_assessment) {
                     // Store Enrollment Assessment
                     $_assessment_details = [
                         "student_id" => $_student->id,
-                        "academic_id" => Auth::user()->staff->current_academic()->id,
+                        "academic_id" => $_request->academic ? base64_decode($_request->academic) : Auth::user()->staff->current_academic()->id,
                         "course_id" => $_request->_course ?: $_student->enrollment_assessment->course_id,
                         "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
                         "year_level" => $_request->_level ?: strval($_year_level),
@@ -143,7 +174,7 @@ class RegistrarController extends Controller
                     } else { // If Onsite Enrollee Store Data
                         $_details = [
                             'student_id' => $_student->id,
-                            'academic_id' => Auth::user()->staff->current_academic()->id,
+                            'academic_id' => $_request->academic ? base64_decode($_request->academic) :  Auth::user()->staff->current_academic()->id,
                             'enrollment_place' => 'onsite',
                             'staff_id' => Auth::user()->staff->id,
                             'is_approved' => 1,
@@ -171,7 +202,7 @@ class RegistrarController extends Controller
                 // Store Enrollment Assessment
                 $_assessment_details = [
                     "student_id" => $_student->id,
-                    "academic_id" => Auth::user()->staff->current_academic()->id,
+                    "academic_id" => $_request->academic ? base64_decode($_request->academic) :  Auth::user()->staff->current_academic()->id,
                     "course_id" => $_request->_course ?: $_student->enrollment_assessment->course_id,
                     "curriculum_id" => $_request->_curriculum ?: $_student->enrollment_assessment->curriculum_id,
                     "year_level" => 4,
@@ -189,7 +220,7 @@ class RegistrarController extends Controller
                 } else { // If Onsite Enrollee Store Data
                     $_details = [
                         'student_id' => $_student->id,
-                        'academic_id' => Auth::user()->staff->current_academic()->id,
+                        'academic_id' => $_request->academic ? base64_decode($_request->academic) :  Auth::user()->staff->current_academic()->id,
                         'enrollment_place' => 'onsite',
                         'staff_id' => Auth::user()->staff->id,
                         'is_approved' => 1,
@@ -411,7 +442,7 @@ class RegistrarController extends Controller
             if ($_request->file('upload-file')) {
                 Storage::disk('public')->put($_file_name, fopen($_request->file('upload-file'), 'r+'));
                 Excel::import(new SubjectScheduleImport(), $_request->file('upload-file'));
-                return back()->with('success', 'Successfully Upload the Class Scheduled');
+                // return back()->with('success', 'Successfully Upload the Class Scheduled');
             }
         } catch (Exception $err) {
             $this->debugTracker($err);
@@ -644,6 +675,17 @@ class RegistrarController extends Controller
         try {
             $_section = Section::find(base64_decode($_request->_section));
             $_student_list = $_section->student_sections;
+            foreach ($_student_list as $student) {
+                $verify = StudentSection::where('student_id', $student->student_id)->where('section_id', $_section->id)->whereNull('enrollment_id')
+                    ->where('is_removed', false)->first();
+                //echo json_encode( $verify). "<br>";
+                if ($verify) {
+                    $enrollment = EnrollmentAssessment::where('student_id', $student->student_id)->where('academic_id', $_section->academic_id)->where('is_removed', false)->first();
+                    $verify->enrollment_id = $enrollment->id;
+                    $verify->save();
+                    //echo "Save: " . $student->student->first_name . "<br>";
+                }
+            }
             return view('pages.registrar.sections.section_view', compact('_section', '_student_list'));
         } catch (Exception $err) {
             $this->debugTracker($err);
@@ -676,6 +718,7 @@ class RegistrarController extends Controller
     }
     public function section_store_student(Request $_request)
     {
+        //TODO:: add the enrollment id
         try {
             StudentSection::create([
                 'student_id' => base64_decode($_request->_student),

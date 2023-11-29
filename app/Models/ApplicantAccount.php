@@ -11,14 +11,18 @@ use Laravel\Sanctum\HasApiTokens;
 class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
 {
     use HasApiTokens, HasFactory/* , Notifiable */;
-    protected $connection = 'mysql2';
+
+    protected $connection = 'mysql';
+    protected $table = 'applicant_accounts';
     protected $fillable = [
         'name',
         'email',
         'password',
         'applicant_number',
         'course_id',
-        'academic_id'
+        'academic_id',
+        'contact_number',
+        'is_removed'
     ];
 
     protected $hidden = [
@@ -40,7 +44,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
 
     public function applicant_documents()
     {
-        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false)->orderBy('document_id');
+        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false)->with('staff')->orderBy('document_id');
     }
     public function applicant_documents_status()
     {
@@ -52,6 +56,18 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     public function is_alumnia()
     {
         return $this->hasOne(ApplicantAlumnia::class, 'applicant_id')->where('is_removed', false);
+    }
+    function document_requirements()
+    {
+        $_level = $this->course_id == 3 ? 11 : 4;
+        $id = $this->id;
+        return Documents::where('department_id', 2)
+            ->with(['applicant_requirements_v2' => function ($query) use ($id) {
+                $query->where('applicant_id', $id);
+            }])
+            ->where('year_level', $_level)
+            ->where('is_removed', false)
+            ->orderBy('id')->get();
     }
     public function empty_documents()
     {
@@ -76,9 +92,9 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
         //return ApplicantAccount::where('name', 'like', '%' . $_data . '%')->with('applicant_details')->get();
         return $this->where('name', 'like', '%' . request()->input('_applicants') . '%')->orWhere('applicant_number', 'like', '%' . request()->input('_applicants') . '%')->get();
     }
-    public function applicant_payments()
+    public function  applicant_payments()
     {
-        return $this->select('applicant_accounts.*')->join('applicant_payments', 'applicant_payments.applicant_id', 'applicant_accounts.id')->whereNull('is_approved')->where('applicant_payments.is_removed', false)->get();
+        return $this->select('applicant_accounts.*')->join(env('DB_DATABASE_SECOND') . '.applicant_payments', env('DB_DATABASE_SECOND') . '.applicant_payments.applicant_id', 'applicant_accounts.id')->whereNull('is_approved')->where(env('DB_DATABASE_SECOND') . '.applicant_payments.is_removed', false)->get();
     }
     public function payment()
     {
@@ -96,11 +112,26 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     {
         return $this->hasMany(ApplicantEntranceExamination::class, 'applicant_id');
     }
+    public function examination_schedule()
+    {
+        return $this->hasOne(ApplicantExaminationSchedule::class, 'applicant_id')->where('is_removed', false);
+    }
     public function image()
     {
         $_level = $this->course_id == 3 ? 11 : 4;
         $_document = Documents::where('department_id', 2)->where('year_level', $_level)->where('document_name', '2x2 Picture with Name Tag')->where('is_removed', false)->first();
         return $this->hasOne(ApplicantDocuments::class, 'applicant_id')->where('document_id', $_document->id)->where('is_removed', false);
+    }
+    function profile_picture()
+    {
+        $_level = $this->course_id == 3 ? 11 : 4;
+        $_document = Documents::where('department_id', 2)->where('year_level', $_level)->where('document_name', '2x2 Picture with Name Tag')->where('is_removed', false)->first();
+        $data = $this->hasOne(ApplicantDocuments::class, 'applicant_id')->where('document_id', $_document->id)->where('is_removed', false)->first();
+        $profilePicture = 'http://bma.edu.ph/img/student-picture/midship-man.jpg';
+        if ($data) {
+            $profilePicture = json_decode($data->file_links)[0];
+        }
+        return $profilePicture;
     }
     public function virtual_orientation()
     {
@@ -117,11 +148,11 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     public function similar_account()
     {
         $_details = $this->applicant;
-        $_applicant = ApplicantAccount::select('applicant_accounts.*')->join('applicant_detials', 'applicant_accounts.id', 'applicant_detials.applicant_id')
+        $_applicant = ApplicantAccount::select('applicant_accounts.*')->join(env('DB_DATABASE_SECOND') . '.applicant_detials', 'applicant_accounts.id', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id')
             /* ->join('applicant_documents as sd', 'sd.applicant_id', 'applicant_accounts.id') */
-            ->where('applicant_detials.first_name', $_details->first_name)
-            ->where('applicant_detials.last_name', $_details->last_name)
-            ->where('applicant_detials.middle_name', $_details->middle_name)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_detials.first_name', $_details->first_name)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', $_details->last_name)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_detials.middle_name', $_details->middle_name)
             ->where('applicant_accounts.id', '!=', $this->id)
             ->where('applicant_accounts.is_removed', false)->first();
         return $_applicant;
@@ -149,5 +180,9 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
         $_course_color = $this->course_id == 2 ? 'bg-primary' : $_course_color;
         $_course_color = $this->course_id == 3 ? 'bg-warning text-white' : $_course_color;
         return $_course_color;
+    }
+    function student_applicant()
+    {
+        return $this->hasOne(StudentApplicantDetails::class, 'applicant_id');
     }
 }

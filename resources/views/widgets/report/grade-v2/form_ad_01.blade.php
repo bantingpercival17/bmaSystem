@@ -177,7 +177,12 @@
                                         @endif
                                     @endif
                                     <th>
-                                        {{ $_student->student->point_grade(request()->input('_period')) }}
+                                        @if ($_student->student->enrollment_assessment_paid->enrollment_cancellation)
+                                            DROPPED
+                                        @else
+                                            {{ $_student->student->point_grade(request()->input('_period')) }}
+                                        @endif
+
                                     </th>
                                 </tr>
                             @endforeach
@@ -192,4 +197,5 @@
 
         </div>
 
+    </div>
     @endsection

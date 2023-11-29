@@ -26,9 +26,9 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     Route::post('/subjects/e-clearance', [TeacherController::class, 'student_e_clearance'])->name('teacher.e-clearance');
     Route::get('/grading-sheet/store', [TeacherController::class, 'grade_store']); // Store a Score per Subjects Class and Students
 
-    Route::get('/grade-reports', [TeacherController::class, 'submission_view'])->name('department-head.grade-submission'); // Grade Submission View
+    Route::get('/subjects/grading-sheet/grade-reports', [TeacherController::class, 'subject_grading_view_report'])->name('teacher.grading-sheet-report'); // Grade Submission View
     Route::get('/grade-submission', [TeacherController::class, 'submission_view'])->name('department-head.grade-submission');
-    Route::post('/grade-reports', [TeacherController::class, 'check_grade_submission']); // Review the Grading Sheet  
+    Route::post('/grade-reports', [TeacherController::class, 'check_grade_submission']); // Review the Grading Sheet
     Route::get('/grade-reports/instructor', [TeacherController::class, 'instructor_view']); // Instructor View
     Route::get('/grade-reports/subject', [TeacherController::class, 'subject_report_view']); // Grade Report Submission View
     Route::post('/subject-grade/bulk-upload', [TeacherController::class, 'subject_grade_bulk_upload'])->name('teacher.bulk-upload-grades'); // Bulk Upload of Grades
@@ -52,7 +52,7 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     // STCW Reference
     Route::post('/course-syllabus/editor/store-stcw-reference', [CourseSyllabusController::class, 'store_stcw_reference'])->name('teacher.store-stcw-reference'); // Store STCW Reference
     Route::get('/course-syllabus/editor/stcw-reference/remove', [CourseSyllabusController::class, 'remove_stcw_reference'])->name('teacher.stcw-reference-remove'); // Remove STCW Table
-    Route::post('/course-syllabus/editor/stcw-reference/add', [CourseSyllabusController::class, 'add_stcw_reference'])->name('teacher.stcw-reference-add'); // Add STCW REFERENCE 
+    Route::post('/course-syllabus/editor/stcw-reference/add', [CourseSyllabusController::class, 'add_stcw_reference'])->name('teacher.stcw-reference-add'); // Add STCW REFERENCE
     // COURSE OUTCOME
     Route::post('/course-syllabus/editor/store-course-outcome', [CourseSyllabusController::class, 'store_course_outcome'])->name('teacher.course-outcome-store');
     Route::post('/course-syllabus/editor/store-course-details', [CourseSyllabusController::class, 'store_course_details'])->name('teacher.course-details-store');

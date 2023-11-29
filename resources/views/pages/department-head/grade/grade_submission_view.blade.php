@@ -1,6 +1,6 @@
 @extends('layouts.app-main')
 @php
-$_title = 'Grade Submission';
+    $_title = 'Grade Submission';
 @endphp
 @section('page-title', $_title)
 @section('page-mode', 'dark-mode')
@@ -17,7 +17,7 @@ $_title = 'Grade Submission';
         </li>
 
         <li class="breadcrumb-item active" aria-current="page">
-            {{ Auth::user()->staff->current_academic()->semester .' | ' .Auth::user()->staff->current_academic()->school_year }}
+            {{ Auth::user()->staff->current_academic()->semester . ' | ' . Auth::user()->staff->current_academic()->school_year }}
         </li>
     @else
         <li class="breadcrumb-item active" aria-current="page">
@@ -40,6 +40,9 @@ $_title = 'Grade Submission';
                     <div class="header-title">
                         <h4 class="card-title">Instruction List</h4>
                     </div>
+                    <a href="{{ route('department-head.grade-submission-v2') }}" class="btn btn-primary btn-sm">Go to
+                        Version
+                        2</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive mt-4">
@@ -100,8 +103,7 @@ $_title = 'Grade Submission';
                                                                     }
                                                                 }
                                                             @endphp
-                                                            <span
-                                                                class="text-info fw-bolder">{{ $_finals_counts }}</span>
+                                                            <span class="text-info fw-bolder">{{ $_finals_counts }}</span>
                                                             <small> out of</small>
                                                             <span class="text-primary fw-bolder">
                                                                 {{ count($_data->subject_handles) }}
@@ -116,7 +118,6 @@ $_title = 'Grade Submission';
                                         </tr>
                                     @endforeach
                                 @else
-
                                 @endif
 
                             </tbody>

@@ -15,6 +15,9 @@ class StudentSection extends Model
     {
         return $this->belongsTo(Section::class, 'section_id');
     }
+    public function student_section(){
+        return $this->belongsTo(Section::class, 'section_id')->with('subject_details');
+    }
     public function student()
     {
         return $this->belongsTo(StudentDetails::class, 'student_id')->where('is_removed', false);

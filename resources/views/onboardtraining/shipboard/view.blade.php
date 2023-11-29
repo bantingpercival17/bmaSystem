@@ -119,11 +119,11 @@
                 @if (count($_midshipman->shipboard_training->performance_report) > 0)
                     <div class="card">
                         <div class="card-body">
-                            <div class="header-title d-flex justify-content-between">
+                            <div class="header-title ">
                                 <span class="h5 text-primary fw-bolder">MONTHLY OBT PERFORMANCE MONITORING REPORT
                                     (MOPM)</span>
-                                <a href="{{ route('onboard.narative-summary-report') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
-                                    class="btn btn-primary btn-sm float-right" target="_blank">GENERATE REPORT</a>
+                                <a href="{{ route('onboard.narative-summary-report-v2') . '?_midshipman=' . base64_encode($_midshipman->id) }}"
+                                    class="badge bg-primary float-end" target="_blank">GENERATE REPORT</a>
                             </div>
                             <div class="table-responsive mt-4">
                                 <table id="basic-table" class="table table-striped mb-0" role="grid"
@@ -146,22 +146,32 @@
                                                         </a>
                                                     </td>
                                                     <td>
+                                                        @php
+                                                            $percentage = 0;
+                                                            if ($_journal->document_attachments->count() > 0) {
+                                                                $percentage = ($_journal->approved_document_attachments->count() / $_journal->document_attachments->count()) * 100;
+                                                            }
+                                                            
+                                                        @endphp
                                                         <div class="d-flex align-items-center mb-2">
-                                                            <h6>{{ ($_journal->is_approved / 5) * 100 }}%</h6>
+                                                            <h6>{{ $percentage }}%
+                                                            </h6>
                                                         </div>
                                                         <div class="progress bg-soft-info shadow-none w-100"
                                                             style="height: 6px">
                                                             <div class="progress-bar bg-info" data-toggle="progress-bar"
-                                                                role="progressbar"
-                                                                aria-valuenow="{{ ($_journal->is_approved / 5) * 100 }}"
+                                                                role="progressbar" aria-valuenow="{{ $percentage }}"
                                                                 aria-valuemin="0" aria-valuemax="100"></div>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        @if ($_journal->is_approved == 5)
-                                                            <a href="{{ route('onboard.narative-report-monthly-summary') . '?_midshipman=' . base64_encode($_midshipman->id) . '&_month=' . $_journal->month }}"
-                                                                class="btn btn-primary btn-sm" target="_blank">VIEW</a>
+                                                        @if ($_journal->document_attachments->count() > 0)
+                                                            @if ($_journal->approved_document_attachments->count() === $_journal->document_attachments->count())
+                                                                <a href="{{ route('onboard.narative-report-monthly-summary-v2') . '?_midshipman=' . base64_encode($_midshipman->id) . '&narativeReport=' . base64_encode($_journal->id) }}"
+                                                                    class="btn btn-primary btn-sm" target="_blank">VIEW</a>
+                                                            @endif
                                                         @endif
+
                                                     </td>
                                                 </tr>
                                             @endforeach

@@ -8,10 +8,10 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/image/bma-logo-1.png') }}">
     <title>@yield('page-title') | Baliwag Maritime Academy Inc.</title>
 
-
     <link rel="stylesheet" href="{{ asset('css/app-1.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="{{ asset('resources/plugin/toastify/toastify.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- <link rel="stylesheet" href="{{ asset('resources/plugin/editor/editor.css') }}"> --}}
     <style>
         .iframe-placeholder {

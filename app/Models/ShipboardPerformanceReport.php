@@ -16,4 +16,8 @@ class ShipboardPerformanceReport extends Model
     {
         return $this->hasMany(ShipboardJournal::class, 'shipboard_id')->with('staff')->where('is_removed', false);
     }
+    public function approved_document_attachments()
+    {
+        return $this->hasMany(ShipboardJournal::class, 'shipboard_id')->where('is_approved', true)->with('staff')->where('is_removed', false);
+    }
 }

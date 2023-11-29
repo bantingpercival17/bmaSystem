@@ -14,4 +14,7 @@ class SubjectClassCourseSyllabus extends Model
     {
       return $this->belongsTo(CourseSyllabus::class,'course_syllabus_id');
     }
+    function syllabus_details(){
+      return $this->belongsTo(CourseSyllabus::class,'course_syllabus_id')->select('id','subject_id','course_id','course_description')->with('learning_outcomes');
+    }
 }

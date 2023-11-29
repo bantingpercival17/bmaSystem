@@ -181,7 +181,7 @@
                                     $_whole = '-';
                                     $_decimal = '-';
                                 }
-                                
+
                             @endphp
                             <tr>
                                 <td>{{ count($_particular) > $i ? $_particular[$i] : '' }}</td>
@@ -205,7 +205,7 @@
                                             <label style="padding: 0px; margin:0px;">
                                                 Cash <br>
                                                 <input class="checkbox-input"type="checkbox"
-                                                    style="padding: 0px; margin:0px; width=50px;" />
+                                                    style="padding: 0px; margin:0px; width:50px;" />
                                             </label>
                                         </div>
                                     </li>
@@ -235,7 +235,7 @@
                 <img src="{{ public_path() . '/assets/image/bma-logo-1.png' }}" class="img-header ">
                 <div class="header">
 
-                    <p style="padding:0px; font-size:20px; font-weigth:bolder;">
+                    <p style="padding:0px; font-size:20px; font-weight:bolder;">
                         <b> BALIWAG MARITIME ACADEMY, INC</b>
                     </p>
                     <p style="padding:0px;">
@@ -245,7 +245,7 @@
                     </p>
 
                 </div>
-                <label style="float:right"><b>PR # {{ $_data->or_number }}</b></label>
+                <label style="float:right"><b>OR # {{ $_data->or_number }}</b></label>
                 <br>
                 <div class="sub-header">
                     <label><b>PROVISIONAL RECEIPT</b></label>
@@ -291,10 +291,15 @@
                                 </tbody>
                             </table>
                         </li>
-                        <li style="">
+                        <li>
+                        <img src="{{ public_path() . '\assets/img/signature/' . $_data->staff->user->email . '.png' }}"
+                                alt="" style="width:200px; margin:0px; position:absolute; top:260px;">
                             <div style="padding: 15xp 15px 0px 0px; text-align: center;">
-                                By: <span
-                                    style="font-size:12px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+                                By:
+                               
+                                <span
+                                    style="font-size:12px; width:70%">{{$_data->staff->first_name. ' '. $_data->staff->last_name}}</span>
                                 <br>
                                 Authorized Representative
                             </div>

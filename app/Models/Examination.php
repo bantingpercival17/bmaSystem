@@ -20,4 +20,8 @@ class Examination extends Model
     {
         return $this->hasMany(ExaminationCategory::class, 'examination_id');
     }
+    public function category_lists()
+    {
+        return $this->hasMany(ExaminationCategory::class, 'examination_id')->select('id','examination_id','category_name','subject_name','instruction','image_path')->with('question_lists')->where('is_removed', false);
+    }
 }

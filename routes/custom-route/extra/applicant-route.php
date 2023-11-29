@@ -19,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/applicants/bma-alumnia', [ApplicantController::class, 'applicant_alumnia'])->name('applicant.bma-alumnia'); // Function for Bma Alumnia
     Route::get('/applicants/examination-notification', [ApplicantController::class, 'entrance_examination_notification'])->name('applicant-entrance-examination-notification');
     Route::get('/applicants/briefing-notification', [ApplicantController::class, 'briefing_notification'])->name('applicant.briefing-notification');
+    Route::get('/applicant/reconsideration', [ApplicantController::class, 'applicant_reconsideration'])->name('applicant-reconsideration');
     /* Examination  */
     Route::get('/applicant/examination', [ApplicantController::class, 'applicant_entrance_examination'])->name('applicant-examination-status');
     Route::get('/applicant/examination-reset', [ApplicantController::class, 'applicant_examination_reset'])->name('applicant-examination-reset');
@@ -33,6 +34,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/applicants/overview', ApplicantView::class)->name('applicant.overview');
     Route::get('/applicants/profile-view', ApplicantProfileView::class)->name('applicant.profile-view');
+    Route::get('/applicant/examination-logs-v2', [ApplicantController::class, 'applicant_examination_log_v2'])->name('applicant-examination-log-v2');
+    Route::get('/applicant/examination-result-v2', [ApplicantController::class, 'appllicant_examination_result_v2'])->name('applicant-examination-result-v2');
     Route::get('/applicants/verified', function () {
         $applicant = new ApplicantReport();
         return $applicant->applicant_vefied_list();

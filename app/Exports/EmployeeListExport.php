@@ -24,38 +24,19 @@ class EmployeeListExport implements FromCollection, ShouldAutoSize, WithMapping,
     public function headings(): array
     {
         return [
-            'ID no',
-            'LAST NAME',
-            'FIRST NAME',
-            'MIDDLE NAME',
+            'ID NO',
+            'FULL NAME',
             'EMAIL',
-            'MARITME DEPT',
-            'QR-CODE'
+            'DEPARTMENT',
         ];
     }
     public function map($_data): array
     {
-        $_staff_details = array(
-            $_data->user->email,
-            json_encode(array(
-                'body_temp' => 39,
-                0,
-                0,
-                0,
-
-            )),
-            date('Y-m-d H:i:s'),
-        );
-        $_qr_Code = json_encode($_staff_details);
-        $_qr_Code = base64_encode($_qr_Code);
         return [
             $_data->id,
-            $_data->last_name,
-            $_data->first_name,
-            $_data->middle_name,
+            $_data->last_name . ', ' . $_data->first_name,
             $_data->user->email,
             $_data->department,
-            // QrCode::format('png')->style('round', 0.5)->eye('square')->size(300)->generate($_qr_Code)
         ];
     }
     public function registerEvents(): array
@@ -78,6 +59,6 @@ class EmployeeListExport implements FromCollection, ShouldAutoSize, WithMapping,
     }
     public function title(): string
     {
-        return 'Empolyee';
+        return 'EMPLOYEE DETAILS';
     }
 }

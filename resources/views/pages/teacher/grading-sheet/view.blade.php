@@ -2,8 +2,8 @@
 @section('page-title', 'Grading Sheet')
 @section('page-content')
     @php
-    $_subject_data = $_subject->submitted_grade('ad1', request()->input('_period'));
-    $_grade_status = $_subject_data ? $_subject_data->is_approved === 1 ? 'disabled' : '' : '';
+        $_subject_data = $_subject->submitted_grade('ad1', request()->input('_period'));
+        $_grade_status = $_subject_data ? ($_subject_data->is_approved === 1 ? 'disabled' : '') : '';
     @endphp
     <div class="card p-0">
         <div class="card-body">
@@ -46,17 +46,20 @@
 
                                     <div class="row ">
                                         <div class="col-md-8">
-                                            <div class="form-group">
+                                            <div class="form-group ">
                                                 <input type="hidden" name="_section"
                                                     value="{{ Crypt::encrypt($_subject->id) }}">
-                                                <input class="form-control form-control-sm" type="file" id="customFile"
-                                                    name="_file_grade" required {{ $_grade_status }}>
+                                                <input class="form-control form-control-sm border border-primary"
+                                                    type="file" id="customFile" name="file_input" required
+                                                    {{ $_grade_status }}>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <button type="submit" class="btn btn-primary btn-sm"
                                                 {{ $_grade_status }}>UPLOAD</button>
                                         </div>
+                                        @error('file_input')
+                                        @enderror
                                     </div>
                                 </form>
                             </div>
@@ -66,8 +69,9 @@
                                 <small class="fw-bolder text-muted">
                                     DOWNLOAD TEMPLATE
                                 </small> <br>
-                                <label for="" class="fw-bolder"><a
-                                        href="{{ route('teacher.export-grade') . '?_subject=' . request()->input('_subject') . '&_period=' . request()->input('_period') }}">export-grade.xlsx</a></label>
+                                <label for="" class=""><a class="badge bg-primary"
+                                        href="{{ route('teacher.export-grade') . '?_subject=' . request()->input('_subject') . '&_period=' . request()->input('_period') }}">Grading
+                                        Sheet Template.xlsx</a></label>
 
                             </div>
                         </div>
@@ -89,14 +93,24 @@
                             <small for="" class="fw-bolder text-muted">
                                 PRE-VIEW:
                             </small>
+                            <!-- <span type="button" class="badge bg-info btn-form-grade" data-bs-toggle="modal"
+                                    data-bs-target=".grade-view-modal"
+                                    data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad1">
+                                    FORM AD-01
+                                </span>
+                                <span type="button" class="badge bg-primary btn-form-grade mt-2" data-bs-toggle="modal"
+                                    data-bs-target=".grade-view-modal"
+                                    data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period=finals&_preview=pdf&_form=ad2">
+                                    FORM AD-02
+                                </span> -->
                             <span type="button" class="badge bg-info btn-form-grade" data-bs-toggle="modal"
                                 data-bs-target=".grade-view-modal"
-                                data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period={{ request()->input('_period') }}&_preview=pdf&_form=ad1">
+                                data-grade-url="{{ route('teacher.grading-sheet-report') }}?class={{ base64_encode($_subject->id) }}&period={{ request()->input('_period') }}&form=ad1">
                                 FORM AD-01
                             </span>
                             <span type="button" class="badge bg-primary btn-form-grade mt-2" data-bs-toggle="modal"
                                 data-bs-target=".grade-view-modal"
-                                data-grade-url="/teacher/subjects/grading-sheet?_subject={{ base64_encode($_subject->id) }}&_period=finals&_preview=pdf&_form=ad2">
+                                data-grade-url="{{ route('teacher.grading-sheet-report') }}?class={{ base64_encode($_subject->id) }}&period=finals&form=ad2">
                                 FORM AD-02
                             </span>
                         </div>
@@ -145,7 +159,7 @@
                                             <input type="hidden" name="_form" value="{{ $_subject_data->form }}">
                                             <div class="form-group row">
                                                 <div class="col-md">
-                                                    <label for="" class="form-control">FORM
+                                                    <label for="" class="form-control border border-primary">FORM
                                                         {{ strtoupper($_subject_data->form) }}</label>
                                                 </div>
                                                 <div class="col-md">
@@ -210,7 +224,7 @@
                                 @csrf
                                 <div class="row">
                                     <div class="form-group col-md">
-                                        <label for="" class="form-control">
+                                        <label for="" class="form-control border border-primary">
                                             {{ request()->input('_period') == 'midterm' ? 'Form AD-01 Midterm' : 'Form AD-02 Finals' }}
                                         </label>
                                         <input type="hidden" name="_form" value="ad1">
@@ -230,6 +244,9 @@
         </div>
     </div>
 
+    @php
+        $cNum = 1;
+    @endphp
     <div class="card p-0">
         <div class="card-body table-responsive p-0">
             <main class="main-table">
@@ -251,7 +268,7 @@
                                 <th class="pin text-primary fw-bolder">STUDENT NO. - COMPLETE NAME</th>
                                 @foreach ($_columns as $col)
                                     @for ($i = 1; $i <= $col[2]; $i++)
-                                        <th class=" text-center table-bordered text-primary fw-bolder">
+                                        @php $cNum +=1; @endphp <th class=" text-center table-bordered text-primary fw-bolder">
                                             {{ strtoupper($col[1]) . $i }}
                                         </th>
                                     @endfor
@@ -262,25 +279,33 @@
                             @if ($_students->count() > 0)
                                 @foreach ($_students as $_key => $_student)
                                     <tr>
-                                        <th class="text-primary fw-bolder">
+                                        <th
+                                            class={{ $_student->student->enrollment_assessment_paid->enrollment_cancellation ? 'text-danger fw-bolder' : 'text-primary fw-bolder' }}>
                                             {{ $_student->student->account ? $_student->student->account->student_number : '-' }}
                                             -
                                             {{ strtoupper($_student->last_name . ', ' . $_student->first_name) }}
                                         </th>
-                                        @foreach ($_columns as $col)
-                                            @for ($i = 1; $i <= $col[2]; $i++)
-                                                <td class="text-center table-bordered">
-                                                    @php
-                                                        $_score = $_student->student->subject_score([$_subject->id, request()->input('_period'), $col[1] . $i]);
-                                                    @endphp
-                                                    <input type="text" class="score-cell"
-                                                        style="width: 38px; font-size:12px" value="{{ $_score }}"
-                                                        data-student="{{ $_student->student->id }}"
-                                                        data-category="{{ $col[1] . $i }}"
-                                                        data-section="{{ $_subject->id }}" {{ $_grade_status }}>
-                                                </td>
-                                            @endfor
-                                        @endforeach
+                                        @if ($_student->student->enrollment_academic_year($_subject->academic->id)->enrollment_cancellation)
+                                            <td colspan="{{ $cNum }}" class="text-danger fw-bolder">STUDENT
+                                                DROPPED</td>
+                                        @else
+                                            @foreach ($_columns as $col)
+                                                @for ($i = 1; $i <= $col[2]; $i++)
+                                                    <td class="text-center table-bordered">
+                                                        @php
+                                                            $_score = $_student->student->subject_score([$_subject->id, request()->input('_period'), $col[1] . $i]);
+                                                        @endphp
+                                                        <input type="text" class="score-cell"
+                                                            style="width: 38px; font-size:12px"
+                                                            value="{{ $_score }}"
+                                                            data-student="{{ $_student->student->id }}"
+                                                            data-category="{{ $col[1] . $i }}"
+                                                            data-section="{{ $_subject->id }}" {{ $_grade_status }}>
+                                                    </td>
+                                                @endfor
+                                            @endforeach
+                                        @endif
+
 
                                     </tr>
                                 @endforeach
@@ -298,8 +323,15 @@
     <div class="modal fade grade-view-modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
-                </iframe>
+                <div class="modal-header">
+                    <label for="" class="h6 fw-bolder text-primary">GRADE PRE-VIEW</label>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body p-0">
+                    <iframe class="form-view iframe-placeholder" src="" width="100%" height="600px">
+                    </iframe>
+                </div>
             </div>
         </div>
     </div>
@@ -307,9 +339,16 @@
 @endsection
 @section('js')
     <script>
+        let previewLink = null
         $(document).on('click', '.btn-form-grade', function(evt) {
-            console.log($(this).data('grade-url'))
-            $('.form-view').attr('src', $(this).data('grade-url'))
+            if (previewLink != null) {
+                previewLink = null
+                $('.form-view').attr('src', previewLink)
+            }
+            previewLink = $(this).data('grade-url')
+            $('.form-view').attr('src', previewLink)
+
+
         });
         $(document).on('keydown', '.score-cell', function(e) {
             // Allow the numberica number only the inputs

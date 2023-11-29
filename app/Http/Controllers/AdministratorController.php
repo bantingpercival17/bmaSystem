@@ -25,6 +25,7 @@ use App\Models\Documents;
 use App\Models\EducationalDetails;
 use App\Models\EnrollmentAssessment;
 use App\Models\Examination;
+use App\Models\ExaminationCategory;
 use App\Models\ParentDetails;
 use App\Models\PaymentAssessment;
 use App\Models\PaymentTransaction;
@@ -68,7 +69,7 @@ class AdministratorController extends Controller
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
-        $_total_applicants = ApplicantAccount::join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
+        $_total_applicants = ApplicantAccount::join(env('DB_DATABASE_SECOND').'.applicant_detials', env('DB_DATABASE_SECOND').'.applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
         return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population', '_total_applicants'));
     }
 
@@ -84,9 +85,10 @@ class AdministratorController extends Controller
         } else {
             $_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
         }
+        $sectionLists = Section::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
         //return $_students;
         //$_students = StudentDetails::where('is_removed', false)->orderBy('last_name', 'asc')->paginate(10);
-        return view('pages.administrator.student.view', compact('_academics', '_course', '_students'));
+        return view('pages.administrator.student.view', compact('_academics', '_course', '_students', 'sectionLists'));
     } /* View Student  */
     public function student_profile(Request $_request)
     {
@@ -125,13 +127,14 @@ class AdministratorController extends Controller
     }
     public function student_reset_password(Request $_request)
     {
+        $student = StudentDetails::find(base64_decode($_request->_student));
         $_student_accounts = StudentAccount::where('is_removed', false)->find(base64_decode($_request->_student));
         $length = 5;
         $_password = 'BMA-' . substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
-        $_student_accounts->password = Hash::make($_password);
-        $_student_accounts->save();
+        $student->account->password = Hash::make($_password);
+        $student->account->save();
         StudentPasswordReset::create([
-            'student_id' => $_student_accounts->student_id,
+            'student_id' => $student->account->student_id,
             'password_string' => $_password,
             'is_status' => 'reset-password',
             'is_removed' => false,
@@ -675,7 +678,12 @@ class AdministratorController extends Controller
         Excel::import(new ImportExamination($_request->exam), $_file);
         return back()->with('success', 'Excel File Successfully Imported');
     }
-
+    function examination_category_view(Request $request)
+    {
+        $category =  ExaminationCategory::find(base64_decode($request->_view));
+        #return $category->question;
+        return view('pages.administrator.examination.question_view', compact('category'));
+    }
     public function student_account_details(Request $_request)
     {
         $_student = StudentDetails::find(90);
@@ -767,5 +775,12 @@ class AdministratorController extends Controller
         $pdf = PDF::loadView("widgets.report.employee.employee-qr-code", compact('_employee'));
         $file_name = strtoupper('Qr code generate: ' . $_data);
         return $pdf->setPaper([0, 0, 612, 396], 'portrait')->stream($file_name . '.pdf');
+    }
+    function generateQrcodeBySection(Request $_request)
+    {
+        $section = Section::find($_request->section);
+        $filename = $section->section . '-' . $section->academic->semester;
+        $pdf = PDF::loadView("widgets.report.student.student_qrcode_by_section", compact('section'));
+        return $pdf->setPaper([0, 0, 612.00, 1008.00], 'portrait')->stream($filename . '.pdf');
     }
 }

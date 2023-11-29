@@ -35,7 +35,7 @@ class ApplicantEmail extends Mailable
     // Pre Registration Notification Email
     public function pre_registration_notificaiton($_applicant)
     {
-        return $this->from(Auth::user()->email, 'Baliwag Maritime Academy, Inc.')
+        return $this->from('support@bma.edu.ph', 'Baliwag Maritime Academy, Inc.')
             ->subject("PRE-REGISTRATION : " . $_applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.pre-registration-notification')
             ->with(['data' => $_applicant]);
@@ -78,12 +78,18 @@ class ApplicantEmail extends Mailable
     {
         $length = 10;
         $_exam_code = 'CODE-' . substr(str_shuffle(str_repeat($x = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
-        ApplicantEntranceExamination::create(
-            [
-                'applicant_id' => $_applicant->id,
-                'examination_code' => $_exam_code
-            ]
-        );
+
+        $applicantExamination = ApplicantEntranceExamination::where('applicant_id', $_applicant->id)->where('is_removed', false)->first();
+        if ($applicantExamination) {
+            $_exam_code = $applicantExamination->examination_code;
+        } else {
+            ApplicantEntranceExamination::create(
+                [
+                    'applicant_id' => $_applicant->id,
+                    'examination_code' => $_exam_code
+                ]
+            );
+        }
         return $this->from(Auth::user()->email, "BMA ACCOUNTING'S OFFICE")
             ->subject("ENTRANCE EXAMINATION PAYMENT APPROVED: " . $_applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.entrance-examination-payment-approved')

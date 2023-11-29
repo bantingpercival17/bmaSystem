@@ -9,6 +9,7 @@ use App\Models\PaymentAdditionalFees;
 use App\Models\PaymentTransaction as ModelsPaymentTransaction;
 use App\Models\PaymentTrasanctionOnline;
 use App\Models\Section;
+use App\Models\Staff;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
 use App\Models\StudentSection;
@@ -18,10 +19,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 
 class PaymentTransaction extends Component
 {
     public $inputStudent;
+    public $staff = null;
     public $academic;
     public $academicData;
     public $academicHistory;
@@ -39,9 +42,10 @@ class PaymentTransaction extends Component
     public $transactionOrNumber = null;
     public $transactionDate = null;
     public $transactionAmount = null;
-    public $transactionVoucher = null;
+    public $transactionVoucher = 0;
     public $onlinePaymentTransaction = null;
     public $paymentDetails = [];
+    public $particularId = null;
     protected $rules = [
         'transactionOrNumber' => 'required',
         'transactionAmount' => 'required',
@@ -49,18 +53,16 @@ class PaymentTransaction extends Component
     protected $listeners = ['voidTransaction', 'paymentDisapproved'];
     public function render()
     {
-        $_academic = Auth::user()->staff->current_academic();
-        $this->academic =  request()->query('_academic') ?: $this->academic;
-        $academic = base64_decode($this->academic) ?: $_academic->id;
-
-        $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->recentStudent($academic);
+        $this->staff = auth()->user()->staff->id;
+        $this->academic =  $this->academicValue();
+        $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->recentStudent(base64_decode($this->academic));
         $particularFees = AdditionalFees::where('is_removed', false)->get();
         $scholarshipList = [];
         $additional_fees = [];
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
         if ($this->profile) {
             $this->academicHistory = $this->profile->enrollment_history;
-            $this->academicData = AcademicYear::find($academic);
+            $this->academicData = AcademicYear::find(base64_decode($this->academic));
             if ($this->profile->enrollment_selection($this->academicData->id)) {
                 $this->paymentAssessment = $this->profile->enrollment_selection($this->academicData->id)->payment_assessments;
                 $this->enrollmentAssessment =  $this->profile->enrollment_selection($this->academicData->id);
@@ -70,10 +72,22 @@ class PaymentTransaction extends Component
                 $this->enrollmentAssessment = $this->profile->enrollment_selection($this->profile->enrollment_assessment->academic_id);
                 $additional_fees = $this->paymentAssessment->additional_fees;
             }
-
             $scholarshipList =  Voucher::where('is_removed', false)->get();
         }
         return view('livewire.accounting.payment-transaction', compact('studentLists',  'particularFees', 'scholarshipList', 'additional_fees'));
+    }
+    function academicValue()
+    {
+        $data = $this->academic;
+        if ($this->academic == '') {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        }
+        if (request()->query('_academic')) {
+            $data = request()->query('_academic') ?: $this->academic;
+        }
+        Cache::put('academic', $data, 60);
+        return $data;
     }
     function recentStudent($academic)
     {
@@ -145,6 +159,7 @@ class PaymentTransaction extends Component
         $this->particularName =  $term;
         $this->transactionStatus = $status;
         $this->transactionRemarks = $term;
+        $this->particularId = base64_decode($id);
         $fees = PaymentAdditionalFees::find(base64_decode($id));
         $this->paymentDetails = array(
             'total_payable' => $fees->fee_details->amount,
@@ -155,7 +170,7 @@ class PaymentTransaction extends Component
     function paymentTransaction()
     {
         try {
-            $amount = str_replace(",", "", $this->transactionAmount);
+            $convertedAmount = str_replace(",", "", $this->transactionAmount);
             // Payment transaction types
             $tuition_fee_remarks = ['Tuition Fee', 'Upon Enrollment', '1ST MONTHLY', '2ND MONTHLY', '3RD MONTHLY', '4TH MONTHLY'];
             // Determine payment transaction type
@@ -164,25 +179,37 @@ class PaymentTransaction extends Component
                 $voucher = Voucher::find($this->transactionVoucher);
                 $orNumber = $voucher->voucher_code . '.' . $this->profile->account->student_number;
                 $fullVoucher = ['TCC SCHOLAR', 'MMSL - SCHOLAR'];
-                $amount = in_array($voucher->voucher_name, $fullVoucher) ? $this->paymentAssessment->total_payment : $voucher->voucher_amount;
+                if ($voucher->voucher_code == 'CAPT.SINGSON') {
+                    $tuition_fees = $this->paymentAssessment->enrollment_assessment->course_level_tuition_fee();
+                    $amount =  $tuition_fees->tuition_fee_discount($this->paymentAssessment->enrollment_assessment);
+                } else {
+                    $amount = in_array($voucher->voucher_name, $fullVoucher) ? $this->paymentAssessment->total_payment : $voucher->voucher_amount;
+                }
                 $paymentMethod = 'VOUCHER';
             } else {
                 $this->validate();
             }
             // Create a Payment Details
+            $staff = Staff::where('user_id', Auth::user()->id)->first();
             $paymentDetails = array(
                 'assessment_id' => $this->paymentAssessment->id,
                 'or_number' => $this->transactionVoucher ? $orNumber : $this->transactionOrNumber,
                 'payment_transaction' => $payment_transaction,
-                'payment_amount' => $this->transactionVoucher ? $amount : $this->transactionAmount,
+                'payment_amount' => $this->transactionVoucher ? $amount : $convertedAmount,
                 'payment_method' => $this->transactionVoucher ? $paymentMethod : $this->transactionPaymentMethod,
-                'remarks' => $this->transactionRemarks,
+                'remarks' => strtoupper($this->transactionRemarks),
                 'transaction_date' => $this->transactionDate ?: date('Y-m-d'),
-                'staff_id' => Auth::user()->id,
+                'staff_id' => $staff->id,
                 'is_removed' => false
             );
+            if ($this->particularId) {
+                $fees = PaymentAdditionalFees::find($this->particularId);
+                $fees->status = $convertedAmount;
+                $fees->save();
+            }
             $paymentTransaction = ModelsPaymentTransaction::create($paymentDetails);
-            if ($paymentTransaction) {
+            // TODO: Change into Payment Transaction History
+            if (count($this->paymentAssessment->payment_transaction) < 1) {
                 // The Auto Section
                 $this->setStudentSection($this->paymentAssessment);
                 $this->setStudentAccount($this->paymentAssessment->enrollment_assessment);
@@ -194,7 +221,7 @@ class PaymentTransaction extends Component
                     $onlinePayment->save();
                 }
             }
-            $this->reset(['transactionAmount', 'transactionOrNumber', 'transactionVoucher', 'transactionPaymentMethod', 'transactionRemarks', 'transactionDate']);
+            $this->reset(['transactionAmount', 'transactionOrNumber', 'transactionVoucher', 'transactionPaymentMethod', 'transactionRemarks', 'transactionDate', 'particularId']);
             $this->dispatchBrowserEvent('swal:alert', [
                 'title' => 'Payment Transaction!',
                 'text' => 'Successfully Transact!',
@@ -222,13 +249,13 @@ class PaymentTransaction extends Component
                 $_sub_query->select(DB::raw('count(*)'))->from('student_sections')
                     ->whereColumn('student_sections.section_id', 'sections.id')
                     ->where('student_sections.is_removed', false);
-            }, '<=', 40)->first();
+            }, '<', 40)->first();
 
         if ($section) {
             $oldValidation = StudentSection::where('section_id', $section->id)
                 ->where('student_id', $enrollment->student->id)
                 ->where('is_removed', false)->first(); // Verify if the Student will save on Section
-            if (!$oldValidation || !$enrollment->student_section) {
+            if (!$enrollment->student_section) {
                 StudentSection::create([
                     'student_id' => $enrollment->student->id,
                     'section_id' => $section->id,
@@ -273,6 +300,36 @@ class PaymentTransaction extends Component
             /*  if ($yearLevel == 11 && $yearLevel == 4) {
                 StudentAccount::create($_account_details);
             } */
+        } else {
+            # Get the Year level of the Student
+            $yearLevel = $enrollment->year_level;
+            # Get the Total Number of Enrollee per Year Level
+            $_enrollment_count = EnrollmentAssessment::where('enrollment_assessments.is_removed', false)
+                ->where('enrollment_assessments.year_level', $yearLevel)
+                ->where('enrollment_assessments.academic_id', $this->academicData->id)
+                ->groupBy('enrollment_assessments.student_id')
+                ->join('payment_assessments', 'payment_assessments.enrollment_id', 'enrollment_assessments.id')
+                ->join('payment_transactions', 'payment_transactions.assessment_id', 'payment_assessments.id')
+                ->groupBy('enrollment_assessments.student_id')->get();
+            $_enrollment_count = count($_enrollment_count);
+            // Set the student number
+            $student_count = $_enrollment_count >= 10 ? ($_enrollment_count >= 100 ? $_enrollment_count : '0' . $_enrollment_count) : '00' . $_enrollment_count;
+            $pattern = $yearLevel == 11 ? '07-' . date('y') : date('y'); // Set the Year and Batch
+            $student_number = $pattern . $student_count; // Final Student Number
+            $email = $student_number . '.' . str_replace(' ', '', strtolower($enrollment->student->last_name)) . '@bma.edu.ph'; // Set Email
+            // Set the value for Student Account
+            $_account_details = array(
+                'student_id' => $enrollment->student_id,
+                'email' => $email,
+                'personal_email' => $email,
+                'student_number' => $student_number,
+                'password' => Hash::make($student_number),
+                'is_actived' => true,
+                'is_removed' => false,
+            );
+            if ($yearLevel == 11 && $yearLevel == 4) {
+                StudentAccount::create($_account_details);
+            }
         }
     }
     function voidTransaction($payment, $remarks)

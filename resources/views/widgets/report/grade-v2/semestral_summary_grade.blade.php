@@ -124,7 +124,7 @@
                                             <small>Department Head</small>
                                         </td>
                                         <td colspan="2">
-                                            <b>Capt. Maximo M. Pesta&ntilde;o</b>
+                                            <b>{{strtoupper('Capt. Maximo M. PestaÑo')}}</b>
                                             <br>
                                             <small>Dean of Maritime Studies</small>
                                         </td>

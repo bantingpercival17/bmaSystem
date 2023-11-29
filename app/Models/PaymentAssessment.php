@@ -62,13 +62,13 @@ class PaymentAssessment extends Model
     }
     function additional_fees()
     {
-        return $this->hasMany(PaymentAdditionalFees::class, 'assessment_id')->where('is_removed', false);
+        return $this->hasMany(PaymentAdditionalFees::class, 'assessment_id')/* ->with('total_paid') */->with('fee_details')->where('is_removed', false);
     }
     function account_card_details()
     {
         $transactionList = array();
         array_push($transactionList, array(
-            'date' => $this->created_at->format('Y-m-d'),
+            'date' => '',
             'orNumber' => '',
             'remarks' => 'TUITION FEE',
             'debit' => null,
@@ -79,7 +79,7 @@ class PaymentAssessment extends Model
         $addtionalFees = $this->additional_fees;
         foreach ($addtionalFees as $key => $value) {
             array_push($transactionList, array(
-                'date' => $this->created_at->format('Y-m-d'),
+                'date' => '',
                 'orNumber' => '',
                 'remarks' => $value->fee_details->particular->particular_name,
                 'debit' => null,
@@ -95,11 +95,11 @@ class PaymentAssessment extends Model
                 'credit' => null
             ));
         }
-        usort($transactionList, function ($a, $b) {
+      /*   usort($transactionList, function ($a, $b) {
             $dateA = strtotime($a['date']);
             $dateB = strtotime($b['date']);
             return $dateA - $dateB;
-        });
+        }); */
 
         return $transactionList;
     }

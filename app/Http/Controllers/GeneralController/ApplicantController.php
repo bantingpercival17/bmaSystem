@@ -160,13 +160,14 @@ class ApplicantController extends Controller
                 $_document->feedback = $_request->_comment;
                 $_document->save();
                 if ($_request->_comment == 'Sorry you did not meet the Grade requirement') {
-                    $applicant = ApplicantNotQualified::where('applicant_id', $_document->applicant_id)->first();
+                    $applicant = ApplicantNotQualified::where('applicant_id', $_document->applicant_id)->where('is_removed',false)->first();
                     if (!$applicant) {
                         ApplicantNotQualified::create([
                             'applicant_id' => $_document->applicant_id,
                             'course_id' => $_document->account->course_id,
                             'academic_id' => $_document->account->academic_id,
-                            'staff_id' => Auth::user()->staff->id
+                            'staff_id' => Auth::user()->staff->id,
+                            'remarks' => $_request->_comment
                         ]);
                     }
                 }
@@ -187,7 +188,8 @@ class ApplicantController extends Controller
                 'applicant_id' => $applicant->id,
                 'course_id' => $applicant->course_id,
                 'academic_id' => $applicant->academic_id,
-                'staff_id' => Auth::user()->staff->id
+                'staff_id' => Auth::user()->staff->id,
+                'remarks' => $request->comment
             ]);
         }
         return back();
@@ -312,6 +314,16 @@ class ApplicantController extends Controller
             $applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
             $_report = new ApplicantReport();
             return $_report->applicant_examination_result($applicant);
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+    }
+    public function appllicant_examination_result_v2(Request $request)
+    {
+        try {
+            $examination = ApplicantEntranceExamination::find(base64_decode($request->examination));
+            $report = new ApplicantReport();
+            return $report->applicant_examination_result_v2($examination);
         } catch (Exception $error) {
             return back()->with('error', $error->getMessage());
         }
@@ -568,6 +580,21 @@ class ApplicantController extends Controller
         } catch (Exception $err) {
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
+        }
+    }
+    function applicant_reconsideration(Request $request)
+    {
+        try {
+            $applicant_account = ApplicantAccount::find(base64_decode($request->_applicant));
+            ApplicantDocuments::where('applicant_id', $applicant_account->id)->where('is_removed', false)->update(['is_approved' => true, 'staff_id' => Auth::user()->staff->id]);
+            $account = ApplicantNotQualified::where('applicant_id', $applicant_account->id)->where('is_removed', false)->first();
+            $account->is_removed = true;
+            $account->save();
+
+            return back()->with('success', 'Successfully Transact');
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('error', $th->getMessage());
         }
     }
 }

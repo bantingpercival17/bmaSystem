@@ -212,7 +212,7 @@
                                     </td>
                                     <td>
                                         <u>
-                                            <b>{{ strtoupper('severino bugarin') }}</b>
+                                            <b>{{ strtoupper('2M Christian Dela Cruz') }}</b>
                                         </u>
 
                                     </td>

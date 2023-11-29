@@ -30,5 +30,6 @@ Route::prefix('medical')->group(function () {
 
         // Report 
         Route::get('applicant/medical-report', [MedicalController::class, 'applicant_medical_report'])->name('medical.applicant-report');
+        Route::get('student/medical-report', [MedicalController::class, 'student_medical_report'])->name('medical.student-report');
     });
 });

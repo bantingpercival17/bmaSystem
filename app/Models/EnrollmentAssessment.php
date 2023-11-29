@@ -102,7 +102,9 @@ class EnrollmentAssessment extends Model
     }
     function student_section()
     {
-        return $this->hasOne(StudentSection::class, 'enrollment_id')->where('is_removed', false);
+        return $this->hasOne(StudentSection::class, 'enrollment_id')
+            ->with('student_section')
+            ->where('is_removed', false);
     }
     public function color_course()
     {
@@ -132,11 +134,31 @@ class EnrollmentAssessment extends Model
     }
     function over_payment()
     {
-        $previous =  AcademicYear::where('id', '<', $this->academic_id)
+        $enrollment = EnrollmentAssessment::where('student_id', $this->student_id)->orderBy('id', 'desc')
+        ->where('academic_id', '!=', $this->academic_id)->first();
+      /*   $previous =  AcademicYear::where('id', '<', $this->academic_id)
             ->orderBy('id', 'desc')
             ->first();
         $enrollment = EnrollmentAssessment::where('academic_id', $previous->id)->where('student_id', $this->student_id)->where('is_removed', false)->first();
-        $paymentAssessment = $enrollment->payment_assessments;
-        return ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
+         */$value = 0;
+        if ($enrollment) {
+            $paymentAssessment = $enrollment->payment_assessments;
+            if ($paymentAssessment) {
+                $value =  ($paymentAssessment->course_semestral_fee_id ? $paymentAssessment->course_semestral_fee->total_payments($paymentAssessment) : $paymentAssessment->total_payment) - $paymentAssessment->total_paid_amount->sum('payment_amount');
+            }
+        }
+        return $value;
+    }
+    function payment_assessment_details()
+    {
+        return $this->hasOne(PaymentAssessment::class, 'enrollment_id')->with('payment_assessment_paid');
+    }
+    function payment_assessment_details_with_transactions()
+    {
+        return $this->hasOne(PaymentAssessment::class, 'enrollment_id')
+            ->with('payment_transaction')
+            ->with('online_payment_transaction')
+            ->withSum('total_paid_amount', 'payment_amount')
+            ->with('additional_fees');
     }
 }

@@ -23,4 +23,8 @@ class ExaminationQuestion extends Model
     {
         return $this->hasMany(ExaminationQuestionChoice::class, 'question_id');
     }
+    public function choices_v2()
+    {
+        return $this->hasMany(ExaminationQuestionChoice::class, 'question_id')->where('is_removed', false);
+    }
 }

@@ -41,7 +41,7 @@ return [
             'provider' => 'users',
         ],
         'applicant' => [
-            'driver' => 'sanctum',
+            'driver' => 'session',
             'provider' => 'applicants',
             'hash' => false,
         ],
@@ -49,6 +49,10 @@ return [
             'driver' => 'session',
             'provider' => 'students',
             'hash' => false
+        ],
+        'applicant-sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'applicants',
         ],
     ],
 
@@ -70,6 +74,7 @@ return [
     */
 
     'providers' => [
+        App\Providers\AuthServiceProvider::class,
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,

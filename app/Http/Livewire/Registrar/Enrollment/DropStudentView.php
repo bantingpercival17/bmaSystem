@@ -2,9 +2,11 @@
 
 namespace App\Http\Livewire\Registrar\Enrollment;
 
+use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class DropStudentView extends Component
@@ -24,11 +26,22 @@ class DropStudentView extends Component
     {
         $courses = CourseOffer::orderBy('id', 'desc')->get();
         $selectCourses = $courses;
-        $_academic = Auth::user()->staff->current_academic();
-        $this->academic =  request()->query('_academic') ?: $this->academic;
-        $academic = base64_decode($this->academic) ?: $_academic->id;
-        $dataLists = $this->filterData($academic);
+        $this->academic = $this->academicValue();
+        $dataLists = $this->filterData(base64_decode($this->academic));
         return view('livewire.registrar.enrollment.drop-student-view', compact('selectCourses', 'courses', 'dataLists'));
+    }
+    function academicValue()
+    {
+        $data = $this->academic;
+        if ($this->academic == '') {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        }
+        if (request()->query('_academic')) {
+            $data = request()->query('_academic') ?: $this->academic;
+        }
+        Cache::put('academic', $data, 60);
+        return $data;
     }
     function categoryCourse()
     {
