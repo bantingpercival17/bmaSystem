@@ -19,7 +19,7 @@ class ApplicantEnrollmentController extends Controller
     {
         try {
             // Enrollment Procudure
-            $semester = AcademicYear::where('semester', 'First Semester')->orderBy('id', 'desc')->first();
+
             $student = auth()->user()->student_applicant ? auth()->user()->student_applicant->student_details : [];
             // Enrollment Details
             $enrollment_application = $student ? EnrollmentApplication::with('course')->where('student_id', $student->id)->where('academic_id', $semester->id)->where('is_removed', false)->first() : [];
@@ -109,10 +109,10 @@ class ApplicantEnrollmentController extends Controller
                 'is_removed' => false,
             );
             // Find if the Applicant have an Student Information
-            $studentDetails = $account->student_applicant->student_details;
+            $studentDetails = $account->student_applicant ?  $account->student_applicant->student_details : [];
             if (!$studentDetails) {
                 $studentDetails = StudentDetails::create($studentData);
-                $applicantStudent = StudentApplicantDetails::create([
+                StudentApplicantDetails::create([
                     'student_id' => $studentDetails->id,
                     'applicant_id' => $account->id
                 ]);

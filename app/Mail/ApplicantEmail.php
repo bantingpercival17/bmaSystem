@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\AcademicYear;
 use App\Models\ApplicantEntranceExamination;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -35,10 +36,11 @@ class ApplicantEmail extends Mailable
     // Pre Registration Notification Email
     public function pre_registration_notificaiton($_applicant)
     {
+        $semester = AcademicYear::where('semester', 'First Semester')->orderBy('id', 'desc')->first();
         return $this->from('support@bma.edu.ph', 'Baliwag Maritime Academy, Inc.')
             ->subject("PRE-REGISTRATION : " . $_applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.pre-registration-notification')
-            ->with(['data' => $_applicant]);
+            ->with(['data' => $_applicant, 'semester' => $semester]);
     }
 
     // Document Attachment Notification Email
