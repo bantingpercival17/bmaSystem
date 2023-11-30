@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
+use Illuminate\Support\Facades\Cache;
 
 class ApplicantProfileView extends Component
 {
@@ -33,6 +34,9 @@ class ApplicantProfileView extends Component
         $this->profile = request()->query('_applicant') ? ApplicantAccount::find(base64_decode(request()->query('_applicant'))) : $this->profile;
         $this->selectCategories = request()->query('_catergory') ?: $this->selectCategories;
         $applicantView = new ApplicantView();
+        if (Cache::has('menu')) {
+            $this->activeTab = Cache::get('menu');
+        }
         if ($this->profile) {
             $approvedDocuments = $this->profile->applicant_documents_status();
             #$this->activeTab = $this->selectCategories == 'for_checking' ? $this->activeTab : 'documents';
@@ -66,6 +70,7 @@ class ApplicantProfileView extends Component
     function swtchTab($data)
     {
         $this->activeTab = $data;
+        Cache::put('menu', $data, 60);
     }
     function dialogBoxSHS($data)
     {

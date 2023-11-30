@@ -89,12 +89,13 @@ class AuthController extends Controller
                 'is_removed' => 0,
             ];
             try {
-                $user = ApplicantAccount::create($_details);
+                return response(['error' => 'Please await the official announcement for the admission process for the academic year 2024-2025'], 422);
+                /*  $user = ApplicantAccount::create($_details);
                 $applicant = ApplicantAccount::find($user->id);
                 $mail = new ApplicantEmail();
                 Mail::to($_request->email)->bcc('developer@bma.edu.ph')->send($mail->pre_registration_notificaiton($applicant));
                 $message = "Email Sent";
-                return response(['message' => 'Thank you for submitting your application! Your login credentials have been sent to email address: ' . $applicant->email], 200);
+                return response(['message' => 'Thank you for submitting your application! Your login credentials have been sent to email address: ' . $applicant->email], 200); */
                 #return back()->with('success-message', 'Thank you for submitting your application! Your login credentials have been sent to' . $_request->email);
             } catch (\Throwable  $error) {
                 $_request->header('User-Agent');

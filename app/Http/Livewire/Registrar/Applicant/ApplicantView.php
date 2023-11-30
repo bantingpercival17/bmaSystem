@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 class ApplicantView extends Component
 {
-    public $selectCategories = 'created_accounts';
+    public $selectCategories;
     public $selectCourse = 'ALL COURSE';
     public $selectedCourse = 'ALL COURSE';
     public $searchInput;
@@ -90,16 +90,11 @@ class ApplicantView extends Component
         if (request()->query('_category')) {
             $data = request()->query('_category') ?: $this->selectCategories;
         }
+        Cache::put('category', $data, 120);
         if (Cache::has('category')) {
-            $cache = Cache::get('category');
-            if ($cache != $data) {
-                Cache::put('category', $data, 60);
-                $cache = Cache::get('category');
-                $data = $cache;
-            }
-        } else {
-            Cache::put('category', $data, 60);
+            $data = Cache::get('category');
         }
+        #$data = $data ?: 'created_accounts';
         return $data;
     }
     function categoryCourse()
@@ -172,7 +167,9 @@ class ApplicantView extends Component
         if ($selectCategories == 'not_qualified') {
             $dataLists = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($this->tblApplicantNotQualifieds, $this->tblApplicantNotQualifieds . '.applicant_id', $this->applicantAccountTable . '.id')
-                ->where($this->tblApplicantNotQualifieds . '.academic_id', base64_decode($academic));
+                ->where($this->tblApplicantNotQualifieds . '.is_removed', false)
+                ->where($this->tblApplicantNotQualifieds . '.academic_id', base64_decode($academic))
+                ->groupBy('applicant_accounts.id');
         }
         if ($selectCategories == 'qualified') {
             $dataLists = $query
@@ -281,7 +278,7 @@ class ApplicantView extends Component
                 }, '>=', function ($query) {
                     $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
                 })
-                ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.created_at', 'desc');;
+                ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.updated_at', 'desc');;
         }
         if ($selectCategories == 'examination_failed') {
             $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')

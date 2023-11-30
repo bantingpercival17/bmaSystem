@@ -566,7 +566,9 @@ class CourseOffer extends Model
         if ($category == 'not_qualified') {
             $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', $applicantAccountTable . '.id')
-                ->where($tblApplicantNotQualifieds . '.academic_id', Auth::user()->staff->current_academic()->id);
+                ->where($tblApplicantNotQualifieds . '.is_removed', false)
+                ->where($tblApplicantNotQualifieds . '.academic_id', Auth::user()->staff->current_academic()->id)
+                ->groupBy('applicant_accounts.id');
         }
         if ($category == 'qualified') {
             $query = $query
