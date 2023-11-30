@@ -89,7 +89,7 @@ class AuthController extends Controller
                 'is_removed' => 0,
             ];
             try {
-                return response(['error' => 'Please await the official announcement for the admission process for the academic year 2024-2025'], 422);
+                return response(['error' => array('message' => 'Please await the official announcement for the admission process for the academic year 2024-2025')], 422);
                 /*  $user = ApplicantAccount::create($_details);
                 $applicant = ApplicantAccount::find($user->id);
                 $mail = new ApplicantEmail();
