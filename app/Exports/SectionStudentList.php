@@ -34,6 +34,7 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
     {
         $_fields = array(0 => 'STUDENT NUMBER', 1 => 'EMAIL', 2 => 'LAST NAME', 3 => 'FIRST NAME', 4 => 'MIDDLE NAME');
         return [
+            'STATUS',
             'STUDENT NUMBER',
             'EMAIL',
             'LAST NAME',
@@ -50,11 +51,14 @@ class SectionStudentList implements FromCollection, ShouldAutoSize, WithMapping,
     }
     public function map($_data): array
     {
+        $enrollment_status = $_data->student->enrollment_academic_year($this->section->academic->id)->enrollment_cancellation;
+        $enrollment_status = $enrollment_status ? strtoupper($enrollment_status->type_of_cancellations) : "ENROLLED";
         $parents = $_data->student->parent_details;
         $guardianName = $parents ? $parents->guardian_first_name . ' ' . $parents->guardian_last_name : '';
         $guardianContactNumber = $parents ? $parents->guardian_contact_number : '';
         $guardianAddress = $parents ? $parents->guardian_address : '';
         return [
+            $enrollment_status,
             $_data->student->account ? $_data->student->account->student_number : '',
             $_data->student->account ?  $_data->student->account->email : "-",
             $_data->student->last_name,
