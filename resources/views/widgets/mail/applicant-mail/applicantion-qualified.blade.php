@@ -2,7 +2,7 @@
 # CONGRATULATIONS
 Good day {{ucwords($data->account->applicant->first_name)}},
 <p>
-We are glad to inforn you that you are eligible to take the Online Entrance Examination for the 2022-2023 academic year.
+We are glad to inform you that you are eligible to take the Online Entrance Examination for the 2024-2025 academic year.
 You may now pay the Php 300.00 examination fee.
 </p>
 
@@ -20,7 +20,7 @@ BANK : **_Bank of Commerce_** <br>
 ACCOUNT NAME : **_BALIWAG MARITIME ACADEMY, INC_** <br>
 ACCOUNT NUMBER : **_062000001037_** <br><br>
 
-@component('mail::button', ['url' => 'http://bma.edu.ph/bma/login'])
+@component('mail::button', ['url' => env('APP_STUDENT_URL')])
 LOG IN NOW
 @endcomponent
 @include('widgets.mail.footer')

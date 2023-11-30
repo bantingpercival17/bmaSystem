@@ -10,7 +10,7 @@ You may now proceed with the <b><i>Entrance Examination</i></b>  using this code
 </p>
 
 <p>Kindly login to your Applicant Portal to Proceed to the Entrance Examination. </p>
-@component('mail::button', ['url' => 'http://bma.edu.ph/bma/login'])
+@component('mail::button', ['url' => env('APP_STUDENT_URL')])
 LOG IN NOW
 @endcomponent
 @include('widgets.mail.footer')

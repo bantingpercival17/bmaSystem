@@ -12,7 +12,7 @@ Kindly re-submit your clear and correct <b>{{ ucwords(trim(str_replace('_', ' ',
 </p>
 @endif
 <p>Kindly visit to the your Applicant Portal to check your status. </p>
-@component('mail::button', ['url' => 'http://bma.edu.ph/bma/login'])
+@component('mail::button', ['url' => env('APP_STUDENT_URL')])
 LOG IN NOW
 @endcomponent
 @include('widgets.mail.footer')
