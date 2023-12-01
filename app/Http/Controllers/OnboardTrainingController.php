@@ -73,11 +73,11 @@ class OnboardTrainingController extends Controller
     public function shipboard_application_verification(Request $_request)
     {
         try {
-            $_document_verification = DocumentRequirements::find(base64_decode($_request->_document)); // Get the Document 
+            $_document_verification = DocumentRequirements::find(base64_decode($_request->_document)); // Get the Document
             // The the Shipboard Information
             $shipboard_information = ShipBoardInformation::find($_document_verification->deployment_id);
             if ($_request->document_status == 1) {
-                // Check the Input Document Status 
+                // Check the Input Document Status
                 $_document_verification->document_status = 1; // Set the value for the update of the document
             } else {
                 // Set the Update for the following Columns
@@ -275,7 +275,7 @@ class OnboardTrainingController extends Controller
     # Onboard Examination Assessment
     public function onboard_examination_setup($_data, $_examination_code)
     {
-        $_student = StudentDetails::find($_data); // Student 
+        $_student = StudentDetails::find($_data); // Student
         $_shipboard_information = $_student->shipboard_training;
         $_examination_name = $_student->enrollment_assessment->course_id == 1 ? 'ONBOARD EXAMINATION BSMARE' : 'ONBOARD EXAMINATION BSMT'; // EXAMINATION NAME
         $_examination = Examination::where('examination_name', $_examination_name)->where('department', 'college')->where('is_removed', false)->first();

@@ -183,6 +183,6 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     }
     function student_applicant()
     {
-        return $this->hasOne(StudentApplicantDetails::class, 'applicant_id');
+        return $this->hasOne(StudentApplicantDetails::class, 'applicant_id')->where('is_removed', false);
     }
 }

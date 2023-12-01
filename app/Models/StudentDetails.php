@@ -1172,6 +1172,10 @@ class StudentDetails extends Model
             ->orderBy('ship_board_information.updated_at', 'desc');
         return $student;
     }
+    function shipboard_information()
+    {
+        return $this->hasMany(ShipBoardInformation::class, 'student_id')->with('document_requirements')->where('is_removed', false);
+    }
     public function shipboard_application()
     {
         return $this->hasOne(DeploymentAssesment::class, 'student_id') /* ->where('is_removed', false)->whereNull('staff_id') */;
