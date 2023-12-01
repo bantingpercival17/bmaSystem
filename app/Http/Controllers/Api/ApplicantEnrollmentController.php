@@ -69,7 +69,8 @@ class ApplicantEnrollmentController extends Controller
         try {
             $user = auth()->user();
             $student = $user->applicant;
-            return response(compact('student', 'user'), 200);
+            $student_v2 = $user->student_applicant ? StudentDetails::with('educational_background')->with('parent_details')->find($user->student_applicant->student_id) : null;
+            return response(compact('student', 'user', 'student_v2'), 200);
         } catch (\Throwable $th) {
             $this->debugTrackerApplicant($th);
             return response([
@@ -216,9 +217,12 @@ class ApplicantEnrollmentController extends Controller
                     'course_id' => $account->course_id,
                     'enrollment_place' => 'online',
                     'enrollment_category' => NULL,
+                    'strand' => $request->strand,
                     'is_removed' => false,
                 ];
                 EnrollmentApplication::create($_details);
+            } else {
+                $enrollment_application->update(['strand' => $request->strand,]);
             }
             return response(['message' => 'Successfully Send your Enrollment Application.'], 200);
         } catch (\Throwable $th) {
@@ -298,6 +302,7 @@ class ApplicantEnrollmentController extends Controller
                 'senior_high_school_name' => 'required|max:100',
                 'senior_high_school_address' => 'required|max:255',
                 'senior_high_school_year' => 'required|max:100',
+                'strand' => 'required'
             ];
         }
         $request->validate($_fields);
