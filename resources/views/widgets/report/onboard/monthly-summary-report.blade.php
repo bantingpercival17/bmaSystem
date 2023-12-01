@@ -90,7 +90,7 @@
                             <i>Picture while working & condition onboard and during meal time.
                             </i>
                         </li>
-                       {{--  <li>
+                        {{--  <li>
                             <i>
                                 Accomplished data on Daily Journal for the month covered including front page and summary
                                 checklist. (Make sure never missed any single specified on it.)
@@ -138,6 +138,7 @@
                         </p>
                         @foreach (json_decode($document->file_links) as $links)
                             @php
+                                $links = str_replace(':1000', '', $links);
                                 $myFile = pathinfo($links);
                                 $_ext = $myFile['extension'];
                             @endphp
