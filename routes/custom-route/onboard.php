@@ -3,6 +3,7 @@
 use App\Http\Controllers\OnboardTrainingController;
 use App\Http\Middleware\OnboardTraining;
 use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\OnboardTraining\MidshipmanView;
 
 Route::prefix('onboard')->group(function () {
     Route::get('/', [OnboardTrainingController::class, 'index'])->name('onboard.dashboard'); // Dashboard View
@@ -33,4 +34,7 @@ Route::prefix('onboard')->group(function () {
     Route::get('/shipboard-monitoring/examination', [OnboardTrainingController::class, 'onboard_examination'])->name('onboard.examination');
     Route::post('/shipboard-monitoring/assessment-report', [OnboardTrainingController::class, 'onboard_assessment_report'])->name('onboard.assessment-report');
     Route::get('/shipboard-monitoring/assessment-report-v2', [OnboardTrainingController::class, 'onboard_assessment_report_v2'])->name('onboard.assessment-report-v2');
+
+    /* Liveview Components */
+    Route::get('/midshipman', MidshipmanView::class)->name('onboard.midshipman-v2');
 });
