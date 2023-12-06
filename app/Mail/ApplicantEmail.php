@@ -38,7 +38,7 @@ class ApplicantEmail extends Mailable
     {
         $semester = AcademicYear::where('semester', 'First Semester')->orderBy('id', 'desc')->first();
         return $this->from('support@bma.edu.ph', 'Baliwag Maritime Academy, Inc.')
-            ->subject("PRE-REGISTRATION : " . $_applicant->applicant_number)
+            ->subject("REGISTRATION : " . $_applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.pre-registration-notification')
             ->with(['data' => $_applicant, 'semester' => $semester]);
     }

@@ -22,6 +22,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
         'course_id',
         'academic_id',
         'contact_number',
+        'json_details',
         'is_removed'
     ];
 

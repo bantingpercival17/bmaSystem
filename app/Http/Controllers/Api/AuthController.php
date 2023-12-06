@@ -78,24 +78,31 @@ class AuthController extends Controller
             }
             // Get the number of Applicant Per School Year
             $_transaction_number = ApplicantAccount::where('academic_id', $_academic->id)->count();
+            $ApplicantForm = array(
+                'first_name' => ucwords(mb_strtolower(trim($_request->firstName))),
+                'last_name' => ucwords(mb_strtolower(trim($_request->lastName))),
+                'birthday' => $_request->birthday
+            );
+            $applicationFormJson = json_encode($ApplicantForm);
             $_details = [
-                'name' => trim($_request->firstName) . ' ' . trim($_request->lastName),
+                'name' => ucwords(mb_strtolower(trim($_request->firstName) . ' ' . trim($_request->lastName))),
                 'email' => trim($_request->email),
                 'course_id' => $_request->course,
                 'contact_number' => $_request->contactNumber,
                 'password' => Hash::make('AN-' . date('ymd') . ($_transaction_number + 1)),
                 'applicant_number' => 'AN-' . date('ymd') . ($_transaction_number + 1),
+                'json_details' => $applicationFormJson,
                 'academic_id' => $_academic->id,
                 'is_removed' => 0,
             ];
             try {
-                return response(['errors' => array('message' => 'Please await the official announcement for the admission process for the academic year 2024-2025')], 422);
-                /*  $user = ApplicantAccount::create($_details);
+                #return response(['errors' => array('message' => 'Please await the official announcement for the admission process for the academic year 2024-2025')], 422);
+                $user = ApplicantAccount::create($_details);
                 $applicant = ApplicantAccount::find($user->id);
                 $mail = new ApplicantEmail();
                 Mail::to($_request->email)->bcc('developer@bma.edu.ph')->send($mail->pre_registration_notificaiton($applicant));
                 $message = "Email Sent";
-                return response(['message' => 'Thank you for submitting your application! Your login credentials have been sent to email address: ' . $applicant->email], 200); */
+                return response(['message' => 'Thank you for submitting your application! Your login credentials have been sent to email address: ' . $applicant->email], 200);
                 #return back()->with('success-message', 'Thank you for submitting your application! Your login credentials have been sent to' . $_request->email);
             } catch (\Throwable  $error) {
                 $_request->header('User-Agent');
