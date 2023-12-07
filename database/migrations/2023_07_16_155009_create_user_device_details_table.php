@@ -15,6 +15,10 @@ class CreateUserDeviceDetailsTable extends Migration
     {
         Schema::create('user_device_details', function (Blueprint $table) {
             $table->id();
+            $table->string('ip_address');
+            $table->string('client_name');
+            $table->text('accessing_page');
+            $table->text('device_details');
             $table->timestamps();
         });
     }
