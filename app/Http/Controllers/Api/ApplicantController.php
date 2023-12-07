@@ -37,9 +37,10 @@ class ApplicantController extends Controller
             ->where('documents.is_removed', false)
             ->get();
         $documents = $data->applicant_documents;
+        $this->applicant_information_verification();
         $approvedDocuments = $data->applicant_documents_status();
         $disqualification = $data->not_qualified;
-        $documents = compact('documents', 'listOfDocuments', 'approvedDocuments','disqualification');
+        $documents = compact('documents', 'listOfDocuments', 'approvedDocuments', 'disqualification');
         $payment = $data->payment;
         $examinationDetails = $payment ? $data->applicant_examination : [];
         $examinationSchedule = $examinationDetails ? $data->examination_schedule : [];
@@ -88,6 +89,11 @@ class ApplicantController extends Controller
         $enrollment = $data->student_applicant ? $data->student_applicant->student_details :  [];
 
         return response(['data' => $data, 'documents' => $documents, 'examination' => $examination, 'orientation' => $orientation, 'medical' => $medical, 'enrollment' => $enrollment], 200);
+    }
+    function applicant_information_verification()
+    {
+        $account = auth()->user();
+        $applicant = ApplicantDetials::where('applicant_id', $account->id)->first();
     }
     public function applicant_store_information(Request $_request)
     {

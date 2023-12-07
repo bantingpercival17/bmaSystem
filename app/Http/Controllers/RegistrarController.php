@@ -55,7 +55,7 @@ class RegistrarController extends Controller
             $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
             $mainHeader = array(
                 array('COURSE', 1, NULL),
-                array('PRE-REGISTRATION', 1, NULL),
+                array('', 1, NULL),
                 array('INFORMATION VERIFICATION', 3, NULL),
                 array('BMA-ALUMNUS', 1, NULL),
                 array('ENTRANCE EXAMINATION PAYMENT', 3, NULL),
@@ -74,10 +74,10 @@ class RegistrarController extends Controller
             $tableHeader = array($mainHeader, $subHeader);
             $tableHeader = array(
                 array('Course', array('')),
-                array('Pre Registration', array('registered_applicants')),
-                array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination')),
-                array('Aluminus', array('bma_senior_high')),
-                array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'took_the_exam')),
+                array('', array('registered_applicants')),
+                array('Information Verification', array('for_checking', 'not_qualified', 'qualified')),
+                array('', array('bma_senior_high')),
+                array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'no_of_qualified_examinees')),
                 array('Briefing Orientation', array('expected_attendees', 'total_attendees')),
                 array('Medical Examination', array('for_medical_schedule', 'medical_schedule', 'waiting_for_medical_results', 'medical_result')),
                 array('Enrollment', array('qualified_to_enrollment'))
