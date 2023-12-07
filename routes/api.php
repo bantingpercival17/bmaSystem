@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ShipboardTraining;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\StudentSubjectsController;
+use App\Http\Controllers\Api\VisitorController;
 use App\Http\Controllers\PaymongoApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,38 +39,7 @@ Route::get('/form-recaptcha', function () {
 });
 Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
 Route::post('/student/forget-password', [AuthController::class, 'student_forget_password']);
-Route::get('/csrf-token', function (Request $request) {
-    $userAgent = $request->header('User-Agent');
-    $ipAddress = $request->ip();
-    $jsonData = json_encode($userAgent);
-
-    // Generate a unique file name
-    $fileName = 'data_' . $ipAddress . '.json';
-
-    // Specify the file path
-    $filePath =  '/device/' . $fileName;
-
-    // Save the JSON data to the file
-    //file_put_contents($filePath, $jsonData);
-    Storage::disk('public')->put($fileName, $jsonData);
-    // Extract device information from the user agent string
-    // You can use regular expressions or other parsing techniques here
-    // to extract information such as browser, operating system, etc.
-    $browser = ''; // Extract browser information
-    $platform = ''; // Extract operating system information
-    $deviceType = ''; // Determine the device type (desktop, mobile, tablet, etc.)
-
-    // Create an array or object to store the device information
-    $deviceInfo = [
-        'browser' => $browser,
-        'platform' => $platform,
-        'deviceType' => $deviceType,
-    ];
-
-    // Return the device information as a response or use it as needed
-    //return response()->json($deviceInfo);
-    return response()->json(['csrf_token' => csrf_token(), $userAgent]);
-});
+Route::get('/csrf-token', [VisitorController::class, 'visitor_logs']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
@@ -103,7 +73,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/student/onboard/performance', [ShipboardTraining::class, 'shipboard_performance_store']);
     Route::get('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_report_view']);
     Route::post('/student/onboard/performance/view', [ShipboardTraining::class, 'performance_file_attachment']);
-    Route::get('/student/onboard/performance/view-report/{data}/{version}',[ShipboardTraining::class,'student_onboard_mopm_report']);
+    Route::get('/student/onboard/performance/view-report/{data}/{version}', [ShipboardTraining::class, 'student_onboard_mopm_report']);
     Route::get('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_assessment_view']);
     Route::post('student/onboard/assessment', [ShipboardTraining::class, 'student_onboard_assessment_verification']);
     Route::get('student/onboard/assessment/questioner', [ShipboardTraining::class, 'student_onboard_assessment_questioner']);
