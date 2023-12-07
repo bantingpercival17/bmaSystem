@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Jenssegers\Agent\Agent;
 
 class VisitorController extends Controller
 {
@@ -11,15 +12,20 @@ class VisitorController extends Controller
     {
         $userAgent = $request->header('User-Agent');
         $ipAddress = $request->ip();
-        $jsonData = json_encode($userAgent);
+        $agent = new Agent();
+        $device = $agent->device();
+        $browser = $agent->browser();
+        $platform = $agent->platform();
 
-        // Generate a unique file name
-        $fileName = 'data_' . $ipAddress . '.json';
-
-        // Specify the file path
-        $filePath =  '/device/' . $fileName;
+        $visitorDetails = array(
+            'ip_address' => $ipAddress,
+            'userAgent' => $userAgent,
+            'device' => $device,
+            'browser' => $browser,
+            'platform' => $platform
+        );
         // Return the device information as a response or use it as needed
         //return response()->json($deviceInfo);
-        return response()->json($ipAddress);
+        return response()->json($visitorDetails);
     }
 }
