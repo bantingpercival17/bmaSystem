@@ -40,7 +40,7 @@ Route::get('/form-recaptcha', function () {
 Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
 Route::post('/student/forget-password', [AuthController::class, 'student_forget_password']);
 Route::get('/csrf-token', [VisitorController::class, 'visitor_logs']);
-
+Route::get('/checker', [VisitorController::class, 'visitor_logs']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route::post('/applicant/create', [ApplicantController::class, 'create_applicant_details']);
     //Route::post('/logout', [ApplicantController::class, 'logout']);

@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class UserDeviceDetails extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'ip_address',
+        'client_name',
+        'accessing_page',
+        'device_details'
+    ];
 }

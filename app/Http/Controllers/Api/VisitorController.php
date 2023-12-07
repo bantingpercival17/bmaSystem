@@ -3,29 +3,37 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserDeviceDetails;
 use Illuminate\Http\Request;
 use Jenssegers\Agent\Agent;
 
 class VisitorController extends Controller
 {
-    function visitor_logs(Request $request)
+    function visitor_logs(Request $request, $user = 'unknown')
     {
         $userAgent = $request->header('User-Agent');
         $ipAddress = $request->ip();
         $agent = new Agent();
+
         $device = $agent->device();
         $browser = $agent->browser();
         $platform = $agent->platform();
 
         $visitorDetails = array(
-            'ip_address' => $ipAddress,
             'userAgent' => $userAgent,
             'device' => $device,
             'browser' => $browser,
-            'platform' => $platform
+            'platform' => $platform,
+            'robot' => $agent->isRobot()
         );
-        // Return the device information as a response or use it as needed
-        //return response()->json($deviceInfo);
-        return response()->json($visitorDetails);
+        $data = array(
+            'ip_address' => $ipAddress,
+            'client_name' => $user,
+            'accessing_page' => request()->url(),
+            'device_details' => json_encode($visitorDetails)
+        );
+        UserDeviceDetails::create($data);
+        $bot = array('robot' => $agent->isRobot());
+        return compact('bot');
     }
 }
