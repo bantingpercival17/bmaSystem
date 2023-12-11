@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['http://127.0.0.1:7070', 'http://student.bma.edu.ph', 'http://bma.edu.ph', 'http://beta.student.bma.edu.ph'],
 
     'allowed_origins_patterns' => [],
 

@@ -12,6 +12,7 @@ use App\Models\MedicalAppointmentSchedule;
 use App\Report\MedicalReport;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -31,12 +32,36 @@ class ApplicantView extends Component
     public $remarks;
     public $remarksPending;
     protected $listeners = ['medicalResult'];
+    public $applicantAccountTable;
+    public $tblDocuments;
+    public $tblApplicantDetails;
+    public $tblApplicantDocuments;
+    public $tblApplicantNotQualifieds;
+    public $tblApplicantPayment;
+    public $tblApplicantAlumia;
+    public $tblApplicantExamination;
+    public $tblApplicantExaminationAnswer;
+    public $tblApplicantOrientationScheduled;
+    public $tblApplicantOrientation;
+    public function __construct()
+    {
+        $this->applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
+        $this->tblDocuments = env('DB_DATABASE') . '.documents';
+        $this->tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
+        $this->tblApplicantDocuments = env('DB_DATABASE_SECOND') . '.applicant_documents';
+        $this->tblApplicantNotQualifieds = env('DB_DATABASE_SECOND') . '.applicant_not_qualifieds';
+        $this->tblApplicantPayment = env('DB_DATABASE_SECOND') . '.applicant_payments';
+        $this->tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
+        $this->tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+        $this->tblApplicantExaminationAnswer = env('DB_DATABASE_SECOND') . '.applicant_examination_answers';
+        $this->tblApplicantOrientationScheduled = env('DB_DATABASE_SECOND') . '.applicant_briefing_schedules';
+    }
     public function render()
     {
         $courseDashboard = CourseOffer::all();
         $courses = CourseOffer::all();
         $selectContent = array(
-            array('waiting for Scheduled', 'waiting_for_scheduled'),
+            array('for medical Schedule', 'waiting_for_scheduled'),
             array('scheduled', 'medical_scheduled'),
             array('waiting for Medical result', 'waiting_for_medical_result'),
             array('passed', 'medical_result_passed'),
@@ -49,11 +74,11 @@ class ApplicantView extends Component
         if ($this->selecteCategories == '') {
             $this->applicants = ApplicantAccount::select('applicant_accounts.*')
                 ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
-                ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_removed', false)
-                ->groupBy('applicant_accounts.id')
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id')
+                /* ->where(env('DB_DATABASE') . '.applicant_accounts.id false)
+                ->join(env('DB_DATABASE') . '.applicant_accounts'idTABASE') . '.applicant_accounts.id', 'applicant_accounts.id')*/
                 ->where('applicant_accounts.is_removed', false)
                 ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                ->groupBy('applicant_accounts.id')
                 ->whereNull('ama.applicant_id')->get();
         } else {
             $this->filtered();
@@ -84,9 +109,21 @@ class ApplicantView extends Component
         $this->applicants = [];
         $query =  ApplicantAccount::select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', base64_decode($this->academic))
-            ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_removed', false)
+            /*  ->where(env('DB_DATABASE') . '.applicant_accounts.id false)
+            ->join(env('DB_DATABASE') . '.applicant_accounts'idTABASE') . '.applicant_accounts.id', 'applicant_accounts.id') */
+            ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+            ->where($this->tblApplicantExamination . '.is_removed', false)
+            ->where($this->tblApplicantExamination . '.is_finish', true)
+            ->where(function ($query) {
+                $query->select(DB::raw('COUNT(*)'))
+                    ->from($this->tblApplicantExaminationAnswer)
+                    ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', $this->tblApplicantExaminationAnswer . '.choices_id')
+                    ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                    ->whereColumn($this->tblApplicantExaminationAnswer . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+            }, '>=', function ($query) {
+                $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+            })
             ->groupBy('applicant_accounts.id')
-            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false);
         // Sort By Courses
         if ($this->selectCourse != 'ALL COURSE') {
@@ -113,41 +150,41 @@ class ApplicantView extends Component
                 ->whereNull('ama.applicant_id')->get();
         }
         if ($this->selecteCategories == 'medical_scheduled') {
-            $this->applicants = $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+            $this->applicants = $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE') . '.applicant_accounts.id')
                 ->where('ama.is_removed', false)
                 ->where('is_approved', false)
                 ->groupBy('applicant_accounts.id')->get();
         }
         if ($this->selecteCategories == 'waiting_for_medical_result') {
-            $this->applicants =  $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+            $this->applicants =  $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE') . '.applicant_accounts.id')
                 ->where('ama.is_removed', false)
                 ->where('is_approved', true)->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'ama.applicant_id')
                 ->whereNull(env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id')
                 ->groupBy('applicant_accounts.id')->get();
         }
         if ($this->selecteCategories == 'medical_result_passed') {
-            $this->applicants =  $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+            $this->applicants =  $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE') . '.applicant_accounts.id')
                 ->where('ama.is_removed', false)
                 ->where('is_approved', true)
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', env('DB_DATABASE') . '.applicant_accounts.id')
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
                 ->groupBy('applicant_accounts.id')->get();
         }
         if ($this->selecteCategories == 'medical_result_pending') {
-            $this->applicants =  $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+            $this->applicants =  $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE') . '.applicant_accounts.id')
                 ->where('ama.is_removed', false)
                 ->where('is_approved', true)
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', env('DB_DATABASE') . '.applicant_accounts.id')
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_pending', false)
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
                 ->groupBy('applicant_accounts.id')->get();
         }
         if ($this->selecteCategories == 'medical_result_failed') {
-            $this->applicants =  $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+            $this->applicants =  $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE') . '.applicant_accounts.id')
                 ->where('ama.is_removed', false)
                 ->where('is_approved', true)
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', env('DB_DATABASE') . '.applicant_accounts.id')
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', 2)
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
                 ->groupBy('applicant_accounts.id')->get();

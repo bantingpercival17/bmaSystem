@@ -407,7 +407,7 @@
         })
         @if(Session::has('success'))
         Swal.fire({
-            title: 'Complete!',
+            title: 'Completed!',
             text: "{{ session('success') }}",
             icon: 'success',
             confirmButtonText: 'Okay'

@@ -23,6 +23,7 @@ use App\Models\Section;
 use App\Models\StudentCancellation;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
+use App\Models\StudentScholarshipGrant;
 use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
@@ -55,7 +56,7 @@ class RegistrarController extends Controller
             $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
             $mainHeader = array(
                 array('COURSE', 1, NULL),
-                array('PRE-REGISTRATION', 1, NULL),
+                array('', 1, NULL),
                 array('INFORMATION VERIFICATION', 3, NULL),
                 array('BMA-ALUMNUS', 1, NULL),
                 array('ENTRANCE EXAMINATION PAYMENT', 3, NULL),
@@ -74,10 +75,10 @@ class RegistrarController extends Controller
             $tableHeader = array($mainHeader, $subHeader);
             $tableHeader = array(
                 array('Course', array('')),
-                array('Pre Registration', array('registered_applicants')),
-                array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination')),
-                array('Aluminus', array('bma_senior_high')),
-                array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'took_the_exam')),
+                array('', array('registered_applicants')),
+                array('Information Verification', array('for_checking', 'not_qualified', 'qualified')),
+                array('', array('bma_senior_high')),
+                array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'no_of_qualified_examinees')),
                 array('Briefing Orientation', array('expected_attendees', 'total_attendees')),
                 array('Medical Examination', array('for_medical_schedule', 'medical_schedule', 'waiting_for_medical_results', 'medical_result')),
                 array('Enrollment', array('qualified_to_enrollment'))
@@ -134,6 +135,14 @@ class RegistrarController extends Controller
             $_current_assessment = $_student->enrollment_assessment;
             $_application = $_student->enrollment_application ?: $_current_assessment;
             $_value = $_application->course_id == 3 ? 1 : -1;
+            // SCHOLARSHIP GRANT
+            if ($_request->scholarship != 'N.A') {
+                $data = [
+                    'student_id' => $_student->id, 'voucher_id' => $_request->scholarship, 'staff_id' => Auth::user()->staff->id
+                ];
+                StudentScholarshipGrant::create($data);
+            }
+
             if (count($_student->enrollment_history) > 0) {
                 // Set the Year Level of Old Student
                 $_year_level = Auth::user()->staff->current_academic()->semester == 'First Semester' ? intval($_current_assessment->year_level) +  $_value : intval($_current_assessment->year_level);

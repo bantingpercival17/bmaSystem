@@ -15,6 +15,10 @@ class ApplicantEntranceExamination extends Model
     {
         return $this->belongsTo(ApplicantAccount::class, 'applicant_id');
     }
+    function examination_scheduled()
+    {
+        return $this->hasOne(ApplicantExaminationSchedule::class, 'examination_id')->where('is_removed', false);
+    }
     public function examination_result()
     {
         $_transmutation_college = array(

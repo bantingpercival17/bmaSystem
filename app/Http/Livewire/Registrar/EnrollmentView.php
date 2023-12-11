@@ -7,6 +7,7 @@ use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\EnrollmentApplication;
 use App\Models\StudentDetails;
+use App\Models\Voucher;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 //use Livewire\WithPagination;
@@ -25,6 +26,7 @@ class EnrollmentView extends Component
         $courseLists = CourseOffer::all();
         $_courses = CourseOffer::all();
         $_curriculums = Curriculum::where('is_removed', false)->get();
+        $scholarship = Voucher::where('is_removed', false)->get();
         $this->academic =  $this->academicValue();
         $studentsList = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name')
             ->leftJoin('enrollment_applications as ea', 'ea.student_id', 'student_details.id')
@@ -53,7 +55,7 @@ class EnrollmentView extends Component
 
             $studentsList = $query->paginate(10);
         }
-        return view('livewire.registrar.enrollment-view', compact('_courses', 'courseLists', '_curriculums', 'studentsList'));
+        return view('livewire.registrar.enrollment-view', compact('_courses', 'courseLists', '_curriculums', 'studentsList', 'scholarship'));
     }
     function academicValue()
     {

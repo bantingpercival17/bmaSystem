@@ -698,7 +698,7 @@ class CourseOffer extends Model
                 })
                 ->groupBy('applicant_accounts.id')->orderBy($tblApplicantExamination . '.created_at', 'desc');;
         }
-        if ($category == 'took_the_exam') {
+        if ($category == 'no_of_qualified_examinees') {
             $query =  $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantPayment . '.is_approved', true)

@@ -1,6 +1,6 @@
 @extends('widgets.report.grade.report_layout_1')
 @php
-    $_form_number = $_enrollment_assessment->course_id == 3 ? ' RG-02' : ' RG-01';
+    $_form_number = $_enrollment_assessment->course_id == 3 ? ' RG-01' : ' RG-03';
     $_department = $_enrollment_assessment->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLEGE';
 @endphp
 @section('title-report', $_form_number . ' - STUDENT REGISTRATION : ' . strtoupper($_student->last_name . ', ' .

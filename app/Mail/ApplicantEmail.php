@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Models\AcademicYear;
 use App\Models\ApplicantEntranceExamination;
+use App\Models\ApplicantExaminationSchedule;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -75,7 +76,7 @@ class ApplicantEmail extends Mailable
             ->markdown('widgets.mail.applicant-mail.applicantion-qualified')
             ->with(['data' => $_document]);
     }
-    // Approved Entrance Examination Payment 
+    // Approved Entrance Examination Payment
     public function payment_approved($_applicant)
     {
         $length = 10;
@@ -85,17 +86,40 @@ class ApplicantEmail extends Mailable
         if ($applicantExamination) {
             $_exam_code = $applicantExamination->examination_code;
         } else {
-            ApplicantEntranceExamination::create(
+            $applicantExamination = ApplicantEntranceExamination::create(
                 [
                     'applicant_id' => $_applicant->id,
                     'examination_code' => $_exam_code
                 ]
             );
+            // If the Payment Transaction Transaction Date
+            $date =  $applicantExamination->created_at;
+            // Rule to Create the Examination Scheduled 
+            // Monday, Wednesday and Friday 09:00 AM TO 11:00 and 02:00 TO 04:00 PM
+            $scheduledDate = $this->examinationScheduled($date);
+            $scheduleDetails = array(
+                'examination_id' => $applicantExamination->id, 'applicant_id' => $_applicant->id, 'schedule_date' => $scheduledDate->format('Y-m-d H:i:s')
+            );
+            ApplicantExaminationSchedule::create($scheduleDetails);
         }
         return $this->from(Auth::user()->email, "BMA ACCOUNTING'S OFFICE")
             ->subject("ENTRANCE EXAMINATION PAYMENT APPROVED: " . $_applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.entrance-examination-payment-approved')
-            ->with(['data' => $_applicant, 'exam_code' => $_exam_code]);
+            ->with(['data' => $_applicant, 'exam_code' => $_exam_code, 'examinationDetails' => $applicantExamination, 'data1' => $scheduleDetails]);
+    }
+    function examinationScheduled($currentDate)
+    {
+        $plusOne = "+1 days";
+        $plusTwo = "+2 days";
+        $dayName = $currentDate->format('N');
+        if ($dayName == 1 || $dayName == 3) {
+            $modDate = $currentDate->modify($plusTwo);
+        } else if ($dayName == 5) {
+            $modDate = $currentDate->modify("+3 days");
+        } else {
+            $modDate = $currentDate->modify($plusOne);
+        }
+        return $modDate;
     }
     public function orientation_schedule($_applicant)
     {

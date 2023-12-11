@@ -88,7 +88,7 @@
     <script>
         @if (Session::has('success'))
             Swal.fire({
-                title: 'Complete!',
+                title: 'Completed!',
                 text: "{{ session('success') }}",
                 icon: 'success',
                 confirmButtonText: 'Okay'
@@ -116,7 +116,7 @@
         var message = "<?php echo session('reset-password'); ?>"
         @if (Session::has('reset-password'))
             Swal.fire({
-                title: 'Complete!',
+                title: 'Completed!',
                 text: /* "{{ session('reset-password') }}" */ message,
                 icon: 'success',
                 confirmButtonText: 'Okay'

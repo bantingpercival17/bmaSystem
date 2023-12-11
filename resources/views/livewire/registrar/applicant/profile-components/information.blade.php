@@ -8,8 +8,7 @@
                 FORM RG-03
             @endif
         </a>
-        <label for="" class="h5 text-primary fw-bolder mb-3">STUDENT INFORMATION</label> <br>
-        <label for="" class="h6 text-primary fw-bolder">FULL NAME</label>
+        <label for="" class="h5 text-primary fw-bolder mb-3">STUDENT'S INFORMATION</label> <br>
         <div class="row">
             <div class="col-xl col-md-6 ">
                 <div class="form-group">
@@ -76,7 +75,7 @@
                 <div class="form-group">
                     <small class="text-center">HEIGHT</small>
                     <span class="form-control form-control-sm border border-primary fw-bolder text-primary">
-                        {{ ucwords($profile->applicant->height) }}
+                        {{ ucwords($profile->applicant->height) . ' cm' }}
                     </span>
                 </div>
             </div>
@@ -84,7 +83,7 @@
                 <div class="form-group">
                     <small class="text-center">WEIGHT</small>
                     <span class="form-control form-control-sm border border-primary fw-bolder text-primary">
-                        {{ $profile->applicant->weight }}
+                        {{ $profile->applicant->weight . ' pounds' }}
                     </span>
                 </div>
             </div>
@@ -144,6 +143,67 @@
                     <small class="text-center">PROVINCE</small>
                     <span
                         class="form-control form-control-sm border border-primary fw-bolder text-primary">{{ ucwords($profile->applicant->province) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="form-view">
+            <h6 class="h5 mb-1 text-primary"><b>PARENTS'S INFORMATION</b></h6>
+            <div class="row">
+                <div class="col-xl-8 col-md mb-xl-0">
+                    <div class="form-group">
+                        <small class="text-center">FATHER'S NAME</small>
+
+                        <span
+                            class="form-control form-control-sm border border-primary fw-bolder text-primary">{{ ucwords($profile->applicant->father_first_name . ' ' . $profile->applicant->father_last_name) ?: '' }}</span>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md mb-xl-0">
+                    <div class="form-group">
+                        <small class="text-center">CONTACT NUMBER</small>
+
+                        <span
+                            class="form-control form-control-sm border border-primary fw-bolder text-primary">{{ $profile->applicant->father_contact_number ?: '' }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-8 col-md mb-xl-0">
+                    <div class="form-group">
+                        <small class="text-center">MOTHER'S MAIDEN NAME:</small>
+
+                        <span
+                            class="form-control form-control-sm border border-primary fw-bolder text-primary">{{ ucwords($profile->applicant->mother_first_name . ' ' . $profile->applicant->mother_last_name) ?: '' }}</span>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md mb-xl-0">
+                    <div class="form-group">
+                        <small class="text-center">CONTACT NUMBER</small>
+
+                        <span
+                            class="form-control form-control-sm border border-primary fw-bolder text-primary">{{ $profile->applicant->mother_contact_number ?: '' }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-8 col-md mb-xl-0">
+                    <div class="form-group">
+                        <small class="text-center">GUARDIAN'S NAME</small>
+
+                        <span
+                            class="form-control form-control-sm border border-primary fw-bolder text-primary">{{ ucwords($profile->applicant->guardian_first_name . ' ' . $profile->applicant->guardian_last_name) ?: '' }}</span>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md mb-xl-0">
+                    <div class="form-group">
+                        <small class="text-center">CONTACT NUMBER</small>
+
+                        <span
+                            class="form-control form-control-sm border border-primary fw-bolder text-primary">{{ $profile->applicant->guardian_contact_number ?: '' }}</span>
+                    </div>
                 </div>
             </div>
         </div>

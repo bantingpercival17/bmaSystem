@@ -1,6 +1,6 @@
-@extends('widgets.report.app_report_template')
+@extends('widgets.report.grade.report_layout_1')
 @php
-    $_form_number = $_account->course_id == 3 ? ' RG-02' : ' RG-01';
+    $_form_number = $_account->course_id == 3 ? ' RG-01' : ' RG-03';
     $_department = $_account->course_id == 3 ? 'SENIOR HIGH SCHOOL' : 'COLLEGE';
 @endphp
 @section('title-report',
@@ -20,12 +20,11 @@
         <p class="h5 text-center m-0 p-0">STUDENT'S APPLICATION FORM</p>
         <p class="text-center fw-bolder m-0 p-0 mb-3"> <small>
                 {{ $_department . ' - ' . $_account->course->course_name }}</small></p>
-
         <h6 for="" class="text-header">A. PERSONAL INFORMATION</h6>
-        <table class="table-content" style="margin: 0px; padding:0">
+        <table class="table">
             <tbody>
                 <tr class="m-0">
-                    <td colspan="2"><small>APPLICANT NO:</small>
+                    <td><small>APPLICANT NO:</small>
                         <br><b>{{ $_account->applicant_number }}</b>
                     </td>
                     <td>
@@ -34,7 +33,7 @@
                     </td>
                 </tr>
                 <tr class="">
-                    <td colspan="2">
+                    <td>
                         <small>APPLICANT NAME: </small> <br>
                         <b>{{ strtoupper($_account->applicant->last_name . ', ' . $_account->applicant->first_name . ' ' . $_account->applicant->middle_name) }}</b>
                     </td>
@@ -44,38 +43,56 @@
                     </td>
                 </tr>
                 <tr class="m-0 p-0">
-                    <td>
+                    <td colspan="2">
                         <small>BIRTH PLACE:</small> <br>
                         <b>{{ Str::upper($_account->applicant->birth_place) }}</b>
                     </td>
                 </tr>
+            </tbody>
+        </table>
+        <table class="table" style="margin: 0px; padding:0">
+            <tbody>
                 <tr class="m-0 p-0">
                     <td>
                         <small>GENDER: </small> <br><b>MALE</b>
                     </td>
                     <td>
                         <small>HEIGHT: </small> <br>
-                        <b>{{ $_account->applicant->height ? number_format($_account->applicant->height / 30.48, 1) . ' Ft/In' : '' }}
+                        <b>{{ $_account->applicant->height ? number_format($_account->applicant->height, 2) . ' cm' : '' }}
                         </b>
                     </td>
                     <td>
                         <small>WEIGHT: </small> <br>
-                        <b> {{ $_account->applicant->weight ? number_format($_account->applicant->weight / 2.205, 2) . ' Kg' : '' }}
+                        <b> {{ $_account->applicant->weight ? number_format($_account->applicant->weight, 2) . ' pounds' : '' }}
                         </b>
                     </td>
                     <td>
                         @php
                             $bmi = 0;
+                            $remarks = '';
                             if ($_account->applicant->weight > 0 && $_account->applicant->height) {
                                 $weight = $_account->applicant->weight / 2.205;
                                 $height = $_account->applicant->height;
                                 $bmi = ($weight / $height / $height) * 10000;
+                                if ($bmi < 18.5) {
+                                    $remarks = 'UNDERWEIGHT';
+                                } elseif ($bmi >= 18.5 && $bmi <= 24.9) {
+                                    $remarks = 'NORMAL WEIGHT';
+                                } elseif ($bmi >= 25 && $bmi <= 29.9) {
+                                    $remarks = 'OVER WEIGHT';
+                                } else {
+                                    $remarks = 'OBESITY';
+                                }
                             }
                         @endphp
                         <small>BMI: </small> <br>
-                        <b> {{ number_format($bmi, 2) }}</b>
+                        <b> {{ $remarks }}</b>
                     </td>
                 </tr>
+            </tbody>
+        </table>
+        <table class="table">
+            <tbody>
                 <tr class="m-0 p-0">
                     <td colspan="2"><small>RELIGION: </small> <br>
                         <b>{{ strtoupper($_account->applicant->religion) }}</b>
@@ -85,20 +102,21 @@
                         <b>{{ Str::upper($_account->applicant->nationality) }}</b>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-        <table class="table-content">
-            <tbody>
                 <tr>
-                    <td colspan="3">
+                    <td colspan="">
                         <small>CONTACT NUMBER: </small>
                         <br>
                         <b>{{ $_account->contact_number }}</b>
                     </td>
-                    <td colspan="2"><small>EMAIL ADDRESS: </small><br>
+                    <td><small>EMAIL ADDRESS: </small><br>
                         <b>{{ $_account->email }}</b>
                     </td>
                 </tr>
+            </tbody>
+        </table>
+        <table class="table">
+            <tbody>
+
                 <tr>
                     <td colspan=""><small>ADDRESS:</small>
             <tbody>
@@ -118,7 +136,7 @@
         </table>
         <br>
         <h6 for="" class="text-header">B. PARENT'S INFORMATION</h6>
-        <table class="table-content">
+        <table class="table">
             <tbody>
                 <tr>
                     <td colspan="2">
@@ -143,8 +161,9 @@
                 </tr>
             </tbody>
         </table>
+        <br>
         <h6 for="" class="text-header mt-3">C. SCHOOL ATTENDED</h6>
-        <table class="table-content">
+        <table class="table">
 
             @if ($_account->course_id != 3)
                 <tbody>
