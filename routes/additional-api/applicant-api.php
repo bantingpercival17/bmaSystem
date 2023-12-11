@@ -6,13 +6,8 @@ use App\Http\Controllers\Api\ApplicantEnrollmentController;
 use App\Http\Controllers\Api\AuthController;
 
 
-Route::middleware('cors')->group(function () {
-    Route::post('/applicant/login', [AuthController::class, 'applicant_login']);
-    Route::post('/applicant/register',function(){
-        return "Testing";
-    });
-    #Route::post('/applicant/register', [AuthController::class, 'applicant_registration']);
-});
+Route::post('/applicant/login', [AuthController::class, 'applicant_login']);
+Route::post('/applicant/register', [AuthController::class, 'applicant_registration']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/applicant/token', function () {
         return 'valid';
