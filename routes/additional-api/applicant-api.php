@@ -5,9 +5,14 @@ use App\Http\Controllers\Api\ApplicantController;
 use App\Http\Controllers\Api\ApplicantEnrollmentController;
 use App\Http\Controllers\Api\AuthController;
 
-Route::post('/applicant/login', [AuthController::class, 'applicant_login']);
-Route::post('/applicant/register', [AuthController::class, 'applicant_registration']);
 
+Route::middleware('cors')->group(function () {
+    Route::post('/applicant/login', [AuthController::class, 'applicant_login']);
+    Route::post('/applicant/register',function(){
+        return "Testing";
+    });
+    #Route::post('/applicant/register', [AuthController::class, 'applicant_registration']);
+});
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/applicant/token', function () {
         return 'valid';
@@ -24,7 +29,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/applicant/examination/finish', [ApplicantController::class, 'examination_finish']);
     Route::get('/applicant/medical-schedule/{data}', [ApplicantController::class, 'medical_appointment']);
     Route::get('/applicant/medical-schedule/slot/{data}', [ApplicantController::class, 'medical_appointment_slot']);
-    # ENROLLMENT PROCUDURE 
+    # ENROLLMENT PROCUDURE
     Route::get('/applicant/enrollment', [ApplicantEnrollmentController::class, 'enrollment_overview']);
     Route::get('/applicant/enrollment-registration', [ApplicantEnrollmentController::class, 'enrollment_applicant_details']);
     Route::post('/applicant/enrollment-registration', [ApplicantEnrollmentController::class, 'enrollment_application_registration']);

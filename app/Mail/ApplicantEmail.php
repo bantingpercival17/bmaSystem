@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Models\AcademicYear;
 use App\Models\ApplicantEntranceExamination;
+use App\Models\ApplicantExaminationSchedule;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -75,7 +76,7 @@ class ApplicantEmail extends Mailable
             ->markdown('widgets.mail.applicant-mail.applicantion-qualified')
             ->with(['data' => $_document]);
     }
-    // Approved Entrance Examination Payment 
+    // Approved Entrance Examination Payment
     public function payment_approved($_applicant)
     {
         $length = 10;
@@ -85,12 +86,14 @@ class ApplicantEmail extends Mailable
         if ($applicantExamination) {
             $_exam_code = $applicantExamination->examination_code;
         } else {
-            ApplicantEntranceExamination::create(
+            $examination = ApplicantEntranceExamination::create(
                 [
                     'applicant_id' => $_applicant->id,
                     'examination_code' => $_exam_code
                 ]
             );
+            // If the Payment Transaction Transaction Date
+            #ApplicantExaminationSchedule::create(['examination_id'=>$examination->id]);
         }
         return $this->from(Auth::user()->email, "BMA ACCOUNTING'S OFFICE")
             ->subject("ENTRANCE EXAMINATION PAYMENT APPROVED: " . $_applicant->applicant_number)

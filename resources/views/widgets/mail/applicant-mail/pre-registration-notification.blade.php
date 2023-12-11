@@ -4,7 +4,7 @@ Welcome Aboard {{ ucwords($data->name) }},
 We are pleased to inform you that we have received your registration as an incoming
 <b>{{ $data->course_id == 3 ? 'Grade 11 Student' : '4th Class Midshipman' }}</b> for the
 <b>{{ $data->course->course_name }}</b>
-course for the Academic Year <b>{{ $semester->school_year }}</b>.
+course for the A.Y. <b>{{ $semester->school_year }}</b>.
 </p>
 <p>To proceed with your application, please use the following login credentials:</p>
 <p>
