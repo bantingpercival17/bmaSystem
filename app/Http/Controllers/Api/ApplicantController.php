@@ -43,7 +43,7 @@ class ApplicantController extends Controller
         $documents = compact('documents', 'listOfDocuments', 'approvedDocuments', 'disqualification');
         $payment = $data->payment;
         $examinationDetails = $payment ? $data->applicant_examination : [];
-        $examinationSchedule = $examinationDetails ? $data->examination_schedule : [];
+        $examinationSchedule = $examinationDetails ? $examinationDetails->examination_scheduled : [];
         $examinationResult = [];
         $finalResult = [];
         /* EXAMINATION DETAILS */
@@ -230,12 +230,16 @@ class ApplicantController extends Controller
     }
     function payment_transaction(Request $request)
     {
-        $request->validate([
+        $inputFields = array(
             'transaction_date' => 'required',
             'amount_paid' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
-            'reference_number' => 'required',
+            'payment_mode' => 'required',
             'file' => 'required| mimes:jpg,bmp,png',
-        ]);
+        );
+        if (strtolower($request->payment_mode) == 'e-wallets') {
+            $inputFields += ['reference_number' => 'required'];
+        }
+        $request->validate($inputFields);
         try {
             $user = auth()->user();
             $paymentHistory = ApplicantPayment::where('applicant_id', $user->id)->where('is_removed', false)->first();

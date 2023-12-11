@@ -56,10 +56,10 @@ class ApplicantView extends Component
     {
         return  array(
             array('User Accounts', array('created_accounts', 'registered_applicants', 'total_registrants')),
-            array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination')),
+            array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'no_of_qualified_examinees')),
             array('Aluminus', array('bma_senior_high')),
             array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'took_the_exam')),
-            array('Briefing Orientation', array('expected_attendees', 'total_attendees')),
+            /*   array('Briefing Orientation', array('expected_attendees', 'total_attendees')), */
             array('Medical Examination', array('for_medical_schedule', 'medical_schedule', 'waiting_for_medical_results', 'medical_result')),
             array('Enrollment', array('qualified_to_enrollment'))
         );
@@ -86,7 +86,7 @@ class ApplicantView extends Component
     }
     function getCategories()
     {
-        $data = $this->selectCategories;
+        $data = $this->selectCategories ?: 'created_accounts';
         if (request()->query('_category')) {
             $data = request()->query('_category') ?: $this->selectCategories;
         }
@@ -299,7 +299,7 @@ class ApplicantView extends Component
                 })
                 ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.created_at', 'desc');;
         }
-        if ($selectCategories == 'took_the_exam') {
+        if ($selectCategories == 'no_of_qualified_examinees') {
             $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantPayment . '.is_approved', true)
@@ -341,8 +341,8 @@ class ApplicantView extends Component
                 ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantExamination . '.is_removed', false)
                 ->where($this->tblApplicantExamination . '.is_finish', true)
-                ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
-                ->where($this->tblApplicantOrientation . '.is_completed', true)
+                /* ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantOrientation . '.is_completed', true) */
                 ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                 ->whereNull('ama.applicant_id')
                 ->groupBy('applicant_accounts.id')/* ->orderBy($this->tblApplicantOrientationScheduled . '.created_at', 'desc') */;
@@ -355,8 +355,8 @@ class ApplicantView extends Component
                 ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantExamination . '.is_removed', false)
                 ->where($this->tblApplicantExamination . '.is_finish', true)
-                ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
-                ->where($this->tblApplicantOrientation . '.is_completed', true)
+                /* ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantOrientation . '.is_completed', true) */
                 ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
                 ->where('ama.is_removed', false)
                 ->where('ama.is_approved', false)
@@ -370,8 +370,8 @@ class ApplicantView extends Component
                 ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantExamination . '.is_removed', false)
                 ->where($this->tblApplicantExamination . '.is_finish', true)
-                ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
-                ->where($this->tblApplicantOrientation . '.is_completed', true)
+                /* ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantOrientation . '.is_completed', true) */
                 ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
                 ->where('ama.is_removed', false)
                 ->where('ama.is_approved', true)
@@ -387,8 +387,8 @@ class ApplicantView extends Component
                 ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantExamination . '.is_removed', false)
                 ->where($this->tblApplicantExamination . '.is_finish', true)
-                ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
-                ->where($this->tblApplicantOrientation . '.is_completed', true)
+                /* ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantOrientation . '.is_completed', true) */
                 ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
                 ->where('ama.is_removed', false)
                 ->where('ama.is_approved', true)
@@ -404,8 +404,8 @@ class ApplicantView extends Component
                 ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantExamination . '.is_removed', false)
                 ->where($this->tblApplicantExamination . '.is_finish', true)
-                ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
-                ->where($this->tblApplicantOrientation . '.is_completed', true)
+                /* ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantOrientation . '.is_completed', true) */
                 ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
                 ->where('ama.is_removed', false)
                 ->where('ama.is_approved', true)
@@ -415,16 +415,22 @@ class ApplicantView extends Component
                 ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
         }
         if ($searchInput != '') {
-            $_student = explode(',', $searchInput); // Seperate the Sentence
-            $_count = count($_student);
-            #$query = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id');
-            if ($_count > 1) {
-                $dataLists = $dataLists->where($this->tblApplicantDetails . '.last_name', 'like', '%' . $_student[0] . '%')
-                    ->where($this->tblApplicantDetails . '.first_name', 'like', '%' . trim($_student[1]) . '%')
-                    ->orderBy($this->tblApplicantDetails . '.last_name', 'asc');
+
+            if ($selectCategories == 'created_accounts') {
+                $dataLists = $dataLists->where('name', 'like', '%' . $searchInput . '%')->orWhere('email', 'like', '%' . $searchInput . '%')
+                    ->orderBy('created_at', 'desc');
             } else {
-                $dataLists = $dataLists->where($this->tblApplicantDetails . '.last_name', 'like', '%' . $_student[0] . '%')
-                    ->orderBy($this->tblApplicantDetails . '.last_name', 'asc');
+                $_student = explode(',', $searchInput); // Seperate the Sentence
+                $_count = count($_student);
+                #$query = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id');
+                if ($_count > 1) {
+                    $dataLists = $dataLists->where($this->tblApplicantDetails . '.last_name', 'like', '%' . $_student[0] . '%')
+                        ->where($this->tblApplicantDetails . '.first_name', 'like', '%' . trim($_student[1]) . '%')
+                        ->orderBy($this->tblApplicantDetails . '.last_name', 'asc');
+                } else {
+                    $dataLists = $dataLists->where($this->tblApplicantDetails . '.last_name', 'like', '%' . $_student[0] . '%')
+                        ->orderBy($this->tblApplicantDetails . '.last_name', 'asc');
+                }
             }
         }
         return $dataLists->get();
