@@ -168,6 +168,19 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <small class="fw-bolder">SCHOLARSHIP : </small>
+                                            <select name="scholarship" class="form-select form-select-sm mb-3 shadow-none ">
+                                                <option value="N.A">NO SCHOLARSHIP</option>
+                                                @foreach ($scholarship as $item)
+                                                    <option value="{{ $item->id }}">
+                                                        {{ $item->voucher_name }}</option>
+                                                @endforeach
+
+                                            </select>
+                                        </div>
+                                    </div>
                                     @if (!$_student->account)
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -191,7 +204,7 @@
                                         ASSESS</button> --}}
                                     <button type="button" class="btn btn-info btn-sm text-white"
                                         wire:click='confirmBox("{{ base64_encode($_student->id) }}","{{ base64_encode('approved') }}" )'>
-                                        ASSESS
+                                        APPROVED
                                     </button>
                                 </div>
                             </form>
@@ -217,22 +230,22 @@
 @section('script')
     <script>
         /*  $('.btn-assessment').click(function(event) {
-                                 Swal.fire({
-                                     title: 'Enrollment Assessment',
-                                     text: "Do you want to submit?",
-                                     icon: 'warning',
-                                     showCancelButton: true,
-                                     confirmButtonColor: '#3085d6',
-                                     cancelButtonColor: '#d33',
-                                     confirmButtonText: 'Yes'
-                                 }).then((result) => {
-                                     var form = $(this).data('form');
-                                     if (result.isConfirmed) {
-                                         console.log(form)
-                                         document.getElementById(form).submit()
-                                     }
-                                 })
-                                 event.preventDefault();
-                             }) */
+                                                 Swal.fire({
+                                                     title: 'Enrollment Assessment',
+                                                     text: "Do you want to submit?",
+                                                     icon: 'warning',
+                                                     showCancelButton: true,
+                                                     confirmButtonColor: '#3085d6',
+                                                     cancelButtonColor: '#d33',
+                                                     confirmButtonText: 'Yes'
+                                                 }).then((result) => {
+                                                     var form = $(this).data('form');
+                                                     if (result.isConfirmed) {
+                                                         console.log(form)
+                                                         document.getElementById(form).submit()
+                                                     }
+                                                 })
+                                                 event.preventDefault();
+                                             }) */
     </script>
 @endsection

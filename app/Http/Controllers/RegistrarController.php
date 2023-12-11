@@ -23,6 +23,7 @@ use App\Models\Section;
 use App\Models\StudentCancellation;
 use App\Models\StudentDetails;
 use App\Models\StudentNonAcademicClearance;
+use App\Models\StudentScholarshipGrant;
 use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
@@ -134,6 +135,14 @@ class RegistrarController extends Controller
             $_current_assessment = $_student->enrollment_assessment;
             $_application = $_student->enrollment_application ?: $_current_assessment;
             $_value = $_application->course_id == 3 ? 1 : -1;
+            // SCHOLARSHIP GRANT
+            if ($_request->scholarship != 'N.A') {
+                $data = [
+                    'student_id' => $_student->id, 'voucher_id' => $_request->scholarship, 'staff_id' => Auth::user()->staff->id
+                ];
+                StudentScholarshipGrant::create($data);
+            }
+
             if (count($_student->enrollment_history) > 0) {
                 // Set the Year Level of Old Student
                 $_year_level = Auth::user()->staff->current_academic()->semester == 'First Semester' ? intval($_current_assessment->year_level) +  $_value : intval($_current_assessment->year_level);
