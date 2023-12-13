@@ -18,6 +18,7 @@ use App\Models\StudentDetails;
 use App\Report\OnboardTrainingReport;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ShipboardTraining extends Controller
 {
@@ -30,6 +31,21 @@ class ShipboardTraining extends Controller
             return response(['data' => compact('shipboard_information', 'narative_report')], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
+        }
+    }
+    function pre_deployment_requirements(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $document_requirements = Documents::where('document_propose', 'DOCUMENTS-MONITORING')->where('department_id', 4)->get();
+            $onboard_requirements =  DocumentRequirements::where('document_requirements.is_removed', false)
+                ->where('document_requirements.student_id', $user->student->id)->get();
+            return response(compact('document_requirements', 'onboard_requirements'), 200);
+        } catch (\Throwable $th) {
+            $this->debugTrackerStudent($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
         }
     }
     public function shipboard_performance_store(Request $_request)
@@ -163,6 +179,39 @@ class ShipboardTraining extends Controller
             return response(['error' => $error->getMessage()], 505);
             $_request->header('User-Agent');
             // Create a function to Controler file to save and store the details of bugs
+        }
+    }
+    function upload_documents_v2(Request $request)
+    {
+        $request->validate([
+            'file' => 'required| mimes:jpg,bmp,png',
+        ]);
+        try {
+            # If verify the Document Data
+            $documentChecker = DocumentRequirements::where([
+                'student_id' => Auth::user()->student->id,
+                'document_id' => $request->document, 'is_removed' => false
+            ])->first();
+            if ($documentChecker) {
+                $documentChecker->is_removed = true;
+                $documentChecker->save();
+            }
+
+            $_data_link = $this->saveFiles($request->file, 'bma-students', 'onboard/pre-deployment');
+            $_data = [
+                'student_id' => Auth::user()->student->id,
+                'document_id' => $request->document,
+                'file_path' => $_data_link,
+                'document_path' => $_data_link,
+                'document_status' => 0
+            ];
+            $data = DocumentRequirements::create($_data);
+            return response(['data' => $data], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
         }
     }
     public function reupload_documents(Request $_request)

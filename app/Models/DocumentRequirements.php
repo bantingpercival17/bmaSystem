@@ -13,6 +13,7 @@ class DocumentRequirements extends Model
         'document_id',
         'file_path',
         'document_path',
+        'document_status',
         'deployment_id'
     ];
     public function student()
