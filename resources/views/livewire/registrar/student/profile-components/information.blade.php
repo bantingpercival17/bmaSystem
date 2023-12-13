@@ -11,7 +11,6 @@
     <div class="card-body p-3">
 
         <div class="form-view">
-            <h6 class="mb-1 text-primary"><b>FULL NAME</b></h6>
             <div class="row">
                 <div class="col-md">
                     <small class="text-muted">LAST NAME</small> <br>

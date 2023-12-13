@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\OnboardTraining;
 
+use App\Models\Documents;
 use Livewire\Component;
 use App\Models\StudentDetails;
 use Illuminate\Support\Facades\Cache;
@@ -17,6 +18,7 @@ class MidshipmanView extends Component
         $component_path = 'livewire.registrar.student.profile-components.';
         $subHeaders = array(
             array('profile', $component_path . 'information'),
+            array('pre-deployment-requirements', $component_path . 'shipboard-requirements'),
             array('shipboard-application', $component_path . 'shipboard-application')
         );
         $studentLists = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'student_details.extention_name')
@@ -24,8 +26,9 @@ class MidshipmanView extends Component
             ->whereNull('ship_board_information.is_approved')
             ->orderBy('ship_board_information.updated_at', 'desc')->get();
         $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $studentLists;
+        $document_requirements = Documents::where('document_propose', 'DOCUMENTS-MONITORING')->where('department_id', 4)->get();
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
-        return view('livewire.onboard-training.midshipman-view', compact('studentLists', 'subHeaders'));
+        return view('livewire.onboard-training.midshipman-view', compact('studentLists', 'subHeaders', 'document_requirements'));
     }
     function swtchTab($data)
     {

@@ -58,9 +58,6 @@
                                 {{ strtoupper(str_replace('-', ' ', $item[0])) }}
                             </a>
                         @endforeach
-                        <!-- <a class="nav-link  {{ $activeCard == 'enrollment' ? 'active' : 'text-muted' }}">ENROLLMENT</a>
-                    <a class="nav-link   {{ $activeCard == 'account' ? 'active' : 'text-muted' }}">ACCOUNT</a>
-                    <a class="nav-link   {{ $activeCard == 'grades' ? 'active' : 'text-muted' }}">CERTIFICATE OF GRADE</a> -->
                     </div>
                 </nav>
                 <div class="mt-4">
