@@ -72,7 +72,7 @@ class ShipboardTraining extends Controller
                     'student_id' => $user->student->id
                 ]);
             }
-            return
+            return $checkProfile;
             // return response(compact('student', 'batch'), 200);
         } catch (\Throwable $th) {
             $this->debugTrackerStudent($th);
