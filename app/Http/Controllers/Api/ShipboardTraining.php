@@ -55,18 +55,24 @@ class ShipboardTraining extends Controller
         try {
             $user = auth()->user();
             $checkProfile = OnboardStudentProfile::where('student_id', $user->student->id)->first();
-            if($checkProfile){
-
-            }else{
-
+            if ($checkProfile) {
+                $checkProfile->facebook_link = $request->facebookAccount;
+                $checkProfile->mismo_account = $request->mismoAccount;
+            } else {
+                OnboardStudentProfile::create([
+                    'student_id' => $user->student->id,
+                    'facebook_link' => $request->facebookAccount,
+                    'mismo_account' => $request->mismoAccount
+                ]);
             }
-            
+
             if ($request->batchNo) {
                 StudentBatch::create([
                     'batch_id' => $request->batchNo,
                     'student_id' => $user->student->id
                 ]);
             }
+            return
             // return response(compact('student', 'batch'), 200);
         } catch (\Throwable $th) {
             $this->debugTrackerStudent($th);
