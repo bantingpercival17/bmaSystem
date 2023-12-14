@@ -94,6 +94,11 @@ class ApplicantController extends Controller
     {
         $account = auth()->user();
         $applicant = ApplicantDetials::where('applicant_id', $account->id)->first();
+        $height = $applicant->height;
+        // Course
+        if ($account->course_id == 2 || $height <= 161.544) {
+            return response(['message' => "You're Height is not Quilifed on Marine Transportation. Do you want to shift on Marine Engineering"], 200);
+        }
     }
     public function applicant_store_information(Request $_request)
     {

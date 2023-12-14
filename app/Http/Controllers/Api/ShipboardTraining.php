@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
+use App\Models\BatchNumber;
 use App\Models\DeploymentAssesment;
 use App\Models\DocumentRequirements;
 use App\Models\Documents;
@@ -31,6 +32,20 @@ class ShipboardTraining extends Controller
             return response(['data' => compact('shipboard_information', 'narative_report')], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
+        }
+    }
+    function profile_details(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $student = StudentDetails::with('batch')->with('onboard_profile')->find($user->id);
+            $batch = BatchNumber::all();
+            return response(compact('student', 'batch'), 200);
+        } catch (\Throwable $th) {
+            $this->debugTrackerStudent($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
         }
     }
     function pre_deployment_requirements(Request $request)

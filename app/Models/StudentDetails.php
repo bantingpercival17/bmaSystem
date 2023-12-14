@@ -1309,4 +1309,10 @@ class StudentDetails extends Model
             ->where('is_removed', 0)
             ->orderBy('id', 'desc')->with('course')->with('academic')->with('curriculum')->with('payment_assessment_details_with_transactions');
     }
+    function batch(){
+        return $this->hasOne(BatchNumber::class,'student_id')->where('is_removed',false);
+    }
+    function onboard_profile(){
+        return $this->hasOne(OnboardStudentProfile::class,'student_id');
+    }
 }
