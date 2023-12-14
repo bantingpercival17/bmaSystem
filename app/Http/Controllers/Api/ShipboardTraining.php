@@ -8,6 +8,7 @@ use App\Models\BatchNumber;
 use App\Models\DeploymentAssesment;
 use App\Models\DocumentRequirements;
 use App\Models\Documents;
+use App\Models\OnboardStudentProfile;
 use App\Models\ShipboardAssessmentDetails;
 use App\Models\ShipboardExamination;
 use App\Models\ShipboardExaminationAnswer;
@@ -15,6 +16,7 @@ use App\Models\ShipBoardInformation;
 use App\Models\ShipboardPerformanceReport;
 use App\Models\ShippingAgencies;
 use App\Models\ShipboardJournal;
+use App\Models\StudentBatch;
 use App\Models\StudentDetails;
 use App\Report\OnboardTrainingReport;
 use Exception;
@@ -38,9 +40,34 @@ class ShipboardTraining extends Controller
     {
         try {
             $user = auth()->user();
-            $student = StudentDetails::with('batch')->with('onboard_profile')->find($user->id);
+            $student = StudentDetails::with('batch')->with('onboard_profile')->with('account')->find($user->id);
             $batch = BatchNumber::all();
             return response(compact('student', 'batch'), 200);
+        } catch (\Throwable $th) {
+            $this->debugTrackerStudent($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+    function store_profile_details(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $checkProfile = OnboardStudentProfile::where('student_id', $user->student->id)->first();
+            if($checkProfile){
+
+            }else{
+
+            }
+            
+            if ($request->batchNo) {
+                StudentBatch::create([
+                    'batch_id' => $request->batchNo,
+                    'student_id' => $user->student->id
+                ]);
+            }
+            // return response(compact('student', 'batch'), 200);
         } catch (\Throwable $th) {
             $this->debugTrackerStudent($th);
             return response([

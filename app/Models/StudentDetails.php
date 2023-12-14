@@ -1310,7 +1310,7 @@ class StudentDetails extends Model
             ->orderBy('id', 'desc')->with('course')->with('academic')->with('curriculum')->with('payment_assessment_details_with_transactions');
     }
     function batch(){
-        return $this->hasOne(BatchNumber::class,'student_id')->where('is_removed',false);
+        return $this->hasOne(StudentBatch::class,'student_id');
     }
     function onboard_profile(){
         return $this->hasOne(OnboardStudentProfile::class,'student_id');
