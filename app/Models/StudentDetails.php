@@ -62,7 +62,7 @@ class StudentDetails extends Model
     /* Latest Enrollment Assessment */
     public function enrollment_assessment()
     {
-        return $this->hasOne(EnrollmentAssessment::class, 'student_id')
+        return $this->hasOne(EnrollmentAssessment::class, 'student_id')->with('course')
             /* ->where('academic_id', Auth::user()->staff->current_academic()->id) */
             ->where('is_removed', 0)
             ->orderBy('id', 'desc');
