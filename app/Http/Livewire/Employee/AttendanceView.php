@@ -28,7 +28,7 @@ class AttendanceView extends Component
     }
     function searchEmployee($searchInput, $searchSelect)
     {
-        $data = Staff::where('is_removed', false)
+        $data = Staff::where('staff.is_removed', false)
             ->join('employee_attendances', 'employee_attendances.staff_id', 'staff.id')
             // ->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%')
             ->groupBy('employee_attendances.staff_id');
@@ -37,15 +37,15 @@ class AttendanceView extends Component
             if (count($value) > 1) {
                 $data = $data->where('staff.last_name', 'like', '%' . $value[0] . '%')->where('staff.first_name', 'like', '%' . $value[0] . '%');
             } else {
-                $data = $data->where('staff.last_name', 'like null', '%' . $searchInput . '%');
+                $data = $data->where('staff.last_name', 'like', '%' . $searchInput . '%');
             }
         }
         if ($searchSelect) {
             if ($searchSelect == 2) {
-                $data = $data->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('created_at', 'desc');
+                $data = $data->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%');
             }
             if ($searchSelect == 3) {
-                $data = $data->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%');
+                $data = $data->whereNull('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%');
             }
         }
         return $data->orderBy('staff.last_name', 'asc')->get();
