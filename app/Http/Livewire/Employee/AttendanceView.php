@@ -28,8 +28,7 @@ class AttendanceView extends Component
     }
     function searchEmployee($searchInput, $searchSelect)
     {
-        $data = Staff::where('staff.is_removed', false)
-            ->join('employee_attendances', 'employee_attendances.staff_id', 'staff.id')
+        $data = Staff::leftJoin('employee_attendances', 'employee_attendances.staff_id', 'staff.id')
             // ->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%')
             ->groupBy('employee_attendances.staff_id');
         if ($searchInput) {
@@ -45,9 +44,11 @@ class AttendanceView extends Component
                 $data = $data->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%');
             }
             if ($searchSelect == 3) {
-                $data = $data->whereNull('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%');
+                $data = $data->where('employee_attendances.created_at', '!=', now()->format('Y-m-d'));
+                    /*   ->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%') */;
             }
         }
-        return $data->orderBy('staff.last_name', 'asc')->get();
+        return $data->where('staff.is_removed', false)
+            ->orderBy('staff.last_name', 'asc')->get();
     }
 }
