@@ -42,9 +42,9 @@ class AttendanceView extends Component
         }
         if ($searchSelect) {
             if ($searchSelect == 2) {
-                $data = $data->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%');
+                $data = $data->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%')->orderBy('created_at', 'desc');
             }
-            if ($searchSelect == 2) {
+            if ($searchSelect == 3) {
                 $data = $data->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%');
             }
         }

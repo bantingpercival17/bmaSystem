@@ -44,8 +44,8 @@
                                         <small class="fw-bolder badge bg-info">
                                             TIME IN:
                                             <b>
-                                                @if ($employee->daily_attendance)
-                                                    {{ date_format(date_create($employee->daily_attendance->time_in), 'h:i:s a') }}
+                                                @if ($employee->attendance)
+                                                    {{ date_format(date_create($employee->attendance->time_in), 'h:i:s a') }}
                                                 @else
                                                     -
                                                 @endif
@@ -54,9 +54,9 @@
                                         <small class="badge bg-info">
                                             TIME OUT:
                                             <b>
-                                                @if ($employee->daily_attendance)
-                                                    @if ($employee->daily_attendance->time_out)
-                                                        {{ date_format(date_create($employee->daily_attendance->time_out), 'h:i:s a') }}
+                                                @if ($employee->attendance)
+                                                    @if ($employee->attendance->time_out)
+                                                        {{ date_format(date_create($employee->attendance->time_out), 'h:i:s a') }}
                                                     @else
                                                         -
                                                     @endif
