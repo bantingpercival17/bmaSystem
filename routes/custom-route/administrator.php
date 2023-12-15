@@ -6,6 +6,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Controllers\GeneralController\EnrollmentController;
 use App\Http\Controllers\PaymongoApi;
+use App\Http\Livewire\Employee\AttendanceView;
 use App\Http\Middleware\Administrator;
 use App\Models\StudentDetails;
 use App\Report\Students\StudentReport;
@@ -19,7 +20,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   require __DIR__ . '/extra/applicant-route.php'; // Applicant Route
   require __DIR__ . '/extra/ticket-route.php'; // Ticket Route
   require __DIR__ . '/extra/enrollment-route.php'; // Enrollment Route
-  
+
   require __DIR__ . '/extra/livewire-route.php'; // Livewire Route
   //  Route::get('/enrollment-list', [EnrollmentController::class, 'enrolled_list_view'])->name('enrollment.enrolled-list');
   Route::get('/', [AdministratorController::class, 'index'])->name('admin.dashboard');
@@ -70,13 +71,13 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/qr-code/{data}', [AdministratorController::class, 'qr_generator']);
 
   // Attendance
-  Route::get('/attendance', [AdministratorController::class, 'attendance_view'])->name('admin.attendance'); // Attendance View
+  Route::get('/attendance', AttendanceView::class)->name('admin.attendance'); // Attendance View
   Route::get('/attendance/report', [AdministratorController::class, 'attendance_report']); // Attendance Report
 
   // Employee
   Route::get('/accounts/view', [AdministratorController::class, 'employee_profile'])->name('admin.employee-view');
   Route::post('/accounts/reset-password', [AdministratorController::class, 'employee_reset_password'])->name('admin.reset-password');
-  Route::get('/accounts/generate-qrcode',[AdministratorController::class,'employee_generate_qrcode'])->name('admin.staff-qrcode');
+  Route::get('/accounts/generate-qrcode', [AdministratorController::class, 'employee_generate_qrcode'])->name('admin.staff-qrcode');
   /* Setting */
   Route::get('/setting', [AdministratorController::class, 'setting_view'])->name('admin.setting');
   Route::post('/setting/store-role', [AdministratorController::class, 'store_role'])->name('setting.store-role');
@@ -111,5 +112,5 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/task-request', [AdministratorController::class, 'request_task_view'])->name('admin.request-task');
   Route::post('/task-request/add', [AdministratorController::class, 'request_task_store'])->name('admin.revision-task');
   Route::get('/task-request/approved', [AdministratorController::class, 'request_task_approved'])->name('admin.revision-approved');
-  Route::get('/section-qrcode',[AdministratorController::class,'generateQrcodeBySection'])->name('generate-qrcode-section');
+  Route::get('/section-qrcode', [AdministratorController::class, 'generateQrcodeBySection'])->name('generate-qrcode-section');
 });

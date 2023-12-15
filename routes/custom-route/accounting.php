@@ -5,6 +5,7 @@ use App\Http\Controllers\AccountingController;
 use App\Http\Livewire\Accounting\AssessmentFees;
 use App\Http\Livewire\Accounting\FeesView;
 use App\Http\Livewire\Accounting\PaymentTransaction;
+use App\Http\Livewire\Employee\AttendanceView;
 
 Route::prefix('accounting')->group(function () {
     /* Applicants */
@@ -70,7 +71,7 @@ Route::prefix('accounting')->group(function () {
     Route::get('/generate-report/employee-attendance', [AccountingController::class, 'employee_attendace_report'])->name('accounting.employee-attendance');
     Route::get('/generate-report/test-permit', [AccountingController::class, 'examination_permit'])->name('accounting.test-permit');
     // Staff
-    Route::get('/staff/view', [AccountingController::class, 'employee_view'])->name('accounting.employee-view');
+    Route::get('/staff/view', AttendanceView::class)->name('accounting.employee-view');
     Route::get('/staff/payroll-view', [AccountingController::class, 'staff_payroll_view'])->name('accounting.payroll-view');
     Route::get('/staff/salary-details', [AccountingController::class, 'staff_salary_details'])->name('accounting.staff-salary');
     Route::get('/staff/salary-details-template', [AccountingController::class, 'staff_salary_details_template'])->name('accounting.salary-details-template');
