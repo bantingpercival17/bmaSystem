@@ -1047,8 +1047,20 @@ class AccountingController extends Controller
         try {
             $_report = new AttendanceSheetReport();
             $_report_pdf = $_request->r_view == 'daily' ? $_report->daily_report() : $_report->daily_time_record_report($_request->start_date, $_request->end_date);
-            $_report_pdf = $_request->r_view == 'health_check' ? $_report->health_check() : $_report_pdf;
-
+            return $_report_pdf;
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+    public function employee_attendace_report_v2(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required',
+            'end_date' => 'required'
+        ]);
+        try {
+            $_report = new AttendanceSheetReport();
+            $_report_pdf =  $_report->daily_time_record_report_v2($request->department, $request->start_date, $request->end_date);
             return $_report_pdf;
         } catch (\Throwable $th) {
             //throw $th;

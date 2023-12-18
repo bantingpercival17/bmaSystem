@@ -69,6 +69,8 @@ Route::prefix('accounting')->group(function () {
     Route::post('/generate-report/balance', [AccountingController::class, 'balance_report'])->name('accounting.report-balance');
     Route::post('/generate-report/monthly-report', [AccountingController::class, 'report_student_monthly_payment'])->name('accounting.monthly-payment-report');
     Route::get('/generate-report/employee-attendance', [AccountingController::class, 'employee_attendace_report'])->name('accounting.employee-attendance');
+    Route::get('/generate-report/employee-attendance-v2', [AccountingController::class, 'employee_attendace_report_v2'])->name('accounting.employee-attendance-v2');
+    
     Route::get('/generate-report/test-permit', [AccountingController::class, 'examination_permit'])->name('accounting.test-permit');
     // Staff
     Route::get('/staff/view', AttendanceView::class)->name('accounting.employee-view');

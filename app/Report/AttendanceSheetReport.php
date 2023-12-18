@@ -7,6 +7,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class AttendanceSheetReport
 {
+    public $legal;
+    public $crosswise_short;
     public function __construct()
     {
         $this->legal = [0, 0, 612.00, 1008.00];
@@ -48,6 +50,30 @@ class AttendanceSheetReport
             ->orderBy('staff.last_name', 'asc')->get();
         $pdf = PDF::loadView("widgets.report.employee.health_check_report", compact('_employees'));
         $file_name = "Health Check: "; // With Date now
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    function daily_time_record_report_v2($department, $start_date, $end_date)
+    {
+        $dateList = array();
+        $start = $current = strtotime($start_date);
+        $end = strtotime($end_date);
+
+        while ($current <= $end) {
+            // Check if the current day is not a weekend (Saturday or Sunday)
+            if (date('N', $current) < 6) {
+                $dateList[] = date('Y-m-d', $current);
+            }
+            $current = strtotime('+1 days', $current);
+        }
+        $employees = Staff::where('staff.is_removed', false);
+        if ($department != 0) {
+            $employees = $employees->join('staff_departments', 'staff_departments.staff_id', 'staff.id')
+                ->where('staff_departments.department_id', $department);
+        }
+        $employees = $employees->orderBy('staff.last_name', 'asc')->groupBy('staff.id')->get();
+        $file_name = "Daily Attendance: Start Date " . $start_date . " & End Date: " . $end_date; // With Date now
+        # return $employees;
+        $pdf = PDF::loadView("widgets.report.employee.weekly_report_attendance_v2", compact('employees', 'start_date', 'end_date', 'dateList'));
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 }
