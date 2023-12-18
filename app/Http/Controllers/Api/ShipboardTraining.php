@@ -40,7 +40,7 @@ class ShipboardTraining extends Controller
     {
         try {
             $user = auth()->user();
-            $student = StudentDetails::with('batch')->with('onboard_profile')->with('enrollment_assessment')->with('account')->find($user->id);
+            $student = StudentDetails::with('batch')->with('onboard_profile')->with('enrollment_assessment')->with('account')->find($user->student->id);
             $batch = BatchNumber::all();
             return response(compact('student', 'batch'), 200);
         } catch (\Throwable $th) {
