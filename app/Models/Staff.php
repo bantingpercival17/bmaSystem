@@ -97,8 +97,7 @@ class Staff extends Model
     }
     public function date_attendance($date)
     {
-        return EmployeeAttendance::where('staff_id', $this->user_id)->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'desc')->first();
-        #return $this->hasOne(EmployeeAttendance::class, 'staff_id')/* ->where('created_at', 'like', trim($date)) */->orderBy('id', 'desc')->first();
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'desc')->first();
     }
     public function current_academic()
     {

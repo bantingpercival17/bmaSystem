@@ -65,7 +65,7 @@ class AttendanceSheetReport
             }
             $current = strtotime('+1 days', $current);
         }
-        $employees = Staff::where('staff.is_removed', false);
+        $employees = Staff::select('staff.*')->where('staff.is_removed', false);
         if ($department != 0) {
             $employees = $employees->join('staff_departments', 'staff_departments.staff_id', 'staff.id')
                 ->where('staff_departments.department_id', $department);

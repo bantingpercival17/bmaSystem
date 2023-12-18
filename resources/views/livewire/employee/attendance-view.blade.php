@@ -43,12 +43,11 @@
                                         <small class="fw-bolder badge bg-info">
                                             TIME IN:
                                             <b>
-                                                {{ $employee->date_attendance(now()->format('Y-m-d')) }}
-                                                {{-- @if ($employee->daily_attendance)
-                                                    {{ date_format(date_create($employee->daily_attendance->time_in), 'h:i:s a') }}
+                                                @if ($employee->date_attendance(now()->format('Y-m-d')))
+                                                    {{ date_format(date_create($employee->date_attendance(now()->format('Y-m-d'))->time_in), 'h:i:s a') }}
                                                 @else
                                                     -
-                                                @endif --}}
+                                                @endif
                                             </b>
                                         </small> -
                                         <small class="badge bg-info">
