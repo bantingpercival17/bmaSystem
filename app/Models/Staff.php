@@ -81,23 +81,24 @@ class Staff extends Model
     // Staff Attendance
     public function attendance()
     {
-        return $this->hasMany(EmployeeAttendance::class, 'staff_id')->where('created_at', 'like', '%' . now()->format('Y-m-d') . '%')->latest();
+        return $this->hasMany(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . now()->format('Y-m-d') . '%')->latest();
     }
     public function daily_attendance()
     {
-        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('created_at', 'like', '%' . date('Y-m-d') . '%')->latest();
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . now()->format('Y-m-d') . '%')->latest();
     }
     public function daily_attendance_report()
     {
-        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('created_at', 'like', '%' . request()->input('_date') . '%')->latest();
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . request()->input('_date') . '%')->latest();
     }
     public function attendance_list()
     {
         return $this->hasMany(EmployeeAttendance::class, 'staff_id');
     }
-    public function date_attendance($_date)
+    public function date_attendance($date)
     {
-        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('created_at', 'like', '%' . $_date . '%')->first();
+        return EmployeeAttendance::where('staff_id', $this->user_id)->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'desc')->first();
+        #return $this->hasOne(EmployeeAttendance::class, 'staff_id')/* ->where('created_at', 'like', trim($date)) */->orderBy('id', 'desc')->first();
     }
     public function current_academic()
     {

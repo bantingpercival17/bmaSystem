@@ -5,7 +5,11 @@
 
     @foreach ($employees as $employee)
         <div class="page-content">
-            <h3 class="text-center"><b>DAILY TIME RECORD</b></h3>
+            <div class="summary-grade-header">
+                <h2 class="text-center" style="margin:0px;">
+                    <b>DAILY TIME RECORD</b>
+                </h2>
+            </div>
             <table class="table-content">
                 <tbody>
                     <tr>
@@ -29,7 +33,12 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="table-outline-2 table-student-content" style="margin-top: 3%">
+
+            <table class="table-outline-2 table-student-content" style="margin-top: 2%">
+                @php
+                    $contentNumber = 0;
+                    $contentCount = 45;
+                @endphp
                 <thead>
                     <tr>
                         <th>DATE</th>
@@ -38,20 +47,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($dateList as $_date)
-                        <tr>
-                            <td>{{ date('F d, Y', strtotime($_date)) }}</td>
+                    @foreach ($dateList as $date)
+                        @php
+                            $contentNumber += 1;
+                        @endphp
+                        <tr class="{{ $contentNumber >= $contentCount ? 'page-break' : '' }}">
+                            <td>{{ date('F d, Y', strtotime($date)) }}</td>
                             <td>
-                                @if ($employee->date_attendance($_date))
-                                    {{ date_format(date_create($employee->date_attendance($_date)->time_in), 'h:i:s a') }}
+                                @if ($employee->date_attendance($date))
+                                    {{-- {{ $employee->date_attendance($date)->time_in }} --}}
+                                    {{ date_format(date_create($employee->date_attendance($date)->time_in), 'h:i:s a') }}
                                 @else
                                     -
                                 @endif
                             </td>
                             <td>
-                                @if ($employee->date_attendance($_date))
-                                    @if ($employee->date_attendance($_date)->time_out)
-                                        {{ date_format(date_create($employee->date_attendance($_date)->time_out), 'h:i:s a') }}
+                                @if ($employee->date_attendance($date))
+                                    @if ($employee->date_attendance($date)->time_out)
+                                        {{ date_format(date_create($employee->date_attendance($date)->time_out), 'h:i:s a') }}
                                     @else
                                         -
                                     @endif
@@ -60,6 +73,11 @@
                                 @endif
                             </td>
                         </tr>
+                        @if ($contentNumber >= $contentCount)
+                            @php
+                                $contentNumber = 0;
+                            @endphp
+                        @endif
                     @endforeach
 
                 </tbody>
