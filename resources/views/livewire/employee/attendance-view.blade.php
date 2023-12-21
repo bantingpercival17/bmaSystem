@@ -134,7 +134,7 @@
                             <small class="text-muted">DEPARTMENT</small>
                             <select name="department" id=""
                                 class="form-select form-select-sm border border-primary">
-                                <option value="null">All Department</option>
+                                <option value="0">All Department</option>
                                 @foreach ($departmentList as $item)
                                     <option value="{{ $item->id }}">{{ strtoupper($item->name) }}</option>
                                 @endforeach
