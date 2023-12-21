@@ -120,7 +120,7 @@
                 <h4 class="card-title text-primary fw-bolder">SUMMARY VIEW</h4>
             </div>
         </div>
-        <div class="card-body p-0">
+        {{--  <div class="card-body p-0">
             <div class="table-responsive">
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
                     <thead>
@@ -161,25 +161,64 @@
                     </tbody>
                 </table>
             </div>
+        </div> --}}
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="basic-table" class="table table-striped mb-0" role="grid">
+                    <thead>
+                        <tr class="text-center">
+                            <th></th>
+                            @foreach ($_courses as $course)
+                                <th> {{ $course->course_name }}</th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($tableHeader as $index => $headers)
+                            <tr>
+                                <th colspan="4" class="text-center fw-bolder text-primary">
+                                    {{ strtoupper($headers[0]) }}
+                                </th>
+                            </tr>
+                            @foreach ($headers[1] as $item)
+                                <tr>
+                                    <th>{{ strtoupper(str_replace('_', ' ', $item)) }}</th>
+                                    @foreach ($_courses as $course)
+                                        <td>
+                                            <a
+                                                href="{{ route('applicant.overview') . '?_course=' . base64_encode($course->id) . '&_category=' . $item }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                                {{ count($course->applicant_count_per_category($item)) }}
+                                            </a>
+                                        </td>
+                                    @endforeach
+                                </tr>
+                            @endforeach
+                        @endforeach
+                    </tbody>
+                    {{--  <tbody>
+                        @foreach ($_courses as $_course)
+                            <tr>
+                                <td class="course-btn" data-course="{{ $_course->id }}">
+                                    {{ $_course->course_name }}
+                                </td>
+                                @foreach ($tableHeader as $index => $headers)
+                                    @if ($index > 0)
+                                        @foreach ($headers[1] as $index => $item)
+                                            <td class="text-center">
+                                                <a
+                                                    href="{{ route('applicant.overview') . '?_course=' . base64_encode($_course->id) . '&_category=' . $item }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                                    {{ count($_course->applicant_count_per_category($item)) }}
+                                                </a>
+
+                                            </td>
+                                        @endforeach
+                                    @endif
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </tbody> --}}
+                </table>
+            </div>
         </div>
     </div>
 </section>
-
-
-
-@section('js')
-    <script>
-        $(document).on('click', '.course-btn', function() {
-            var data = $(this).data('course')
-            $.get('applicant-list?course=' + data, function(respond) {
-                respond.applicant.forEach(element => {
-                    $.get('applicant/notification?_applicant=' + element.id, function(respond) {
-                        if (respond.data.respond == '200') {
-                            console.info(respond.data.message)
-                        }
-                    })
-                });
-            })
-        })
-    </script>
-@endsection

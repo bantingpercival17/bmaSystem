@@ -54,6 +54,12 @@ class ApplicantView extends Component
     }
     function filterContent()
     {
+        return array(
+            array('Information Verification', array('registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni')),
+            array('Entrance Examination', array('examination_payment', 'entrance_examination', 'passed', 'failed')),
+            array('Medical Examination', array('for_medical_schedule', 'waiting_for_medical_results', 'medical_fit', 'medical_unfit', 'medical_pending')),
+            array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'))
+        );
         return  array(
             array('User Accounts', array('created_accounts', 'registered_applicants', 'total_registrants')),
             array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'no_of_qualified_examinees')),
@@ -86,7 +92,7 @@ class ApplicantView extends Component
     }
     function getCategories()
     {
-        $data = $this->selectCategories ?: 'created_accounts';
+        $data = $this->selectCategories ?: 'registered_applicants';
         if (request()->query('_category')) {
             $data = request()->query('_category') ?: $this->selectCategories;
         }
@@ -122,7 +128,7 @@ class ApplicantView extends Component
             $dataLists = $query->leftJoin($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($this->tblApplicantDetails . '.applicant_id');
         }
-        if ($selectCategories == 'registered_applicants') {
+        if ($selectCategories == 'registered_applicants_v1') {
             $dataLists = $query
                 ->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->leftJoin($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
@@ -133,11 +139,11 @@ class ApplicantView extends Component
                 ->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->orderBy($this->tblApplicantDetails . '.created_at', 'desc');
         }
-        if ($selectCategories == 'bma_senior_high') {
+        if ($selectCategories == 'senior_high_school_alumni') {
             $dataLists = $query->join($this->tblApplicantAlumia, $this->tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantAlumia . '.is_removed', false);
         }
-        if ($selectCategories == 'for_checking') {
+        if ($selectCategories == 'registered_applicants') {
             $dataLists = $query
                 ->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
@@ -164,14 +170,14 @@ class ApplicantView extends Component
                 ->groupBy('applicant_accounts.id')
                 ->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
         }
-        if ($selectCategories == 'not_qualified') {
+        if ($selectCategories == 'disapproved') {
             $dataLists = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($this->tblApplicantNotQualifieds, $this->tblApplicantNotQualifieds . '.applicant_id', $this->applicantAccountTable . '.id')
                 ->where($this->tblApplicantNotQualifieds . '.is_removed', false)
                 ->where($this->tblApplicantNotQualifieds . '.academic_id', base64_decode($academic))
                 ->groupBy('applicant_accounts.id');
         }
-        if ($selectCategories == 'qualified') {
+        if ($selectCategories == 'approved') {
             $dataLists = $query
                 ->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
@@ -197,6 +203,16 @@ class ApplicantView extends Component
                 ->whereNull('anq.applicant_id')
                 ->groupBy('applicant_accounts.id')
                 ->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments = documentCount');
+        }
+        if ($selectCategories == 'pending') {
+            $query = $query
+                ->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                ->where($this->tblApplicantDocuments . '.is_approved', 2)
+                ->where($this->tblApplicantDocuments . '.is_removed', false)
+                ->leftJoin($this->tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
+                ->whereNull('anq.applicant_id')
+                ->groupBy('applicant_accounts.id');
         }
         if ($selectCategories == 'qualified_for_entrance_examination') {
             $dataLists = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
@@ -261,7 +277,7 @@ class ApplicantView extends Component
                 ->whereNull($this->tblApplicantExamination . '.is_finish')
                 ->groupBy($this->tblApplicantExamination . '.applicant_id');
         }
-        if ($selectCategories == 'examination_passed') {
+        if ($selectCategories == 'passed') {
             $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantPayment . '.is_approved', true)
@@ -280,7 +296,7 @@ class ApplicantView extends Component
                 })
                 ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.updated_at', 'desc');;
         }
-        if ($selectCategories == 'examination_failed') {
+        if ($selectCategories == 'failed') {
             $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantPayment . '.is_approved', true)

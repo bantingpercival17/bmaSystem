@@ -526,17 +526,17 @@ class CourseOffer extends Model
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id);
         // Sort By Courses
-        if ($category == 'registered_applicants') {
+        if ($category == 'registered_applicants_v1') {
             $query = $query
                 ->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->leftJoin($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantDocuments . '.applicant_id');
         }
-        if ($category == 'bma_senior_high') {
+        if ($category == 'senior_high_school_alumni') {
             $query = $query->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantAlumia . '.is_removed', false);
         }
-        if ($category == 'for_checking') {
+        if ($category == 'registered_applicants') {
             $query = $query
                 ->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
@@ -563,14 +563,14 @@ class CourseOffer extends Model
                 ->groupBy('applicant_accounts.id')
                 ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
         }
-        if ($category == 'not_qualified') {
+        if ($category == 'disapproved') {
             $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', $applicantAccountTable . '.id')
                 ->where($tblApplicantNotQualifieds . '.is_removed', false)
                 ->where($tblApplicantNotQualifieds . '.academic_id', Auth::user()->staff->current_academic()->id)
                 ->groupBy('applicant_accounts.id');
         }
-        if ($category == 'qualified') {
+        if ($category == 'approved') {
             $query = $query
                 ->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
@@ -596,6 +596,16 @@ class CourseOffer extends Model
                 ->whereNull('anq.applicant_id')
                 ->groupBy('applicant_accounts.id')
                 ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments = documentCount');
+        }
+        if ($category == 'pending') {
+            $query = $query
+                ->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id')
+                ->where($tblApplicantDocuments . '.is_approved', 2)
+                ->where($tblApplicantDocuments . '.is_removed', false)
+                ->leftJoin($tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
+                ->whereNull('anq.applicant_id')
+                ->groupBy('applicant_accounts.id');
         }
         if ($category == 'qualified_for_entrance_examination') {
             $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
@@ -660,7 +670,7 @@ class CourseOffer extends Model
                 ->whereNull($tblApplicantExamination . '.is_finish')
                 ->groupBy($tblApplicantExamination . '.applicant_id');
         }
-        if ($category == 'examination_passed') {
+        if ($category == 'passed') {
             $query =  $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantPayment . '.is_approved', true)
@@ -679,7 +689,7 @@ class CourseOffer extends Model
                 })
                 ->groupBy('applicant_accounts.id')->orderBy($tblApplicantExamination . '.created_at', 'desc');;
         }
-        if ($category == 'examination_failed') {
+        if ($category == 'failed') {
             $query =  $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantPayment . '.is_approved', true)
@@ -740,8 +750,8 @@ class CourseOffer extends Model
                 ->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantExamination . '.is_removed', false)
                 ->where($tblApplicantExamination . '.is_finish', true)
-                ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
-                ->where($tblApplicantOrientation . '.is_completed', true)
+                /*   ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantOrientation . '.is_completed', true) */
                 ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                 ->whereNull('ama.applicant_id')
                 ->groupBy('applicant_accounts.id')/* ->orderBy($tblApplicantOrientationScheduled . '.created_at', 'desc') */;
@@ -756,7 +766,7 @@ class CourseOffer extends Model
                 ->where($tblApplicantExamination . '.is_finish', true)
                 ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantOrientation . '.is_completed', true)
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                 ->where('ama.is_removed', false)
                 ->where('ama.is_approved', false)
                 ->groupBy('applicant_accounts.id')/* ->orderBy($tblApplicantOrientationScheduled . '.created_at', 'desc') */;
@@ -769,9 +779,9 @@ class CourseOffer extends Model
                 ->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantExamination . '.is_removed', false)
                 ->where($tblApplicantExamination . '.is_finish', true)
-                ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
-                ->where($tblApplicantOrientation . '.is_completed', true)
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+                /*   ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantOrientation . '.is_completed', true) */
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                 ->where('ama.is_removed', false)
                 ->where('ama.is_approved', true)
                 ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'ama.applicant_id')
@@ -786,16 +796,70 @@ class CourseOffer extends Model
                 ->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantExamination . '.is_removed', false)
                 ->where($tblApplicantExamination . '.is_finish', true)
-                ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
-                ->where($tblApplicantOrientation . '.is_completed', true)
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+                /*  ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantOrientation . '.is_completed', true) */
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                 ->where('ama.is_removed', false)
                 ->where('ama.is_approved', true)
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
                 ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
         }
-        if ($category == 'qualified_to_enrollment') {
+        if ($category == 'medical_fit') {
+            $query =  $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantPayment . '.is_approved', true)
+                ->where($tblApplicantPayment . '.is_removed', false)
+                ->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantExamination . '.is_removed', false)
+                ->where($tblApplicantExamination . '.is_finish', true)
+                /*  ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantOrientation . '.is_completed', true) */
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                ->where('ama.is_removed', false)
+                ->where('ama.is_approved', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', 1)
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
+                ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
+        }
+        if ($category == 'medical_unfit') {
+            $query =  $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantPayment . '.is_approved', true)
+                ->where($tblApplicantPayment . '.is_removed', false)
+                ->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantExamination . '.is_removed', false)
+                ->where($tblApplicantExamination . '.is_finish', true)
+                /*  ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantOrientation . '.is_completed', true) */
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                ->where('ama.is_removed', false)
+                ->where('ama.is_approved', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', 2)
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
+                ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
+        }
+        if ($category == 'medical_pending') {
+            $query =  $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantPayment . '.is_approved', true)
+                ->where($tblApplicantPayment . '.is_removed', false)
+                ->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantExamination . '.is_removed', false)
+                ->where($tblApplicantExamination . '.is_finish', true)
+                /*  ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantOrientation . '.is_completed', true) */
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                ->where('ama.is_removed', false)
+                ->where('ama.is_approved', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_pending', 0)
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
+                ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
+        }
+        if ($category == 'qualified_for_enrollment') {
             $query =  $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantPayment . '.is_approved', true)
@@ -805,10 +869,46 @@ class CourseOffer extends Model
                 ->where($tblApplicantExamination . '.is_finish', true)
                 ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantOrientation . '.is_completed', true)
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                 ->where('ama.is_removed', false)
                 ->where('ama.is_approved', true)
-                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
+                ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
+        }
+        if ($category == 'non_pbm') {
+            $query =  $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantPayment . '.is_approved', true)
+                ->where($tblApplicantPayment . '.is_removed', false)
+                ->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantExamination . '.is_removed', false)
+                ->where($tblApplicantExamination . '.is_finish', true)
+                ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantOrientation . '.is_completed', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                ->where('ama.is_removed', false)
+                ->where('ama.is_approved', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
+                ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
+        }
+        if ($category == 'pbm') {
+            $query =  $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantPayment . '.is_approved', true)
+                ->where($tblApplicantPayment . '.is_removed', false)
+                ->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantExamination . '.is_removed', false)
+                ->where($tblApplicantExamination . '.is_finish', true)
+                ->join($tblApplicantOrientation, $tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantOrientation . '.is_completed', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                ->where('ama.is_removed', false)
+                ->where('ama.is_approved', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
                 ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
@@ -1392,7 +1492,7 @@ class CourseOffer extends Model
                 '>=',
                 $_point,
             ) # Get the Score;
-            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', 'applicant_accounts.id', 'applicant_accounts.id')
             ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_completed', false)
             ->orderBy(env('DB_DATABASE_SECOND') . '.applicant_briefings.updated_at', 'desc');
@@ -1452,7 +1552,7 @@ class CourseOffer extends Model
                 '>=',
                 $_point,
             ) # Get the Score;
-            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', 'applicant_accounts.id', 'applicant_accounts.id') # Applicant Virtual Orientation
             ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_removed', false)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_completed', true)
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments', env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.applicant_id', 'applicant_accounts.id')
@@ -1512,7 +1612,7 @@ class CourseOffer extends Model
                 '>=',
                 '50',
             ) # Get the Score;
-            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', 'applicant_accounts.id', 'applicant_accounts.id') # Applicant Virtual Orientation
             ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments', env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.applicant_id', 'applicant_accounts.id') # Applicant Medical Appointment
             ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.is_removed', false)
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
@@ -1573,7 +1673,7 @@ class CourseOffer extends Model
                 '>=',
                 '50',
             ) # Get the Score;
-            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id') # Applicant Virtual Orientation
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', 'applicant_accounts.id', 'applicant_accounts.id') # Applicant Virtual Orientation
             ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments', env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.applicant_id', 'applicant_accounts.id') # Applicant Medical Appointment
             ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments.is_removed', false)
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
@@ -1634,7 +1734,7 @@ class CourseOffer extends Model
             ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_briefings.is_removed', false)
             ->groupBy('applicant_accounts.id')
-            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id', 'applicant_accounts.id')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_briefings', 'applicant_accounts.id', 'applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false)
             ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
             ->whereNull('ama.applicant_id');

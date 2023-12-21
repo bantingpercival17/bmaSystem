@@ -54,25 +54,7 @@ class RegistrarController extends Controller
             $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
             $_total_population = Auth::user()->staff->enrollment_count();
             $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
-            $mainHeader = array(
-                array('COURSE', 1, NULL),
-                array('', 1, NULL),
-                array('INFORMATION VERIFICATION', 3, NULL),
-                array('BMA-ALUMNUS', 1, NULL),
-                array('ENTRANCE EXAMINATION PAYMENT', 3, NULL),
-            );
-            $subHeader = array(
-                array('', 1, NULL),
-                array('', 1, 'registered_applicants'),
-                array('FOR CHECKING', 1, 'for_checking'),
-                array('QUALIFIED', 1, 'qualified'),
-                array('NOT QUALIFIED', 1, 'not_qualified'),
-                array('', 1, 'bma_alumnus'),
-                array('FOR PAYMENT', 1, 'qualified_for_entrance_examination'),
-                array('FOR VERIFICATION', 1, 'examination_payment'),
-                array('PAYMENT VERIFIED', 1, 'entrance_examination'),
-            );
-            $tableHeader = array($mainHeader, $subHeader);
+
             $tableHeader = array(
                 array('Course', array('')),
                 array('', array('registered_applicants')),
@@ -82,6 +64,13 @@ class RegistrarController extends Controller
                 array('Briefing Orientation', array('expected_attendees', 'total_attendees')),
                 array('Medical Examination', array('for_medical_schedule', 'medical_schedule', 'waiting_for_medical_results', 'medical_result')),
                 array('Enrollment', array('qualified_to_enrollment'))
+            );
+            $tableHeader = array(
+                array('Information Verification', array('registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni')),
+                array('Entrance Examination', array('examination_payment', 'entrance_examination', 'passed', 'failed')),
+                array('Medical Examination', array('for_medical_schedule', 'waiting_for_medical_results', 'medical_fit', 'medical_unfit', 'medical_pending')),
+                array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'))
+
             );
             return view('pages.registrar.dashboard.view', compact('_academics', '_courses', '_total_population', '_total_applicants', 'tableHeader'));
         } catch (Exception $err) {

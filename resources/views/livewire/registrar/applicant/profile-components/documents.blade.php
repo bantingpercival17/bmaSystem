@@ -13,11 +13,23 @@
                     @if ($document = $item->applicant_requirements_v2)
                         @if ($document->is_approved == null)
                             <form class="row" action="{{ route('document-verification') }}">
+                                @php
+                                    $comments = ['Your Grade has been disapprove, please submit a clear copy of your Grades', 'Your Grade has been disapprove, please submit a complete copy of your Grades', 'Your Good Moral Conduct has been disapproved, please submit a clear copy of this documents', 'Your PSA Birth Certificate has been disapproved, please submit a clear copy of this documents', 'Your Barangay Clearance has been disapproved, please submit a clear copy of this documents', 'Your 2x2 Picture with Name Tag has been disapproved, please submit a clear copy of this documents'];
+                                @endphp
                                 <div class="col-md-8">
                                     <input type="hidden" name="_document" value="{{ base64_encode($document->id) }}">
-                                    <input type="text"
+                                    <select name="_comment" required
+                                        class="form-select form-select-sm border border-primary">
+                                        @foreach ($comments as $item)
+                                            <option value="{{ $item }}">
+                                                {{ $item }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                    {{--  <input type="text"
                                         class="form-control form-control-sm border border-primary mt-2" name="_comment"
-                                        placeholder="Comment!" required>
+                                        placeholder="Comment!" required> --}}
                                 </div>
                                 <div class="col-md">
                                     <a href="{{ route('document-verification') }}?_document={{ base64_encode($document->id) }}&_verification_status=1"
