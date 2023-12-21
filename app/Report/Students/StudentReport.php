@@ -2,6 +2,7 @@
 
 namespace App\Report\Students;
 
+use App\Models\AdditionalFees;
 use App\Models\EnrollmentAssessment;
 use App\Models\StudentDetails;
 use App\Models\StudentSection;
@@ -26,7 +27,43 @@ class StudentReport
     {
         $_enrollment_assessment = EnrollmentAssessment::find($_assessment_id);
         $_student = $_enrollment_assessment->student;
-        $pdf = PDF::loadView("widgets.report.student.student_enrollment_information", compact('_student', '_enrollment_assessment'));
+        $tuition_fees = $_enrollment_assessment->course_level_tuition_fee();
+        if ($tuition_fees) {
+
+            if ($_enrollment_assessment->payment_assessments) {
+                $paymentMode = $_enrollment_assessment->payment_assessments->payment_mode;
+                if (count($_enrollment_assessment->payment_assessments->additional_fees)) {
+                    foreach ($_enrollment_assessment->payment_assessments->additional_fees as $key => $value) {
+                        $fee = AdditionalFees::with('particular')->find($value->fees_id);
+                        $particularLists[] = $fee;
+                    }
+                }
+            }
+            $tags = $tuition_fees->semestral_fees();
+            $total_tuition  = $tuition_fees->total_tuition_fees($_enrollment_assessment);
+            $total_tuition_with_interest  = $tuition_fees->total_tuition_fees_with_interest($_enrollment_assessment);
+            $upon_enrollment = 0;
+            $upon_enrollment = $tuition_fees->upon_enrollment_v2($_enrollment_assessment);
+            $monthly = 0;
+            $monthly = $tuition_fees->monthly_fees_v2($_enrollment_assessment);
+            $tuition_fees = array(
+                'fee_amount' => $total_tuition,
+                'upon_enrollment' => $total_tuition,
+                'monthly' => 0.00,
+                'total_fees' => $total_tuition
+            );
+            $totalSemestralFees = $total_tuition;
+            if ($paymentMode == 1) {
+                $tuition_fees = array(
+                    'fee_amount' => $total_tuition,
+                    'upon_enrollment' => $upon_enrollment,
+                    'monthly' => $monthly,
+                    'total_fees' => $total_tuition_with_interest
+                );
+                $totalSemestralFees = $total_tuition_with_interest;
+            }
+        }
+        $pdf = PDF::loadView("widgets.report.student.student_enrollment_information", compact('_student', '_enrollment_assessment','tuition_fees'));
         $_form_number = $_enrollment_assessment->course_id == 3 ? 'FORM RG-04' : 'FORM RG-03';
         $file_name = $_form_number . ' - ' . strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $_student->middle_name);
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
@@ -34,7 +71,42 @@ class StudentReport
     function enrollment_certificate($assessment)
     {
         $student = $assessment->student;
-        $pdf = PDF::loadView($this->path . 'student_enrollment_certificate', compact('student', 'assessment'));
+        $tuition_fees = $assessment->course_level_tuition_fee();
+        if ($tuition_fees) {
+
+            if ($assessment->payment_assessments) {
+                $paymentMode = $assessment->payment_assessments->payment_mode;
+                if (count($assessment->payment_assessments->additional_fees)) {
+                    foreach ($assessment->payment_assessments->additional_fees as $key => $value) {
+                        $fee = AdditionalFees::with('particular')->find($value->fees_id);
+                        $particularLists[] = $fee;
+                    }
+                }
+            }
+            $tags = $tuition_fees->semestral_fees();
+            $total_tuition  = $tuition_fees->total_tuition_fees($assessment);
+            $total_tuition_with_interest  = $tuition_fees->total_tuition_fees_with_interest($assessment);
+            $upon_enrollment = 0;
+            $upon_enrollment = $tuition_fees->upon_enrollment_v2($assessment);
+            $monthly = 0;
+            $monthly = $tuition_fees->monthly_fees_v2($assessment);
+            $tuition_fees = array(
+                'fee_amount' => $total_tuition,
+                'upon_enrollment' => $total_tuition,
+                'monthly' => 0.00,
+                'total_fees' => $total_tuition
+            );
+            $totalSemestralFees = $total_tuition;
+            if ($paymentMode == 1) {
+                $tuition_fees = array(
+                    'fee_amount' => $total_tuition,
+                    'upon_enrollment' => $upon_enrollment,
+                    'monthly' => $monthly,
+                    'total_fees' => $total_tuition_with_interest
+                );
+                $totalSemestralFees = $total_tuition_with_interest;
+            }
+        $pdf = PDF::loadView($this->path . 'student_enrollment_certificate', compact('student', 'assessment','tuition_fees'));
         $formNumber = $assessment->course_id == 3 ? 'FORM RG-04' : 'FORM RG-03';
         $fileName = $formNumber . ' - ' . strtoupper($student->last_name . ', ' . $student->first_name . ' ' . $student->middle_name);
         return $pdf->setPaper($this->legal, 'portrait')->stream($fileName . '.pdf');

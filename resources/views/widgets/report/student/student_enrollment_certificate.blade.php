@@ -201,13 +201,13 @@
                         <tr>
                             <td>UPON ENROLLMENT</td>
                             <td class="text-center">
-                                {{ number_format($_payment_details->course_semestral_fee->upon_enrollment($_payment_details), '2') }}
+                                {{ number_format($tuition_fees['upon_enrollment'], '2') }}
                             </td>
                         </tr>
                         <tr>
                             <td>4 MONTHLY INSTALLMENT</td>
                             <td class="text-center">
-                                {{ number_format($_payment_details->course_semestral_fee->monthly_fees($_payment_details), '2') }}
+                                {{ number_format($tuition_fees['monthly'], '2') }}
                             </td>
                         </tr>
                         <tr>

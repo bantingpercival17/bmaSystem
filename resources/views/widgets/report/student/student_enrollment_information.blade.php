@@ -797,31 +797,21 @@
                         <tr>
                             <td>UPON ENROLLMENT</td>
                             <td class="text-center">
-                                {{ number_format($_payment_details->course_semestral_fee->upon_enrollment($_payment_details), '2') }}
+                                {{ number_format($tuition_fees['upon_enrollment'], '2') }}
                             </td>
                         </tr>
                         <tr>
                             <td>4 MONTHLY INSTALLMENT</td>
                             <td class="text-center">
-                                {{ number_format($_payment_details->course_semestral_fee->monthly_fees($_payment_details), '2') }}
+                                {{ number_format($tuition_fees['monthly'], '2') }}
                             </td>
                         </tr>
                         <tr>
                             <td><b>TOTAL FEES</b></td>
                             <td class="text-center">
-                                <b>{{ $_payment_details
-                                    ? ($_payment_details->course_semestral_fee_id
-                                        ? number_format($_payment_details->course_semestral_fee->total_payments($_payment_details), 2)
-                                        : number_format($_payment_details->total_payment, 2))
-                                    : '-' }}</b>
+                                <b>{{ number_format($tuition_fees['total_fees'], '2') }}</b>
                             </td>
                         </tr>
-                        {{-- @foreach ($_monthly_fee as $_due)
-                  <tr>
-                      <td>{{$_due}}</td>
-                    <td class="text-center">{{$_monthly_payment >0 ? number_format($_monthly_payment,'2'):'-'}}</td>
-                    </tr>
-                    @endforeach --}}
                     </tbody>
                 </table>
             </div>
