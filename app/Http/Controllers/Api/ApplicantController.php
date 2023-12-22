@@ -105,8 +105,8 @@ class ApplicantController extends Controller
         $_fields = [
             'first_name' => 'required',
             'last_name' => 'required',
-            'middle_name' => 'required',
-            'extension_name' => 'required | min:2',
+            /*  'middle_name' => 'required',
+            'extension_name' => 'required | min:2', */
             'birth_date' => 'required',
             'birth_place' => 'required',
             'gender' => 'required',
