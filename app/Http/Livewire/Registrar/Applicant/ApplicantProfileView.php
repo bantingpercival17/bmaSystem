@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
 
 class ApplicantProfileView extends Component
 {
-    public $selectCategories = 'for_checking';
+    public $selectCategories = 'registered_applicants';
     public $selectCourse = 'ALL COURSE';
     public $selectedCourse = 'ALL COURSE';
     public $documentLink = null;
@@ -28,7 +28,6 @@ class ApplicantProfileView extends Component
 
     public function render()
     {
-        $filterContent = array('created_accounts', 'registered_applicants', 'for_checking', 'not_qualified', 'qualified', 'qualified_for_entrance_examination', 'examination_payment', 'entrance_examination');
         $filterCourses = CourseOffer::all();
         $this->academic = $this->academicValue();
         $this->profile = request()->query('_applicant') ? ApplicantAccount::find(base64_decode(request()->query('_applicant'))) : $this->profile;
@@ -39,11 +38,9 @@ class ApplicantProfileView extends Component
         }
         if ($this->profile) {
             $approvedDocuments = $this->profile->applicant_documents_status();
-            #$this->activeTab = $this->selectCategories == 'for_checking' ? $this->activeTab : 'documents';
         }
-        #$dataLists = $this->filterData();
-        $dataLists = $applicantView->filterApplicantData($this->searchInput, $this->selectCourse, $this->selectCategories, $this->academic);
         $filterContent = $applicantView->filterContent();
+        $dataLists = $applicantView->filterApplicantData($this->searchInput, $this->selectCourse, $this->selectCategories, $this->academic);
         return view('livewire.registrar.applicant.applicant-profile-view', compact('filterContent', 'filterCourses', 'dataLists'));
     }
     function academicValue()

@@ -2,7 +2,7 @@
 # CONGRATULATIONS
 Good day {{ucwords($data->account->applicant->first_name)}},
 <p>
-We are glad to inform you that you are eligible to take the Online Entrance Examination for the 2024-2025 academic year.
+We are glad to inform you that you are eligible to take the Online Entrance Examination for the A.Y. 2024-2025 academic year.
 You may now pay the Php 300.00 examination fee.
 </p>
 

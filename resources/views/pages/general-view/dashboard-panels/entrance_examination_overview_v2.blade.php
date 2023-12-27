@@ -184,8 +184,8 @@
                                 <tr>
                                     <th>{{ strtoupper(str_replace('_', ' ', $item)) }}</th>
                                     @foreach ($_courses as $course)
-                                        <td>
-                                            <a
+                                        <td class="text-center">
+                                            <a 
                                                 href="{{ route('applicant.overview') . '?_course=' . base64_encode($course->id) . '&_category=' . $item }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
                                                 {{ count($course->applicant_count_per_category($item)) }}
                                             </a>
