@@ -899,6 +899,7 @@ class CourseOffer extends Model
                 ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
+                ->where('applicant_accounts.strand', '!=', 'Pre-Baccalaureate Maritime Strand')
                 ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
         }
         if ($category == 'pbm') {
@@ -917,6 +918,7 @@ class CourseOffer extends Model
                 ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
+                ->where('applicant_accounts.strand', 'Pre-Baccalaureate Maritime Strand')
                 ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
         }
 

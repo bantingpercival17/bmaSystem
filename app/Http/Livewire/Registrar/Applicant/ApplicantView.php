@@ -183,7 +183,7 @@ class ApplicantView extends Component
                 ->whereNull('anq.applicant_id')
                 ->groupBy('applicant_accounts.id')
                 ->havingRaw('applicantDocuments >= documentCount and ApprovedDocuments < documentCount');
-                #->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
+            #->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
         }
         if ($selectCategories == 'disapproved') {
             $dataLists = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
@@ -427,7 +427,7 @@ class ApplicantView extends Component
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
                 ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
         }
-        if ($selectCategories == 'qualified_to_enrollment') {
+        if ($selectCategories == 'qualified_for_enrollment') {
             $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                 ->where($this->tblApplicantPayment . '.is_approved', true)
@@ -443,6 +443,44 @@ class ApplicantView extends Component
                 ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', env('DB_DATABASE_SECOND') . '.applicant_briefings.applicant_id')
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
                 ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
+                ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
+        }
+        if ($selectCategories == 'non_pbm') {
+            $query =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantPayment . '.is_approved', true)
+                ->where($this->tblApplicantPayment . '.is_removed', false)
+                ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantExamination . '.is_removed', false)
+                ->where($this->tblApplicantExamination . '.is_finish', true)
+                ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantOrientation . '.is_completed', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                ->where('ama.is_removed', false)
+                ->where('ama.is_approved', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
+                ->where('applicant_accounts.strand', '!=', 'Pre-Baccalaureate Maritime Strand')
+                ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
+        }
+        if ($selectCategories == 'pbm') {
+            $query =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->join($this->tblApplicantPayment, $this->tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantPayment . '.is_approved', true)
+                ->where($this->tblApplicantPayment . '.is_removed', false)
+                ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantExamination . '.is_removed', false)
+                ->where($this->tblApplicantExamination . '.is_finish', true)
+                ->join($this->tblApplicantOrientation, $this->tblApplicantOrientation . '.applicant_id', 'applicant_accounts.id')
+                ->where($this->tblApplicantOrientation . '.is_completed', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                ->where('ama.is_removed', false)
+                ->where('ama.is_approved', true)
+                ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
+                ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
+                ->where('applicant_accounts.strand', 'Pre-Baccalaureate Maritime Strand')
                 ->groupBy('applicant_accounts.id')->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
         }
         if ($searchInput != '') {
