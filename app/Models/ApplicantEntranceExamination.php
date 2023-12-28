@@ -19,6 +19,10 @@ class ApplicantEntranceExamination extends Model
     {
         return $this->hasOne(ApplicantExaminationSchedule::class, 'examination_id')->where('is_removed', false);
     }
+    function examination_scheduled_history()
+    {
+        return $this->hasMany(ApplicantExaminationSchedule::class, 'examination_id');
+    }
     public function examination_result()
     {
         $_transmutation_college = array(

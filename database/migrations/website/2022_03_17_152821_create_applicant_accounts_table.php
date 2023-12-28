@@ -26,6 +26,8 @@ class CreateApplicantAccountsTable extends Migration
             $table->foreign('course_id')->references('id')->on(new Expression('bma_portal.course_offers'));
             $table->unsignedBigInteger('academic_id');
             $table->foreign('academic_id')->references('id')->on(new Expression('bma_portal.academic_years'));
+            $table->text('json_details')->nullable();
+            $table->text('strand')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

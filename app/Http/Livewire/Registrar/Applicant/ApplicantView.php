@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Registrar\Applicant;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\CourseOffer;
+use App\Models\StaffDepartment;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Illuminate\Support\Facades\Cache;
@@ -54,12 +55,20 @@ class ApplicantView extends Component
     }
     function filterContent()
     {
-        return array(
+        $reguralUser =  array(
             array('Information Verification', array('registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni')),
             array('Entrance Examination', array('examination_payment', 'entrance_examination', 'passed', 'failed')),
             array('Medical Examination', array('for_medical_schedule', 'waiting_for_medical_results', 'medical_fit', 'medical_unfit', 'medical_pending')),
             array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'))
         );
+        $admin = array('User Accounts', array('created_accounts', 'registered_applicants_v1', 'total_registrants'));
+        $adminRole = StaffDepartment::where('role_id', 1)->where('staff_id', auth()->user()->staff->id)->first();
+        if ($adminRole) {
+            $sortList = array_merge($reguralUser, array($admin));
+        } else {
+            $sortList = $reguralUser;
+        }
+        return $sortList;
         return  array(
             array('User Accounts', array('created_accounts', 'registered_applicants', 'total_registrants')),
             array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'no_of_qualified_examinees')),
@@ -154,6 +163,11 @@ class ApplicantView extends Component
                 WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id
                 AND ' . $this->tblApplicantDocuments . '.is_removed = 0
                 AND ' . $this->tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                    DB::raw('(SELECT COUNT(' . $this->tblApplicantDocuments . '.applicant_id)
+                FROM ' . $this->tblApplicantDocuments . '
+                WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+                AND ' . $this->tblApplicantDocuments . '.is_removed = 0
+                AND (' . $this->tblApplicantDocuments . '.is_approved is null or ' . $this->tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
                     DB::raw('(
                     SELECT COUNT(' . $this->tblDocuments . '.id)
                     FROM ' . $this->tblDocuments . '
@@ -168,7 +182,8 @@ class ApplicantView extends Component
                 ->leftJoin($this->tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
                 ->whereNull('anq.applicant_id')
                 ->groupBy('applicant_accounts.id')
-                ->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
+                ->havingRaw('applicantDocuments >= documentCount and ApprovedDocuments < documentCount');
+                #->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
         }
         if ($selectCategories == 'disapproved') {
             $dataLists = $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')

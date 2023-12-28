@@ -44,6 +44,7 @@ class ApplicantController extends Controller
         $payment = $data->payment;
         $examinationDetails = $payment ? $data->applicant_examination : [];
         $examinationSchedule = $examinationDetails ? $examinationDetails->examination_scheduled : [];
+        $examinationScheduleHistory = $examinationDetails ? count($examinationDetails->examination_scheduled_history) : 0;
         $examinationResult = [];
         $finalResult = [];
         /* EXAMINATION DETAILS */
@@ -69,7 +70,7 @@ class ApplicantController extends Controller
                 }
             }
         }
-        $examination = compact('payment', 'examinationDetails', 'examinationSchedule', 'examinationResult', 'finalResult');
+        $examination = compact('payment', 'examinationDetails', 'examinationSchedule', 'examinationScheduleHistory', 'examinationResult', 'finalResult');
         /* BRIEFING ORIENTATION */
         $orientation = [];
         if ($data->schedule_orientation) {
@@ -163,11 +164,12 @@ class ApplicantController extends Controller
                 'senior_high_school_name' => 'required|max:100',
                 'senior_high_school_address' => 'required|max:255',
                 'senior_high_school_year' => 'required|max:100',
+                'strand' => 'required'
             ];
         }
         $inputs = $_request->validate($_fields);
         foreach ($inputs as $key => $value) {
-            if ($key != 'personal_email' && $key != 'contact_number') {
+            if ($key != 'personal_email' && $key != 'contact_number' && $key != 'strand') {
                 if ($key == 'extension_name') {
                     $_data['extention_name'] = ucwords(mb_strtolower(trim($value)));
                 } else if ($key == 'birth_date') {
@@ -182,6 +184,7 @@ class ApplicantController extends Controller
         $user = auth()->user(); // Get the Current User Account
         $account = ApplicantAccount::find($user->id); // Get the Applicant Account using the user id
         $account->contact_number = $inputs['contact_number'];
+        $account->strand = $_request->strand;
         $account->save();
         if ($account->applicant) {
             # If Account have Applicant Details it will be Update the information
@@ -285,13 +288,15 @@ class ApplicantController extends Controller
             $formattedDate = $date->format('Y-m-d');
             $scheduleDate =  $formattedDate . ' ' . $request->schedule_time . ':00';
             //return response(['message' => $scheduleDate]);
-            if (!$schedule) {
+            if ($schedule) {
                 ApplicantExaminationSchedule::create([
                     'applicant_id' => $user->id,
                     'examination_id' => $user->applicant_examination->id,
                     'schedule_date' => $scheduleDate
                 ]);
             }
+            $schedule->is_removed = true;
+            $schedule->save();
             return response(['message' => 'Examination Scheduled Save.']);
         } catch (\Throwable $error) {
             $this->debugTrackerApplicant($error);

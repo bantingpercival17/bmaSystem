@@ -159,7 +159,7 @@ class ApplicantController extends Controller
                 $_document->staff_id = Auth::user()->staff->id;
                 $_document->feedback = $_request->_comment;
                 $_document->save();
-                if ($_request->_comment == 'Sorry you did not meet the Grade requirement') {
+                if ($_request->_comment == 'Sorry, you did not meet the required grades.') {
                     $applicant = ApplicantNotQualified::where('applicant_id', $_document->applicant_id)->where('is_removed',false)->first();
                     if (!$applicant) {
                         ApplicantNotQualified::create([

@@ -547,6 +547,11 @@ class CourseOffer extends Model
                 WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id
                 AND ' . $tblApplicantDocuments . '.is_removed = 0
                 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                    DB::raw('(SELECT COUNT(' . $tblApplicantDocuments . '.applicant_id)
+                FROM ' . $tblApplicantDocuments . '
+                WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id
+                AND ' . $tblApplicantDocuments . '.is_removed = 0
+                AND (' . $tblApplicantDocuments . '.is_approved is null or ' . $tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
                     DB::raw('(
                     SELECT COUNT(' . $tblDocuments . '.id)
                     FROM ' . $tblDocuments . '
@@ -561,7 +566,8 @@ class CourseOffer extends Model
                 ->leftJoin($tblApplicantNotQualifieds . ' as anq', 'anq.applicant_id', 'applicant_accounts.id')
                 ->whereNull('anq.applicant_id')
                 ->groupBy('applicant_accounts.id')
-                ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount');
+                ->havingRaw('applicantDocuments >= documentCount and ApprovedDocuments < documentCount');
+            /* ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments < documentCount'); */
         }
         if ($category == 'disapproved') {
             $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')

@@ -14,7 +14,7 @@
                         @if ($document->is_approved == null)
                             <form class="row" action="{{ route('document-verification') }}">
                                 @php
-                                    $comments = ['Your Grade has been disapprove, please submit a clear copy of your Grades', 'Your Grade has been disapprove, please submit a complete copy of your Grades', 'Your Good Moral Conduct has been disapproved, please submit a clear copy of this documents', 'Your PSA Birth Certificate has been disapproved, please submit a clear copy of this documents', 'Your Barangay Clearance has been disapproved, please submit a clear copy of this documents', 'Your 2x2 Picture with Name Tag has been disapproved, please submit a clear copy of this documents'];
+                                    $comments = ['Your Grade has been disapprove, please submit a clear copy of your Grades', 'Your Grade has been disapprove, please submit a complete copy of your Grades', 'Your Good Moral Conduct has been disapproved, please submit a clear copy of this documents', 'Your PSA Birth Certificate has been disapproved, please submit a clear copy of this documents', 'Your Barangay Clearance has been disapproved, please submit a clear copy of this documents', 'Your 2x2 Picture with Name Tag has been disapproved, please submit a clear copy of this documents','Sorry, you did not meet the required grades.'];
                                 @endphp
                                 <div class="col-md-8">
                                     <input type="hidden" name="_document" value="{{ base64_encode($document->id) }}">
