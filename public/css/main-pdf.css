@@ -25,6 +25,7 @@ header {
     /*  max-height: 12in;
    background-color: #aaa; */
 }
+
 .page-content-v2 {
     /* position: relative; */
     top: 1.3in;
@@ -35,6 +36,7 @@ header {
 
 
 }
+
 .table-content {
     /* font-family: "Times New Roman", Times, serif; */
     border-collapse: collapse;
@@ -43,7 +45,7 @@ header {
 
 .table-content td,
 .table-content th {
-   /*  padding-top: 5px;
+    /*  padding-top: 5px;
     padding-bottom: 5px; */
     padding-left: 0px;
     font-size: 14px;
@@ -84,6 +86,10 @@ header {
 
 .page-break {
     margin-top: 25px;
+    padding: 0%;
+    margin-bottom: 0%;
+    margin-left: 0%;
+    margin-right: 0%;
     page-break-after: always;
     content: counter(page);
 }
@@ -106,14 +112,17 @@ footer {
     font-size: 0.9em;
     bottom: 40px;
 }
-.timestamp{
+
+.timestamp {
     float: left;
 }
-.page-number{
+
+.page-number {
     float: right;
 }
+
 .page-number::before {
-    content: "Page " counter(page);
+    content: "Page "counter(page);
 }
 
 .table-content {
@@ -149,9 +158,11 @@ footer {
     padding-bottom: 5px;
     text-align: center;
 }
-.table-remove-border td{
+
+.table-remove-border td {
     border: none;
 }
+
 .image-signature {
     width: 30%;
 }
@@ -266,5 +277,15 @@ footer {
 .table-2 th {
     padding-top: 5px;
     padding-bottom: 5px;
+    text-align: center;
+}
+
+.fw-bolder {
+    font-weight: bold;
+    margin: 0%;
+    padding: 0%;
+}
+
+.content-header {
     text-align: center;
 }

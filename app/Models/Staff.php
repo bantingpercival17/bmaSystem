@@ -91,6 +91,39 @@ class Staff extends Model
     {
         return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . request()->input('_date') . '%')->latest();
     }
+    function daily_time_in($date)
+    {
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'asc')->first();
+    }
+    function daily_time_out($date)
+    {
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'desc')->first();
+    }
+    function compute_late_per_day($arrivalTime)
+    {
+        // Scheduled arrival time
+        $scheduledTime = strtotime('08:00:00');
+        // Actual arrival time
+        $actualTime = strtotime($arrivalTime);
+        if ($scheduledTime <= $actualTime) {
+            $latenessInSeconds = ($actualTime - $scheduledTime) / 60;
+            return number_format($latenessInSeconds, 1);
+        } else {
+            return '-';
+        }
+    }
+    function compute_tardines_per_day($arrivalTime)
+    {
+        $scheduledEndTime = strtotime('17:00:00');
+        // Actual end time
+        $actualEndTime = strtotime($arrivalTime);
+        if ($scheduledEndTime >= $actualEndTime) {
+            $undertimeInMinutes = ($scheduledEndTime - $actualEndTime) / 60;
+            return number_format($undertimeInMinutes, 1);
+        } else {
+            return '-';
+        }
+    }
     public function attendance_list()
     {
         return $this->hasMany(EmployeeAttendance::class, 'staff_id');

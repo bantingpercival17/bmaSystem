@@ -1,10 +1,9 @@
 @extends('widgets.report.main-report-template')
-@section('title-report', 'DAILY ATTENDANCE REPORT')
+@section('title-report', 'EMPLOYEE ATTENDANCE REPORT')
 @section('form-code', '')
 @section('content')
-
-    @foreach ($employees as $employee)
-        <div class="page-content">
+    <div class="page-content">
+        @foreach ($employees as $employee)
             <div class="summary-grade-header">
                 <h2 class="text-center" style="margin:0px;">
                     <b>DAILY TIME RECORD</b>
@@ -44,33 +43,35 @@
                         <th>DATE</th>
                         <th>TIME-IN</th>
                         <th>TIME-OUT</th>
+                        <th>TARDINES</th>
+                        <th>UNDER-TIME</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($dateList as $date)
                         @php
                             $contentNumber += 1;
+                            $time_in = $employee->daily_time_in($date);
+                            $time_out = $employee->daily_time_out($date);
+                            $timeInDisplay = $time_in ? date_format(date_create($time_in->time_in), 'h:i:s a') : '-';
+                            $timeOutDisplay = $time_out ? ($time_out->time_out ? date_format(date_create($time_out->time_out), 'h:i:s a') : 'NO TIME OUT') : '-';
+                            $late = $timeInDisplay != '-' ? $employee->compute_late_per_day(date_format(date_create($time_in->time_in), 'H:i:s')) : '-';
+                            $tardines = $timeOutDisplay != '-' ? ($time_out->time_out ? $employee->compute_tardines_per_day(date_format(date_create($time_out->time_out), 'H:i:s')) : 'NO TIME OUT') : '-';
+
                         @endphp
                         <tr class="{{ $contentNumber >= $contentCount ? 'page-break' : '' }}">
                             <td>{{ date('F d, Y', strtotime($date)) }}</td>
                             <td>
-                                @if ($employee->date_attendance($date))
-                                    {{-- {{ $employee->date_attendance($date)->time_in }} --}}
-                                    {{ date_format(date_create($employee->date_attendance($date)->time_in), 'h:i:s a') }}
-                                @else
-                                    -
-                                @endif
+                                {{ $timeInDisplay }}
                             </td>
                             <td>
-                                @if ($employee->date_attendance($date))
-                                    @if ($employee->date_attendance($date)->time_out)
-                                        {{ date_format(date_create($employee->date_attendance($date)->time_out), 'h:i:s a') }}
-                                    @else
-                                        -
-                                    @endif
-                                @else
-                                    -
-                                @endif
+                                {{ $timeOutDisplay }}
+                            </td>
+                            <td>
+                                {{ $late }}
+                            </td>
+                            <td>
+                                {{ $tardines }}
                             </td>
                         </tr>
                         @if ($contentNumber >= $contentCount)
@@ -82,8 +83,7 @@
 
                 </tbody>
             </table>
-        </div>
-        <div class="page-break"></div>
-    @endforeach
-
+            <div class="page-break"></div>
+        @endforeach
+    </div>
 @endsection

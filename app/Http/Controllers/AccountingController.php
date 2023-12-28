@@ -467,7 +467,7 @@ class AccountingController extends Controller
             // Sectioning & Student number for new student
             if ($_request->remarks == 'Upon Enrollment' && $_payment) {
                 $_payment_assessment = PaymentAssessment::find($_request->_assessment);
-                $_section = $_payment_assessment->enrollment_assessment->find_section(); // Find the Sections 
+                $_section = $_payment_assessment->enrollment_assessment->find_section(); // Find the Sections
                 if ($_section) {
                     $_validate_student_section = StudentSection::where('section_id', $_section->id)->where('student_id', $_payment_assessment->enrollment_assessment->student_id)->where('is_removed', false)->first(); // Verify if the Student will save on Section
                     if (!$_validate_student_section) {
@@ -687,7 +687,7 @@ class AccountingController extends Controller
                     );
                     StudentSection::create($_content); // Store Student Section
                 }
-                // If the Student don't have BMA Account and Student number 
+                // If the Student don't have BMA Account and Student number
                 return $_payment_assessment->enrollment_assessment->student;
                 if (!$_payment_assessment->enrollment_assessment->student->account) {
                     // Get the Year Level
@@ -1060,7 +1060,7 @@ class AccountingController extends Controller
         ]);
         try {
             $_report = new AttendanceSheetReport();
-            $_report_pdf =  $_report->daily_time_record_report_v2($request->department, $request->start_date, $request->end_date);
+            $_report_pdf = $request->format == 'daily' ? $_report->daily_time_record_report_v2($request->department, $request->start_date, $request->end_date) :  $_report->monthly_time_record_report_v2($request->department, $request->start_date, $request->end_date);
             return $_report_pdf;
         } catch (\Throwable $th) {
             //throw $th;

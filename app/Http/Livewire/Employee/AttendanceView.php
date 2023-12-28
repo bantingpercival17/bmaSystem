@@ -12,6 +12,7 @@ class AttendanceView extends Component
 {
     public $searchInput;
     public $searchSelect;
+    public $searchDate;
     public $employee;
     public $department = 1;
     public $role = 1;
@@ -20,15 +21,16 @@ class AttendanceView extends Component
     public function render()
     {
         $this->employee = request()->query('employee') ? $this->setEmployee(base64_decode(request()->query('employee'))) : $this->employee;
-        $employeeList = $this->searchEmployee($this->searchInput, $this->searchSelect);
+        $employeeList = $this->searchEmployee($this->searchInput, $this->searchSelect, $this->searchDate);
+        $this->searchDate = $this->searchDate ?: now()->format('Y-m-d');
         $departmentList = Department::where('is_removed', false)->get();
         $employeeRoles = $this->employee ? $this->employee->roles : [];
         $roles = Role::all();
         return view('livewire.employee.attendance-view', compact('employeeList', 'departmentList', 'roles', 'employeeRoles'));
     }
-    function searchEmployee($searchInput, $searchSelect)
+    function searchEmployee($searchInput, $searchSelect, $date)
     {
-        $data = Staff::leftJoin('employee_attendances', 'employee_attendances.staff_id', 'staff.id')
+        $data = Staff::select('staff.*')->leftJoin('employee_attendances', 'employee_attendances.staff_id', 'staff.id')
             // ->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%')
             ->groupBy('employee_attendances.staff_id');
         if ($searchInput) {
@@ -40,11 +42,12 @@ class AttendanceView extends Component
             }
         }
         if ($searchSelect) {
+            $date = $date ?: now()->format('Y-m-d');
             if ($searchSelect == 2) {
-                $data = $data->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%');
+                $data = $data->where('employee_attendances.created_at', 'like', '%' . $date . '%');
             }
             if ($searchSelect == 3) {
-                $data = $data->where('employee_attendances.created_at', '!=', now()->format('Y-m-d'));
+                $data = $data->where('employee_attendances.created_at', '!=', $date);
                     /*   ->where('employee_attendances.created_at', 'like', '%' . now()->format('Y-m-d') . '%') */;
             }
         }

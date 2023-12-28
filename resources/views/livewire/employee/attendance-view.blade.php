@@ -11,7 +11,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <small class="fw-bolder text-muted">DATE </small> <br>
-                        <label for="" class="fw-bolder text-primary">{{ now()->format('F d,Y') }}</label>
+                        <label for="" class="fw-bolder text-primary">{{ $searchDate }}</label>
                     </div>
                     <div class="col-md-6">
                         <small class="fw-bolder text-muted">TOTAL PRESENT : </small> <br>
@@ -43,8 +43,8 @@
                                         <small class="fw-bolder badge bg-info">
                                             TIME IN:
                                             <b>
-                                                @if ($employee->date_attendance(now()->format('Y-m-d')))
-                                                    {{ date_format(date_create($employee->date_attendance(now()->format('Y-m-d'))->time_in), 'h:i:s a') }}
+                                                @if ($employee->daily_time_in($searchDate))
+                                                    {{ date_format(date_create($employee->daily_time_in($searchDate)->time_in), 'h:i:s a') }}
                                                 @else
                                                     -
                                                 @endif
@@ -53,11 +53,11 @@
                                         <small class="badge bg-info">
                                             TIME OUT:
                                             <b>
-                                                @if ($employee->daily_attendance)
-                                                    @if ($employee->daily_attendance->time_out)
-                                                        {{ date_format(date_create($employee->daily_attendance->time_out), 'h:i:s a') }}
+                                                @if ($employee->daily_time_out($searchDate))
+                                                    @if ($employee->daily_time_out($searchDate)->time_out)
+                                                        {{ date_format(date_create($employee->daily_time_out($searchDate)->time_out), 'h:i:s a') }}
                                                     @else
-                                                        -
+                                                        NO TIME OUT
                                                     @endif
                                                 @else
                                                     -
@@ -115,6 +115,11 @@
                         <option value="3">Absent Employees</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <small class="text-muted">DATE SORT</small>
+                    <input type="date" class="form-control form-control-sn border border-primary"
+                        wire:model="searchDate">
+                </div>
             </form>
             <div class="form mb-5">
                 <span class="text-primary fw-bolder">GENERATE REPORT</span>
@@ -129,6 +134,13 @@
                             <small class="text-muted">END DATE</small>
                             <input type="date" class="form-control form-control-sm border border-primary"
                                 name="end_date" required="">
+                        </div>
+                        <div class="form-group">
+                            <small class="text-muted">ATTENDANCE CATEGORY</small>
+                            <select name="format" class="form-select form-select-sm border border-primary">
+                                <option value="daily">Daily Attendance</option>
+                                <option value="monthly">Monthly Attendance</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <small class="text-muted">DEPARTMENT</small>
