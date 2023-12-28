@@ -62,8 +62,7 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <h3 class="counter">
-                                            {{ count($_course->applicant_registrants) }}
-                                            {{-- {{count($_course->student_applicants)}} --}}
+                                            {{-- {{ count($_course->applicant_registrants) }} --}}
                                         </h3>
                                         <svg width="32" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -120,48 +119,6 @@
                 <h4 class="card-title text-primary fw-bolder">SUMMARY VIEW</h4>
             </div>
         </div>
-        {{--  <div class="card-body p-0">
-            <div class="table-responsive">
-                <table id="basic-table" class="table table-striped mb-0" role="grid">
-                    <thead>
-                        <tr class="text-center">
-                            @foreach ($tableHeader as $headers)
-                                <th colspan="{{ count($headers[1]) }}">{{ strtoupper($headers[0]) }}</th>
-                            @endforeach
-                        </tr>
-                        <tr class="text-center">
-                            @foreach ($tableHeader as $headers)
-                                @foreach ($headers[1] as $item)
-                                    <th>{{ strtoupper(str_replace('_', ' ', $item)) }}</th>
-                                @endforeach
-                            @endforeach
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($_courses as $_course)
-                            <tr>
-                                <td class="course-btn" data-course="{{ $_course->id }}">
-                                    {{ $_course->course_name }}
-                                </td>
-                                @foreach ($tableHeader as $index => $headers)
-                                    @if ($index > 0)
-                                        @foreach ($headers[1] as $index => $item)
-                                            <td class="text-center">
-                                                <a
-                                                    href="{{ route('applicant.overview') . '?_course=' . base64_encode($_course->id) . '&_category=' . $item }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
-                                                    {{ count($_course->applicant_count_per_category($item)) }}
-                                                </a>
-
-                                            </td>
-                                        @endforeach
-                                    @endif
-                                @endforeach
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div> --}}
         <div class="card-body">
             <div class="table-responsive">
                 <table id="basic-table" class="table table-striped mb-0" role="grid">
