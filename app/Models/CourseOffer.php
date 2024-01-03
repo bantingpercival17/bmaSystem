@@ -604,6 +604,55 @@ class CourseOffer extends Model
                                     $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
                                 })
                                 ->groupBy('applicant_accounts.id')->orderBy($tblApplicantExamination . '.updated_at', 'desc');
+                        } else {
+                            $query = $query->where($tblApplicantExamination . '.is_removed', false)
+                                ->where($tblApplicantExamination . '.is_finish', true)
+                                ->where(function ($query) {
+                                    $query->select(DB::raw('COUNT(*)'))
+                                        ->from(env('DB_DATABASE_SECOND') . '.applicant_examination_answers')
+                                        ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.choices_id')
+                                        ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+                                }, '>=', function ($query) {
+                                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+                                })->groupBy('applicant_accounts.id');
+                            if ($category === 'for_medical_schedule') {
+                                $query =  $query->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                                    ->whereNull('ama.applicant_id');
+                            } else if ($category === 'waiting_for_medical_results') {
+                                $query =
+                                    $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                                    ->where('ama.is_removed', false)
+                                    ->where('ama.is_approved', true)
+                                    ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'ama.applicant_id')
+                                    ->whereNull(env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id');
+                            } else {
+                                $query->join(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
+                                    ->where('ama.is_removed', false)
+                                    ->where('ama.is_approved', true)
+                                    ->join(env('DB_DATABASE_SECOND') . '.applicant_medical_results', env('DB_DATABASE_SECOND') . '.applicant_medical_results.applicant_id', 'applicant_accounts.id')
+                                    ->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_removed', false)
+                                    ->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
+                                if ($category == 'fit') {
+                                    $query->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', 1);
+                                } elseif ($category == 'unfit') {
+                                    $query->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', 2);
+                                } elseif ($category == 'pending_result') {
+                                    $query->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_pending', 0);
+                                } else {
+                                    if ($category == 'qualified_for_enrollment') {
+                                        $query->where(env('DB_DATABASE_SECOND') . '.applicant_medical_results.is_fit', true)
+                                            ->groupBy('applicant_accounts.id')
+                                            ->orderBy(env('DB_DATABASE_SECOND') . '.applicant_medical_results.created_at', 'desc');
+                                    } elseif ($category == 'non_pbm' || $category == 'pbm') {
+                                        if ($category == 'non_pbm') {
+                                            $query->where('applicant_accounts.strand', '!=', 'Pre-Baccalaureate Maritime Strand');
+                                        } elseif ($category == 'pbm') {
+                                            $query->where('applicant_accounts.strand', 'Pre-Baccalaureate Maritime Strand');
+                                        }
+                                    }
+                                }
+                            }
                         }
                         /* $query = $query->leftJoin($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                             ->leftJoin($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
