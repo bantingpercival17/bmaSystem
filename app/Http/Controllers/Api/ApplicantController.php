@@ -189,12 +189,12 @@ class ApplicantController extends Controller
         if ($account->applicant) {
             # If Account have Applicant Details it will be Update the information
             ApplicantDetials::where('applicant_id', $user->id)->update($_data);
-            return response(['message' => 'Update the Applicant Information'], 200);
+            return response(['message' => 'Applicant Information Completed'], 200);
         } else {
             # Then is not they will be Store the Applicant Details
             $_data['applicant_id'] = $account->id;
             ApplicantDetials::create($_data);
-            return response(['message' => 'Successfully Save the Applicant Information'], 200);
+            return response(['message' => 'Applicant Information Completed'], 200);
         }
     }
     function applicant_registration_form()
@@ -297,7 +297,7 @@ class ApplicantController extends Controller
             }
             $schedule->is_removed = true;
             $schedule->save();
-            return response(['message' => 'Examination Scheduled Save.']);
+            return response(['message' => 'Your Examination Schedule has been approved.']);
         } catch (\Throwable $error) {
             $this->debugTrackerApplicant($error);
             return response([
