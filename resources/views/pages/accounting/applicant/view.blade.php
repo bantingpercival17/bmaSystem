@@ -22,12 +22,12 @@
                     <div class="col-md col-lg">
                         <div class="card-body">
                             <h4 class="card-title text-primary">
-                                <b>{{ $_student ? strtoupper($_student->applicant->last_name . ', ' . $_student->applicant->first_name) : 'APPLICANT NAME' }}</b>
+                                <b>{{ $_student ? strtoupper($_student->applicant->last_name . ', ' . $_student->applicant->first_name) : 'APPLICANT'S NAME' }}</b>
                             </h4>
                             <p class="card-text">
                                 <span>
                                     <b>
-                                        {{ $_student ? $_student->applicant_number : 'APPLICANT NUMBER.' }}
+                                        {{ $_student ? $_student->applicant_number : 'APPLICANT'S NUMBER.' }}
                                         |
                                         {{ $_student ? $_student->course->course_name : 'COURSE' }}
                                         <br>
