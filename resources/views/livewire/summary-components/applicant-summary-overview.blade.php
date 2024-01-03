@@ -1,4 +1,4 @@
-<section>
+<div>
     <p class="display-6 fw-bolder text-primary">Entrance Examination Overview</p>
     <div class="row">
         <div class="col-lg-12 col-xl-3">
@@ -54,7 +54,7 @@
         </div>
         <div class="col-lg-12 col-xl-9">
             <div class="row">
-                @foreach ($_courses as $_course)
+                @foreach ($courses as $_course)
                     <div class="col-md-4">
                         <a href="">
                             <div class="card iq-purchase" data-iq-gsap="onStart" data-iq-position-y="50"
@@ -125,7 +125,7 @@
                     <thead>
                         <tr class="text-center">
                             <th></th>
-                            @foreach ($_courses as $course)
+                            @foreach ($courses as $course)
                                 <th> {{ $course->course_name }}</th>
                             @endforeach
                         </tr>
@@ -140,7 +140,7 @@
                             @foreach ($headers[1] as $item)
                                 <tr>
                                     <th>{{ strtoupper(str_replace('_', ' ', $item)) }}</th>
-                                    @foreach ($_courses as $course)
+                                    @foreach ($courses as $course)
                                         <td class="text-center">
                                             <a
                                                 href="{{ route('applicant.overview') . '?_course=' . base64_encode($course->id) . '&_category=' . $item }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
@@ -178,4 +178,4 @@
             </div>
         </div>
     </div>
-</section>
+</div>
