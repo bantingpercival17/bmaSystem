@@ -86,7 +86,7 @@ class ApplicantProfileView extends Component
         $_data = ['applicant_id' => $data, 'staff_id' => Auth::user()->staff->id];
         ApplicantAlumnia::create($_data);
         $this->dispatchBrowserEvent('swal:alert', [
-            'title' => 'Complete!',
+            'title' => '',
             'text' => 'Successfully Transact',
             'type' => 'success',
         ]);

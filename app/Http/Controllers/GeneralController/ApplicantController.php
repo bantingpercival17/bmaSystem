@@ -153,7 +153,7 @@ class ApplicantController extends Controller
                         Mail::to($_applicant_email)->send($_email_model->document_verified($_document));
                     }
                 }
-                return back()->with('success', 'Document Approved.');
+                return back()->with('success', 'Approved.');
             } else {
                 $_document->is_approved = 2;
                 $_document->staff_id = Auth::user()->staff->id;
@@ -172,7 +172,7 @@ class ApplicantController extends Controller
                     }
                 }
                 Mail::to($_applicant_email)->send($_email_model->document_disapproved($_document));
-                return back()->with('success', 'Document Disapproved.');
+                return back()->with('success', 'Disapproved.');
                 //echo "Disapproved";
             }
         } catch (Exception $error) {

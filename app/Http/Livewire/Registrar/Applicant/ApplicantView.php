@@ -309,7 +309,7 @@ class ApplicantView extends Component
                 }, '>=', function ($query) {
                     $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
                 })
-                ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.updated_at', 'desc');;
+                ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.updated_at', 'desc');
         }
         if ($selectCategories == 'failed') {
             $dataLists =  $query->join($this->tblApplicantDetails, $this->tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')

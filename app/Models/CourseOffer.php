@@ -519,6 +519,7 @@ class CourseOffer extends Model
         $tblApplicantPayment = env('DB_DATABASE_SECOND') . '.applicant_payments';
         $tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
         $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+        // = env('DB_DATABASE_SECOND') . '.applicant_examination_answers';
         //$tblApplicantOrientationScheduled = env('DB_DATABASE_SECOND') . '.applicant_briefing_schedules';
         $tblApplicantOrientation = env('DB_DATABASE_SECOND') . '.applicant_briefings';
         $query = $this->hasMany(ApplicantAccount::class, 'course_id')
@@ -589,6 +590,20 @@ class CourseOffer extends Model
                             $query = $query->whereNull($tblApplicantExamination . '.is_finish')
                                 ->groupBy($tblApplicantExamination . '.applicant_id');
                         } else if ($category == 'passed' || $category == 'failed') {
+                            // Entrance Examination
+                            $operation = $category == 'passed' ? '>=' : '<';
+                            $query = $query->where($tblApplicantExamination . '.is_removed', false)
+                                ->where($tblApplicantExamination . '.is_finish', true)
+                                ->where(function ($query) {
+                                    $query->select(DB::raw('COUNT(*)'))
+                                        ->from(env('DB_DATABASE_SECOND') . '.applicant_examination_answers')
+                                        ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.choices_id')
+                                        ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+                                }, $operation, function ($query) {
+                                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+                                })
+                                ->groupBy('applicant_accounts.id')->orderBy($tblApplicantExamination . '.updated_at', 'desc');
                         }
                         /* $query = $query->leftJoin($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
                             ->leftJoin($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
