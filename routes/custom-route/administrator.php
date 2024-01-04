@@ -6,6 +6,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Controllers\GeneralController\EnrollmentController;
 use App\Http\Controllers\PaymongoApi;
+use App\Http\Livewire\Employee\AddEmployee;
 use App\Http\Livewire\Employee\AttendanceView;
 use App\Http\Middleware\Administrator;
 use App\Models\StudentDetails;
@@ -113,4 +114,6 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::post('/task-request/add', [AdministratorController::class, 'request_task_store'])->name('admin.revision-task');
   Route::get('/task-request/approved', [AdministratorController::class, 'request_task_approved'])->name('admin.revision-approved');
   Route::get('/section-qrcode', [AdministratorController::class, 'generateQrcodeBySection'])->name('generate-qrcode-section');
+
+  Route::get('/employee/create', AddEmployee::class)->name('admin.add-employee');
 });

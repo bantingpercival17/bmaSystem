@@ -20,6 +20,7 @@ class EmployeeView extends Component
     public $position;
     public $status = 1;
     public $testingValue;
+    public $uploadPictureForm = false;
     public function render()
     {
         $this->employee = request()->query('employee') ? $this->setEmployee(base64_decode(request()->query('employee'))) : $this->employee;
@@ -93,5 +94,9 @@ class EmployeeView extends Component
         $this->department = 1;
         $this->status = 1;
         $this->position =  '';
+    }
+    function uploadPicture()
+    {
+        $this->uploadPictureForm = $this->uploadPictureForm ? false : true;
     }
 }

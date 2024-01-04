@@ -24,8 +24,20 @@
                                     {{ $employee ? $employee->user->email : 'EMAIL' }}
                                 </small>
                                 @if ($employee)
-                                    <a href="{{ route('admin.staff-qrcode') }}?employee={{ base64_encode($employee->id) }}"
-                                        class="btn btn-primary btn-sm float-end">GENERATE QR-CODE</a>
+                                    <div class="mt-2">
+                                        <a href="{{ route('admin.staff-qrcode') }}?employee={{ base64_encode($employee->id) }}"
+                                            class="badge bg-primary">GENERATE QR-CODE</a>
+                                        <span wire:click="uploadPicture" class="badge bg-info">UPLOAD PICTURE</span>
+                                    </div>
+                                    @if ($uploadPictureForm)
+                                        <form >
+                                            <div class="form-group">
+                                                <small class="text-muted fw-bolder">Upload Image</small>
+                                                <input type="file" name=""
+                                                    class="form-control form-control-sm border border-primary">
+                                            </div>
+                                        </form>
+                                    @endif
                                 @endif
                             </p>
                         </div>
