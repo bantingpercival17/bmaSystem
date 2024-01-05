@@ -36,10 +36,12 @@
                                                 <input type="file" name="file" wire:model="image"
                                                     class="form-control form-control-sm border border-primary">
                                             </div>
-                                            <button type="submit" class="btn btn-primary btn-sm float-end">UPLOAD</button>
-                                            @error('image') <span>{{ $message }}</span> @enderror
+                                            <button type="submit"
+                                                class="btn btn-primary btn-sm float-end">UPLOAD</button>
+                                            @error('image')
+                                                <small class="badge bg-danger">{{ $message }}</small>
+                                            @enderror
                                         </form>
-                                        
                                     @endif
                                 @endif
                             </p>
