@@ -7,10 +7,14 @@ use App\Models\Role;
 use App\Models\Staff;
 use App\Models\StaffDepartment;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class EmployeeView extends Component
 {
+    use WithFileUploads;
     public $searchInput;
     public $employee;
     public $formRole = false;
@@ -21,6 +25,8 @@ class EmployeeView extends Component
     public $status = 1;
     public $testingValue;
     public $uploadPictureForm = false;
+    public $image;
+    public $imagePath = null;
     public function render()
     {
         $this->employee = request()->query('employee') ? $this->setEmployee(base64_decode(request()->query('employee'))) : $this->employee;
@@ -98,5 +104,21 @@ class EmployeeView extends Component
     function uploadPicture()
     {
         $this->uploadPictureForm = $this->uploadPictureForm ? false : true;
+    }
+    function imageUpload()
+    {
+        $this->validate([
+            'image' => 'image|mimes:jpeg,png,jpg|max:1024', // Adjust the validation rules as needed
+        ]);
+
+        $filename =  'employee/image/' . time() . '.' . $this->image->getClientOriginalExtension();
+        // File Path Format: $_path.'/'.student-number.'/'.$_folder
+        $path = 'public';
+        // Using Storage facade to store the file
+        Storage::disk($path)->put($filename, fopen($this->image, 'r+'));
+        // Generating the URL for the stored file
+        $url = URL::to('/') . '/storage/' . $path . '/' . $filename;
+
+        $this->imagePath = $url;
     }
 }

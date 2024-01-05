@@ -19,9 +19,10 @@
                         <button class="btn btn-info text-white" type="submit">UPLOAD</button>
                     </div>
                     <div class="col-md-4">
-                        <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#add-employee">
+                        <a href="{{route('admin.add-employee')}}" class="btn btn-primary btn-sm">ADD EMPLOYEE</a>
+                        <!--  <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#add-employee">
                             Add Employee
-                        </button>
+                        </button> -->
                         <a href="{{ route('export-employee') }}" class="btn btn-info btn-sm">EXPORT</a>
                     </div>
                 </div>

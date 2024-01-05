@@ -30,13 +30,16 @@
                                         <span wire:click="uploadPicture" class="badge bg-info">UPLOAD PICTURE</span>
                                     </div>
                                     @if ($uploadPictureForm)
-                                        <form >
+                                        <form wire:submit.prevent="imageUpload" enctype="multipart/form-data">
                                             <div class="form-group">
                                                 <small class="text-muted fw-bolder">Upload Image</small>
-                                                <input type="file" name=""
+                                                <input type="file" name="file" wire:model="image"
                                                     class="form-control form-control-sm border border-primary">
                                             </div>
+                                            <button type="submit" class="btn btn-primary btn-sm float-end">UPLOAD</button>
+                                            @error('image') <span>{{ $message }}</span> @enderror
                                         </form>
+                                        
                                     @endif
                                 @endif
                             </p>
