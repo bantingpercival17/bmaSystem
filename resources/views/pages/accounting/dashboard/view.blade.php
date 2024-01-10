@@ -11,7 +11,7 @@
 @endsection
 @section('page-content')
     {{-- @include('pages.general-view.dashboard-panels.enrollment_overview') --}}
-    @include('layouts.widgets.enrollment_overview')
-    @include('pages.general-view.dashboard-panels.entrance_examination_overview')
+    {{--  @include('layouts.widgets.enrollment_overview')
+    @include('pages.general-view.dashboard-panels.entrance_examination_overview') --}}
     @include('pages.general-view.dashboard-panels.collection_overview')
 @endsection
