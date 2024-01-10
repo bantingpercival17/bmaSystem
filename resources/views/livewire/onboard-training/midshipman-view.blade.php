@@ -78,6 +78,16 @@
                     <input type="search" class="form-control border border-primary" placeholder="Search..."
                         wire:model="inputStudent">
                 </div>
+                <div class="form-group">
+                    <small class="fw-bolder">SORT STUDENT'S</small>
+                    <select name="" id="" wire:model="selectSort"
+                        class="form-select form-select-sm border border-primary">
+                        @forelse ($sortList as $sort)
+                            <option value="{{ $sort }}">{{ ucwords(str_replace('-', ' ', $sort)) }}</option>
+                        @empty
+                        @endforelse
+                    </select>
+                </div>
                 <div class=" d-flex justify-content-between mb-2">
                     <h6 class=" fw-bolder text-muted">
                         @if ($inputStudent != '')

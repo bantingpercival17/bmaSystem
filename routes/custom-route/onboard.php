@@ -11,7 +11,7 @@ Route::prefix('onboard')->group(function () {
     Route::get('/embarked-monitoring', [OnboardTrainingController::class, 'embarked_monitoring_view'])->name('onboard.embarked-list'); // Embarked View
 
 
-    Route::get('/midship-man', [OnboardTrainingController::class, 'midshipman_view'])->name('onboard.midshipman'); // Midship Man Profile
+    //Route::get('/midship-man', [OnboardTrainingController::class, 'midshipman_view'])->name('onboard.midshipman'); // Midship Man Profile
     Route::get('/midshipman/v2', [OnboardTrainingController::class, 'midshipman_view_v2'])->name('onboard.midshipman'); // Midship Man Profile
     Route::get('miship-man/shipboard-application/document-verification', [OnboardTrainingController::class, 'shipboard_application_verification'])->name('onboard.midshipman-shipboard-application');
 
@@ -36,5 +36,5 @@ Route::prefix('onboard')->group(function () {
     Route::get('/shipboard-monitoring/assessment-report-v2', [OnboardTrainingController::class, 'onboard_assessment_report_v2'])->name('onboard.assessment-report-v2');
 
     /* Liveview Components */
-    Route::get('/midshipman', MidshipmanView::class)->name('onboard.midshipman-v2');
+    Route::get('/midshipman', MidshipmanView::class)->name('onboard.midshipman');
 });
