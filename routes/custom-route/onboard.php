@@ -36,5 +36,5 @@ Route::prefix('onboard')->group(function () {
     Route::get('/shipboard-monitoring/assessment-report-v2', [OnboardTrainingController::class, 'onboard_assessment_report_v2'])->name('onboard.assessment-report-v2');
 
     /* Liveview Components */
-    Route::get('/midshipman', MidshipmanView::class)->name('onboard.midshipman');
+    Route::get('/midshipman', MidshipmanView::class)->name('onboard.midshipman-v2');
 });

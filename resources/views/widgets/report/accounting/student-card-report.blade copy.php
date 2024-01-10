@@ -1,5 +1,5 @@
-@extends('widgets.report.app_report_template_v2')
-{{-- @extends('widgets.report.main-report-template') --}}
+{{-- @extends('widgets.report.grade.report_layout_1') --}}
+@extends('widgets.report.main-report-template')
 @section('title-report', 'MIDSHIPMAN ACCOUNT CARD - ' . strtoupper($_student->last_name . ', ' . $_student->first_name))
 @section('form-code', 'ACC-12')
 @section('style')
@@ -49,6 +49,21 @@
 
         .text-50 {
             width: 20%;
+        }
+
+        .table-content {
+            font-family: "Times New Roman", Times, serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table-content td,
+        .table-content th {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+            font-size: 14px;
+
         }
     </style>
 @endsection
@@ -100,14 +115,13 @@
                         <th class="text-fill-in">
                             @php
                                 $extensionName = strtolower($_student->extention_name) != 'n/a' ? $_student->extention_name : '';
-
+                                
                             @endphp
                             {{ strtoupper($_student->last_name . ' ' . $extensionName . ', ' . $_student->first_name . ' ' . $_student->middle_name) }}
                         </th>
                         <td>SCHOOL YEAR:</td>
                         <th class="text-fill-in">
-                            {{ strtoupper($enrollment->academic->semester . ' - ' . $enrollment->academic->school_year) }}
-                        </th>
+                            {{ $enrollment->academic->school_year . ' - ' . $enrollment->academic->semester }}</th>
                     </tr>
                     <tr>
                         <td>STUDENT NUMBER:</td>

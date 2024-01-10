@@ -28,6 +28,14 @@ class Section extends Model
             ->where('student_sections.is_removed', false)
             ->orderBy('student_details.last_name', 'asc')->orderBy('student_details.first_name', 'asc');
     }
+    public function student_section_for_accounting()
+    {
+        return $this->hasMany(StudentSection::class, 'section_id')
+            ->select('student_details.*')
+            ->join('student_details', 'student_details.id', 'student_sections.student_id')
+            ->where('student_sections.is_removed', false)
+            ->orderBy('student_details.last_name', 'asc')->orderBy('student_details.first_name', 'asc');
+    }
     public function student_with_bdg_sections()
     {
         return $this->hasMany(StudentSection::class, 'section_id')
@@ -52,10 +60,10 @@ class Section extends Model
     public function subject_details()
     {
         return $this->hasMany(SubjectClass::class, 'section_id')
-        ->with('curriculum_subjects')
-        ->with('staff')
-        ->with('student_semestral_subject_grade')
-        ->where('is_removed', false)->orderBy('curriculum_subject_id', 'asc');
+            ->with('curriculum_subjects')
+            ->with('staff')
+            ->with('student_semestral_subject_grade')
+            ->where('is_removed', false)->orderBy('curriculum_subject_id', 'asc');
     }
 
     public function course()

@@ -1082,6 +1082,32 @@ class AccountingController extends Controller
             //throw $th;
         }
     }
+    function student_account_card_per_section(Request $_request)
+    {
+        try {
+            $course = CourseOffer::find($_request->course);
+            $academic = AcademicYear::find(base64_decode($_request->academic));
+            $level = str_replace('/', '', $_request->level);
+            $filename = $course->course_code . '-' . $level . '-' . $academic->school_year . '-' . $academic->semester;
+
+            $studentList = StudentDetails::select('student_details.id', 'student_details.last_name', 'student_details.first_name', 'student_details.middle_name', 'student_details.extention_name')
+                ->join('student_sections', 'student_sections.student_id', 'student_details.id')
+                ->where('student_sections.is_removed', false)
+                ->join('sections', 'student_sections.section_id', 'sections.id')
+                ->where('sections.is_removed', false)
+                ->where('sections.course_id', $course->id)
+                ->where('sections.academic_id', $academic->id)
+                ->where('sections.year_level', $_request->level)
+                ->orderBy('sections.section_name', 'asc')
+                ->orderBy('student_details.last_name', 'asc')->orderBy('student_details.first_name', 'asc')
+                ->get();
+            //return $studentList;
+            $pdfReport = new PaymentReports();
+            return $pdfReport->student_account_card_by_section($studentList, $filename, $academic);
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
     public function employee_view(Request $_request)
     {
         try {
