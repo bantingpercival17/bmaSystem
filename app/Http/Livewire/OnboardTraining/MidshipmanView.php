@@ -33,7 +33,7 @@ class MidshipmanView extends Component
             ->where('documents.document_propose', 'DOCUMENTS-MONITORING')
             ->where('documents.department_id', 4)
             ->where('document_requirements.student_id', base64_decode(request()->query('student')))
-            ->select('documents.*') 
+            ->select('documents.*')
             ->groupBy('documents.id')
             ->get();
         }

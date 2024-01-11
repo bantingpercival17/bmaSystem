@@ -67,9 +67,15 @@
                 @foreach ($item->document_requirements as $requirement)
                     <div class="form-group">
 
-                        <span
-                            class="fw-bolder text-secondary">{{ strtoupper($requirement->documents->document_name) }}</span>
-                        <small class="badge bg-primary btn-form-document float-left" data-bs-toggle="modal"
+                        <span class="fw-bolder text-secondary">{{ strtoupper($requirement->documents->document_name) }}
+                        </span>
+                        <small class="btn btn-outline-primary btn-xs btn-form-document btn-round float-end" data-bs-toggle="modal"
+                            data-bs-target=".document-view-modal"
+                            wire:click="showDocuments('{{ $requirement->file_path }}')" title=""
+                            data-bs-original-title="View Image">
+                           View Document
+                        </small>
+                        {{--  <small class="badge bg-primary btn-form-document float-left" data-bs-toggle="modal"
                             data-bs-target=".document-view-modal" data-document-url="{{ $requirement->file_path }}"
                             title="" data-bs-original-title="View Image">
                             <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +88,7 @@
                                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                     stroke-linejoin="round"></path>
                             </svg>
-                        </small>
+                        </small> --}}
                         @if ($requirement->document_status == 1)
                             <br>
                             <small class="fw-bolder text-primary">DOCUMENT APPROVED</small>
@@ -162,4 +168,25 @@
         @endforelse
 
     </div>
+    @if ($showModal)
+        <div class="fixed inset-0 flex items-center justify-center z-50">
+            <div class="modal fade show"
+                style="display: block;   background-color: rgb(0 0 0 / 77%);
+            width: 100%;
+            height: 100%;">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header p-3">
+                            <h5 class="fw-bolder text-primary" id="exampleModalLabel1">Document Review</h5>
+                            <button type="button" class="btn-close" wire:click="hideDocuments">
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <img src="{{ $documentLink }}" style=" width: 100%; " alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
