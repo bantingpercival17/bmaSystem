@@ -68,12 +68,14 @@
     </style>
 @endsection
 @section('content')
-    <div class="page-content">
-        @forelse ($students as $student)
+
+    @foreach ($students as $key => $student)
+        <div class="page-content">
             <h3 class="text-center"><b>MIDSHIPMAN'S ACCOUNT CARD</b></h3>
             <label for="" class="account-card-title text-center"></label>
             @php
                 $enrollment = $student->enrollment_academic_year($academic->id);
+                $balance = 0;
             @endphp
             <table class="table-content account-table" style="width: 70%">
                 <tr>
@@ -107,9 +109,7 @@
                         @endif
 
                     </td>
-
                 </tr>
-
             </table>
             <table class="table-content account-table">
                 <tr>
@@ -168,9 +168,6 @@
                     </th>
                 </tr>
             </table>
-            @php
-                $balance = 0;
-            @endphp
             <table class="table table-onboard account-table">
                 <thead>
                     <tr>
@@ -282,9 +279,10 @@
                     <th>MIDSHIPMAN</th>
                 </tr>
             </table>
-            <div class="page-break"></div>
-        @empty
-        @endforelse
-    </div>
+           {{--  <div class="page-break"></div>
+            {{ $key % 2 }} --}}
+        </div>
+        <div class="page-break"></div>
+    @endforeach
 
 @endsection

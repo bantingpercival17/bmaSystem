@@ -45,6 +45,6 @@ class PaymentReports
     {
         $file_name =   'FORM ACC-12-' . $filename."".date('dmy');
         $pdf = PDF::loadView($this->path . '.student-card-report', compact('students', 'academic'));
-        return $pdf->setPaper($this->crosswise_legal, 'portrait')->download($file_name . '.pdf');
+        return $pdf->setPaper($this->crosswise_legal, 'portrait')->stream($file_name . '.pdf');
     }
 }
