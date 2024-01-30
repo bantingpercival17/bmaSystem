@@ -258,7 +258,7 @@
                             <br>
                             {{ strtoupper($enrollment->payment_assessments->staff->first_name . ' ' . $enrollment->payment_assessments->staff->last_name) }}
                         @else
-                        -
+                            -
                         @endif
                     </th>
                     <th><img src="{{ public_path() . '/assets\img\signature/payments@bma.edu.ph.png' }}" alt=""
