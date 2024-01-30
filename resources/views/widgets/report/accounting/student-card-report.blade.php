@@ -81,7 +81,7 @@
                 <tr>
                     <td style="width: 30%">ENROLLMENT STATUS: </td>
                     <td class="checkbox-container">
-                        @if ($enrollment->payment_assessments)
+                        @if ($enrollment)
                             @if ($enrollment->payment_assessments->payment_assessment_paid)
                                 @if ($status = $enrollment->enrollment_cancellation)
                                     <input class="checkbox-input" type="checkbox" />
@@ -154,16 +154,16 @@
                     <td>PAYMENT SCHEME:</td>
                     <th class="checkbox-container">
                         <input class="checkbox-input" type="checkbox"
-                            {{ $enrollment->payment_assessments ? ($enrollment->payment_assessments->payment_mode == 0 ? 'checked' : '') : '' }} />
+                            {{ $enrollment ? ($enrollment->payment_assessments->payment_mode == 0 ? 'checked' : '') : '' }} />
                         FULL
                         <input class="checkbox-input" type="checkbox"
-                            {{ $enrollment->payment_assessments ? ($enrollment->payment_assessments->payment_mode == 1 ? 'checked' : '') : '' }} />
+                            {{ $enrollment ? ($enrollment->payment_assessments->payment_mode == 1 ? 'checked' : '') : '' }} />
                         PERIODIC
                     </th>
                     <td style="width:150px;">PAYMENT SCHEDULED:</td>
                     <td style="width:100px;">DOWN PAYMENT:</td>
                     <th class="text-fill-in" style="width:100px;">
-                        {{ $enrollment->payment_assessments ? number_format($enrollment->payment_assessments->upon_enrollment, 2) : '' }}
+                        {{ $enrollment ? number_format($enrollment->payment_assessments->upon_enrollment, 2) : '' }}
                     </th>
                 </tr>
                 <tr>
@@ -174,7 +174,7 @@
                     <td></td>
                     <td>PERIODIC:</td>
                     <th class="text-fill-in" style="width:100px;">
-                        {{ $enrollment->payment_assessments ? number_format($enrollment->payment_assessments->monthly_payment, 2) : '' }}
+                        {{ $enrollment ? number_format($enrollment->payment_assessments->monthly_payment, 2) : '' }}
                     </th>
                 </tr>
             </table>
@@ -194,7 +194,7 @@
                     @php
                         $row = 12;
                     @endphp
-                    @if ($enrollment->payment_assessments)
+                    @if ($enrollment)
                         @if (count($enrollment->payment_assessments->account_card_details()) > 0)
                             @foreach ($enrollment->payment_assessments->account_card_details() as $payment)
                                 <tr>
@@ -262,7 +262,7 @@
                 </tr>
                 <tr>
                     <th>
-                        @if ($enrollment->payment_assessments)
+                        @if ($enrollment)
                             <img src="{{ public_path() . '\assets/img/signature/' . $enrollment->payment_assessments->staff->user->email . '.png' }}"
                                 alt="" style="align-content: center; width:150px; margin:0px;">
                             <br>
