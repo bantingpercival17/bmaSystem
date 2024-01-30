@@ -81,18 +81,27 @@
                 <tr>
                     <td style="width: 30%">ENROLLMENT STATUS: </td>
                     <td class="checkbox-container">
-                        @if ($enrollment->payment_assessments->payment_assessment_paid)
-                            @if ($status = $enrollment->enrollment_cancellation)
-                                <input class="checkbox-input" type="checkbox" />
-                                ENROLLED
-                                <input class="checkbox-input" type="checkbox"
-                                    {{ $status->type_of_cancellations == 'withdrawn' ? 'checked' : '' }} />
-                                WITHDRAW
-                                <input class="checkbox-input" type="checkbox"
-                                    {{ $status->type_of_cancellations == 'dropped' ? 'checked' : '' }} />
-                                DROPPED
+                        @if ($enrollment->payment_assessments)
+                            @if ($enrollment->payment_assessments->payment_assessment_paid)
+                                @if ($status = $enrollment->enrollment_cancellation)
+                                    <input class="checkbox-input" type="checkbox" />
+                                    ENROLLED
+                                    <input class="checkbox-input" type="checkbox"
+                                        {{ $status->type_of_cancellations == 'withdrawn' ? 'checked' : '' }} />
+                                    WITHDRAW
+                                    <input class="checkbox-input" type="checkbox"
+                                        {{ $status->type_of_cancellations == 'dropped' ? 'checked' : '' }} />
+                                    DROPPED
+                                @else
+                                    <input class="checkbox-input" type="checkbox" checked />
+                                    ENROLLED
+                                    <input class="checkbox-input" type="checkbox" />
+                                    WITHDRAW
+                                    <input class="checkbox-input" type="checkbox" />
+                                    DROPPED
+                                @endif
                             @else
-                                <input class="checkbox-input" type="checkbox" checked />
+                                <input class="checkbox-input" type="checkbox" />
                                 ENROLLED
                                 <input class="checkbox-input" type="checkbox" />
                                 WITHDRAW
@@ -107,6 +116,7 @@
                             <input class="checkbox-input" type="checkbox" />
                             DROPPED
                         @endif
+
 
                     </td>
                 </tr>
