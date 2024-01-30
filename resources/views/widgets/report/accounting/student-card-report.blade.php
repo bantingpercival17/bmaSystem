@@ -144,16 +144,16 @@
                     <td>PAYMENT SCHEME:</td>
                     <th class="checkbox-container">
                         <input class="checkbox-input" type="checkbox"
-                            {{ $enrollment->payment_assessments->payment_mode == 0 ? 'checked' : '' }} />
+                            {{ $enrollment->payment_assessments ? ($enrollment->payment_assessments->payment_mode == 0 ? 'checked' : '') : '' }} />
                         FULL
                         <input class="checkbox-input" type="checkbox"
-                            {{ $enrollment->payment_assessments->payment_mode == 1 ? 'checked' : '' }} />
+                            {{ $enrollment->payment_assessments ? ($enrollment->payment_assessments->payment_mode == 1 ? 'checked' : '') : '' }} />
                         PERIODIC
                     </th>
                     <td style="width:150px;">PAYMENT SCHEDULED:</td>
                     <td style="width:100px;">DOWN PAYMENT:</td>
                     <th class="text-fill-in" style="width:100px;">
-                        {{ number_format($enrollment->payment_assessments->upon_enrollment, 2) }}
+                        {{ $enrollment->payment_assessments ? number_format($enrollment->payment_assessments->upon_enrollment, 2) : '' }}
                     </th>
                 </tr>
                 <tr>
@@ -164,7 +164,7 @@
                     <td></td>
                     <td>PERIODIC:</td>
                     <th class="text-fill-in" style="width:100px;">
-                        {{ number_format($enrollment->payment_assessments->monthly_payment, 2) }}
+                        {{ $enrollment->payment_assessments ? number_format($enrollment->payment_assessments->monthly_payment, 2) : '' }}
                     </th>
                 </tr>
             </table>
@@ -184,46 +184,49 @@
                     @php
                         $row = 12;
                     @endphp
-                    @if (count($enrollment->payment_assessments->account_card_details()) > 0)
-                        @foreach ($enrollment->payment_assessments->account_card_details() as $payment)
-                            <tr>
-                                <td class="text-center">{{ $payment['date'] }}</td>
-                                <td class="text-center">{{ $payment['orNumber'] }}</td>
-                                <td class="text-center text-50">{{ $payment['remarks'] }}</td>
-                                <td class="text-left">
-                                    {{ $payment['debit'] ? number_format($payment['debit'], 2) : '' }}
-                                </td>
-                                <td class="text-left">
-                                    {{ $payment['credit'] ? number_format($payment['credit'], 2) : '' }}
-                                </td>
-                                <td class="text-left">
-                                    @php
-                                        if ($payment['debit'] !== null) {
-                                            $balance -= $payment['debit'];
-                                        }
-                                        if ($payment['credit'] !== null) {
-                                            $balance += $payment['credit'];
-                                        }
-                                    @endphp
-                                    {{ number_format($balance, 2) }}
-                                </td>
-                                <th></th>
-                            </tr>
-                            @php
-                                $row -= 1;
-                            @endphp
-                        @endforeach
-                        @for ($i = 0; $i < $row; $i++)
-                            <tr>
-                                <td style="color:white">-</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        @endfor
+                    @if ($enrollment->payment_assessments)
+                        @if (count($enrollment->payment_assessments->account_card_details()) > 0)
+                            @foreach ($enrollment->payment_assessments->account_card_details() as $payment)
+                                <tr>
+                                    <td class="text-center">{{ $payment['date'] }}</td>
+                                    <td class="text-center">{{ $payment['orNumber'] }}</td>
+                                    <td class="text-center text-50">{{ $payment['remarks'] }}</td>
+                                    <td class="text-left">
+                                        {{ $payment['debit'] ? number_format($payment['debit'], 2) : '' }}
+                                    </td>
+                                    <td class="text-left">
+                                        {{ $payment['credit'] ? number_format($payment['credit'], 2) : '' }}
+                                    </td>
+                                    <td class="text-left">
+                                        @php
+                                            if ($payment['debit'] !== null) {
+                                                $balance -= $payment['debit'];
+                                            }
+                                            if ($payment['credit'] !== null) {
+                                                $balance += $payment['credit'];
+                                            }
+                                        @endphp
+                                        {{ number_format($balance, 2) }}
+                                    </td>
+                                    <th></th>
+                                </tr>
+                                @php
+                                    $row -= 1;
+                                @endphp
+                            @endforeach
+                            @for ($i = 0; $i < $row; $i++)
+                                <tr>
+                                    <td style="color:white">-</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            @endfor
+                        @else
+                        @endif
                     @else
                         @for ($i = 0; $i < $row; $i++)
                             <tr>
@@ -237,7 +240,6 @@
                             </tr>
                         @endfor
                     @endif
-
                 </tbody>
             </table>
             <br>
@@ -279,7 +281,7 @@
                     <th>MIDSHIPMAN</th>
                 </tr>
             </table>
-           {{--  <div class="page-break"></div>
+            {{--  <div class="page-break"></div>
             {{ $key % 2 }} --}}
         </div>
         <div class="page-break"></div>

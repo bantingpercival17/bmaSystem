@@ -264,8 +264,8 @@
                                                     <select name="level" id=""
                                                         class="form-select form-select-sm border border-primary">
                                                         <option value="all">All</option>
-                                                        <option value="11">Grade 11</option>
-                                                        <option value="12">Grade 12</option>
+                                                        <option value="GRADE 11">Grade 11</option>
+                                                        <option value="GRADE 12">Grade 12</option>
                                                         <option value="1/C"> 1ST CLASS</option>
                                                         <option value="2/C"> 2ND CLASS</option>
                                                         <option value="3/C"> 3RD CLASS</option>
