@@ -252,10 +252,14 @@
                 </tr>
                 <tr>
                     <th>
-                        <img src="{{ public_path() . '\assets/img/signature/' . $enrollment->payment_assessments->staff->user->email . '.png' }}"
-                            alt="" style="align-content: center; width:150px; margin:0px;">
-                        <br>
-                        {{ strtoupper($enrollment->payment_assessments->staff->first_name . ' ' . $enrollment->payment_assessments->staff->last_name) }}
+                        @if ($enrollment->payment_assessments)
+                            <img src="{{ public_path() . '\assets/img/signature/' . $enrollment->payment_assessments->staff->user->email . '.png' }}"
+                                alt="" style="align-content: center; width:150px; margin:0px;">
+                            <br>
+                            {{ strtoupper($enrollment->payment_assessments->staff->first_name . ' ' . $enrollment->payment_assessments->staff->last_name) }}
+                        @else
+                        -
+                        @endif
                     </th>
                     <th><img src="{{ public_path() . '/assets\img\signature/payments@bma.edu.ph.png' }}" alt=""
                             style="align-content: center; width:150px; margin:0px;">
