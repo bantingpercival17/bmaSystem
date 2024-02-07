@@ -8,3 +8,4 @@ Route::get('attendance', [AttendanceController::class, 'fetch_attendance']);
 
 Route::get('attendance/store', [AttendanceController::class, 'store_attendance']);
 Route::get('data-sync', [AttendanceController::class, 'data_sync']);
+Route::post('employee-attendance',[AttendanceController::class,'employee_attendance_sync']);

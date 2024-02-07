@@ -233,4 +233,16 @@ class AttendanceController extends Controller
             ], 500);
         }
     }
+    function employee_attendance_sync(Request $request)
+    {
+        try {
+            // Employee Data
+            return response($request->name, 200);
+        } catch (\Throwable $error) {
+            $this->reportBug($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
 }
