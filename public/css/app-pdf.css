@@ -9,6 +9,7 @@ header {
     font-size: 12px !important;
     text-align: left;
     justify-content: center;
+    margin-bottom: 10%;
     /** Extra personal styles **/
     /*  background-color: #008B8B; */
 }
@@ -42,6 +43,7 @@ footer {
     font-size: 0.9em;
     bottom: 10px;
 }
+
 .page-break {
     margin-top: 25px;
     padding: 0%;
@@ -63,6 +65,7 @@ footer {
     /*  border: 1px solid #ddd;
                                                     border: 1px solid #ddd; */
 }
+
 .table {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
@@ -72,9 +75,11 @@ footer {
     table-layout: fixed;
     page-break-inside: always;
 }
+
 .table-content {
     overflow-x: auto;
 }
+
 .table-content {
     /* font-family: "Times New Roman", Times, serif; */
     border-collapse: collapse;
@@ -106,4 +111,25 @@ footer {
     padding-bottom: 5px;
     border: 1px solid rgb(0, 0, 0);
     font-size: 10px;
+}
+
+.table-subject-grade {
+    border-collapse: collapse;
+    width: 100%;
+    border: 0.9px solid rgb(0, 0, 0);
+    margin-top: 10px;
+}
+
+.table-subject-grade td,
+.table-subject-grade th {
+    padding: 3px;
+    border: 1px solid rgb(0, 0, 0);
+    font-size: 9px;
+
+}
+
+.table-subject-grade th {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
 }

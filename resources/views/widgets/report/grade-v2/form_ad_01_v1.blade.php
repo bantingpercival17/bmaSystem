@@ -1,9 +1,10 @@
 {{-- @extends('widgets.report.grade-v2.report_layout_1') --}}
-@extends('widgets.report.main-report-template')
+{{-- @extends('widgets.report.main-report-template') --}}
+@extends('widgets.report.app_report_template_v2')
 @section('title-report', 'FORM AD 01 - GRADING SHEET : ' . $subject->curriculum_subject->subject->subject_code)
 @section('form-code', 'AD - 01')
 @section('content')
-    <div class="page-content">
+    <div class="page-content" style="margin-top: 30px;">
         <table class="table-content">
             <tbody>
                 <tr>
@@ -43,7 +44,6 @@
                 </tr>
             </tbody>
         </table>
-        <br>
         <table class="table-subject-grade">
             <thead>
                 @foreach ($columns as $key => $item)

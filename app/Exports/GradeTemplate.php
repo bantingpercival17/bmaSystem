@@ -100,8 +100,8 @@ class GradeTemplate implements FromCollection, ShouldAutoSize,  WithEvents, With
         }
         $_data += array($_count => 'Quiz:' . strtoupper(request()->input('_period')) . ":EXAMINATION");
         if (request()->input('_period') == 'finals') {
-            for ($r = 1; $r <= 10; $r++) {
-                $_data += array($_count => 'Assignment :' . strtoupper(request()->input('_period')) . ": Course Outcome No." . $r);
+            for ($i = 0; $i <= 10; $i++) {
+                $_data += array($_count => 'Assignment :' . strtoupper(request()->input('_period')) . ": Course Outcome No." . $i);
                 $_count += 1;
             }
         }
