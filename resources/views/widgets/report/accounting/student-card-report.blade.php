@@ -81,18 +81,27 @@
                 <tr>
                     <td style="width: 30%">ENROLLMENT STATUS: </td>
                     <td class="checkbox-container">
-                        @if ($enrollment->payment_assessments->payment_assessment_paid)
-                            @if ($status = $enrollment->enrollment_cancellation)
-                                <input class="checkbox-input" type="checkbox" />
-                                ENROLLED
-                                <input class="checkbox-input" type="checkbox"
-                                    {{ $status->type_of_cancellations == 'withdrawn' ? 'checked' : '' }} />
-                                WITHDRAW
-                                <input class="checkbox-input" type="checkbox"
-                                    {{ $status->type_of_cancellations == 'dropped' ? 'checked' : '' }} />
-                                DROPPED
+                        @if ($enrollment)
+                            @if ($enrollment->payment_assessments->payment_assessment_paid)
+                                @if ($status = $enrollment->enrollment_cancellation)
+                                    <input class="checkbox-input" type="checkbox" />
+                                    ENROLLED
+                                    <input class="checkbox-input" type="checkbox"
+                                        {{ $status->type_of_cancellations == 'withdrawn' ? 'checked' : '' }} />
+                                    WITHDRAW
+                                    <input class="checkbox-input" type="checkbox"
+                                        {{ $status->type_of_cancellations == 'dropped' ? 'checked' : '' }} />
+                                    DROPPED
+                                @else
+                                    <input class="checkbox-input" type="checkbox" checked />
+                                    ENROLLED
+                                    <input class="checkbox-input" type="checkbox" />
+                                    WITHDRAW
+                                    <input class="checkbox-input" type="checkbox" />
+                                    DROPPED
+                                @endif
                             @else
-                                <input class="checkbox-input" type="checkbox" checked />
+                                <input class="checkbox-input" type="checkbox" />
                                 ENROLLED
                                 <input class="checkbox-input" type="checkbox" />
                                 WITHDRAW
@@ -107,6 +116,7 @@
                             <input class="checkbox-input" type="checkbox" />
                             DROPPED
                         @endif
+
 
                     </td>
                 </tr>
@@ -144,16 +154,16 @@
                     <td>PAYMENT SCHEME:</td>
                     <th class="checkbox-container">
                         <input class="checkbox-input" type="checkbox"
-                            {{ $enrollment->payment_assessments ? ($enrollment->payment_assessments->payment_mode == 0 ? 'checked' : '') : '' }} />
+                            {{ $enrollment ? ($enrollment->payment_assessments->payment_mode == 0 ? 'checked' : '') : '' }} />
                         FULL
                         <input class="checkbox-input" type="checkbox"
-                            {{ $enrollment->payment_assessments ? ($enrollment->payment_assessments->payment_mode == 1 ? 'checked' : '') : '' }} />
+                            {{ $enrollment ? ($enrollment->payment_assessments->payment_mode == 1 ? 'checked' : '') : '' }} />
                         PERIODIC
                     </th>
                     <td style="width:150px;">PAYMENT SCHEDULED:</td>
                     <td style="width:100px;">DOWN PAYMENT:</td>
                     <th class="text-fill-in" style="width:100px;">
-                        {{ $enrollment->payment_assessments ? number_format($enrollment->payment_assessments->upon_enrollment, 2) : '' }}
+                        {{ $enrollment ? number_format($enrollment->payment_assessments->upon_enrollment, 2) : '' }}
                     </th>
                 </tr>
                 <tr>
@@ -164,7 +174,7 @@
                     <td></td>
                     <td>PERIODIC:</td>
                     <th class="text-fill-in" style="width:100px;">
-                        {{ $enrollment->payment_assessments ? number_format($enrollment->payment_assessments->monthly_payment, 2) : '' }}
+                        {{ $enrollment ? number_format($enrollment->payment_assessments->monthly_payment, 2) : '' }}
                     </th>
                 </tr>
             </table>
@@ -184,7 +194,7 @@
                     @php
                         $row = 12;
                     @endphp
-                    @if ($enrollment->payment_assessments)
+                    @if ($enrollment)
                         @if (count($enrollment->payment_assessments->account_card_details()) > 0)
                             @foreach ($enrollment->payment_assessments->account_card_details() as $payment)
                                 <tr>
@@ -252,10 +262,14 @@
                 </tr>
                 <tr>
                     <th>
-                        <img src="{{ public_path() . '\assets/img/signature/' . $enrollment->payment_assessments->staff->user->email . '.png' }}"
-                            alt="" style="align-content: center; width:150px; margin:0px;">
-                        <br>
-                        {{ strtoupper($enrollment->payment_assessments->staff->first_name . ' ' . $enrollment->payment_assessments->staff->last_name) }}
+                        @if ($enrollment)
+                            <img src="{{ public_path() . '\assets/img/signature/' . $enrollment->payment_assessments->staff->user->email . '.png' }}"
+                                alt="" style="align-content: center; width:150px; margin:0px;">
+                            <br>
+                            {{ strtoupper($enrollment->payment_assessments->staff->first_name . ' ' . $enrollment->payment_assessments->staff->last_name) }}
+                        @else
+                            -
+                        @endif
                     </th>
                     <th><img src="{{ public_path() . '/assets\img\signature/payments@bma.edu.ph.png' }}" alt=""
                             style="align-content: center; width:150px; margin:0px;">
