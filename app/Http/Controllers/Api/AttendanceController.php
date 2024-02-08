@@ -224,6 +224,18 @@ class AttendanceController extends Controller
                 }
             }
             $students = [];
+            $studentAccount = StudentAccount::where('is_actived', true)->get();
+            foreach ($studentAccount as $key => $value) {
+                if ($value->student) {
+                    $students[] = array(
+                        'type' => 'student',
+                        'username' => str_replace('@bma.edu.ph', '', $value->email),
+                        'name' => strtoupper(trim($value->student->first_name . ' ' . $value->student->last_name)),
+                        'course' => $value->student->enrollment_assessment->course->course_name,
+                        'image' => $value->student->profile_picture()
+                    );
+                }
+            }
             $data = compact('employees', 'students');
             return response($data, 200);
         } catch (\Throwable $error) {
@@ -237,7 +249,32 @@ class AttendanceController extends Controller
     {
         try {
             // Employee Data
-            return response($request->name, 200);
+            // Check the First if the Request data of ResponseId is not null
+            if ($request->response_id) {
+                $attendance = EmployeeAttendance::find($request->response_id);
+                $attendance->time_out = $request->time_out;
+                $attendance->save();
+                $data = array(
+                    'response_id' => $request->response_id,
+                    'status' => '201'
+                );
+            } else {
+                // Create / Store Attendance 
+                // If the the Response ID is null check the email
+                $employee = User::where('email', $request->email)->first();
+                $attendanceDetails = array(
+                    'staff_id' => $employee->staff->id,
+                    'description' => 'ATTENDANCE SYNC',
+                    'time_in' => $request->time_in,
+                    'time_out' => $request->time_out,
+                );
+                $attendance = EmployeeAttendance::create($attendanceDetails);
+                $data = array(
+                    'response_id' => $attendance->id,
+                    'status' => '200'
+                );
+            }
+            return response($data, 200);
         } catch (\Throwable $error) {
             $this->reportBug($error);
             return response([
