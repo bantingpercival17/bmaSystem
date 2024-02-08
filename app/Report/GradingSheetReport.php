@@ -113,11 +113,11 @@ class GradingSheetReport
             $subHeader[] = array('(pg)', 1, '40px');
         } else {
             $mainHeader[] = array($period . ' Grade', 1);
-            $mainHeader[] = array('co grade', 1);
+            $mainHeader[] = array('coa grade', 1);
             $mainHeader[] = array('total final Grade', 1);
             $mainHeader[] = array('point grade', 1);
             $subHeader[] = array('(fg)', 1, '20px');
-            $subHeader[] = array('', 1, $avgSize);
+            $subHeader[] = array('35%', 1, $avgSize);
             $subHeader[] = array('', 1, $avgSize);
             $subHeader[] = array('(pg)', 1, $avgSize);
         }
