@@ -32,7 +32,7 @@ class EnrollmentView extends Component
             ->leftJoin('enrollment_applications as ea', 'ea.student_id', 'student_details.id')
             ->where('ea.academic_id', base64_decode($this->academic))
             ->whereNull('ea.is_approved')
-            ->where('ea.is_removed', false)->paginate(10);
+            ->where('ea.is_removed', false)->orderBy('ea.created_at', 'desc')->paginate(10);
         if ($this->searchInput != '') {
             $query = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'student_details.middle_initial')
                 ->where('student_details.is_removed', false);
