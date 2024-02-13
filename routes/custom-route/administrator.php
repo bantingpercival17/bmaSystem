@@ -39,6 +39,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/accounts', [AdministratorController::class, 'account_view'])->name('admin.accounts'); // View Accounts
   Route::post('/accounts', [AdministratorController::class, 'account_store']); // Store Account
   Route::post('/accounts/profile-picture', [AdministratorController::class, 'account_upload_profile']);
+  Route::post('/accounts/staff-profile-picture', [AdministratorController::class, 'staff_upload_profile'])->name('staff-upload-image');
   Route::post('/accounts/role', [AdministratorController::class, 'account_roles_store']);
   Route::get('/accounts/deactive', [AdministratorController::class, 'deactive_account'])->name('admin.deactive-account');
   /* Subject and Curriculum Routes */
@@ -65,7 +66,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::post('/semestral-clearance', [AdministratorController::class, 'clearance_store'])->name('admin.semestral-clearance-store'); // Enrollment View
   Route::get('/semestral-clearance/view', [AdministratorController::class, 'semestral_student_list_view'])->name('admin.semestral-student-list'); // Section view
 
-  // Paymongo 
+  // Paymongo
   Route::get('/paymongo', [PaymongoApi::class, 'view']); // Enrollment View
 
   // QR Code
@@ -92,7 +93,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/examination/category', [AdministratorController::class, 'examination_category_view'])->name('admin.examination-category');
 
 
-  // Student Account 
+  // Student Account
   Route::get('/students/account-details', [AdministratorController::class, 'student_account_details'])->name('admin.student-account-details');
   Route::get('/student/qr-code', function (Request $_request) {
     $_report = new StudentReport();
@@ -101,7 +102,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   })->name('admin.student-qrcode');
   Route::get('employee/export', function () {
     $_file_export = new EmployeeListExport();
-    $_respond =  Excel::download($_file_export, 'employee' . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File 
+    $_respond =  Excel::download($_file_export, 'employee' . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
     ob_end_clean();
     return $_respond;
   })->name('export-employee');

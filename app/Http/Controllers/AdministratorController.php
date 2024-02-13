@@ -32,6 +32,7 @@ use App\Models\PaymentTransaction;
 use App\Models\Role;
 use App\Models\Section;
 use App\Models\Staff;
+use App\Models\StaffProfiles;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
 use App\Models\StudentGadget;
@@ -55,6 +56,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Exception;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class AdministratorController extends Controller
 {
@@ -69,7 +72,7 @@ class AdministratorController extends Controller
         $_academics = AcademicYear::where('is_removed', false)->get();
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
-        $_total_applicants = ApplicantAccount::join(env('DB_DATABASE_SECOND').'.applicant_detials', env('DB_DATABASE_SECOND').'.applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
+        $_total_applicants = ApplicantAccount::join(env('DB_DATABASE_SECOND') . '.applicant_detials', env('DB_DATABASE_SECOND') . '.applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
         return view('pages.administrator.dashboard', compact('_academics', '_courses', '_total_population', '_total_applicants'));
     }
 
@@ -222,6 +225,35 @@ class AdministratorController extends Controller
             return back()->with('message', 'Successfully Upload image');
         }
         // return $_file_image_name;
+    }
+    function staff_upload_profile(Request $request)
+    {
+        $request->validate([
+            'file' => 'mimes:jpeg,png,jpg',
+        ]);
+        try {
+            if ($file = $request->hasFile('file')) {
+
+                $filename =  'employee/image/' . base64_encode($request->staff) . "/" . time() . '.' . $request->file->getClientOriginalExtension();
+                // File Path Format: $_path.'/'.student-number.'/'.$_folder
+                $path = 'public';
+                // Using Storage facade to store the file
+                Storage::disk($path)->put($filename, fopen($request->file, 'r+'));
+                // Generating the URL for the stored file
+                $url = URL::to('/') . '/storage/' . $path . '/' . $filename;
+                StaffProfiles::create([
+                    'staff_id' => $request->staff, 'image_path' => $url
+                ]);
+                   /* $file = $request->file('file');
+                //$fileName = $file->getClientOriginalName();
+                $destinationPath = public_path() . '/assets/img/staff';
+                $file->move($destinationPath,   $_file_image_name); */
+                return back()->with('message', 'Successfuly Uploaded.');
+            }
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
     public function account_roles_store(Request $_request)
     {

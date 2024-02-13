@@ -30,15 +30,19 @@
                                         <span wire:click="uploadPicture" class="badge bg-info">UPLOAD PICTURE</span>
                                     </div>
                                     @if ($uploadPictureForm)
-                                        <form wire:submit.prevent="imageUpload" enctype="multipart/form-data">
+                                        {{ $imagePath }}
+                                        <form action="{{ route('staff-upload-image') }}" method="POST"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <input type="hidden" name="staff" value={{$profile->id}}>
                                             <div class="form-group">
                                                 <small class="text-muted fw-bolder">Upload Image</small>
-                                                <input type="file" name="file" wire:model="image"
+                                                <input type="file" name="file"
                                                     class="form-control form-control-sm border border-primary">
                                             </div>
                                             <button type="submit"
                                                 class="btn btn-primary btn-sm float-end">UPLOAD</button>
-                                            @error('image')
+                                            @error('file')
                                                 <small class="badge bg-danger">{{ $message }}</small>
                                             @enderror
                                         </form>
