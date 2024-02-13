@@ -216,8 +216,8 @@ class AssessmentFees extends Component
     {
         //$profile->enrollment_assessment->over_payment();
         // Get the Previous Enrollment Semester
-        $enrollment = EnrollmentAssessment::where('student_id', $this->profile->id)->orderBy('id', 'desc')
-            ->where('academic_id', '!=', $this->academic)->first(); //Check if the Enrollment 
+        $enrollment = EnrollmentAssessment::where('student_id', $this->profile->id)->where('academic_id', '!=', base64_decode($this->academic))->orderBy('id', 'desc')
+            ->first(); //Check if the Enrollment 
         if ($enrollment) {
             $paymentAssessment = $enrollment->payment_assessments;
             if ($paymentAssessment) {
