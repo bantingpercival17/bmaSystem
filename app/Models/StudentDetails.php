@@ -654,6 +654,19 @@ class StudentDetails extends Model
             ->groupBy('month')
             ->where('is_removed', false);
     }
+
+    function pre_onboard_documents()
+    {
+        $id = $this->id;
+        return Documents::where('document_propose', 'DOCUMENTS-MONITORING')
+        ->with(['student_onboard_requirements' => function ($query) use ($id) {
+            $query->where('student_id', $id);
+        }])
+            ->where('department_id', 4)
+            ->where('is_removed', false)
+            ->orderBy('id')->get();
+    }
+    /* Shipboard End */
     public function clearance($_data)
     {
         return $this->hasOne(StudentClearance::class, 'student_id')
@@ -1309,10 +1322,12 @@ class StudentDetails extends Model
             ->where('is_removed', 0)
             ->orderBy('id', 'desc')->with('course')->with('academic')->with('curriculum')->with('payment_assessment_details_with_transactions');
     }
-    function batch(){
-        return $this->hasOne(StudentBatch::class,'student_id');
+    function batch()
+    {
+        return $this->hasOne(StudentBatch::class, 'student_id');
     }
-    function onboard_profile(){
-        return $this->hasOne(OnboardStudentProfile::class,'student_id');
+    function onboard_profile()
+    {
+        return $this->hasOne(OnboardStudentProfile::class, 'student_id');
     }
 }

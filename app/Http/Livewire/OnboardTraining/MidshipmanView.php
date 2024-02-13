@@ -28,14 +28,14 @@ class MidshipmanView extends Component
         $document_requirements = Documents::where('document_propose', 'DOCUMENTS-MONITORING')->where('department_id', 4)->get();
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
         if ($this->profile) {
-            $document_requirements = Documents::leftJoin('document_requirements', 'document_requirements.document_id', 'documents.id')
+            $document_requirements = []; /* Documents::leftJoin('document_requirements', 'document_requirements.document_id', 'documents.id')
             ->where('document_requirements.is_removed', false)
             ->where('documents.document_propose', 'DOCUMENTS-MONITORING')
             ->where('documents.department_id', 4)
             ->where('document_requirements.student_id', base64_decode(request()->query('student')))
             ->select('documents.*')
             ->groupBy('documents.id')
-            ->get();
+            ->get(); */
         }
         return view('livewire.onboard-training.midshipman-view', compact('studentLists', 'subHeaders', 'document_requirements', 'sortList'));
     }

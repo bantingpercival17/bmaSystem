@@ -35,6 +35,10 @@ class Documents extends Model
     {
         return $this->hasOne(DocumentRequirements::class, 'document_id')->where('student_id', base64_decode(request()->input('_midshipman')))->where('is_removed', false);
     }
+    function student_onboard_requirements()
+    {
+        return $this->hasOne(DocumentRequirements::class, 'document_id')->where('is_removed', false);
+    }
     public function student_upload_documents()
     {
         return $this->hasOne(DocumentRequirements::class, 'document_id')->where('student_id', auth()->user()->student_id)->where('is_removed', false)->with('staff');

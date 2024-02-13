@@ -231,7 +231,7 @@ class AttendanceController extends Controller
                         'type' => 'student',
                         'username' => str_replace('@bma.edu.ph', '', $value->email),
                         'name' => strtoupper(trim($value->student->first_name . ' ' . $value->student->last_name)),
-                        'course' => $value->student->enrollment_assessment->course->course_name,
+                        'course' => $value->student->enrollment_assessment,
                         'image' => $value->student->profile_picture()
                     );
                 }
@@ -259,7 +259,7 @@ class AttendanceController extends Controller
                     'status' => '201'
                 );
             } else {
-                // Create / Store Attendance 
+                // Create / Store Attendance
                 // If the the Response ID is null check the email
                 $employee = User::where('email', $request->email)->first();
                 $attendanceDetails = array(
