@@ -235,17 +235,18 @@ class AdministratorController extends Controller
         try {
             if ($file = $request->hasFile('file')) {
 
-                $filename =  'employee/image/' . base64_encode($request->staff) . "/" . time() . '.' . $request->file->getClientOriginalExtension();
+                /* $filename =  'employee/image/' . base64_encode($request->staff) . "/" . time() . '.' . $request->file->getClientOriginalExtension();
                 // File Path Format: $_path.'/'.student-number.'/'.$_folder
                 $path = 'public';
                 // Using Storage facade to store the file
                 Storage::disk($path)->put($filename, fopen($request->file, 'r+'));
                 // Generating the URL for the stored file
-                $url = URL::to('/') . '/storage/' . $path . '/' . $filename;
+                $url = URL::to('/') . '/storage/' . $path . '/' . $filename; */
+                $link = $this->office_file_save($request->file, 'public', 'employee', 'picture/' . base64_encode($request->staff));
                 StaffPictures::create([
-                    'staff_id' => $request->staff, 'image_path' => $url
+                    'staff_id' => $request->staff, 'image_path' => $link
                 ]);
-                   /* $file = $request->file('file');
+                /* $file = $request->file('file');
                 //$fileName = $file->getClientOriginalName();
                 $destinationPath = public_path() . '/assets/img/staff';
                 $file->move($destinationPath,   $_file_image_name); */

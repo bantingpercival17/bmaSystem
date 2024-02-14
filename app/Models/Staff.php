@@ -37,13 +37,18 @@ class Staff extends Model
     }
     function profile_picture()
     {
-        $_image = 'avatar.png';
+        $profile_picture = $this->hasOne(StaffPictures::class, 'staff_id')->orderBy('id', 'desc')->where('is_removed', false)->first();
+        $_image = asset('/assets/img/staff/avatar.png');
         if ($this->user) {
             if (file_exists(public_path('assets/img/staff/' . strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg'))) {
                 $_image = strtolower(str_replace(' ', '_', $this->user->name)) . '.jpg';
+                $_image = asset('/assets/img/staff/' . $_image);
+            }
+            if ($profile_picture) {
+                $_image = $profile_picture->image_path;
             }
         }
-        return '/assets/img/staff/' . $_image;
+        return  $_image;
     }
 
     public function subject_handles()

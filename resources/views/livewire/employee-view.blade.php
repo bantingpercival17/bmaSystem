@@ -9,7 +9,7 @@
             <div class="card mb-2">
                 <div class="row no-gutters">
                     <div class="col-md-3">
-                        <img src="{{ $employee ? asset($employee->profile_picture()) : asset('/assets/img/staff/avatar.png') }}"
+                        <img src="{{ $employee ? $employee->profile_picture() : asset('/assets/img/staff/avatar.png') }}"
                             class="card-img" alt="#">
                     </div>
                     <div class="col-md ps-0">
@@ -34,7 +34,7 @@
                                         <form action="{{ route('staff-upload-image') }}" method="POST"
                                             enctype="multipart/form-data">
                                             @csrf
-                                            <input type="hidden" name="staff" value={{$profile->id}}>
+                                            <input type="hidden" name="staff" value={{$employee->id}}>
                                             <div class="form-group">
                                                 <small class="text-muted fw-bolder">Upload Image</small>
                                                 <input type="file" name="file"
