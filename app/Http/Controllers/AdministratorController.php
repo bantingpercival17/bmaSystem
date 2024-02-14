@@ -32,6 +32,7 @@ use App\Models\PaymentTransaction;
 use App\Models\Role;
 use App\Models\Section;
 use App\Models\Staff;
+use App\Models\StaffPictures;
 use App\Models\StaffProfiles;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
@@ -241,7 +242,7 @@ class AdministratorController extends Controller
                 Storage::disk($path)->put($filename, fopen($request->file, 'r+'));
                 // Generating the URL for the stored file
                 $url = URL::to('/') . '/storage/' . $path . '/' . $filename;
-                StaffProfiles::create([
+                StaffPictures::create([
                     'staff_id' => $request->staff, 'image_path' => $url
                 ]);
                    /* $file = $request->file('file');
