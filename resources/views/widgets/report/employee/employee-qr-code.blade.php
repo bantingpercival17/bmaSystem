@@ -58,7 +58,7 @@
                 <td class="text-center" style="text-align: center;">
                     <img src="data:image/png;base64, {!! base64_encode(
                             QrCode::style('round', 0.5)->eye('square')->size(100)->generate('employee:' . $_employee->user->email
-                                )->setEncoding('UTF-8'),
+                                ),
                         ) !!} ">
                 </td>
                 <td>{{ strtoupper($_employee->last_name) }}</td>
