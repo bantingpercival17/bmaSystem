@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 use NumberFormatter;
 
 class Staff extends Model
@@ -45,7 +46,7 @@ class Staff extends Model
                 $_image = asset('/assets/img/staff/' . $_image);
             }
             if ($profile_picture) {
-                $_image = $profile_picture->image_path;
+                $_image =  Storage::url($profile_picture->image_path);;
             }
         }
         return  $_image;
