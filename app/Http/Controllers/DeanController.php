@@ -181,8 +181,8 @@ class DeanController extends Controller
             );
             $students = $_subject_class->section->student_sections;
             foreach ($students as $key => $student) {
-                $midterm_grade = $student->student->period_final_grade('midterm');
-                $final_grade = $_subject_class->academic_id >= 5 ? $student->student->total_final_grade() : $student->student->period_final_grade('finals');
+                $midterm_grade = $student->student->period_final_grade('midterm', $_subject_class);
+                $final_grade = $_subject_class->academic_id >= 5 ? $student->student->total_final_grade($_subject_class) : $student->student->period_final_grade('finals', $_subject_class);
                 $data = array(
                     'student_id' => $student->student->id,
                     'subject_class_id' => $_subject_class->id,
