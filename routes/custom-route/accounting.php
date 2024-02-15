@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Livewire\Accounting\DashboardView;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountingController;
 use App\Http\Livewire\Accounting\AssessmentFees;
@@ -19,7 +20,7 @@ Route::prefix('accounting')->group(function () {
     Route::get('/assessment-fee', [AccountingController::class, 'assessment_view'])->name('accounting.assessments'); // Assessment View
     Route::post('/assessment-fee', [AccountingController::class, 'assessment_store'])->name('accounting.payment-assessment'); // Assessment Store
 
-    //Payment 
+    //Payment
     Route::get('/payment-transaction', [AccountingController::class, 'payment_view'])->name('accounting.payment-transactions');
     Route::post('/payment-transaction', [AccountingController::class, 'payment_store'])->name('accounting.payment-transaction');
     Route::post('/payments', [AccountingController::class], 'payment_store')->name('accounting.payment-store');
@@ -41,16 +42,16 @@ Route::prefix('accounting')->group(function () {
     Route::get('/fees/course/view', [AccountingController::class, 'course_fee_view_list'])->name('accounting.course-fee-view-list');
     Route::post('/fees/course/change-fee', [AccountingController::class, 'course_change_fee'])->name('accounting.course-change-fee');
     Route::get('/fees/course/fee-remove', [AccountingController::class, 'course_fee_remove'])->name('accounting.course-fee-remove');
-    // Particulars 
+    // Particulars
     Route::get('/particular', [AccountingController::class, 'particular_view'])->name('accounting.particulars');
     Route::post('/particular/store', [AccountingController::class, 'particular_store'])->name('accounting.create-particular');
     Route::get('/particular/fee', [AccountingController::class, 'particular_fee_view'])->name('accounting.particular-fee-view');
     Route::post('/particular/fee', [AccountingController::class, 'particular_fee_store'])->name('accounting.particular-fee-store');
-    // Paymongo 
+    // Paymongo
     // Create Payment Method
     Route::get('/paymongo-testing', [AccountingController::class, 'payment_testing']); // Paymongo Testing
     // Get Payment Method
-    Route::get('/paymongo-get', [AccountingController::class, 'payment_view']); // 
+    Route::get('/paymongo-get', [AccountingController::class, 'payment_view']); //
 
 
     // Semestral Clearance
@@ -70,9 +71,9 @@ Route::prefix('accounting')->group(function () {
     Route::post('/generate-report/monthly-report', [AccountingController::class, 'report_student_monthly_payment'])->name('accounting.monthly-payment-report');
     Route::get('/generate-report/employee-attendance', [AccountingController::class, 'employee_attendace_report'])->name('accounting.employee-attendance');
     Route::get('/generate-report/employee-attendance-v2', [AccountingController::class, 'employee_attendace_report_v2'])->name('accounting.employee-attendance-v2');
-    
+
     Route::get('/generate-report/test-permit', [AccountingController::class, 'examination_permit'])->name('accounting.test-permit');
-    Route::post('/generate-report/student-account-card-section',[AccountingController::class,'student_account_card_per_section'])->name('accounting.student-account-card-section');
+    Route::post('/generate-report/student-account-card-section', [AccountingController::class, 'student_account_card_per_section'])->name('accounting.student-account-card-section');
     // Staff
     Route::get('/staff/view', AttendanceView::class)->name('accounting.employee-view');
     Route::get('/staff/payroll-view', [AccountingController::class, 'staff_payroll_view'])->name('accounting.payroll-view');
@@ -98,4 +99,5 @@ Route::prefix('accounting')->group(function () {
     Route::get('/fees-v2', FeesView::class)->name('accounting.fees-v2');
     Route::get('/assessment-fee-v2', AssessmentFees::class)->name('accounting.assessments-v2');
     Route::get('/payment-transaction-v2', PaymentTransaction::class)->name('accounting.payment-transactions-v2');
+    Route::get('/dashboard-v2', DashboardView::class)->name('accounting.dashboard-v2');
 });
