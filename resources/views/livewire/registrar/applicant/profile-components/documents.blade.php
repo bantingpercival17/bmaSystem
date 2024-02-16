@@ -218,7 +218,6 @@
                 var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'];
                 var file = $(this).data('document-url');
                 $('.form-view').attr('src', $(this).data('document-url'))
-                $('.form-view').css('width', '300px');
             });
 
             $(document).ready(function() {
