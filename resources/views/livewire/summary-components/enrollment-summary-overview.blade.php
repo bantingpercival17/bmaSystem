@@ -3,7 +3,7 @@
     <div class="row">
         @foreach ($courses as $course)
         <div class="col-md">
-            <a href="{{route('enrollment.view-v2') .'?course='.base64_encode($course->id)}}">;
+            <a href="{{route('enrollment.enrolled-student-list') .'?course='.base64_encode($course->id)}}">
                 <div class="card">
                     <div class="card-body">
                         @php
@@ -72,10 +72,8 @@
                         @endforeach
                     </div>
                 </div>
+            </a>
         </div>
-        < 
-        </a>
-
         @endforeach
     </div>
 
