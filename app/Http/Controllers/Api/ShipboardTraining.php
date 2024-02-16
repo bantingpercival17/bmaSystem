@@ -29,9 +29,19 @@ class ShipboardTraining extends Controller
     public function shipboard_performance_view(Request $_request)
     {
         try {
-            $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->with('document_requirements')->with('performance_report')->get();
+            $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->with('document_requirements')->with('performance_report')->orderBy('id','desc')->get();
             $narative_report = auth()->user()->student->narative_report;
-            return response(['data' => compact('shipboard_information', 'narative_report')], 200);
+            $shipping_company = ShippingAgencies::select('id', 'agency_name')
+                ->where('is_removed', false)
+                ->orderBy('agency_name')
+                ->get();
+            $document_requirements = Documents::where('is_removed', false)
+                ->where('document_propose', 'PRE-DEPLOYMENT')
+                ->with('student_upload_documents')
+                ->orderByRaw('CHAR_LENGTH("document_name")')
+                ->get();
+            $vessel_type = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER', 'BULK CARIER', 'CRUISE LINE '];
+            return response(['data' => compact('shipboard_information', 'narative_report', 'shipping_company', 'vessel_type','document_requirements')], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
         }
@@ -176,7 +186,7 @@ class ShipboardTraining extends Controller
                 ->first();
             $academic = AcademicYear::where('is_active', true)->first();
             $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->first();
-            if (!$shipboard_information) {
+            if ($shipboard_information) {
                 $shipboard_information =  ShipBoardInformation::create([
                     'student_id' => auth()->user()->student_id,
                     'company_name' => $company_name,
@@ -189,7 +199,7 @@ class ShipboardTraining extends Controller
                     'disembarked' => null
                 ]);
             }
-            if (!$_find) {
+            if ($_find) {
                 DeploymentAssesment::create($_deployment_assessment);
             }
             foreach ($_documents as $_docu) {
