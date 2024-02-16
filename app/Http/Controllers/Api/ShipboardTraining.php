@@ -29,7 +29,7 @@ class ShipboardTraining extends Controller
     public function shipboard_performance_view(Request $_request)
     {
         try {
-            $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->with('document_requirements')->with('performance_report')->orderBy('id','desc')->get();
+            $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->with('document_requirements')->with('performance_report')->orderBy('id', 'desc')->get();
             $narative_report = auth()->user()->student->narative_report;
             $shipping_company = ShippingAgencies::select('id', 'agency_name')
                 ->where('is_removed', false)
@@ -41,7 +41,7 @@ class ShipboardTraining extends Controller
                 ->orderByRaw('CHAR_LENGTH("document_name")')
                 ->get();
             $vessel_type = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER', 'BULK CARIER', 'CRUISE LINE '];
-            return response(['data' => compact('shipboard_information', 'narative_report', 'shipping_company', 'vessel_type','document_requirements')], 200);
+            return response(['data' => compact('shipboard_information', 'narative_report', 'shipping_company', 'vessel_type', 'document_requirements')], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);
         }
@@ -177,6 +177,7 @@ class ShipboardTraining extends Controller
             } else {
                 $agency = ShippingAgencies::find($_request->agency);
                 $company_name = $agency->agency_name;
+                $_agency = $agency->id;
             }
             // Set the Shipboard Application
             $_deployment_assessment = ['student_id' => auth()->user()->student_id, 'agency_id' => $_agency, 'is_removed' => false];
@@ -185,20 +186,21 @@ class ShipboardTraining extends Controller
                 ->where('is_removed', false)
                 ->first();
             $academic = AcademicYear::where('is_active', true)->first();
-            $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->first();
+            /* $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->first();
             if ($shipboard_information) {
-                $shipboard_information =  ShipBoardInformation::create([
-                    'student_id' => auth()->user()->student_id,
-                    'company_name' => $company_name,
-                    'vessel_name' => $_request->vessel_name,
-                    'vessel_type' => $_request->vessel_type,
-                    'shipping_company' => $_request->sea_experience,
-                    'shipboard_status' => 'ON-GOING',
-                    'sbt_batch' => 'SBT ' . $academic->school_year . " " . $academic->semester,
-                    'embarked' => $_request->embarked,
-                    'disembarked' => null
-                ]);
-            }
+                
+            } */
+            $shipboard_information =  ShipBoardInformation::create([
+                'student_id' => auth()->user()->student_id,
+                'company_name' => $company_name,
+                'vessel_name' => $_request->vessel_name,
+                'vessel_type' => $_request->vessel_type,
+                'shipping_company' => $_request->sea_experience,
+                'shipboard_status' => 'ON-GOING',
+                'sbt_batch' => 'SBT ' . $academic->school_year . " " . $academic->semester,
+                'embarked' => $_request->embarked,
+                'disembarked' => null
+            ]);
             if ($_find) {
                 DeploymentAssesment::create($_deployment_assessment);
             }
