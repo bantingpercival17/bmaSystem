@@ -14,7 +14,7 @@
                         @if ($document->is_approved == null)
                             <form class="row" action="{{ route('document-verification') }}">
                                 @php
-                                    $comments = ['Grades shall covered the 1st and 2nd quarter of the first semester','Your Grade has been disapproved, please submit a clear copy of your Grades', 'Your Grade has been disapproved, please submit a complete copy of your Grades', 'Your Good Moral Conduct has been disapproved, please submit a clear copy of this documents', 'Your PSA Birth Certificate has been disapproved, please submit a clear copy of this documents', 'Your Barangay Clearance has been disapproved, please submit a clear copy of this documents', 'Your 2x2 Picture with Name Tag has been disapproved, please submit a clear copy of this documents','Sorry, you did not meet the required grades.'];
+                                    $comments = ['Grades shall covered the 1st and 2nd quarter of the first semester', 'Your Grade has been disapproved, please submit a clear copy of your Grades', 'Your Grade has been disapproved, please submit a complete copy of your Grades', 'Your Good Moral Conduct has been disapproved, please submit a clear copy of this documents', 'Your PSA Birth Certificate has been disapproved, please submit a clear copy of this documents', 'Your Barangay Clearance has been disapproved, please submit a clear copy of this documents', 'Your 2x2 Picture with Name Tag has been disapproved, please submit a clear copy of this documents', 'Sorry, you did not meet the required grades.'];
                                 @endphp
                                 <div class="col-md-8">
                                     <input type="hidden" name="_document" value="{{ base64_encode($document->id) }}">
@@ -64,9 +64,10 @@
                                                 stroke-linejoin="round"></path>
                                         </svg>
                                     </button>
-                                    <a class="btn btn-outline-info btn-sm rounded-pill mt-2"
-                                        wire:click="showDocuments('{{ json_decode($document->file_links)[0] }}')"
-                                        data-bs-toggle="tooltip" title="" data-bs-original-title="View Image">
+                                    <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2"
+                                        data-bs-toggle="modal" data-bs-target=".document-view-modal"
+                                        data-bs-toggle="tooltip" title="" data-bs-original-title="View Image"
+                                        data-document-url="{{ json_decode($document->file_links)[0] }}">
                                         <svg width="20" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -96,8 +97,9 @@
                                         </span>
                                     </div>
                                     <div class="col-md">
-                                        <a class="btn btn-outline-info btn-sm rounded-pill mt-2 w-100" data-bs-toggle="modal"
-                                            wire:click="showDocuments('{{ json_decode($document->file_links)[0] }}')"
+                                        <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2 w-100"
+                                            data-bs-target=".document-view-modal"
+                                            data-document-url="{{ json_decode($document->file_links)[0] }}"
                                             data-bs-toggle="tooltip" title="" data-bs-original-title="View Image">
                                             <svg width="20" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -128,9 +130,10 @@
                                         </span>
                                     </div>
                                     <div class="col-md">
-                                        <a class="btn btn-outline-info btn-sm rounded-pill mt-2 w-100" data-bs-toggle="modal"
-                                            wire:click="showDocuments('{{ json_decode($document->file_links)[0] }}')"
-                                            data-bs-toggle="tooltip" title="" data-bs-original-title="View Image">
+                                        <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2"
+                                            data-bs-toggle="modal" data-bs-target=".document-view-modal"
+                                            data-bs-toggle="tooltip" title="" data-bs-original-title="View Image"
+                                            data-document-url="{{ json_decode($document->file_links)[0] }}">
                                             <svg width="20" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -142,7 +145,6 @@
                                                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                     stroke-linejoin="round"></path>
                                             </svg>
-                                            View
                                         </a>
                                     </div>
                                 </div>
@@ -193,29 +195,46 @@
             @empty
             @endforelse
         </div>
-        @if ($showModal)
-            <div class="fixed inset-0 flex items-center justify-center z-50">
-                <div class="fw-bolder h3">Hello Modal</div>
-                <div class="modal fade show"
-                    style="display: block;   background-color: rgb(0 0 0 / 77%);
-            width: 100%;
-            height: 100%;">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header p-3">
-                                <h5 class="fw-bolder text-primary" id="exampleModalLabel1">Document Review</h5>
-                                <button type="button" class="btn-close" wire:click="hideDocuments">
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <img src="{{ $documentLink }}" style=" width: 100%; " alt="">
-                                {{-- <iframe src="{{ $documentLink }}" class="i"
-                        style=" width: 100%; height:100vh;" >
-                        </iframe> --}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
     </div>
+    <div class="modal fade document-view-modal" id="document-view-modal" tabindex="-1" role="dialog"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary fw-bolder" id="exampleModalLabel1">DOCUMENT'S REVIEW</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <iframe id="my-iframe" class="iframe-container form-view iframe-placeholder" src=""
+                    width="100%" height="700px" >
+                </iframe>
+            </div>
+        </div>
+    </div>
+    @section('script')
+        <script>
+            $(document).on('click', '.btn-form-document', function(evt) {
+                $('.form-view').attr('src', '')
+                var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'];
+                var file = $(this).data('document-url');
+                $('.form-view').attr('src', $(this).data('document-url'))
+                $('.form-view').css('width', '300px');
+            });
+
+            $(document).ready(function() {
+                function resizeIframe() {
+                    var iframe = $('#my-iframe');
+                    var contentWidth = iframe.contents().find('body').prop('scrollWidth');
+                    var contentHeight = iframe.contents().find('body').prop('scrollHeight');
+
+                    iframe.css('width', contentWidth + 'px');
+                    iframe.css('height', contentHeight + 'px');
+                }
+
+                $('#my-iframe').on('load', function() {
+                    resizeIframe();
+                    $(this).contents().on('resize', resizeIframe);
+                });
+            });
+        </script>
+    @endsection
