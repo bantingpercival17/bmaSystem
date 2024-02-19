@@ -418,9 +418,13 @@ class RegistrarController extends Controller
             /* Finding the course offer and then getting the course subject. */
             $_course = CourseOffer::find(base64_decode($_request->course));
             //return  $_subject = $_course->course_subject(json_decode(base64_decode($_request->data)));
-
+            $data = json_decode(base64_decode($_request->data));
+            // Find Curriculum 
+            $curriculum = Curriculum::find($data[0]);
+            $level = Auth::user()->staff->convert_year_level($data[1]);
+            $filename = strtoupper($level . "-" . $_course->course_code . "-" . $curriculum->curriculum_name . "-SUBJECT-SCHEDULE");
             $_file_export = new SubjectScheduleWorkbook($_course, $_request);
-            $_respond =  Excel::download($_file_export, $_course->course_code . '-subject-schedule-' . base64_decode($_request->data) . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
+            $_respond =  Excel::download($_file_export, $filename . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
             ob_end_clean();
             return $_respond;
         } catch (Exception $err) {
