@@ -75,7 +75,9 @@ class OnboardTrainingController extends Controller
         try {
             $_document_verification = DocumentRequirements::find(base64_decode($_request->_document)); // Get the Document
             // The the Shipboard Information
-            $shipboard_information = ShipBoardInformation::find($_document_verification->deployment_id);
+            if ($_request->deployment_id) {
+                $shipboard_information = ShipBoardInformation::find($_document_verification->deployment_id);
+            }
             if ($_request->document_status == 1) {
                 // Check the Input Document Status
                 $_document_verification->document_status = 1; // Set the value for the update of the document
@@ -83,7 +85,9 @@ class OnboardTrainingController extends Controller
                 // Set the Update for the following Columns
                 $_document_verification->document_status = 2;
                 $_document_verification->document_comment = $_request->_comment;
-                $shipboard_information->update(['is_approved' => false]);
+                if ($_request->deployment_id) {
+                    $shipboard_information->update(['is_approved' => false]);
+                }
             }
             $_document_verification->staff_id = Auth::user()->id;
             $_document_verification->save(); // Update the values of Document Verification
@@ -94,12 +98,14 @@ class OnboardTrainingController extends Controller
                 ->orderByRaw('CHAR_LENGTH("document_name")')
                 ->count();
             // Get the Approved Documents
-            $_document_status = $shipboard_information->document_requirements_approved->count();
-            if ($_documents == $_document_status) {
-                $shipboard_information->update(['is_approved' => true]);
-                $_deployment = DeploymentAssesment::where('student_id', $_document_verification->student_id)->where('is_removed', false)->first();
-                $_deployment->staff_id = Auth::user()->id;
-                $_deployment->save();
+            if ($_request->deployment_id) {
+                $_document_status = $shipboard_information->document_requirements_approved->count();
+                if ($_documents == $_document_status) {
+                    $shipboard_information->update(['is_approved' => true]);
+                    $_deployment = DeploymentAssesment::where('student_id', $_document_verification->student_id)->where('is_removed', false)->first();
+                    $_deployment->staff_id = Auth::user()->id;
+                    $_deployment->save();
+                }
             }
             return back()->with('message', 'Successfully Verified!');
         } catch (Exception $error) {
