@@ -103,7 +103,7 @@ class OnboardTrainingController extends Controller
                 if ($_documents == $_document_status) {
                     $shipboard_information->update(['is_approved' => true]);
                     $_deployment = DeploymentAssesment::where('student_id', $_document_verification->student_id)->where('is_removed', false)->first();
-                    $_deployment->staff_id = Auth::user()->id;
+                    $_deployment->staff_id = Auth::user()->staff->id;
                     $_deployment->save();
                 }
             }

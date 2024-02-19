@@ -37,6 +37,53 @@
                                 title="APPROVED DETAILS"
                                 data-bs-content="Approved By: {{ $requirement->student_onboard_requirements->staff ? $requirement->student_onboard_requirements->staff->user->name : '-' }} Approved Date: {{ $requirement->student_onboard_requirements->updated_at->format('F d,Y') }}">{{ $requirement->student_onboard_requirements->updated_at->format('F d,Y') }}</small>
                         </span>
+                        <div class="form-group">
+                            <form class="row" action="{{ route('onboard.midshipman-shipboard-application') }}">
+                                @csrf
+                                <div class="col-md-9">
+                                    <input type="hidden" name="_document"
+                                        value="{{ base64_encode($requirement->student_onboard_requirements->id) }}">
+                                    <input type="hidden" name="document_status" value="2">
+                                    <input type="text" class="form-control form-control-sm rounded-pill mt-2"
+                                        name="_comment" placeholder="Comment!" required="">
+                                </div>
+                                <div class="col-md">
+                                    <a href="{{ route('onboard.midshipman-shipboard-application') . '?_document=' . base64_encode($requirement->student_onboard_requirements->id) . '&document_status=1' }}"
+                                        class="mt-2 btn btn-outline-primary btn-sm rounded-pill "
+                                        data-bs-toggle="tooltip" title=""
+                                        data-bs-original-title="Approved Document">
+                                        <svg width="20" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                                d="M16.3345 2.75024H7.66549C4.64449 2.75024 2.75049 4.88924 2.75049 7.91624V16.0842C2.75049 19.1112 4.63549 21.2502 7.66549 21.2502H16.3335C19.3645 21.2502 21.2505 19.1112 21.2505 16.0842V7.91624C21.2505 4.88924 19.3645 2.75024 16.3345 2.75024Z"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                            <path d="M8.43994 12.0002L10.8139 14.3732L15.5599 9.6272"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg>
+                                    </a>
+                                    <button type="submit" class=" mt-2 btn btn-outline-danger btn-sm rounded-pill "
+                                        data-bs-toggle="tooltip" title=""
+                                        data-bs-original-title="Disapprove Document">
+                                        <svg width="20" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.3955 9.59497L9.60352 14.387" stroke="currentColor"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            </path>
+                                            <path d="M14.3971 14.3898L9.60107 9.59277" stroke="currentColor"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            </path>
+                                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                                d="M16.3345 2.75024H7.66549C4.64449 2.75024 2.75049 4.88924 2.75049 7.91624V16.0842C2.75049 19.1112 4.63549 21.2502 7.66549 21.2502H16.3335C19.3645 21.2502 21.2505 19.1112 21.2505 16.0842V7.91624C21.2505 4.88924 19.3645 2.75024 16.3345 2.75024Z"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg>
+                                    </button>
+
+                                </div>
+                            </form>
+                        </div>
                     @elseif($requirement->student_onboard_requirements->document_status == 2)
                         <br>
                         <small class="fw-bolder text-danger">DOCUMENT DISAPPROVED</small>
