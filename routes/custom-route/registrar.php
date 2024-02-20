@@ -3,6 +3,7 @@
 use App\Http\Controllers\RegistrarController;
 use App\Http\Livewire\Registrar\DashboardView;
 use App\Http\Livewire\Registrar\ScholarshipGrantView;
+use App\Http\Livewire\Registrar\Subjects\CurriculumSubject;
 use App\Http\Livewire\Registrar\Subjects\SubjectHandle\SubjectHandleView;
 use App\Models\CourseOffer;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,7 @@ Route::prefix('registrar')->group(function () {
     Route::get('/subjects/curriculum/view', [RegistrarController::class, 'curriculum_subject_view'])->name('registrar.view-curriculum-subject'); // Remove Curriculum Subject
     Route::post('/subjects/curriculum/update', [RegistrarController::class, 'curriculum_subject_update'])->name('registrar.update-curriculum-subject'); // Store Curriculum Subject
     /* Livewire - Subjects */
+    Route::get('/subjects/v2', CurriculumSubject::class)->name('regsitrar.course-curriculum-subject');
     Route::get('/subjects/classes/v2', SubjectHandleView::class)->name('registrar.course-subject-view-v2');
 
     // Enrollment

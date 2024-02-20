@@ -437,14 +437,13 @@ class RegistrarController extends Controller
         try {
             $_curriculum = Curriculum::find($_request->curriculum);
             $_course = CourseOffer::find($_request->course);
-            $_file_name = $_course->course_code . '-' . $_request->level . '-' . $_curriculum->curriculum_name;
-            $_file_extention =  $_request->file('upload-file')->getClientOriginalExtension();
-            $_file_name = "/registrar/scheduled-import/" . strtoupper(str_replace(' ', '-', str_replace('/', '', $_file_name))) . date('dmyhis') . '.' . $_file_extention;
+            $_file_extention =  $_request->file('upload-file')->getClientOriginalName();
+            $_file_name = "/registrar/scheduled-import/" . $_file_extention;
 
             if ($_request->file('upload-file')) {
-                Storage::disk('public')->put($_file_name, fopen($_request->file('upload-file'), 'r+'));
-                Excel::import(new SubjectScheduleImport(), $_request->file('upload-file'));
-                // return back()->with('success', 'Successfully Upload the Class Scheduled');
+                Storage::disk('local')->put($_file_name, fopen($_request->file('upload-file'), 'r+'));
+                Excel::import(new SubjectScheduleImport(), storage_path('app' . $_file_name));
+                return back()->with('success', 'Successfully Upload the Class Scheduled');
             }
         } catch (Exception $err) {
             $this->debugTracker($err);

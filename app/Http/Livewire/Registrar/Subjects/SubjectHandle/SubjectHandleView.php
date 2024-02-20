@@ -29,27 +29,20 @@ class SubjectHandleView extends Component
     {
         $courseLists = CourseOffer::all();
         $curriculumLists = Curriculum::where('is_removed', false)->orderBy('id', 'desc')->get();
-        $academic = AcademicYear::where('is_active', true)->first();
-        $academic = $this->academic ?: $academic;
-        $this->academic = request()->query('_academic') ? base64_decode(request()->query('_academic')) : $academic->id; // Check the parameter
-        $this->academic = AcademicYear::find($this->academic);
-        $this->course = request()->query('_course') ? base64_decode(request()->query('_course')) : 1;
-        if ($this->selectCourse == null) {
-            $course = CourseOffer::find($this->course);
-            $this->selectedCourse = $course->course_name;
-            $this->selectCourse = $this->course;
-        }
-        $curriculum = Curriculum::where('is_removed', false)
-            ->orderBy('id', 'desc')
-            ->first();
-        if ($this->selectCurriculum == null) {
-            $this->selectedCurriculum = $curriculum->curriculum_name;
-        }
+        $this->academic = $this->setAcademicYear();
+        $this->academic = AcademicYear::find(base64_decode($this->academic));
+        $this->course = $this->setCourse();
+        $curriculum = $this->setCurriculum();
+        $subjectLists  = $this->viewData($this->course, $this->academic);
+        /* echo dd($subjectData); */
+        return view('livewire.registrar.subjects.subject-handle.subject-handle-view', compact('courseLists', 'curriculumLists',  'subjectLists', 'curriculum'));
+    }
+    function viewData($course, $academic)
+    {
         $subjectLists = [];
         $levels = [11, 12];
-        $levels = $this->course != 3 ? [4, 3, 2, 1] : $levels;
+        $levels = $course->id != 3 ? [4, 3, 2, 1] : $levels;
         $subjectLists = [];
-        $academic = AcademicYear::find($this->academic->id);
         foreach ($levels as $key => $value) {
             $subjectData = CurriculumSubject::with(['subject', 'sectionList' => function ($query) {
                 $query->where('academic_id', $this->academic->id);
@@ -67,8 +60,39 @@ class SubjectHandleView extends Component
                 );
             }
         }
-        /* echo dd($subjectData); */
-        return view('livewire.registrar.subjects.subject-handle.subject-handle-view', compact('courseLists', 'curriculumLists', 'levels', 'subjectLists'));
+        return $subjectLists;
+    }
+    function setAcademicYear()
+    {
+        $data = $this->academic;
+        if ($this->academic == '') {
+            $_academic = AcademicYear::where('is_active', 1)->first();
+            $data = base64_encode($_academic->id);
+        }
+        if (request()->query('_academic')) {
+            $data = request()->query('_academic') ?: $this->academic;
+        }
+        return $data;
+    }
+    function setCourse()
+    {
+        $course = CourseOffer::find(1);
+        if ($this->selectedCourse) {
+            $course = CourseOffer::find($this->selectCourse);
+        }
+        $this->selectedCourse = strtoupper($course->course_name);
+        return $course;
+    }
+    function setCurriculum()
+    {
+        $data =   Curriculum::where('is_removed', false)
+            ->orderBy('id', 'desc')
+            ->first();
+        if ($this->selectedCurriculum) {
+            $data = Curriculum::find($this->selectCurriculum);
+        }
+        $this->selectedCurriculum = strtoupper($data->curriculum_name);
+        return $data;
     }
     function categoryCourse()
     {
