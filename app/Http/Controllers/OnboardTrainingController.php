@@ -75,7 +75,7 @@ class OnboardTrainingController extends Controller
         try {
             $_document_verification = DocumentRequirements::find(base64_decode($_request->_document)); // Get the Document
             // The the Shipboard Information
-            if ($_request->deployment_id) {
+            if ($_document_verification->deployment_id) {
                 $shipboard_information = ShipBoardInformation::find($_document_verification->deployment_id);
             }
             if ($_request->document_status == 1) {
@@ -85,7 +85,7 @@ class OnboardTrainingController extends Controller
                 // Set the Update for the following Columns
                 $_document_verification->document_status = 2;
                 $_document_verification->document_comment = $_request->_comment;
-                if ($_request->deployment_id) {
+                if ($_document_verification->deployment_id) {
                     $shipboard_information->update(['is_approved' => false]);
                 }
             }
@@ -98,7 +98,7 @@ class OnboardTrainingController extends Controller
                 ->orderByRaw('CHAR_LENGTH("document_name")')
                 ->count();
             // Get the Approved Documents
-            if ($_request->deployment_id) {
+            if ($_document_verification->deployment_id) {
                 $_document_status = $shipboard_information->document_requirements_approved->count();
                 if ($_documents == $_document_status) {
                     $shipboard_information->update(['is_approved' => true]);
