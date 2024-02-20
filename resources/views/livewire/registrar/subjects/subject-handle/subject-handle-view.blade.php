@@ -25,7 +25,7 @@
                 @forelse ($subjectLists as $subjectDetails)
                     <div class="card shadow">
                         <div class="card-header">
-                            <label class="card-title text-muted fw-bolder">
+                            <label class="card-title text-primary fw-bolder">
                                 {{ $subjectDetails['year_level'] }}
                             </label>
                         </div>
@@ -90,7 +90,7 @@
                     <small class="text-primary"><b>ACADEMIC SCHOOL</b></small>
                     <div class="form-group">
                         <label for="" class="form-control form-control-sm border border-primary">
-                            {{ strtoUpper($academic->semester . ' | ' . $academic->school_year) }}
+                            {{ strtoUpper($academicDetails->semester . ' | ' . $academicDetails->school_year) }}
                         </label>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                     <small class="text-primary"><b>COURSE</b></small>
                     <div class="form-group">
                         <select wire:model="selectCourse" class="form-select form-select-sm border border-primary"
-                            wire:change="categoryCourse">
+                            wire:change="">
                             @foreach ($courseLists as $course)
                                 <option value="{{ $course->id }}">{{ ucwords($course->course_name) }}</option>
                             @endforeach
@@ -109,7 +109,7 @@
                     <small class="text-primary"><b>CURRICULUM</b></small>
                     <div class="form-group">
                         <select wire:model="selectCurriculum" class="form-select form-select-sm border border-primary"
-                            wire:change="categoryCurriculum">
+                            wire:change="">
                             @foreach ($curriculumLists as $data)
                                 <option value="{{ $data->id }}">
                                     {{ ucwords($data->curriculum_name) }}

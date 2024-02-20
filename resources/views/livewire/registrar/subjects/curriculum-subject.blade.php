@@ -40,30 +40,28 @@
                 </div>
             </div>
             <div class="content-page mt-5">
-                @foreach ($layoutDetails['course_level'] as $item)
+                @foreach ($subjectLists as $item)
                     <div class="card">
                         <div class="card-header">
                             <div class="card-tools float-end">
                                 <button class="btn btn-primary btn-sm btn-modal-subject" data-bs-toggle="modal"
-                                    data-year="{{ Auth::user()->staff->convert_year_level($item) }}"
-                                    data-tab="nav-link-{{ $item }}"
+                                    data-year="{{ $item['level_name'] }}" data-tab="nav-link-{{ $item['level'] }}"
                                     data-bs-target=".model-add-subject">ADD</button>
                             </div>
                             <small
                                 class="fw-bolder text-muted">{{ strtoupper($selectedCourse . ' - ' . $selectedCurriculum) }}</small>
                             <h3 class="card-title text-primary">
-                                <b>{{ strtoupper(Auth::user()->staff->convert_year_level($item)) }}
-                                </b>
+                                <b>{{ $item['level_name'] }}</b>
                             </h3>
                         </div>
-                        <div class="card-body">
+                        <div class="card-header">
                             <ul class="nav nav-tabs nav-fill" id="myTab-three" role="tablist">
-                                @foreach ($layoutDetails['semester'] as $key => $tab)
+                                @foreach ($item['semester'] as $key => $tab)
                                     <li class="nav-item nav-sm">
-                                        <a class="nav-link nav-link-{{ $item }} {{ $key == 0 ? 'active' : '' }}"
-                                            id="{{ str_replace(' ', '-', strtolower($tab)) . '-' . $item }}"
+                                        <a class="nav-link nav-link-{{ $item['level'] }} {{ $key == 0 ? 'active' : '' }}"
+                                            id="{{ str_replace(' ', '-', strtolower($tab)) . '-' . $item['level'] }}"
                                             data-bs-toggle="tab" data-semester="{{ $tab }}"
-                                            href="#{{ str_replace(' ', '-', strtolower($tab)) . '-' . $item }}-content"
+                                            href="#{{ str_replace(' ', '-', strtolower($tab)) . '-' . $item['level'] }}-content"
                                             role="tab" aria-controls="home"
                                             aria-selected="{{ $key == 0 ? true : false }}">
                                             {{ strtoupper($tab) }}
@@ -72,11 +70,11 @@
                                 @endforeach
                             </ul>
                             <div class="tab-content" id="myTabContent-4">
-                                @foreach ($layoutDetails['semester'] as $key => $sem)
+                                @foreach ($item['semester'] as $key => $sem)
                                     <div class="tab-pane fade show {{ $key == 0 ? 'active' : '' }}"
-                                        id="{{ str_replace(' ', '-', strtolower($sem)) . '-' . $item }}-content"
+                                        id="{{ str_replace(' ', '-', strtolower($sem)) . '-' . $item['level'] }}-content"
                                         role="tabpanel"
-                                        aria-labelledby="{{ str_replace(' ', '-', strtolower($sem)) . '-' . $item }}">
+                                        aria-labelledby="{{ str_replace(' ', '-', strtolower($sem)) . '-' . $item['level'] }}">
 
                                         <div class="content">
                                             @php
@@ -97,7 +95,24 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if ($_subject = $curriculum->subject([$courseDetails->id, $item, $sem])->count() > 0)
+                                                        @php
+                                                            $data = str_replace(' ', '_', strtolower($sem));
+                                                            $subjects = $item['subject_lists'];
+                                                            $dataLists = $subjects[$data];
+                                                        @endphp
+                                                        {{$dataLists}}
+                                                        @if ($dataLists)
+                                                            @foreach ($dataLists as $item)
+                                                                <tr>
+                                                                    <td>{{ $item }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="6">NO SUBJECT</td>
+                                                            </tr>
+                                                        @endif
+                                                        {{--  @if ($_subject = $curriculum->subject([$courseDetails->id, $item, $sem])->count() > 0)
                                                             @foreach ($curriculum->subject([$courseDetails->id, $item, $sem])->get() as $_subject)
                                                                 <tr>
                                                                     <td>{{ $_subject->subject->subject_code }}</td>
@@ -115,7 +130,7 @@
                                                                         <button
                                                                             class="btn btn-success  btn-sm btn-modal-subject"
                                                                             data-bs-toggle="modal"
-                                                                            data-year="{{ Auth::user()->staff->convert_year_level($item) }}"
+                                                                            data-year="{{ $item['year_level'] }}"
                                                                             data-tab="nav-link-{{ $item }}"
                                                                             data-curriculum="{{ base64_encode($_subject->id) }}"
                                                                             data-bs-target=".model-update-subject">EDIT</button>
@@ -133,7 +148,7 @@
                                                             <tr>
                                                                 <td colspan="6">NO SUBJECT</td>
                                                             </tr>
-                                                        @endif
+                                                        @endif --}}
                                                     </tbody>
                                                     <thead>
                                                         <tr>
@@ -149,7 +164,6 @@
                                         </div>
                                     </div>
                                 @endforeach
-
                             </div>
                         </div>
                     </div>
@@ -177,8 +191,7 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col">
-                                <input type="hidden" name="curriculum"
-                                    value="{{ base64_encode($curriculum->id) }}">
+                                <input type="hidden" name="curriculum" value="{{ base64_encode($curriculum->id) }}">
                                 <input type="hidden" name="department"
                                     value="{{ base64_encode($courseDetails->id) }}">
                                 <input type="text" class="form-control course-code" placeholder="Course Code"
@@ -359,7 +372,7 @@
         })
         $('.btn-modal-subject').click(function(event) {
             var tab = $(this).data('tab')
-            var year_level = $(this).data('year');
+            var level_name = $(this).data('year');
             var semester = $("." + tab + '.active').data('semester');
             if ($(this).data('curriculum')) {
                 console.log($(this).data('curriculum'))

@@ -5,6 +5,8 @@ namespace App\Http\Livewire\Registrar\Subjects;
 use App\Models\AcademicYear;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
+use App\Models\CurriculumSubject as ModelsCurriculumSubject;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class CurriculumSubject extends Component
@@ -20,24 +22,12 @@ class CurriculumSubject extends Component
         $courseLists = CourseOffer::all();
         $curriculumLists = Curriculum::where('is_removed', false)->orderBy('id', 'desc')->get();
         $this->academic = $this->setAcademicYear();
-        $this->course = request()->query('_course') ? base64_decode(request()->query('_course')) : 1;
-        if ($this->selectCourse == null) {
-            $course = CourseOffer::find($this->course);
-            $this->selectedCourse = $course->course_name;
-            $this->selectCourse = $this->course;
-        }
-        $curriculum = Curriculum::where('is_removed', false)
-            ->orderBy('id', 'desc')
-            ->first();
-        if ($this->selectCurriculum == null) {
-            $this->selectedCurriculum = $curriculum->curriculum_name;
-        }
-        $curriculum = $this->selectCurriculum == null ? $curriculum->id : $this->selectCurriculum;
-        $curriculum = Curriculum::find($curriculum);
-        $courseDetails = CourseOffer::find($this->course);
-        $level = $this->selectCourse == 3 ? [11, 12] : [4, 3, 2, 1];
-        $layoutDetails = array('course_level' => $level, 'semester' => ['First Semester', 'Second Semester']);
-        return view('livewire.registrar.subjects.curriculum-subject', compact('courseLists', 'curriculumLists', 'layoutDetails', 'curriculum', 'courseDetails'));
+        $academicDetails = AcademicYear::find(base64_decode($this->academic));
+        $this->course = $this->setCourse();
+        $curriculum = $this->setCurriculum();
+        $courseDetails = $this->setCourse();
+        $subjectLists = $this->viewData($this->course, $curriculum);
+        return view('livewire.registrar.subjects.curriculum-subject', compact('courseLists', 'curriculumLists', 'subjectLists', 'curriculum', 'courseDetails'));
     }
 
     function setAcademicYear()
@@ -50,6 +40,26 @@ class CurriculumSubject extends Component
         if (request()->query('_academic')) {
             $data = request()->query('_academic') ?: $this->academic;
         }
+        return $data;
+    }
+    function setCourse()
+    {
+        $course = CourseOffer::find(1);
+        if ($this->selectCourse !== null) {
+            $course = CourseOffer::find($this->selectCourse);
+        }
+        $this->selectedCourse = strtoupper($course->course_name);
+        return $course;
+    }
+    function setCurriculum()
+    {
+        $data = Curriculum::where('is_removed', false)
+            ->orderBy('id', 'desc')
+            ->first();
+        if ($this->selectCurriculum) {
+            $data = Curriculum::find($this->selectCurriculum);
+        }
+        $this->selectedCurriculum = strtoupper($data->curriculum_name);
         return $data;
     }
     function categoryCourse()
@@ -68,7 +78,37 @@ class CurriculumSubject extends Component
             $this->selectedCurriculum = strtoupper($data);
         }
     }
-    function downloadFiles(){
-        
+    function downloadFiles()
+    {
+    }
+    function viewData($course, $curriculum)
+    {
+        $subjectLists = [];
+        $levels = [11, 12];
+        $levels = $course->id != 3 ? [4, 3, 2, 1] : $levels;
+        $semester = ['First Semester', 'Second Semester'];
+        foreach ($levels as $key => $level) {
+            $first_semester = $this->curriculum_subject($course, $curriculum, $semester[0], $level);
+            $second_semester = $this->curriculum_subject($course, $curriculum, $semester[1], $level);
+            /*  $subjectLists[] = array(
+                'level' => $value,
+                'year_level' => strtoupper(Auth::user()->staff->convert_year_level($value)),
+                'subject_lists' => compact('first_semester', 'second_semester')
+            ); */
+            $subject_lists = compact('first_semester', 'second_semester');
+            $level_name =  strtoupper(Auth::user()->staff->convert_year_level($level));
+            $subjectLists[] = compact('level', 'level_name', 'semester', 'subject_lists');
+        }
+        return $subjectLists;
+    }
+    function curriculum_subject($course, $curriculum, $semester, $value)
+    {
+        return  ModelsCurriculumSubject::with('subject')
+            ->where('curriculum_subjects.course_id', $course->id)
+            ->where('curriculum_subjects.curriculum_id', $curriculum->id)
+            ->where('curriculum_subjects.year_level', $value)
+            ->where('curriculum_subjects.semester', $semester[0])
+            ->where('curriculum_subjects.is_removed', false)
+            ->orderBy('curriculum_subjects.id', 'asc')->get();
     }
 }

@@ -30,14 +30,14 @@ class SubjectHandleView extends Component
         $courseLists = CourseOffer::all();
         $curriculumLists = Curriculum::where('is_removed', false)->orderBy('id', 'desc')->get();
         $this->academic = $this->setAcademicYear();
-        $this->academic = AcademicYear::find(base64_decode($this->academic));
+        $academicDetails = AcademicYear::find(base64_decode($this->academic));
         $this->course = $this->setCourse();
         $curriculum = $this->setCurriculum();
-        $subjectLists  = $this->viewData($this->course, $this->academic);
+        $subjectLists  = $this->viewData($this->course, $academicDetails, $curriculum);
         /* echo dd($subjectData); */
-        return view('livewire.registrar.subjects.subject-handle.subject-handle-view', compact('courseLists', 'curriculumLists',  'subjectLists', 'curriculum'));
+        return view('livewire.registrar.subjects.subject-handle.subject-handle-view', compact('courseLists', 'academicDetails', 'curriculumLists',  'subjectLists', 'curriculum'));
     }
-    function viewData($course, $academic)
+    function viewData($course, $academic, $curriculum)
     {
         $subjectLists = [];
         $levels = [11, 12];
@@ -45,20 +45,22 @@ class SubjectHandleView extends Component
         $subjectLists = [];
         foreach ($levels as $key => $value) {
             $subjectData = CurriculumSubject::with(['subject', 'sectionList' => function ($query) {
-                $query->where('academic_id', $this->academic->id);
+                $query->where('academic_id', base64_decode($this->academic));
             }])
-                ->where('curriculum_subjects.course_id', $this->selectCourse)
-                ->where('curriculum_subjects.curriculum_id', $this->selectCurriculum)
+                ->where('curriculum_subjects.course_id', $course->id)
+                ->where('curriculum_subjects.curriculum_id', $curriculum->id)
                 ->where('curriculum_subjects.year_level', $value)
                 ->where('curriculum_subjects.semester', $academic->semester)
                 ->where('curriculum_subjects.is_removed', false)
-                ->orderBy('curriculum_subjects.id', 'Asc')->get();
-            if (count($subjectData) > 0) {
-                $subjectLists[] = array(
-                    'year_level' => strtoupper(Auth::user()->staff->convert_year_level($value)),
-                    'subject_lists' => $subjectData
-                );
-            }
+                ->orderBy('curriculum_subjects.id', 'asc')->get();
+            /*   $subjectData = CurriculumSubject::where('curriculum_subjects.course_id', $course->id)
+                ->where('curriculum_subjects.curriculum_id', $this->selectCurriculum)
+                ->where('curriculum_subjects.year_level', $value)
+                ->where('curriculum_subjects.semester', $academic->semester)->get(); */
+            $subjectLists[] = array(
+                'year_level' => strtoupper(Auth::user()->staff->convert_year_level($value)),
+                'subject_lists' => $subjectData
+            );
         }
         return $subjectLists;
     }
@@ -77,7 +79,7 @@ class SubjectHandleView extends Component
     function setCourse()
     {
         $course = CourseOffer::find(1);
-        if ($this->selectedCourse) {
+        if ($this->selectCourse !== null) {
             $course = CourseOffer::find($this->selectCourse);
         }
         $this->selectedCourse = strtoupper($course->course_name);
@@ -85,30 +87,14 @@ class SubjectHandleView extends Component
     }
     function setCurriculum()
     {
-        $data =   Curriculum::where('is_removed', false)
+        $data = Curriculum::where('is_removed', false)
             ->orderBy('id', 'desc')
             ->first();
-        if ($this->selectedCurriculum) {
+        if ($this->selectCurriculum) {
             $data = Curriculum::find($this->selectCurriculum);
         }
         $this->selectedCurriculum = strtoupper($data->curriculum_name);
         return $data;
-    }
-    function categoryCourse()
-    {
-        if ($this->selectedCourse) {
-            $data = CourseOffer::find($this->selectCourse);
-            $data = $data->course_name;
-            $this->selectedCourse = strtoupper($data);
-        }
-    }
-    function categoryCurriculum()
-    {
-        if ($this->selectedCurriculum) {
-            $data = Curriculum::find($this->selectCurriculum);
-            $data = $data->curriculum_name;
-            $this->selectedCurriculum = strtoupper($data);
-        }
     }
     function exportTeachingLoadTemplate()
     {
