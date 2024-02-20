@@ -4,7 +4,7 @@
 @section('page-title', $pageTitle)
 
 <div class="page-content">
-    <p class="display-6 fw-bolder text-primary">{{ $pageTitle }}</p>
+    <p class="display-6 fw-bolder text-primary">{{ strtoupper($pageTitle) }}</p>
     <div class="row">
         <div class="col-lg-8 col-md-8">
             <div class="row">

@@ -53,10 +53,6 @@ class SubjectHandleView extends Component
                 ->where('curriculum_subjects.semester', $academic->semester)
                 ->where('curriculum_subjects.is_removed', false)
                 ->orderBy('curriculum_subjects.id', 'asc')->get();
-            /*   $subjectData = CurriculumSubject::where('curriculum_subjects.course_id', $course->id)
-                ->where('curriculum_subjects.curriculum_id', $this->selectCurriculum)
-                ->where('curriculum_subjects.year_level', $value)
-                ->where('curriculum_subjects.semester', $academic->semester)->get(); */
             $subjectLists[] = array(
                 'year_level' => strtoupper(Auth::user()->staff->convert_year_level($value)),
                 'subject_lists' => $subjectData
@@ -100,10 +96,10 @@ class SubjectHandleView extends Component
     {
         $data = EnrollmentAssessment::select('course_id', 'year_level', 'curriculum_id', 'academic_id')
             ->with(['course', 'curriculum'])
-            ->where('academic_id', $this->academic->id)
+            ->where('academic_id', base64_decode($this->academic))
             ->groupBy(['course_id', 'year_level', 'curriculum_id'])->get();
         try {
-            $academic = AcademicYear::find($this->academic->id);
+            $academic = AcademicYear::find(base64_decode($this->academic));
             $current_academic =  strtoupper(str_replace(' ', '-', $academic->semester)) . '-' . $academic->school_year;
             $_file_name = 'storage/department/registrar/zip-file/' . $current_academic . '-TEACHING-LOAD-TEMPLATES-' . date('Ymdhms');
             // Create a new zip archive
