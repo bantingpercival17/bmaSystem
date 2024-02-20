@@ -70,8 +70,7 @@
                             </td>
 
                             @if ($_student->student->enrollment_academic_year($subject->academic->id)->enrollment_cancellation)
-                                <td colspan="5" class="text-danger fw-bolder text-center">STUDENT
-                                    DROPPED</td>
+                                <td colspan="5" class="text-danger fw-bolder text-center">DROPPED</td>
                             @else
                                 @if (
                                     $subject->curriculum_subject->subject->subject_code == 'NSTP 1' ||
