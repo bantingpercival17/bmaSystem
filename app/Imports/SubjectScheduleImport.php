@@ -32,20 +32,20 @@ class SubjectScheduleImport implements ToCollection
                     $academic = base64_decode($value[0]); // Academic Year
                     $subject = base64_decode($value[1]); // Subject Course
                     $section = base64_decode($value[2]); // Section
-                    $email = $value[5];
+                    $email = $value[5]; // Email
                     if ($email !== null) {
-                        $user = User::where('email', $value[5])->first(); // Check if Exsiting
+                        $user = User::where('email', $email)->first(); // Check if Exsiting
                         $section = Section::find($section); // Check if Exsiting
                         $checkTeachingLoad = SubjectClass::where(['curriculum_subject_id' => $subject, 'academic_id' => $academic, 'section_id' => $section->id, 'is_removed' => false])->first();
-                        $subjectClassDetail = array(
-                            'staff_id' => $user->staff->id,
-                            'curriculum_subject_id' => $subject,
-                            'academic_id' => $academic,
-                            'section_id' => $section->id,
-                            'created_by' => Auth::user()->name,
-                            'is_removed' => false,
-                        );
                         if ($user) {
+                            $subjectClassDetail = array(
+                                'staff_id' => $user->staff->id,
+                                'curriculum_subject_id' => $subject,
+                                'academic_id' => $academic,
+                                'section_id' => $section->id,
+                                'created_by' => Auth::user()->name,
+                                'is_removed' => false,
+                            );
                             if ($checkTeachingLoad) {
                                 $checkTeachingLoad->update($subjectClassDetail); // Update Teaching Load
                                 $this->classSchedule($checkTeachingLoad, $value);
@@ -152,24 +152,28 @@ class SubjectScheduleImport implements ToCollection
     }
     function storeSchedule($value, $class, $day)
     {
-        $separateTimeByDash = explode('-', $value);
-        $startTime = $separateTimeByDash[0];
-        $endTime = $separateTimeByDash[1];
-        $classSchedule = SubjectClassSchedule::where('subject_class_id', $class->id)
-            ->where('day', $day)->where('start_time', $startTime . ':00')->where('end_time', $endTime . ':00')->first();
-        if (!$classSchedule) {
-            $schedule = array(
-                'subject_class_id' => $class->id,
-                'day' => $day,
-                'start_time' => $startTime,
-                'end_time' => $endTime,
-                'created_by' => Auth::user()->name,
-                'is_removed' => false
-            );
-            SubjectClassSchedule::create($schedule);
-        } else {
-            $classSchedule->is_removed = false;
-            $classSchedule->save();
+        try {
+            $separateTimeByDash = explode('-', $value);
+            $startTime = $separateTimeByDash[0];
+            $endTime = $separateTimeByDash[1];
+            $classSchedule = SubjectClassSchedule::where('subject_class_id', $class->id)
+                ->where('day', $day)->where('start_time', $startTime . ':00')->where('end_time', $endTime . ':00')->first();
+            if (!$classSchedule) {
+                $schedule = array(
+                    'subject_class_id' => $class->id,
+                    'day' => $day,
+                    'start_time' => $startTime,
+                    'end_time' => $endTime,
+                    'created_by' => Auth::user()->name,
+                    'is_removed' => false
+                );
+                SubjectClassSchedule::create($schedule);
+            } else {
+                $classSchedule->is_removed = false;
+                $classSchedule->save();
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 }

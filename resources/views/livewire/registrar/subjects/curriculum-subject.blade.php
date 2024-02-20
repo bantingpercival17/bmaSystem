@@ -45,7 +45,8 @@
                         <div class="card-header">
                             <div class="card-tools float-end">
                                 <button class="btn btn-primary btn-sm btn-modal-subject" data-bs-toggle="modal"
-                                    data-year="{{ $item['level_name'] }}" data-tab="nav-link-{{ $item['level'] }}"
+                                   data-year="{{ $item['level_name']}}"
+                                    data-tab="nav-link-{{ $item['level'] }}"
                                     data-bs-target=".model-add-subject">ADD</button>
                             </div>
                             <small
@@ -57,6 +58,9 @@
                         <div class="card-header">
                             <ul class="nav nav-tabs nav-fill" id="myTab-three" role="tablist">
                                 @foreach ($item['semester'] as $key => $tab)
+                                    @php
+                                        $data = str_replace(' ', '_', strtolower($tab));
+                                    @endphp
                                     <li class="nav-item nav-sm">
                                         <a class="nav-link nav-link-{{ $item['level'] }} {{ $key == 0 ? 'active' : '' }}"
                                             id="{{ str_replace(' ', '-', strtolower($tab)) . '-' . $item['level'] }}"
@@ -71,17 +75,18 @@
                             </ul>
                             <div class="tab-content" id="myTabContent-4">
                                 @foreach ($item['semester'] as $key => $sem)
+                                    @php
+                                        $_tUnits = 0;
+                                        $_tLechr = 0;
+                                        $_tLabhr = 0;
+                                        $data = str_replace(' ', '_', strtolower($sem));
+                                        $dataLists = $item['subject_lists'] ? ($item['subject_lists'][$data] ? $item['subject_lists'][$data] : []) : [];
+                                    @endphp
                                     <div class="tab-pane fade show {{ $key == 0 ? 'active' : '' }}"
                                         id="{{ str_replace(' ', '-', strtolower($sem)) . '-' . $item['level'] }}-content"
                                         role="tabpanel"
                                         aria-labelledby="{{ str_replace(' ', '-', strtolower($sem)) . '-' . $item['level'] }}">
-
                                         <div class="content">
-                                            @php
-                                                $_tUnits = 0;
-                                                $_tLechr = 0;
-                                                $_tLabhr = 0;
-                                            @endphp
                                             <div class="table-responsive">
                                                 <table class="table table-strip">
                                                     <thead class="text-center">
@@ -95,17 +100,37 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @php
-                                                            $data = str_replace(' ', '_', strtolower($sem));
-                                                            $subjects = $item['subject_lists'];
-                                                            $dataLists = $subjects[$data];
-                                                        @endphp
-                                                        {{$dataLists}}
-                                                        @if ($dataLists)
-                                                            @foreach ($dataLists as $item)
+                                                        @if (count($dataLists) > 0)
+                                                            @foreach ($dataLists as $dataDetails)
                                                                 <tr>
-                                                                    <td>{{ $item }}</td>
+                                                                    <td>{{ $dataDetails->subject->subject_code }}</td>
+                                                                    <td width="30px;">
+                                                                        {{ $dataDetails->subject->subject_name }}</td>
+                                                                    <td style="width: 5px;">
+                                                                        {{ $dataDetails->subject->lecture_hours }}
+                                                                    </td>
+                                                                    <td style="width: 5px;">
+                                                                        {{ $dataDetails->subject->laboratory_hours }}
+                                                                    </td>
+                                                                    <td style="width: 5px;">
+                                                                        {{ $dataDetails->subject->units }}</td>
+                                                                    <td>
+                                                                        <button
+                                                                            class="btn btn-success  btn-sm btn-modal-subject"
+                                                                            data-bs-toggle="modal"
+                                                                            data-year="{{ $dataDetails['year_level'] }}"
+                                                                            data-tab="nav-link-{{ $dataDetails }}"
+                                                                            data-curriculum="{{ base64_encode($dataDetails->id) }}"
+                                                                            data-bs-target=".model-update-subject">EDIT</button>
+                                                                        <button class="btn btn-danger btn-sm btn-remove"
+                                                                            data-url="{{ route('registrar.remove-curriculum-subject') . '?_subject=' . base64_encode($dataDetails->id) }}">REMOVE</button>
+                                                                    </td>
                                                                 </tr>
+                                                                @php
+                                                                    $_tLechr += $dataDetails->subject->lecture_hours;
+                                                                    $_tLabhr += $dataDetails->subject->laboratory_hours;
+                                                                    $_tUnits += $dataDetails->subject->units;
+                                                                @endphp
                                                             @endforeach
                                                         @else
                                                             <tr>
@@ -191,7 +216,8 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col">
-                                <input type="hidden" name="curriculum" value="{{ base64_encode($curriculum->id) }}">
+                                <input type="hidden" name="curriculum"
+                                    value="{{ base64_encode($curriculum->id) }}">
                                 <input type="hidden" name="department"
                                     value="{{ base64_encode($courseDetails->id) }}">
                                 <input type="text" class="form-control course-code" placeholder="Course Code"

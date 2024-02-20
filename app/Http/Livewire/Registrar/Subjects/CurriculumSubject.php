@@ -80,6 +80,7 @@ class CurriculumSubject extends Component
     }
     function downloadFiles()
     {
+        // Exporting Program of Studies Pre Curriculum
     }
     function viewData($course, $curriculum)
     {
@@ -90,11 +91,6 @@ class CurriculumSubject extends Component
         foreach ($levels as $key => $level) {
             $first_semester = $this->curriculum_subject($course, $curriculum, $semester[0], $level);
             $second_semester = $this->curriculum_subject($course, $curriculum, $semester[1], $level);
-            /*  $subjectLists[] = array(
-                'level' => $value,
-                'year_level' => strtoupper(Auth::user()->staff->convert_year_level($value)),
-                'subject_lists' => compact('first_semester', 'second_semester')
-            ); */
             $subject_lists = compact('first_semester', 'second_semester');
             $level_name =  strtoupper(Auth::user()->staff->convert_year_level($level));
             $subjectLists[] = compact('level', 'level_name', 'semester', 'subject_lists');
@@ -107,7 +103,7 @@ class CurriculumSubject extends Component
             ->where('curriculum_subjects.course_id', $course->id)
             ->where('curriculum_subjects.curriculum_id', $curriculum->id)
             ->where('curriculum_subjects.year_level', $value)
-            ->where('curriculum_subjects.semester', $semester[0])
+            ->where('curriculum_subjects.semester', $semester)
             ->where('curriculum_subjects.is_removed', false)
             ->orderBy('curriculum_subjects.id', 'asc')->get();
     }

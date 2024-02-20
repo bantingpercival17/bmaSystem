@@ -134,7 +134,7 @@
                         <form {{-- wire:submit.prevent="importTeachingLoad" --}} action="{{ route('registrar.subject-schedule-upload') }}"
                             method="post" enctype="multipart/form-data">
                             @csrf
-                            <input type="hidden" name="curriculum" value="{{ $course->id }}">
+                            <input type="hidden" name="curriculum" value="{{ $curriculum->id }}">
                             <input type="hidden" name="course" value="{{ $course->id }}">
                             <div class="row">
                                 <div class="col-md-12">

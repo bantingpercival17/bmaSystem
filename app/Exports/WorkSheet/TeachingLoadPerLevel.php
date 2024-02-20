@@ -37,7 +37,7 @@ class TeachingLoadPerLevel implements FromCollection, WithHeadings, WithMapping,
             'SUBJECT DESCRIPTION',
             'TEACHER EMAIL',
             'TEACHER NAME',
-            'MONDAY', 'TUESDAY', 'WENESDAY', 'THURSDAY', 'FRIDAY'
+            'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'
         ];
     }
     public function collection()
