@@ -5,6 +5,7 @@ use App\Http\Livewire\Registrar\DashboardView;
 use App\Http\Livewire\Registrar\ScholarshipGrantView;
 use App\Http\Livewire\Registrar\Subjects\CurriculumSubject;
 use App\Http\Livewire\Registrar\Subjects\SubjectHandle\SubjectHandleView;
+use App\Http\Livewire\Registrar\Subjects\SubjectHandle\TeacherView;
 use App\Models\CourseOffer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -42,6 +43,7 @@ Route::prefix('registrar')->group(function () {
     /* Livewire - Subjects */
     Route::get('/subjects/v2', CurriculumSubject::class)->name('regsitrar.course-curriculum-subject');
     Route::get('/subjects/classes/v2', SubjectHandleView::class)->name('registrar.course-subject-view-v2');
+    Route::get('subjects/teaching-loads', TeacherView::class)->name('registrar.teacher-subject-loads');
 
     // Enrollment
     Route::get('/enrollment', [RegistrarController::class, 'enrollment_view'])->name('registrar.enrollment');
