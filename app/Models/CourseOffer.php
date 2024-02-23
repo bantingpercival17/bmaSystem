@@ -1771,4 +1771,9 @@ class CourseOffer extends Model
             ->where('student_medical_results.is_removed', false)
             ->where('student_medical_results.is_pending', 0);
     }
+    // COMPREHENSIVE EXAMINATION
+    function comprehensive_examination()
+    {
+        return $this->hasMany(ComprehensiveExamination::class, 'course_id');
+    }
 }

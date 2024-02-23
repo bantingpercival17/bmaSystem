@@ -188,7 +188,7 @@ class ShipboardTraining extends Controller
             $academic = AcademicYear::where('is_active', true)->first();
             /* $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->first();
             if ($shipboard_information) {
-                
+
             } */
             $shipboard_information =  ShipBoardInformation::create([
                 'student_id' => auth()->user()->student_id,

@@ -2,6 +2,7 @@
 <?php
 
 use App\Http\Controllers\DepartmentHeadController;
+use App\Http\Livewire\DepartmentHead\Comprehensive\ExaminationView;
 use App\Http\Livewire\DepartmentHead\GradeSubmission\TeacherView;
 use Illuminate\Support\Facades\Route;
 
@@ -18,4 +19,7 @@ Route::prefix('department-head')->middleware(['auth', 'department-head'])->group
     Route::post('/semestral-clearance/store', [DepartmentHeadController::class, 'store_student_clearance'])->name('department-head.store-e-clearance');
     Route::get('/semestral-clearance/uncleared', [DepartmentHeadController::class, 'update_student_clearance'])->name('department-head.uncleared-clearance');
     Route::get('/semestral-clearance/cleared', [DepartmentHeadController::class, 'save_student_clearance'])->name('department-head.cleared-clearance');
+
+    Route::get('/comprehensive-examination', ExaminationView::class)->name('department-head.compre-view');
+    Route::post('/comprehensive-examination', [DepartmentHeadController::class, 'store_comprehensive'])->name('department-head.store-compre');
 });
