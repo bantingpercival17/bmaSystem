@@ -108,3 +108,7 @@ Route::get('/staff-details', [ExportController::class, 'export_staff']);
 Route::get('/course', [ExportController::class, 'export_course']);
 
 Route::get('/academic-year', [ExportController::class, 'export_academic_year']);
+Route::get('/token', function () {
+    $token = csrf_token();
+    return response(compact('token'));
+});

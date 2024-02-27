@@ -275,21 +275,28 @@ class DepartmentHeadController extends Controller
     function store_comprehensive(Request $request)
     {
         try {
-            if ($request->file('upload-file')) {
+            /*  if ($request->file('upload-file')) {
                 $originalFilename = $request->file('upload-file')->getClientOriginalName();
 
-                $filename = '/comprehensive-examination/' . base64_encode($request->course) . '/' . $originalFilename;
+                    $filename = '/comprehensive-examination/' . base64_encode($request->course) . '/' . $originalFilename;
                 $filePath = Storage::disk('bma-students')->put($filename, $request->file('upload-file')->getRealPath());
                 $filePath = Storage::disk('bma-students')->url($filename);
+            } */
+            $fileName = '';
+            if ($request->hasFile('upload-file')) {
+                $file = $request->file('upload-file');
+                $fileName = $file->getClientOriginalName();
+                Storage::disk('local')->putFileAs('scorm', $file, $fileName);
+                return response()->json(['message' => 'File uploaded successfully']);
             }
             $data = array(
                 'competence_name' => $request->name,
                 'competence_code' => $request->code,
-                'file_name' => $filePath,
+                'file_name' => $fileName,
                 'course_id' => $request->course
             );
             ComprehensiveExamination::create($data);
-            return back()->with('success','Examination Added.');
+            return back()->with('success', 'Examination Added.');
             //code...
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());

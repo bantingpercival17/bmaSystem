@@ -244,7 +244,7 @@ class ShipboardTraining extends Controller
     function upload_documents_v2(Request $request)
     {
         $request->validate([
-            'file' => 'required| mimes:jpg,bmp,png',
+            'file' => 'required|mimes:jpg,bmp,png,pdf|max:2048',
         ]);
         try {
             # If verify the Document Data
