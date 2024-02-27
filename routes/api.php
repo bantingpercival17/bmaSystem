@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ShipboardTraining;
+use App\Http\Controllers\Api\StudentComprehensiveExamination;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\StudentSubjectsController;
 use App\Http\Controllers\Api\VisitorController;
@@ -87,7 +88,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/student/subject-lists', [StudentSubjectsController::class, 'subject_lists']);
     Route::get('/student/subject-lists/view', [StudentSubjectsController::class, 'subject_view']);
     Route::get('/student/semestral-grade', [StudentController::class, 'semestral_grade']);
-
+    // COMPREHENSIVE EXAMINATION
+    Route::get('/student/comprehensive-examination', [StudentComprehensiveExamination::class, 'comprehensive_examination']);
+    Route::get('/student/comprehensive-examination/view', [StudentComprehensiveExamination::class, 'examination_view']);
     // LOGOUT
     Route::post('/student/logout', [StudentController::class, 'student_logout']);
     // Route::
@@ -105,3 +108,7 @@ Route::get('/staff-details', [ExportController::class, 'export_staff']);
 Route::get('/course', [ExportController::class, 'export_course']);
 
 Route::get('/academic-year', [ExportController::class, 'export_academic_year']);
+Route::get('/token', function () {
+    $token = csrf_token();
+    return response(compact('token'));
+});

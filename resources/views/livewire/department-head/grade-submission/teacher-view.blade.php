@@ -17,7 +17,7 @@
             <div class="data-content mt-4">
                 @forelse ($teacherLists as $employee)
                     <a
-                        href="{{ route('department-head.grade-submission-v2') . '?staff=' . base64_encode($employee->id) . (request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '') }}">
+                        href="{{ route('department-head.grade-submission-v2') . '?staff=' . base64_encode($employee->id) . ($academic ? '&_academic=' . $academic : '') }}">
                         <div class="card mb-2 shadow mb-3">
                             <div class="row no-gutters">
                                 <div class="col-md-3">

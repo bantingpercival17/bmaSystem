@@ -188,7 +188,7 @@ class ShipboardTraining extends Controller
             $academic = AcademicYear::where('is_active', true)->first();
             /* $shipboard_information = ShipBoardInformation::where('student_id', auth()->user()->student_id)->first();
             if ($shipboard_information) {
-                
+
             } */
             $shipboard_information =  ShipBoardInformation::create([
                 'student_id' => auth()->user()->student_id,
@@ -244,7 +244,7 @@ class ShipboardTraining extends Controller
     function upload_documents_v2(Request $request)
     {
         $request->validate([
-            'file' => 'required| mimes:jpg,bmp,png',
+            'file' => 'required|mimes:jpg,bmp,png,pdf|max:2048',
         ]);
         try {
             # If verify the Document Data

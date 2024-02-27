@@ -10,7 +10,7 @@
                 <div class="d-flex flex-wrap align-items-center">
                     <div class="mb-sm-0">
                         <a
-                            href="{{ route('department-head.grade-submission-v2') }}{{ '?staff=' . base64_encode($staffView->id) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}{{ '&subject=' . base64_encode($item->id) }}">
+                            href="{{ route('department-head.grade-submission-v2') }}{{ '?staff=' . base64_encode($staffView->id) }}{{ $academic ? '&_academic=' . $academic : '' }}{{ '&subject=' . base64_encode($item->id) }}">
 
                             <div class="d-flex">
                                 <h5 class="">

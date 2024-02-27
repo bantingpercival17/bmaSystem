@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
+use App\Models\ComprehensiveExamination;
 use App\Models\GradeSubmission;
 use App\Models\Section;
 use App\Models\Staff;
@@ -14,6 +15,7 @@ use App\Models\SubjectClass;
 use App\Report\GradingSheetReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class DepartmentHeadController extends Controller
 {
@@ -269,5 +271,35 @@ class DepartmentHeadController extends Controller
             }
         }
         return back()->with('success', $_subject . " " . $_section . " Verified.."); */
+    }
+    function store_comprehensive(Request $request)
+    {
+        try {
+            /*  if ($request->file('upload-file')) {
+                $originalFilename = $request->file('upload-file')->getClientOriginalName();
+
+                    $filename = '/comprehensive-examination/' . base64_encode($request->course) . '/' . $originalFilename;
+                $filePath = Storage::disk('bma-students')->put($filename, $request->file('upload-file')->getRealPath());
+                $filePath = Storage::disk('bma-students')->url($filename);
+            } */
+            $fileName = '';
+            if ($request->hasFile('upload-file')) {
+                $file = $request->file('upload-file');
+                $fileName = $file->getClientOriginalName();
+                Storage::disk('local')->putFileAs('scorm', $file, $fileName);
+                return response()->json(['message' => 'File uploaded successfully']);
+            }
+            $data = array(
+                'competence_name' => $request->name,
+                'competence_code' => $request->code,
+                'file_name' => $fileName,
+                'course_id' => $request->course
+            );
+            ComprehensiveExamination::create($data);
+            return back()->with('success', 'Examination Added.');
+            //code...
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
     }
 }

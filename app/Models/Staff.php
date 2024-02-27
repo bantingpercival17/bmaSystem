@@ -300,7 +300,7 @@ class Staff extends Model
                 'role_id' => 9,
                 'role_name' => 'Department Head',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Grade Submission', 'department-head.grade-submission'], ['E-Clearance', 'department-head.e-clearance']],
+                'role_routes' => [['Grade Submission', 'department-head.grade-submission-v2'], ['E-Clearance', 'department-head.e-clearance'],['Comprehensive','department-head.compre-view']],
             ],
             [
                 'role_id' => 10,
