@@ -53,7 +53,7 @@
             <div class="card mb-5">
                 <div class="row no-gutters">
                     <div class="col-md-3">
-                        <img src="{{ asset($_staff->profile_pic($_staff)) }}" class="avatar-130 rounded" alt="#">
+                        <img src="{{ $_staff->profile_picture() }}" class="avatar-130 rounded" alt="#">
                     </div>
                     <div class="ms-5 col-md-8">
                         <div class="card-body">

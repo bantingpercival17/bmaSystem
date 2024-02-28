@@ -19,8 +19,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-3 col-xs-12 text-center">
-                            <img class="img-circle elevation-2"
-                                src="{{ asset('/assets/img/staff/' . $_staff->profile_pic($_staff)) }}" alt="User Avatar"
+                            <img class="img-circle elevation-2" src="{{ $_staff->profile_picture() }}" alt="User Avatar"
                                 height="120px">
                         </div>
                         <div class="col-md-9 col-xs-12">
@@ -131,7 +130,6 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
                             @else
                                 <tr>
                                     <td colspan="3">No Data</td>

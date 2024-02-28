@@ -40,8 +40,8 @@
                                                 </p>
                                             </div>
                                             <div class="col-5 text-center">
-                                                <img src="{{ asset('/assets/img/staff/' . $_data->profile_pic($_data)) }}"
-                                                    alt="user-avatar" class="img-circle img-fluid">
+                                                <img src="{{ $_data->profile_picture() }}" alt="user-avatar"
+                                                    class="img-circle img-fluid">
                                             </div>
                                         </div>
                                     </div>

@@ -47,6 +47,7 @@ class Staff extends Model
             }
             if ($profile_picture) {
                 $_image =  Storage::url($profile_picture->image_path);;
+                //$_image = storage_path($profile_picture->image_path);
             }
         }
         return  $_image;

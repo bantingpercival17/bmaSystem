@@ -55,6 +55,13 @@ return [
             'url' => env('APP_URL') . '/storage/bma-applicants',
             'visibility' => 'public',
         ],
+        'bma-employee' => [
+            'driver' => 'local',
+            //'root' => storage_path('app/public/bma-applicants'),
+            'root' => '../../bma-portal/public/storage/employee',
+            'url' => env('APP_URL') . '/storage/employee',
+            'visibility' => 'public',
+        ],
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

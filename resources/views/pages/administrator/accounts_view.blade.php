@@ -52,7 +52,7 @@
 
                         <td>
                             <div class="d-flex align-items-center">
-                                <img class=" avatar-rounded img-fluid avatar-45 me-3 bg-soft-primary" src="{{ asset($_data->profile_pic($_data)) }}" alt="profile">
+                                <img class=" avatar-rounded img-fluid avatar-45 me-3 bg-soft-primary" src="{{ asset($_data->profile_picture()) }}" alt="profile">
 
                                 <a href="{{ route('employee.view') }}?employee={{ base64_encode($_data->id) }}">
                                     {{ strtoupper($_data->first_name . ' ' . $_data->last_name) }}
