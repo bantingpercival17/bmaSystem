@@ -94,7 +94,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     // LOGOUT
     Route::post('/student/logout', [StudentController::class, 'student_logout']);
     // Route::
-    Route::get('/staff/image', [StudentController::class, 'teacher_image']);
+    Route::post('/staff/image', [StudentSubjectsController::class, 'teacher_image']);
+    // Subject Api
+    Route::post('/subject/topic', [StudentSubjectsController::class, 'subject_topic_view']);
 });
 require __DIR__ . '/additional-api/applicant-api.php';
 require __DIR__ . '/additional-api/attendance-api.php';

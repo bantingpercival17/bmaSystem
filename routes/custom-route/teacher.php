@@ -3,6 +3,7 @@
 use App\Http\Controllers\DepartmentHeadController;
 use App\Http\Controllers\GeneralController\CourseSyllabusController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Livewire\Teacher\CourseSyllabus\SubjectSyllabusView;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
@@ -65,4 +66,7 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     Route::post('/course-syllabus/editor/store-course-topic-materials', [CourseSyllabusController::class, 'learning_topic_materials'])->name('teacher.topic-materials'); // Add Topic Materials
     Route::get('/course-syllabus/preview', [CourseSyllabusController::class, 'learning_topic_preview'])->name('teacher.learning-topic-preview');
     Route::get('/course-syllabus/preview/topic', [CourseSyllabusController::class, 'topic_view'])->name('teacher.course-syllabus-topic-view');
+
+    // Livewire
+    Route::get('/course-syllabus/view', SubjectSyllabusView::class);
 });

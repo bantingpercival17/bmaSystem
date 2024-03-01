@@ -34,6 +34,7 @@ $_title = 'Course Syllabus';
                 @include('pages.teacher.course-syllabus.part-tab-layouts.part-one')
                 @include('pages.teacher.course-syllabus.part-tab-layouts.part-two')
                 @include('pages.teacher.course-syllabus.part-tab-layouts.part-three')
+                @include('pages.teacher.course-syllabus.part-tab-layouts.part-five')
                 @if (request()->input('part') == 'part1')
                     @if (request()->input('section') == 'stcw-reference')
                     @endif

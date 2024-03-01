@@ -76,7 +76,7 @@ class SubjectClass extends Model
     public function student_semestral_subject_grade()
     {
         return  $this->hasOne(GradeComputed::class, 'subject_class_id')->where('removed_at', false)->where('student_id', auth()->user()->student_id);
-        return auth()->user()->student->percentage_grade(base64_encode($data->final_grade));
+        //return auth()->user()->student->percentage_grade(base64_encode($data->final_grade));
 
     }
     public function e_clearance()

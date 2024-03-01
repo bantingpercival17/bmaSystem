@@ -281,7 +281,7 @@ class TeacherController extends Controller
             Storage::disk('local')->put($_file_name, fopen($_request->file('file_input'), 'r+'));
             //Excel::import(new GradeImport($_request->_section), $_request->file('file_input'));
             Excel::import(new GradeBulkImport($_request->_section), storage_path('app' . $_file_name));
-            
+
             return back()->with('success', 'Successfully Upload your Grades');
         }
     }

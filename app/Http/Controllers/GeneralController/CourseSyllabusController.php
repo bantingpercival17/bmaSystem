@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Hash;
 
 class CourseSyllabusController extends Controller
 {
-    #Teacher Portal 
+    #Teacher Portal
     public function course_syllabus_view(Request $_request)
     {
         try {
