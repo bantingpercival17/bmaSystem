@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/app-1.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="{{ asset('resources/plugin/toastify/toastify.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('resources/plugin/editor/editor.css') }}">
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
     <style>
@@ -290,7 +290,7 @@
     <script src="{{ asset('resources/js/plugins/viewer.1.0.0.js') }}"></script>
     <!--  <script src="{{ asset('assets/plugins/sweetalert2/sweetalert2.all.min.js') }}"></script> -->
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- <script src="{{ asset('resources/plugin/select/js/select2.min.js') }}"></script> -->
+    <script src="{{ asset('resources/plugin/select/js/select2.min.js') }}"></script>
     <script src="{{ asset('resources/plugin/toastify/toastify.js') }}"></script>
     <script src="{{ asset('resources/plugin/editor/editor.js') }}"></script>
     <script src="{{ asset('assets\plugins\sweetalert2\sweetalert2.all.min.js') }}"></script>

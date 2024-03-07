@@ -4,6 +4,7 @@ use App\Http\Controllers\DepartmentHeadController;
 use App\Http\Controllers\GeneralController\CourseSyllabusController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Livewire\Teacher\CourseSyllabus\SubjectSyllabusView;
+use App\Http\Livewire\Teacher\CourseSyllabus\SubjectTopicView;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
@@ -68,5 +69,6 @@ Route::prefix('teacher')->middleware(['auth', 'teacher'])->group(function () {
     Route::get('/course-syllabus/preview/topic', [CourseSyllabusController::class, 'topic_view'])->name('teacher.course-syllabus-topic-view');
 
     // Livewire
-    Route::get('/course-syllabus/view', SubjectSyllabusView::class);
+    Route::get('/course-syllabus/view', SubjectSyllabusView::class)->name('teacher.course-syllabus-view');
+    Route::get('/course-syllabus/topic/view', SubjectTopicView::class)->name('teacher.course-syllabus-topic-view-v2');
 });

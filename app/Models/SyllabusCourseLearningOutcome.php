@@ -20,6 +20,11 @@ class SyllabusCourseLearningOutcome extends Model
         'teaching_aids',
         'term'
     ];
+
+    function course_syllabus()
+    {
+        return $this->belongsTo(CourseSyllabus::class, 'course_syllabus_id');
+    }
     public function course_outcome()
     {
         return $this->belongsTo(SyllabusCourseOutcome::class, 'course_outcome_id');
