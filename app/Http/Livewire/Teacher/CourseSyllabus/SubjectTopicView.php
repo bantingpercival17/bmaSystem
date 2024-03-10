@@ -10,7 +10,7 @@ use Livewire\Component;
 class SubjectTopicView extends Component
 {
     public $subjectTopic;
-    public $activeCard = 'subject-information';
+    public $activeCard = 'topic-details';
     public function render()
     {
         $this->subjectTopic = request()->query('topic') ? SyllabusCourseLearningOutcome::find(base64_decode(request()->query('topic'))) : $this->subjectTopic;

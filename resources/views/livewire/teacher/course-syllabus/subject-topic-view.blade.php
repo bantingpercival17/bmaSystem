@@ -20,12 +20,17 @@
         </div>
         <div class="row mt-3">
             <div class="col-md-8">
+                <div class="form-group">
+                    <small class="text-muted">TOPIC NAME</small> <br>
+                    <label for=""
+                        class="fw-bolder text-primary h6">{{ ucwords($subjectTopic->learning_outcomes) }}</label>
+                </div>
                 <div class="table-responsive ">
                     <table class="nav nav-underline bg-soft-primary text-center" aria-label="Secondary navigation">
                         <thead class="d-flex">
                             <tr>
-                                <td class="nav-link {{ $activeCard == 'subject-information' ? 'active' : 'text-muted' }}"
-                                    wire:click="swtchTab('subject-information')">
+                                <td class="nav-link {{ $activeCard == 'topic-details' ? 'active' : 'text-muted' }}"
+                                    wire:click="swtchTab('topic-details')">
                                     TOPIC DETAILS
                                 </td>
                             </tr>
@@ -49,6 +54,11 @@
                             </tr>
                         </thead>
                     </table>
+                </div>
+                <div class="section-content">
+                    @if ($activeCard == 'topic-details')
+                        @include('livewire.teacher.course-syllabus.components.topic-details')
+                    @endif
                 </div>
             </div>
             <div class="col-md-4">
