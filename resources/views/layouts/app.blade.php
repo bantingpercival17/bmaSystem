@@ -12,8 +12,11 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="{{ asset('resources/plugin/toastify/toastify.css') }}">
     <link rel="stylesheet" href="{{ asset('resources/plugin/editor/editor.css') }}">
+    <link href="{{ asset('resources/plugin/photoviewer/photoviewer.css') }}" rel="stylesheet">
+    @yield('style')
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+
     <style>
         .la-ball-square-clockwise-spin,
         .la-ball-square-clockwise-spin>div {
@@ -295,6 +298,7 @@
     <script src="{{ asset('resources/plugin/editor/editor.js') }}"></script>
     <script src="{{ asset('assets\plugins\sweetalert2\sweetalert2.all.min.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('assets\plugins\sweetalert2\sweetalert2.min.css') }}">
+    <script src="{{ asset('resources/plugin/photoviewer/photoviewer.js') }}"></script>
     @if (request()->is('executive/scanner'))
     <script>
         function updateTime() {

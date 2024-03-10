@@ -12,9 +12,24 @@
                     <h5 class="fw-bolder text-muted">{{ $item->document_name }}</h5>
                     @if ($document = $item->applicant_requirements_v2)
                         @if ($document->is_approved == null)
+                          
+                            {{--  <button class="btn-photoviewer btn btn-sm btn-primary"
+                                data-link="http://one.bma.edu.ph/storage/bma-applicants//AN-240126312/documents/uqtsnw2S50h4.jpg"
+                                data-title="{{ $item->document_name }}">
+                                Testing Buttom
+                            </button> --}}
                             <form class="row" action="{{ route('document-verification') }}">
                                 @php
-                                    $comments = ['Grades shall covered the 1st and 2nd quarter of the first semester', 'Your Grade has been disapproved, please submit a clear copy of your Grades', 'Your Grade has been disapproved, please submit a complete copy of your Grades', 'Your Good Moral Conduct has been disapproved, please submit a clear copy of this documents', 'Your PSA Birth Certificate has been disapproved, please submit a clear copy of this documents', 'Your Barangay Clearance has been disapproved, please submit a clear copy of this documents', 'Your 2x2 Picture with Name Tag has been disapproved, please submit a clear copy of this documents', 'Sorry, you did not meet the required grades.'];
+                                    $comments = [
+                                        'Grades shall covered the 1st and 2nd quarter of the first semester',
+                                        'Your Grade has been disapproved, please submit a clear copy of your Grades',
+                                        'Your Grade has been disapproved, please submit a complete copy of your Grades',
+                                        'Your Good Moral Conduct has been disapproved, please submit a clear copy of this documents',
+                                        'Your PSA Birth Certificate has been disapproved, please submit a clear copy of this documents',
+                                        'Your Barangay Clearance has been disapproved, please submit a clear copy of this documents',
+                                        'Your 2x2 Picture with Name Tag has been disapproved, please submit a clear copy of this documents',
+                                        'Sorry, you did not meet the required grades.',
+                                    ];
                                 @endphp
                                 <div class="col-md-8">
                                     <input type="hidden" name="_document" value="{{ base64_encode($document->id) }}">
@@ -64,6 +79,7 @@
                                                 stroke-linejoin="round"></path>
                                         </svg>
                                     </button>
+
                                     <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2"
                                         data-bs-toggle="modal" data-bs-target=".document-view-modal"
                                         data-bs-toggle="tooltip" title="" data-bs-original-title="View Image"
@@ -206,34 +222,8 @@
                     </button>
                 </div>
                 <iframe id="my-iframe" class="iframe-container form-view iframe-placeholder" src=""
-                    width="100%" height="700px" >
+                    width="100%" height="700px">
                 </iframe>
             </div>
         </div>
     </div>
-    @section('script')
-        <script>
-            $(document).on('click', '.btn-form-document', function(evt) {
-                $('.form-view').attr('src', '')
-                var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp', 'webp'];
-                var file = $(this).data('document-url');
-                $('.form-view').attr('src', $(this).data('document-url'))
-            });
-
-            $(document).ready(function() {
-                function resizeIframe() {
-                    var iframe = $('#my-iframe');
-                    var contentWidth = iframe.contents().find('body').prop('scrollWidth');
-                    var contentHeight = iframe.contents().find('body').prop('scrollHeight');
-
-                    iframe.css('width', contentWidth + 'px');
-                    iframe.css('height', contentHeight + 'px');
-                }
-
-                $('#my-iframe').on('load', function() {
-                    resizeIframe();
-                    $(this).contents().on('resize', resizeIframe);
-                });
-            });
-        </script>
-    @endsection

@@ -52,3 +52,51 @@ function document_viewer(data) {
 function rotateImg(data) {
     document.querySelector("#frame-image").style.transform = "rotate(" + data + "deg)";
 }
+$(document).on('click', '.btn-photoviewer', function (evt) {
+    const options = {
+        index: $(this).index(),
+        headerToolbar: ['minimize', 'maximize', 'close'],
+        footerToolbar: ['prev', 'next', 'zoomIn', 'zoomOut', 'fullscreen', 'actualSize', 'rotateLeft', 'rotateRight'],
+        modalWidth: 850,
+        modalHeight: 600,
+        callbacks: {
+            beforeChange: function (context, index) {
+                console.log(context, index);
+            },
+            changed: function (context, index) {
+                console.log(context, index);
+            }
+        }
+    };
+    const items = [{
+        src: $(this).data('link'),
+        title: $(this).data('title')
+    }];
+    console.log($(this).data('link'))
+
+    new PhotoViewer(items, options);
+});
+$('[data-gallery=photoviewer]').click(function (e) {
+
+    e.preventDefault();
+    console.log("Photo Viewer")
+    var items = [],
+        options = {
+            index: $(this).index(),
+        };
+
+    $('[data-gallery=photoviewer]').each(function () {
+        items.push({
+            src: $(this).attr('href'),
+            title: $(this).attr('data-title')
+        });
+    });
+
+    new PhotoViewer(items, options);
+
+});
+$(document).on('click', 'btn-photoviewer-v2', function (evt) {
+    entries.preventDefault()
+    console.log("Photo Viewer")
+    console.log($(this).data('link'))
+});
