@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ExaminationController;
 use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\ShipboardTraining;
 use App\Http\Controllers\Api\StudentComprehensiveExamination;
@@ -114,3 +115,5 @@ Route::get('/token', function () {
     $token = csrf_token();
     return response(compact('token'));
 });
+
+Route::get('/examination-review', [ExaminationController::class, 'review_examination']);
