@@ -117,3 +117,4 @@ Route::get('/token', function () {
 });
 
 Route::get('/examination-review', [ExaminationController::class, 'review_examination']);
+Route::post('/category-view', [ExaminationController::class, 'review_examination_view']);

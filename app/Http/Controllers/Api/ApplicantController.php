@@ -261,7 +261,7 @@ class ApplicantController extends Controller
             $data = array(
                 'applicant_id' => $user->id,
                 'amount_paid'  => str_replace(',', '', $request->amount_paid),
-                'reference_number' => $request->reference_number,
+                'reference_number' => strtolower($request->payment_mode) == 'e-wallets' ? $request->reference_number : '',
                 'transaction_type' => 'entrance-examination-payment',
                 'reciept_attach_path' => $fileLink
             );
