@@ -16,13 +16,16 @@ class ExaminationQuestionChoice extends Model
         'is_answer'
     ];
     protected $hidden = [
-        'is_answer',
         'created_at',
         'updated_at',
         'is_removed'
     ];
 
     public function choices_v2()
+    {
+        return $this->belongsTo(ExaminationQuestion::class, 'question_id')->select('id','choice_name','image_path');
+    }
+    public function choices_with_answer()
     {
         return $this->belongsTo(ExaminationQuestion::class, 'question_id')->select('id','choice_name','image_path');
     }

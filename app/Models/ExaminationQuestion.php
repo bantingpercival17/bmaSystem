@@ -25,6 +25,10 @@ class ExaminationQuestion extends Model
     }
     public function choices_v2()
     {
-        return $this->hasMany(ExaminationQuestionChoice::class, 'question_id')->where('is_removed', false);
+        return $this->hasMany(ExaminationQuestionChoice::class, 'question_id')->select('id', 'choice_name', 'question_id','image_path')->where('is_removed', false);
+    }
+    public function choices_v3()
+    {
+        return $this->hasMany(ExaminationQuestionChoice::class, 'question_id')->select('id', 'choice_name', 'question_id','image_path','is_answer')->where('is_removed', false);
     }
 }
