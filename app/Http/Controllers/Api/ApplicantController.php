@@ -41,6 +41,8 @@ class ApplicantController extends Controller
         $approvedDocuments = $data->applicant_documents_status();
         $disqualification = $data->not_qualified;
         $documents = compact('documents', 'listOfDocuments', 'approvedDocuments', 'disqualification');
+        // Alumnia
+        $alumnia = $data->is_alumnia;
         $payment = $data->payment;
         $examinationDetails = $payment ? $data->applicant_examination : [];
         $examinationSchedule = $examinationDetails ? $examinationDetails->examination_scheduled : [];
@@ -89,7 +91,7 @@ class ApplicantController extends Controller
         /* ENROLLMENT DETAILS */
         $enrollment = $data->student_applicant ? $data->student_applicant->student_details :  [];
 
-        return response(['data' => $data, 'documents' => $documents, 'examination' => $examination, 'orientation' => $orientation, 'medical' => $medical, 'enrollment' => $enrollment], 200);
+        return response(['data' => $data, 'alumnia' => $alumnia, 'documents' => $documents, 'examination' => $examination, 'orientation' => $orientation, 'medical' => $medical, 'enrollment' => $enrollment], 200);
     }
     function applicant_information_verification()
     {
