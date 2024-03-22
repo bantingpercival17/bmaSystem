@@ -125,6 +125,11 @@ class ApplicantView extends Component
             })
             ->groupBy('applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false);
+        $query2 = ApplicantAccount::select('applicant_accounts.*')
+            ->join('bma_website.applicant_alumnias', 'bma_website.applicant_alumnias.applicant_id', '=', 'applicant_accounts.id')
+            ->where('applicant_accounts.academic_id', base64_decode($this->academic))
+            ->where('applicant_accounts.is_removed', 0);
+        $query = $query->union($query2);
         // Sort By Courses
         if ($this->selectCourse != 'ALL COURSE') {
             $query = $query->where('applicant_accounts.course_id', $this->selectCourse);
@@ -142,9 +147,6 @@ class ApplicantView extends Component
                     ->orderBy(env('DB_DATABASE_SECOND') . '.applicant_detials.last_name', 'asc');
             }
         }
-
-
-
         if ($this->selecteCategories == 'waiting_for_scheduled') {
             $this->applicants = $query->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                 ->whereNull('ama.applicant_id')->get();
@@ -249,19 +251,6 @@ class ApplicantView extends Component
             }
             $_email_model = new ApplicantEmail();
             $_email = $_applicant->email;
-            //$_email = 'p.banting@bma.edu.ph';
-            /* if ($result) {
-                if (base64_decode($result) == 1) {
-                    // Email Passed
-                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
-                } else {
-                    // Email Failed
-                    Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
-                }
-            } else {
-                //Email "Pending";
-                Mail::to($_email)->bcc('p.banting@bma.edu.ph')->send($_email_model->medical_result_passed($_applicant));
-            } */
         } catch (Exception $error) {
             $this->dispatchBrowserEvent('swal:alert', [
                 'title' => 'Error!',
