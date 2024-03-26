@@ -51,9 +51,8 @@
                         </div>
                         <div class="card-body">
                             <label for="" class="text-primary fw-bolder">{{ $item->question }}</label>
-                            @if ($item->image_path)
-                                <img src="{{ $item->image_path }}" alt="" width="100">
-                            @endif
+                            {{ $item->image_path }}
+                            <img src="{{ $item->image_path }}" alt="" width="100">
                             <table class="table mt-3">
                                 <thead>
                                     <tr>
