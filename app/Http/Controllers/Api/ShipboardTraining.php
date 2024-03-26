@@ -40,7 +40,7 @@ class ShipboardTraining extends Controller
                 ->with('student_upload_documents')
                 ->orderByRaw('CHAR_LENGTH("document_name")')
                 ->get();
-            $vessel_type = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER', 'BULK CARIER', 'CRUISE LINE ','CAR CARIER'];
+            $vessel_type = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER', 'BULK CARIER', 'CRUISE LINE ', 'CAR CARIER', 'TRAINING SHIP'];
             return response(['data' => compact('shipboard_information', 'narative_report', 'shipping_company', 'vessel_type', 'document_requirements')], 200);
         } catch (Exception $error) {
             return response(['error' => $error->getMessage()], 505);

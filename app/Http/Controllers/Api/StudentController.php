@@ -686,7 +686,7 @@ class StudentController extends Controller
             $document_status = ShipBoardInformation::where('student_id', auth()->user()->student_id)
                 ->where('is_removed', false)->first();
             // VESSEL TYPE
-            $vessel_type = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER', 'BULK CARIER', 'CRUISE LINE ','CAR CARIER'];
+            $vessel_type = ['CONTAINER VESSEL', 'GENERAL CARGO', 'TANKER', 'BULK CARIER', 'CRUISE LINE ', 'CAR CARIER', 'TRAINING SHIP'];
 
             // Enrollment Procudure
             $application = auth()->user()->student->student_enrollment_application;
