@@ -246,7 +246,7 @@ class AdministratorController extends Controller
                  */
                 $filename =  'employee/' . $filename;
                 StaffPictures::create([
-                    'staff_id' => $request->staff, 'image_path' => $filename 
+                    'staff_id' => $request->staff, 'image_path' => $filename
                 ]);
                 /* $file = $request->file('file');
                 //$fileName = $file->getClientOriginalName();

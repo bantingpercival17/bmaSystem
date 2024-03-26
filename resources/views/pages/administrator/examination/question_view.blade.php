@@ -38,27 +38,68 @@
                         </thead>
 
                         <tbody>
-                            @forelse ($category->question as $item)
-                                <tr>
-                                    <td>{{ $item->question }}</td>
-                                    <td>
-                                        @if ($item->choices)
-                                            @forelse ($item->choices as $data)
-                                                {{ $data }}
-                                                <br>
-                                            @empty
-                                            @endforelse
-                                        @endif
 
-                                    </td>
-                                    <td></td>
-                                </tr>
-                            @empty
-                            @endforelse
                         </tbody>
                     </table>
                 </div>
+            </div>
+            <div class="mt-3">
+                @forelse ($category->question as $key=> $item)
+                    <div class="card m-3">
+                        <div class="card-header">
+                            <span class="badge bg-primary">QUESTION {{ $key + 1 }}</span>
+                        </div>
+                        <div class="card-body">
+                            <label for="" class="text-primary fw-bolder">{{ $item->question }}</label>
+                            @if ($item->image_path)
+                                <img src="{{ $item->image_path }}" alt="" width="100">
+                            @endif
+                            <table class="table mt-3">
+                                <thead>
+                                    <tr>
+                                        <th>CHOICES</th>
+                                        <th>ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
+                                    @if ($item->choices)
+                                        @forelse ($item->choices as $data)
+                                            <tr>
+                                                <td>
+                                                    @if ($data->is_answer)
+                                                        <label for="" class="text-primary fw-bolder">
+                                                            {{ $data->choice_name }}</label>
+                                                    @else
+                                                        {{ $data->choice_name }}
+                                                    @endif
+
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        @empty
+                                        @endforelse
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {{--  <tr>
+                        <td>{{ $item->question }}</td>
+                        <td>
+                            @if ($item->choices)
+                                @forelse ($item->choices as $data)
+                                    {{ $data }}
+                                    <br>
+                                @empty
+                                @endforelse
+                            @endif
+
+                        </td>
+                        <td></td>
+                    </tr> --}}
+                @empty
+                @endforelse
             </div>
         </div>
     </div>
