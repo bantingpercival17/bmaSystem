@@ -12,7 +12,7 @@ class MidshipmanView extends Component
     public $profile = [];
     public $inputStudent;
     public $selectSort = 'document-requerments';
-    public $activeCard = 'pre-deployment-requirements';
+    public $activeCard = 'profile';
     public $showModal = false;
     public $documentLink = null;
     public function render()
@@ -24,7 +24,8 @@ class MidshipmanView extends Component
             array('shipboard-application', $component_path . 'shipboard-application')
         );
         $sortList = array('all', 'document-requerments', 'onboard-enrollment');
-        $studentLists =  $this->findStudent($this->inputStudent, $this->selectSort);
+        $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent, $this->selectSort) : [];
+        #$studentLists =  $this->findStudent($this->inputStudent, $this->selectSort);
         $document_requirements = Documents::where('document_propose', 'DOCUMENTS-MONITORING')->where('department_id', 4)->get();
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
         if ($this->profile) {
@@ -50,7 +51,7 @@ class MidshipmanView extends Component
             ->where('student_details.is_removed', false);
         $_student = explode(',', $data); // Seperate the Sentence
         $_count = count($_student);
-        if ($sort === 'document-requerments') {
+        /*   if ($sort === 'document-requerments') {
             $query->join('document_requirements', 'document_requirements.student_id', 'student_details.id')
                 ->join('documents', 'documents.id', 'document_requirements.document_id')
                 ->where('documents.document_propose', 'DOCUMENTS-MONITORING')->where('documents.is_removed', false)
@@ -61,7 +62,7 @@ class MidshipmanView extends Component
             $query->join('ship_board_information', 'ship_board_information.student_id', 'student_details.id')
                 ->whereNull('ship_board_information.is_approved')
                 ->orderBy('ship_board_information.updated_at', 'desc');
-        }
+        } */
         if (is_numeric($data)) {
             $query = $query->join('student_accounts', 'student_accounts.student_id', 'student_details.id')
                 ->where('student_accounts.student_number', 'like', '%' . $data . '%')
@@ -77,7 +78,7 @@ class MidshipmanView extends Component
             }
         }
 
-        return $query->get();
+        return $query->paginate(10);
     }
     function showDocuments($data)
     {
