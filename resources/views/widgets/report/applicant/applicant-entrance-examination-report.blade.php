@@ -52,12 +52,27 @@
                                 @php
                                     $result = $item2->examination_result();
                                 @endphp
-                                @if ($result)
+                                @if ($item2->is_finish == 1)
+                                    @if ($result)
+                                        <p>
+                                            <span>TOTAL SCORE: <b>{{ $result[0] }}</b></span> |
+                                            <span>REMARKS: <b>{{ $result[2] ? 'PASSED' : 'FAILED' }}</b></span>
+                                        </p>
+                                    @endif
+                                @else
+                                    @php
+                                        $formattedDate = $item2->examination_scheduled;
+                                        if ($item2->examination_scheduled) {
+                                            $dateString = $item2->examination_scheduled->schedule_date;
+                                            $date = DateTime::createFromFormat('Y-m-d H:i:s', $dateString);
+                                            $formattedDate = $date->format('M d,Y h:i A');
+                                        }
+                                    @endphp
                                     <p>
-                                        <span>TOTAL SCORE: <b>{{ $result[0] }}</b></span> |
-                                        <span>REMARKS: <b>{{ $result[2] ? 'PASSED' : 'FAILED' }}</b></span>
+                                        {{ $item2->examination_code }} | {{ $formattedDate }}
                                     </p>
                                 @endif
+
                                 {{-- {{ json_encode($result) }} <br> --}}
                             @endforeach
                         </td>
