@@ -52,10 +52,12 @@
                                 @php
                                     $result = $item2->examination_result();
                                 @endphp
-                                <p>
-                                    <span>TOTAL SCORE: <b>{{ $result[0] }}</b></span> |
-                                    <span>REMARKS: <b>{{ $result[2] ? 'PASSED' : 'FAILED' }}</b></span>
-                                </p>
+                                @if ($result)
+                                    <p>
+                                        <span>TOTAL SCORE: <b>{{ $result[0] }}</b></span> |
+                                        <span>REMARKS: <b>{{ $result[2] ? 'PASSED' : 'FAILED' }}</b></span>
+                                    </p>
+                                @endif
                                 {{-- {{ json_encode($result) }} <br> --}}
                             @endforeach
                         </td>
