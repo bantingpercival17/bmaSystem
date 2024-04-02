@@ -19,7 +19,11 @@
             </thead>
             <tbody>
                 @foreach ($totalExaminees as $item)
-                    <tr>
+                    @php
+                        $takeCount = count($item->examination_list);
+                        $style = $takeCount > 1 ? 'background-color: #FFCCCC;' : '';
+                    @endphp
+                    <tr style="{{ $style }}">
                         <td>
                             <b> {{ $item->applicant->first_name . ' ' . $item->applicant->last_name }} </b>
                         </td>
@@ -46,7 +50,7 @@
                                 @if ($result)
                                     <p>
                                         <span>TOTAL SCORE: <b>{{ $result[0] }}</b></span> |
-                                        {{--  <span>REMARKS: <b>{{ $result[2] ? 'PASSED' : 'FAILED' }}</b></span> --}}
+                                        <span>REMARKS: <b>{{ $result[2] ? 'PASSED' : 'FAILED' }}</b></span>
                                     </p>
                                 @endif
                                 {{-- {{ json_encode($result) }} <br> --}}
