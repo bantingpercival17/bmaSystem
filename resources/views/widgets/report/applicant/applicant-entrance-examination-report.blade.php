@@ -54,7 +54,7 @@
                                 @endphp
                                 <p>
                                     <span>TOTAL SCORE: <b>{{ $result[0] }}</b></span> |
-                                    <span>REMARKS: <b>{{ $result[true] ? 'PASSED' : 'FAILED' }}</b></span>
+                                    <span>REMARKS: <b>{{ $result[2] ? 'PASSED' : 'FAILED' }}</b></span>
                                 </p>
                                 {{-- {{ json_encode($result) }} <br> --}}
                             @endforeach
