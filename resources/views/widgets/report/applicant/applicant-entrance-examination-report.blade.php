@@ -6,6 +6,10 @@
 @section('content')
     <div class="page-content">
         <h3 class="text-center"><b>Entrance Examination Summary Report</b></h3>
+        @php
+            $contentNumber = 0;
+            $contentCount = 30;
+        @endphp
         <table class="table-content table-subject-grade">
             <thead>
                 <tr>
@@ -22,8 +26,9 @@
                     @php
                         $takeCount = count($item->examination_list);
                         $style = $takeCount > 1 ? 'background-color: #FFCCCC;' : '';
+                        $contentNumber += 1;
                     @endphp
-                    <tr style="{{ $style }}">
+                    <tr style="{{ $style }}" class="{{ $contentNumber >= $contentCount ? 'page-break' : '' }}">
                         <td>
                             <b> {{ $item->applicant->first_name . ' ' . $item->applicant->last_name }} </b>
                         </td>
@@ -57,6 +62,11 @@
                             @endforeach
                         </td>
                     </tr>
+                    @if ($contentNumber >= $contentCount)
+                        @php
+                            $contentNumber = 0;
+                        @endphp
+                    @endif
                 @endforeach
             </tbody>
         </table>
