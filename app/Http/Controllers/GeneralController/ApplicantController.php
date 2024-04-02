@@ -26,10 +26,13 @@ use App\Report\ApplicantReport;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Svg\Tag\Rect;
+use Barryvdh\DomPDF\Facade as PDF;
+
 
 class ApplicantController extends Controller
 {
@@ -160,7 +163,7 @@ class ApplicantController extends Controller
                 $_document->feedback = $_request->_comment;
                 $_document->save();
                 if ($_request->_comment == 'Sorry, you did not meet the required grades.') {
-                    $applicant = ApplicantNotQualified::where('applicant_id', $_document->applicant_id)->where('is_removed',false)->first();
+                    $applicant = ApplicantNotQualified::where('applicant_id', $_document->applicant_id)->where('is_removed', false)->first();
                     if (!$applicant) {
                         ApplicantNotQualified::create([
                             'applicant_id' => $_document->applicant_id,
@@ -592,6 +595,57 @@ class ApplicantController extends Controller
             $account->save();
 
             return back()->with('success', 'Successfully Transact');
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('error', $th->getMessage());
+        }
+    }
+    function applicant_summary_reports(Request $request)
+    {
+        try {
+            if ($request->category == 'entrance-examination') {
+                $applicantTable = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+                $applicantDetails = ApplicantAccount::select(
+                    'applicant_accounts.*'
+                )
+                    ->join($applicantTable, $applicantTable . '.applicant_id', 'applicant_accounts.id')
+                    ->where('academic_id', base64_decode($request->_academic))
+                    ->where('applicant_accounts.is_removed', false)
+                    ->groupBy('applicant_accounts.id');
+                // Get the total Applicant whom take the Examination
+                $totalExaminees = $applicantDetails->where($applicantTable . '.is_finish', true)
+                    /* ->whereNull($applicantTable . '.is_reset')
+                    ->where($applicantTable . '.is_removed', false) */
+                    ->orderBy($applicantTable . '.examination_start', 'asc')
+                    ->get();
+                /* $totalPassed = $applicantDetails->where(function ($query) {
+                    $query->select(DB::raw('COUNT(*)'))
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_examination_answers')
+                        ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.choices_id')
+                        ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+                }, '>=', function ($query) {
+                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+                })->get();
+                $totalFailed = $applicantDetails->where(function ($query) {
+                    $query->select(DB::raw('COUNT(*)'))
+                        ->from(env('DB_DATABASE_SECOND') . '.applicant_examination_answers')
+                        ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.choices_id')
+                        ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+                }, '<=', function ($query) {
+                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+                })->get(); */
+                $reportPDF = PDF::loadView("widgets.report.applicant.applicant-entrance-examination-report", compact('totalExaminees'));
+                $file_name = 'FORM RG-01 - ';
+                return $reportPDF->setPaper([0, 0, 612.00, 1008.00], 'portrait')->stream($file_name . '.pdf');
+                /*  return array(
+                    'totalExaminees' => $totalExaminees
+                ); */
+                //return compact('totalExaminees', 'totalPassed');
+            } else {
+                return back()->with('error', 'This Page is Ongoing Developement');
+            }
         } catch (\Throwable $th) {
             $this->debugTracker($th);
             return back()->with('error', $th->getMessage());

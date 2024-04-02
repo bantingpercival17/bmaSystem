@@ -187,4 +187,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     {
         return $this->hasOne(StudentApplicantDetails::class, 'applicant_id')->where('is_removed', false);
     }
+    function total_take_examination(){
+        
+    }
 }

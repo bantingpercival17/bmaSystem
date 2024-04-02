@@ -134,7 +134,11 @@
                         @foreach ($tableHeader as $index => $headers)
                             <tr>
                                 <th colspan="4" class="text-center fw-bolder text-primary">
-                                    {{ strtoupper($headers[0]) }}
+                                    <a target="_blank"
+                                        href="{{ route($headers[2]) }}?category={{ str_replace(' ', '-', strtolower($headers[0])) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                        {{ strtoupper($headers[0]) }}
+                                    </a>
+
                                 </th>
                             </tr>
                             @foreach ($headers[1] as $item)

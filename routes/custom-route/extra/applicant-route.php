@@ -40,4 +40,6 @@ Route::middleware(['auth'])->group(function () {
         $applicant = new ApplicantReport();
         return $applicant->applicant_vefied_list();
     });
+
+    Route::get('/applicants/summary-report', [ApplicantController::class, 'applicant_summary_reports'])->name('applicants.summary-reports');
 });

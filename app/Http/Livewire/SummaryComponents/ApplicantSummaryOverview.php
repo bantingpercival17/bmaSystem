@@ -17,10 +17,10 @@ class ApplicantSummaryOverview extends Component
         $courses = CourseOffer::all();
         $this->academic = $this->academicValue();
         $tableHeader = array(
-            array('Information Verification', array('registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni')),
-            array('Entrance Examination', array('examination_payment', 'entrance_examination', 'passed', 'failed')),
-            array('Medical Examination', array('for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending_result')),
-            array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'))
+            array('Information Verification', array('registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni'), 'applicants.summary-reports'),
+            array('Entrance Examination', array('examination_payment', 'entrance_examination', 'passed', 'failed'), 'applicants.summary-reports'),
+            array('Medical Examination', array('for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending_result'), 'applicants.summary-reports'),
+            array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'), 'applicants.summary-reports')
 
         );
         return view('livewire.summary-components.applicant-summary-overview', compact('courses', 'tableHeader'));
@@ -37,7 +37,8 @@ class ApplicantSummaryOverview extends Component
             $data = request()->query('_academic') ?: $this->academic;
         }
         return $data;
-    }function category_count($category, $course, $academic)
+    }
+    function category_count($category, $course, $academic)
     {
         $applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
         $tblDocuments = env('DB_DATABASE') . '.documents';
