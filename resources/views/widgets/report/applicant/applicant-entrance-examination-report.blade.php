@@ -18,19 +18,6 @@
                 </tr>
             </thead>
             <tbody>
-                {{-- <tr>
-                    <td rowspan="2">Row 1, Cell 1</td>
-                    <td>Row 1, Cell 2</td>
-                    <td>Row 1, Cell 3</td>
-                </tr>
-                <tr>
-                    <td>Row 2, Cell 2</td>
-                    <td>Row 2, Cell 3</td>
-                </tr>
-                <tr>
-                    <td>Row 3, Cell 1</td>
-                    <td colspan="2">Row 3, Cell 2 and Cell 3</td>
-                </tr> --}}
                 @foreach ($totalExaminees as $item)
                     <tr>
                         <td>
@@ -39,12 +26,16 @@
                         <td><b>{{ $item->course->course_name }}</b></td>
                         <td>
                             @foreach ($item->examination_list as $item2)
-                                @php
-                                    $dateString = $item2->examination_start;
-                                    $date = DateTime::createFromFormat('Y-m-d H:i:s', $dateString);
-                                    $formattedDate = $date->format('M d,Y h:i A');
-                                @endphp
-                                <p>{{ $formattedDate }}</p>
+                                @if ($item2->examination_start)
+                                    @php
+                                        $dateString = $item2->examination_start;
+                                        $date = DateTime::createFromFormat('Y-m-d H:i:s', $dateString);
+                                        $formattedDate = $date->format('M d,Y h:i A');
+                                    @endphp
+                                    <p>{{ $formattedDate }}</p>
+                                @else
+                                    {{ $item2->examination_start }}
+                                @endif
                             @endforeach
                         </td>
                         <td>
