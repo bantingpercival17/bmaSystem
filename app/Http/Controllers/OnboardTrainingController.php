@@ -89,7 +89,7 @@ class OnboardTrainingController extends Controller
                     $shipboard_information->update(['is_approved' => false]);
                 }
             }
-            $_document_verification->staff_id = Auth::user()->id;
+            $_document_verification->staff_id = Auth::user()->staff->id;
             $_document_verification->save(); // Update the values of Document Verification
             // The total number of Document Requirements
             $_documents = Documents::where('is_removed', false)
@@ -122,7 +122,7 @@ class OnboardTrainingController extends Controller
             'student_id' => base64_decode($_request->_cadet),
             'training_id' => base64_decode($_request->_certificate),
             'certificate_number' => $_request->_cer_code,
-            'staff_id' => Auth::user()->id,
+            'staff_id' => Auth::user()->staff->id,
             'is_active' => 1,
             'is_removed' => 0,
         );
