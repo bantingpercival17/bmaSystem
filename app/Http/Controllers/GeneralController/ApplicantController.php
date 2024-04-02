@@ -610,6 +610,7 @@ class ApplicantController extends Controller
                 )
                     ->join($applicantTable, $applicantTable . '.applicant_id', 'applicant_accounts.id')
                     ->where('academic_id', base64_decode($request->_academic))
+                    ->where('course_id', '!=', 3)
                     ->where('applicant_accounts.is_removed', false)
                     ->groupBy('applicant_accounts.id');
                 // Get the total Applicant whom take the Examination
