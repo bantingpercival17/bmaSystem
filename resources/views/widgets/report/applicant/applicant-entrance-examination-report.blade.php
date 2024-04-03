@@ -91,18 +91,20 @@
                         </td>
                         <td>
                             @foreach ($item->examination_list as $item2)
-                                @php
-                                    $dateString = $item2->examination_start;
-                                    $date = DateTime::createFromFormat('Y-m-d H:i:s', $dateString);
-                                    $formattedDate = $date->format('Y-m-d');
-                                    $place = $item2->check_place($item->email, $formattedDate);
-                                @endphp
-                                <p>
-                                    {{ $item2->examination_start }} | {{ $item->email }}
-                                </p>
-                                <p>
-                                    {{ $place ? $place->ip_address : '' }}
-                                </p>
+                                @if ($item2->examination_start)
+                                    @php
+                                        $dateString = $item2->examination_start;
+                                        $date = DateTime::createFromFormat('Y-m-d H:i:s', $dateString);
+                                        $formattedDate = $date->format('Y-m-d');
+                                        $place = $item2->check_place($item->email, $formattedDate);
+                                    @endphp
+                                    <p>
+                                        {{ $item2->examination_start }} | {{ $item->email }}
+                                    </p>
+                                    <p>
+                                        {{ $place ? $place->ip_address : '' }}
+                                    </p>
+                                @endif
                             @endforeach
                         </td>
                     </tr>
