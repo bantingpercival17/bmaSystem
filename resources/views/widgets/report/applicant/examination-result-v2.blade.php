@@ -1,4 +1,4 @@
-@extends('widgets.report.main-report-template')
+@extends('widgets.report.app_report_template_v2')
 @section('title-report', 'EXAMINATION EXAMINATION - ' . $data->applicant->applicant_number)
 @section('form-code', '')
 @section('content')
@@ -22,7 +22,8 @@
                     </th>
                     <td> SCORE:</td>
                     <th> {{ $data->applicant->applicant_examination->examination_result()[1] }} /
-                        {{ $data->applicant->course_id != 3 ? '200' : '100' }} </th>
+                        {{ $data->applicant->course_id != 3 ? '200' : '100' }}
+                    </th>
                 </tr>
                 <tr>
                     <td>APPLICANT NAME:</td>
@@ -31,14 +32,14 @@
                     </th>
                     <td> REMARK:</td>
                     <th>
-                        {{ $data->examination_result()[1] ? 'PASSED' : 'FAILED' }}
+                        {{ $data->examination_result()[2] ? 'PASSED' : 'FAILED' }}
                     </th>
 
                 </tr>
-                {{--   <tr>
+                {{-- <tr>
                     <td colspan="1"> EXAMINATION CODE:</th>
                     <th colspan="2"> {{ $data->applicant->applicant_examination->examination_code }}</th>
-                </tr> --}}
+            </tr> --}}
                 <tr>
 
                     <td>EXAMINATION START: </td>
@@ -55,6 +56,7 @@
             $_width = [0, '50%', 0, '100px', 0];
 
         @endphp
+        <br>
         @foreach ($_examination_categories as $_key => $_category)
             <div class="category-{{ str_replace(' ', '_', strtolower($_category->category_name)) }}">
                 <h4 style="margin: 0px;">{{ $_category->category_name }}</h4>
@@ -78,23 +80,33 @@
                                 $_answer = $data->choice_answer($_question->id)->first();
                             @endphp
                         <div style="margin-top: 5px">
-                            @foreach ($_question->choices as $_choice)
-                                {{--  @if ($_answer->choices_id == $_choice->id)
-                                    <label for="" class="label-choice"
-                                        style="color:{{ $_choice->is_answer == 1 ? 'green' : 'red' }}">
-                                        <input type="radio" {{ $_answer->choices_id == $_choice->id ? 'checked' : '' }}>
-                                        @php
-                                            echo $_choice->choice_name;
-                                        @endphp
-                                    </label>
+                            @foreach ($_question->choices as $_choices)
+                                @if ($_answer)
+                                    @if ($_answer->choices_id == $_choices->id)
+                                        <label for="" class="label-choice"
+                                            style="color:{{ $_choices->is_answer == 1 ? 'green' : 'red' }}">
+                                            <input type="radio"
+                                                {{ $_answer->choices_id == $_choices->id ? 'checked' : '' }}>
+                                            @php
+                                                echo $_choices->choice_name;
+                                            @endphp
+                                        </label>
+                                    @else
+                                        <label class="label-choice">
+                                            <input type="radio">
+                                            @php
+                                                echo $_choices->choice_name;
+                                            @endphp
+                                        </label>
+                                    @endif
                                 @else
                                     <label class="label-choice">
                                         <input type="radio">
                                         @php
-                                            echo $_choice->choice_name;
+                                            echo $_choices->choice_name;
                                         @endphp
                                     </label>
-                                @endif --}}
+                                @endif
                                 <br>
                             @endforeach
                         </div>

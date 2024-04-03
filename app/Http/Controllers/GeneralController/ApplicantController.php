@@ -311,6 +311,24 @@ class ApplicantController extends Controller
             return back()->with('error', $error->getMessage());
         }
     }
+    public function applicant_examination_log_v2(Request $request)
+    {
+        try {
+            $examination = ApplicantEntranceExamination::find(base64_decode($request->examination));
+            $report = new ApplicantReport();
+            return $report->applicant_examination_log_v2($examination);
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        }
+        /* try {
+
+            $applicant = ApplicantAccount::find(base64_decode($_request->_applicant));
+            $_report = new ApplicantReport();
+            return $_report->applicant_examination_logs($applicant);
+        } catch (Exception $error) {
+            return back()->with('error', $error->getMessage());
+        } */
+    }
     public function appllicant_examination_result(Request $_request)
     {
         try {

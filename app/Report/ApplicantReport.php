@@ -62,6 +62,17 @@ class ApplicantReport
         $file_name = 'EXAMINATION RESULT - ' . $data->applicant->applicant_number . '-' . date('Ymd') . '.pdf';
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
+    public function applicant_examination_log_v2($_data)
+    {
+        // Set the Layout for the report
+        $_layout = $this->path . '.examination-logs-v2';
+        // Import PDF Class
+        $pdf = PDF::loadView($_layout, compact('_data'));
+        // Set the Filename of report
+        // Name format PART - SUBJECT CODE - DATE GENERATED
+        $file_name = 'EXAMINATION SYSTEM LOGS -' . $_data->applicant_number . '-' . date('Ymd') . '.pdf';
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
     function applicant_vefied_list()
     {
         $_layout = $this->path . '.applicant-verified';
