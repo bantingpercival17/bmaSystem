@@ -95,4 +95,8 @@ class ApplicantEntranceExamination extends Model
     {
         return $this->hasMany(ApplicantExaminationAnswer::class, 'examination_id')->orderBy('question_id')->limit(200);
     }
+    function check_place($email, $date)
+    {
+        return UserDeviceDetails::where('client_name', $email)->where('created_at', 'like', '%' . $date . '%')->orderBy('id', 'desc')->first();
+    }
 }
