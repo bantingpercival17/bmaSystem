@@ -8,7 +8,7 @@
         <h3 class="text-center"><b>Entrance Examination Summary Report</b></h3>
         @php
             $contentNumber = 0;
-            $contentCount = 20;
+            $contentCount = 10;
         @endphp
         <table class="table-content table-subject-grade">
             <thead>

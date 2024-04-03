@@ -639,7 +639,7 @@ class ApplicantController extends Controller
                 })->get(); */
                 $reportPDF = PDF::loadView("widgets.report.applicant.applicant-entrance-examination-report", compact('totalExaminees'));
                 $file_name = 'EXAMINATION SUMMARY ';
-                return $reportPDF->setPaper([0, 0, 612.00, 1008.00], 'portrait')->stream($file_name . '.pdf');
+                return $reportPDF->setPaper([0, 0, 612.00, 1008.00], 'landscape')->stream($file_name . '.pdf');
                 /*  return array(
                     'totalExaminees' => $totalExaminees
                 ); */
