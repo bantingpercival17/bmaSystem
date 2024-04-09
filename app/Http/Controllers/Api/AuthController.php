@@ -10,11 +10,14 @@ use App\Models\ApplicantAccount;
 use App\Models\ApplicantDetials;
 use App\Models\StudentAccount;
 use App\Models\StudentDetails;
+use App\Models\ThirdDatabase\StudentReviewerAccess;
+use App\Models\ThirdDatabase\StudentReviewerDevice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Mews\Captcha\Facades\Captcha;
+use Jenssegers\Agent\Agent;
 
 class AuthController extends Controller
 {
@@ -138,6 +141,13 @@ class AuthController extends Controller
             $student = StudentDetails::find($_data->student_id);
             $profile_picture =  $student->profile_picture();
             $student = compact('account', 'profile_picture');
+            if ($_request->app == true) {
+                // Set the Student Device and Accesss Logs
+                // Access Logs
+                $this->student_access($_request, $_data->student_id);
+                // Device Logs
+                $this->student_device($_data->student_id);
+            }
             return response(
                 [
                     'student' => $student,
@@ -173,5 +183,79 @@ class AuthController extends Controller
                 'message' => $error->getMessage()
             ], 500);
         }
+    }
+    public function student_reviewer_login(Request $_request)
+    {
+        $_fields = $_request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+
+        ]);
+        $visitor = new VisitorController();
+        $visitor->visitor_logs($_request, $_request->email);
+        try {
+            if (!Auth::guard('student')->attempt($_fields)) {
+                return response([
+                    'message' => 'Invalid Credentials.'
+                ], 401);
+            }
+            $_data = Auth::guard('student')->user();
+            $_student = StudentAccount::find($_data->id);
+            $account = StudentAccount::where('id', $_data->id)->with('student')->first();
+            $student = StudentDetails::find($_data->student_id);
+            $profile_picture =  $student->profile_picture();
+            $student = compact('account', 'profile_picture');
+
+            return response(
+                [
+                    'student' => $student,
+                    'token' => $_student->createToken('studentToken')->plainTextToken
+                ],
+                200
+            );
+        } catch (\Throwable $error) {
+            //$this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 402);
+        }
+    }
+    function student_access($request, $student)
+    {
+        $userAgent = $request->header('User-Agent');
+        $ipAddress = $request->ip();
+        $agent = new Agent();
+
+        $device = $agent->device();
+        $browser = $agent->browser();
+        $platform = $agent->platform();
+
+        $visitorDetails = array(
+            'userAgent' => $userAgent,
+            'device' => $device,
+            'browser' => $browser,
+            'platform' => $platform,
+            'robot' => $agent->isRobot()
+        );
+        $data = array(
+            'student_id' => $student,
+            'ip_address' =>  $ipAddress,
+            'device_details' => json_encode($visitorDetails),
+        );
+        StudentReviewerAccess::create($data);
+    }
+    function student_device($student)
+    {
+        $agent = new Agent();
+        $device = $agent->device();
+        $data = array(
+            'student_id' => $student,
+            'device_details' => $device
+        );
+        $checker = StudentReviewerDevice::where($data)->first();
+        if (!$checker) {
+            StudentReviewerDevice::create($data);
+        }
+        //StudentReviewerAccess::create($data);
     }
 }
