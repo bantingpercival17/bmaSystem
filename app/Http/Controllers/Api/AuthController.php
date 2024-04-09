@@ -156,7 +156,7 @@ class AuthController extends Controller
                 200
             );
         } catch (\Throwable $error) {
-            //$this->debugTrackerStudent($error);
+            $this->debugTrackerUser($error);
             return response([
                 'message' => $error->getMessage()
             ], 402);
