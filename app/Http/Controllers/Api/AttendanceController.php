@@ -279,7 +279,69 @@ class AttendanceController extends Controller
             $this->reportBug($error);
             return response([
                 'message' => $error->getMessage()
-            ], 500);
+            ], 404);
+        }
+    }
+    function students_attendance_sync(Request $request)
+    {
+        try {
+            $first_day =  new DateTime();
+            $last_day = new DateTime();
+            $first_day->modify('last Sunday');
+            $last_day->modify('Next Saturday');
+            $week_dates = array(
+                $first_day->format('Y-m-d') . '%',  $last_day->format('Y-m-d') . '%'
+            ); // the Weekly Attendance of the Student
+
+            $account = StudentAccount::where('email',  $request->username . '@bma.edu.ph')->first(); // The Student Account Details
+            if ($account) {
+                $attendance = StudentOnboardingAttendance::where([
+                    'student_id' => $account->student->id,
+                    'course_id' => $account->student->enrollment_assessment->course_id,
+                    'academic_id' => $account->student->enrollment_assessment->academic_id,
+                ])
+                    ->whereBetween('created_at', $week_dates)->orderBy('id', 'desc')
+                    ->first(); // Check the weekly Attendance of the Student
+
+                $content = [
+                    'student_id' => $account->student->id,
+                    'course_id' => $account->student->enrollment_assessment->course_id,
+                    'academic_id' => $account->student->enrollment_assessment->academic_id,
+                    'time_in' => $request->time_in,
+                    'time_in_status' => null,
+                    'time_in_remarks' => null,
+                    'time_in_process_by' => 'ATTENDANCE SYNC',
+                ]; // SET THE DETAILS OF THE ATTENDANCE TO STORE
+
+
+                // Check the First if the Request data of ResponseId is not null
+                if ($request->response_id) {
+                    $attendance = StudentOnboardingAttendance::find($request->response_id);
+                    $attendance->time_out = $request->time_out;
+                    $attendance->save();
+                    $data = array(
+                        'response_id' => $request->response_id,
+                        'status' => '201'
+                    );
+                } else {
+                    // Create / Store Attendance
+                    $attendance = StudentOnboardingAttendance::create($content);
+                    $data = array(
+                        'response_id' => $attendance->id,
+                        'status' => '200'
+                    );
+                }
+                return response($data, 200);
+            } else {
+                return response([
+                    'message' => 'Missing Account'
+                ], 404);
+            }
+        } catch (\Throwable $error) {
+            $this->reportBug($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 404);
         }
     }
 }
