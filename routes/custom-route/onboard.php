@@ -4,6 +4,7 @@ use App\Http\Controllers\OnboardTrainingController;
 use App\Http\Middleware\OnboardTraining;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\OnboardTraining\MidshipmanView;
+use App\Http\Livewire\OnboardTraining\MonthlyOnboardTraining;
 
 Route::prefix('onboard')->group(function () {
     Route::get('/', [OnboardTrainingController::class, 'index'])->name('onboard.dashboard'); // Dashboard View
@@ -37,4 +38,5 @@ Route::prefix('onboard')->group(function () {
 
     /* Liveview Components */
     Route::get('/midshipman', MidshipmanView::class)->name('onboard.midshipman-v2');
+    Route::get('/shipboard-monitoring-v2',MonthlyOnboardTraining::class)->name('onboard.shipboard-monitoring');
 });
