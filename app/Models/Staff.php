@@ -276,7 +276,7 @@ class Staff extends Model
                 'role_id' => 5,
                 'role_name' => 'Onboard Training',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'onboard.dashboard'], ['Midshipman', 'onboard.midshipman-v2'], ['MOPM', 'onboard.shipboard']],
+                'role_routes' => [['Dashboard', 'onboard.dashboard'], ['Midshipman', 'onboard.midshipman-v2'], ['MOPM', 'onboard.shipboard-monitoring']],
             ],
             [
                 'role_id' => 6,
