@@ -22,6 +22,7 @@ use App\Models\GradePublish;
 use App\Models\ShipboardAssessmentDetails;
 use App\Models\ShipboardExamination;
 use App\Models\Staff;
+use App\Models\ThirdDatabase\MobileApplicationDetails;
 use App\Report\Students\StudentReport;
 use Exception;
 use Illuminate\Database\Query\Expression;
@@ -857,6 +858,18 @@ class StudentController extends Controller
                 ->where('is_removed', false)->first();
             $percent = [[0, 69.46, 5.0], [69.47, 72.88, 3.0], [72.89, 76.27, 2.75], [76.28, 79.66, 2.5], [79.67, 83.05, 2.25], [83.06, 86.44, 2.0], [86.45, 89.83, 1.75], [89.84, 93.22, 1.5], [93.23, 96.61, 1.25], [96.62, 100, 1.0]];
             return response(['data' => $section, 'enrollment' => $enrollment, 'enrollmentHistory' => $enrollmentHistory, 'gradePublish' => $gradePublish, 'percent' => $percent], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function mobile_application_list(Request $request)
+    {
+        try {
+            $application  = MobileApplicationDetails::where('is_removed', false)->with('latest_version')->get();
+            return response(compact('application'), 200);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([

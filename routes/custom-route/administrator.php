@@ -6,6 +6,8 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Controllers\GeneralController\EnrollmentController;
 use App\Http\Controllers\PaymongoApi;
+use App\Http\Livewire\Administrator\MobileApplication;
+use App\Http\Livewire\Administrator\MobileApplicationVersionView;
 use App\Http\Livewire\Employee\AddEmployee;
 use App\Http\Livewire\Employee\AttendanceView;
 use App\Http\Middleware\Administrator;
@@ -117,4 +119,11 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/section-qrcode', [AdministratorController::class, 'generateQrcodeBySection'])->name('generate-qrcode-section');
 
   Route::get('/employee/create', AddEmployee::class)->name('admin.add-employee');
+  // Mobile Application Deployment
+  Route::post('/mobile-applicantion-deployment/store', [AdministratorController::class, 'store_mobile_application'])->name('admin.upload-mobile-application');
+  Route::post('/mobile-applicantion-deployment/view/store', [AdministratorController::class, 'store_mobile_app'])->name('admin.upload-mobile-app');
+
+  // Livewire
+  Route::get('/mobile-applicantion-deployment', MobileApplication::class)->name('admin.mobile-application-deployment'); // List of Application
+  Route::get('/mobile-applicantion-deployment/view', MobileApplicationVersionView::class)->name('admin.application-version'); // View Application
 });

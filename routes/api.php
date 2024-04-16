@@ -98,7 +98,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/staff/image', [StudentSubjectsController::class, 'teacher_image']);
     // Subject Api
     Route::post('/subject/topic', [StudentSubjectsController::class, 'subject_topic_view']);
-    Route::post('/category-score', [ExaminationController::class, 'review_examination_score']);
+
+    // BMA Mobile Application
+    Route::get('student/bma-application',[StudentController::class,'mobile_application_list']);
+
 });
 require __DIR__ . '/additional-api/applicant-api.php';
 require __DIR__ . '/additional-api/attendance-api.php';
@@ -119,3 +122,4 @@ Route::get('/token', function () {
 
 Route::get('/examination-review', [ExaminationController::class, 'review_examination']);
 Route::post('/category-view', [ExaminationController::class, 'review_examination_view']);
+Route::post('/examination-score', [ExaminationController::class, 'review_examination_score']);

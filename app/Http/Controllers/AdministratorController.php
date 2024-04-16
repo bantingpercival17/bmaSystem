@@ -43,6 +43,8 @@ use App\Models\StudentSection;
 use App\Models\Subject;
 use App\Models\SubjectClass;
 use App\Models\Task;
+use App\Models\ThirdDatabase\MobileApplicationDetails;
+use App\Models\ThirdDatabase\MobileApplicationVersions;
 use App\Models\User;
 use App\Models\UserPasswordReset;
 use App\Report\AttendanceSheetReport;
@@ -818,5 +820,50 @@ class AdministratorController extends Controller
         $filename = $section->section . '-' . $section->academic->semester;
         $pdf = PDF::loadView("widgets.report.student.student_qrcode_by_section", compact('section'));
         return $pdf->setPaper([0, 0, 612.00, 1008.00], 'portrait')->stream($filename . '.pdf');
+    }
+    function store_mobile_application(Request $request)
+    {
+        $request->validate([
+            'app_name' => 'required',
+            'app_description' => 'required',
+            'app_file' => 'required',
+        ]);
+        try {
+            //Save the App LOGO
+            $file_path = $this->office_file_save($request->file('app_file'), 'bma-students', 'ict', 'mobile-application');
+            $details = array(
+                'app_name' => $request->app_name,
+                'description' => $request->app_description,
+                'app_logo_path' => $file_path
+            );
+            MobileApplicationDetails::create($details);
+            return back()->with('success', 'Successfully Created Application');
+        } catch (\Throwable $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
+    }
+    function store_mobile_app(Request $request)
+    {
+        $request->validate([
+            'app_name' => 'required',
+            'app_description' => 'required',
+            'app_file' => 'required',
+        ]);
+        try {
+            //Save the App LOGO
+            $file_path = $this->office_file_save($request->file('app_file'), 'bma-students', 'ict', 'mobile-application/' . $request->app);
+            $details = array(
+                'app_id' => base64_decode($request->app),
+                'version_name' => $request->app_name,
+                'description' => $request->app_description,
+                'app_path' => $file_path
+            );
+            MobileApplicationVersions::create($details);
+            return back()->with('success', 'Successfully Created Application');
+        } catch (\Throwable $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
     }
 }

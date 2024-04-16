@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Examination;
 use App\Models\ExaminationCategory;
 use App\Models\ThirdDatabase\StudentReviewerScore;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,7 @@ class ExaminationController extends Controller
     function review_examination()
     {
         try {
-            $examination = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department','COLLEGE')->with('category_lists')->first();
+            $examination = Examination::where('examination_name', 'like', '%ONBOARD EXAMINATION%')->with('category_lists')->first();
             return response(compact('examination'), 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -32,19 +33,17 @@ class ExaminationController extends Controller
     function review_examination_score(Request $request)
     {
         try {
-            $user = Auth::guard('student')->user();
-            /*   if (!Auth::guard('student')->check()) {
-                return response(['message' => 'unauthentication'], 401);
-            } */
-            $user = auth()->guard('student')->user();
+            $data = User::find($request->id);
             $data = array(
-                'student_id' => $user->student_id, 'score' => $request->score,
-                'examination_id' => $request->examination, 'category_id' => $request->category
+                'student_id' => $request->student_id,
+                'score' => $request->score,
+                'examination_id' => $request->examination,
+                'category_id' => $request->category
             );
             StudentReviewerScore::create($data);
-            //return compact('data');
+            return response(['data' => 'Success'], 200);
         } catch (\Throwable $th) {
-            return response(['messahe' => $th->getMessage()], 500);
+            return response(['message' => $th->getMessage()], 500);
         }
     }
 }
