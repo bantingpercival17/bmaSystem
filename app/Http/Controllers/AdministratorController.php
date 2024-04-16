@@ -848,11 +848,15 @@ class AdministratorController extends Controller
         $request->validate([
             'app_name' => 'required',
             'app_description' => 'required',
-            'app_file' => 'required',
+            'app_file' => 'required|file|max:102400',
         ]);
         try {
             //Save the App LOGO
             $file_path = $this->office_file_save($request->file('app_file'), 'bma-students', 'ict', 'mobile-application/' . $request->app);
+           /*  $file = $request->file('app_file');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads'), $fileName);
+            $file_path = asset('uploads/' . $fileName); */
             $details = array(
                 'app_id' => base64_decode($request->app),
                 'version_name' => $request->app_name,
