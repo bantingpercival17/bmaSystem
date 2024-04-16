@@ -23,6 +23,7 @@ use App\Models\ShipboardAssessmentDetails;
 use App\Models\ShipboardExamination;
 use App\Models\Staff;
 use App\Models\ThirdDatabase\MobileApplicationDetails;
+use App\Models\ThirdDatabase\MobileApplicationDonwloads;
 use App\Report\Students\StudentReport;
 use Exception;
 use Illuminate\Database\Query\Expression;
@@ -870,6 +871,26 @@ class StudentController extends Controller
         try {
             $application  = MobileApplicationDetails::where('is_removed', false)->with('latest_version')->get();
             return response(compact('application'), 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
+    function mobile_application_download(Request $request)
+    {
+        try {
+            $version = MobileApplicationDetails::with('latest_version')->find($request->data);
+            $parsed_url = parse_url($version->latest_version->app_path);
+            // Get the path part of the URL
+            $path = $parsed_url['path'];
+            $filePath = public_path($path);
+            $student = auth()->user();
+            MobileApplicationDonwloads::create(['app_id' => $version->id, 'version_id' => $version->latest_version->id, 'student_id' => $student->student_id]);
+            return response(['message' => 'Donwload Success'], 200);
+            //return response()->download($filePath);
+            //return response(compact('student'), 200);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([

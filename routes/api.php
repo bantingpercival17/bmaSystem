@@ -100,8 +100,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/subject/topic', [StudentSubjectsController::class, 'subject_topic_view']);
 
     // BMA Mobile Application
-    Route::get('student/bma-application',[StudentController::class,'mobile_application_list']);
-
+    Route::get('student/bma-application', [StudentController::class, 'mobile_application_list']);
+    Route::post('student/bma-application/downloads', [StudentController::class, 'mobile_application_download']);
 });
 require __DIR__ . '/additional-api/applicant-api.php';
 require __DIR__ . '/additional-api/attendance-api.php';
