@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\CourseStudentEnrolled;
 use App\Exports\EnrolledStudentList;
 use App\Imports\ImportExamination;
+use App\Imports\ImportExaminationV2;
 use App\Imports\ShipboardInformationImport;
 use App\Imports\StaffImport;
 use App\Imports\StudentGadgetImport;
@@ -715,6 +716,15 @@ class AdministratorController extends Controller
         $_file = $_request->file('files');
         Excel::import(new ImportExamination($_request->exam), $_file);
         return back()->with('success', 'Excel File Successfully Imported');
+    }
+    public function examination_import_v2(Request $request)
+    {
+        $request->validate([
+            'files' => 'required|mimes:xlsx',
+        ]);
+        $file = $request->file('files');
+        Excel::import(new ImportExaminationV2($request->exam), $file);
+        //return back()->with('success', 'Excel File Successfully Imported');
     }
     function examination_category_view(Request $request)
     {

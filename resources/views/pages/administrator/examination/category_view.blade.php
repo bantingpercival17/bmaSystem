@@ -78,6 +78,27 @@ $_title = 'Examination Category';
                     </form>
                 </div>
             </div>
+            <div class="card">
+                <label class="card-header fw-bolder text-primary">IMPORT QUESTION V2</label>
+                <div class="card-body">
+                    <form role="form" action="{{ route('admin.import-examination-v2') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <small class="fw-bolder text-muted">FILLE ATTACH</small>
+                            <input type="file" name="files" class="form-control form-control-sm border border-primary" value="{{ old('files') }}"
+                                accept="xlsx">
+                            <input type="hidden" name="exam" value="{{ request()->input('_view') }}">
+                            @error('files')
+                                <span class="mt-2 badge bg-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-sm btn-primary">IMPORT</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -92,6 +92,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/examination', [AdministratorController::class, 'examination_view'])->name('admin.examination');
   Route::post('/examination', [AdministratorController::class, 'examination_store'])->name('admin.examination');
   Route::post('/examination/import', [AdministratorController::class, 'examination_import'])->name('admin.import-examination');
+  Route::post('/examination/import/v2', [AdministratorController::class, 'examination_import_v2'])->name('admin.import-examination-v2');
   Route::get('/examination/category', [AdministratorController::class, 'examination_category_view'])->name('admin.examination-category');
 
 

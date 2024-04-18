@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 
 class ImportExamination implements ToCollection
 {
+    public $data;
     /**
      * @param Collection $collection
      */
