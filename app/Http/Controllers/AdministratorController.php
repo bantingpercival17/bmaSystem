@@ -722,9 +722,21 @@ class AdministratorController extends Controller
         $request->validate([
             'files' => 'required|mimes:xlsx',
         ]);
-        $file = $request->file('files');
-        Excel::import(new ImportExaminationV2($request->exam), $file);
-        return back()->with('success', 'Excel File Successfully Imported');
+        $_file_name ='/examination-files/'. date('dmyhis');
+        $_file_extention =  $request->file('files')->getClientOriginalExtension();
+        $_file_name = $_file_name . "." . $_file_extention;
+        //return  $_request->file('files');
+        if ($request->file('files')) {
+            Storage::disk('local')->put($_file_name, fopen($request->file('files'), 'r+'));
+            //Excel::import(new GradeImport($_request->_section), $_request->file('file_input'));
+            Excel::import(new ImportExaminationV2($request->exam), storage_path('app' . $_file_name));
+
+            return back()->with('success', 'Excel File Successfully Imported3');
+        }
+        /*   } */
+        /*       $file = $request->file('files'); */
+        /*       Excel::import(new ImportExaminationV2($request->exam), $file); */
+        /*       return back()->with('success', 'Excel File Successfully Imported'); */
     }
     function examination_category_view(Request $request)
     {
@@ -863,7 +875,7 @@ class AdministratorController extends Controller
         try {
             //Save the App LOGO
             $file_path = $this->office_file_save($request->file('app_file'), 'bma-students', 'ict', 'mobile-application/' . $request->app);
-           /*  $file = $request->file('app_file');
+            /*  $file = $request->file('app_file');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $fileName);
             $file_path = asset('uploads/' . $fileName); */
