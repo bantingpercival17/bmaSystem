@@ -724,7 +724,7 @@ class AdministratorController extends Controller
         ]);
         $file = $request->file('files');
         Excel::import(new ImportExaminationV2($request->exam), $file);
-        //return back()->with('success', 'Excel File Successfully Imported');
+        return back()->with('success', 'Excel File Successfully Imported');
     }
     function examination_category_view(Request $request)
     {
