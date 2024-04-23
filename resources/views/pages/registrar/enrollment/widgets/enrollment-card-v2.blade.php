@@ -187,8 +187,8 @@
                                                 <small class="fw-bolder">BRIDGING PROGRAM : </small>
                                                 <select name="_bridging_program"
                                                     class="form-select form-select-sm mb-3 shadow-none">
-                                                    <option value="with">WITH BRIDGING</option>
-                                                    <option value="without">WITHOUT BRIDGING</option>
+                                                    <option value="with">NON PBM</option>
+                                                    <option value="without">PBM</option>
                                                 </select>
                                             </div>
                                         </div>
