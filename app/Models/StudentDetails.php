@@ -53,7 +53,7 @@ class StudentDetails extends Model
     {
         $_formats = ['.jpeg', '.jpg', '.png'];
         $_path = 'http://one.bma.edu.ph/assets/image/student-profile/';
-        $_image = 'http://bma.edu.ph/img/student-picture/midship-man.jpg';
+        $_image = 'http://bma.edu.ph/assets/midship-man.jpg';
         foreach ($_formats as $format) {
             $_image = @fopen($_path . $this->account->student_number . $format, 'r') ? $_path . $this->account->student_number . $format : $_image;
         }
