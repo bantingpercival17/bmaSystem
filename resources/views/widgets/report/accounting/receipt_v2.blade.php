@@ -214,7 +214,8 @@
                             @endphp
                             <td style="text-align: right;width:180px; "><label
                                     for="">{{ $data[0] }}</label></td>
-                            <td style="text-align: right;width:5px;"><label for="">{{ $data[1] }}</label>
+                            <td style="text-align: right;width:5px;"><label
+                                    for="">{{ count($data) > 0 ? $data[1] : '00' }}</label>
                             </td>
                         </tr>
                     </tbody>
