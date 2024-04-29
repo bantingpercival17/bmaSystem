@@ -52,12 +52,14 @@
         .table,
         td,
         th {
-            /*   border: 1px solid; */
+            /* border: 1px solid; */
             margin: 0px;
             padding: 0px;
         }
 
-
+        td {
+            padding: 10px 0px 10px 0px;
+        }
 
         .table {
             width: 85%;
@@ -146,16 +148,17 @@
 <body>
     @php
         $_particular = ['Tuition Fee', 'Uniform', 'Books', 'Forms', 'Others'];
-        $_rows = 10;
+        $_rows = 9;
         $_whole = 0;
         $_decimal = 0;
         $_whole_1 = 0;
         $_decimal_1 = 0;
+        $_total_amount = 0;
     @endphp
     <main class="content">
         <div class="row" style="padding-bottom:0px;">
             <div class="column-a">
-                <table class="table table-bordered" style="margin-top: 20px;">
+                <table class="table table-bordered" style="margin-top: 16px;">
                     <tbody>
                         @for ($i = 0; $i < $_rows; $i++)
                             @php
@@ -166,6 +169,7 @@
                                     ) {
                                         // The the Particular in Database and the Receipt is match we will get the amount
                                         $_amount = explode('.', $_data->payment_amount);
+                                        $_total_amount += $_data->payment_amount;
                                         if (count($_amount) > 1) {
                                             $_whole = $_whole_1 = $_amount[0];
                                             $_decimal = $_decimal_1 = $_amount[1];
@@ -177,6 +181,7 @@
                                         if (strtolower(trim($_data->remarks)) == strtolower(trim($_particular[$i]))) {
                                             // The the Particular in Database and the Receipt is match we will get the amount
                                             $_amount = explode('.', $_data->payment_amount);
+                                            $_total_amount += $_data->payment_amount;
                                             if (count($_amount) > 1) {
                                                 $_whole = $_whole_1 = $_amount[0];
                                                 $_decimal = $_decimal_1 = $_amount[1];
@@ -194,7 +199,7 @@
                                     $_decimal = '';
                                 }
 
-                            @endphp ?>
+                            @endphp
                             <tr>
 
                                 <td style="text-align: right;width:180px; "><label
@@ -203,7 +208,15 @@
                                         for="">{{ $_decimal }}</label></td>
                             </tr>
                         @endfor
-
+                        <tr>
+                            @php
+                                $data = explode('.', $_total_amount);
+                            @endphp
+                            <td style="text-align: right;width:180px; "><label
+                                    for="">{{ $data[0] }}</label></td>
+                            <td style="text-align: right;width:5px;"><label for="">{{ $data[1] }}</label>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -236,6 +249,26 @@
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </span>
                     </p>
+
+                    <p style="margin-top:25px;margin-right:8%; text-align:right;">
+                        {{ $_data->staff->first_name . ' ' . $_data->staff->last_name }}
+                    </p>
+                    {{--  <div class="footer" style="padding:0px; font-size:14px;">
+                        <ul class="ul-details" style="padding:10px 10px 0px 10px;">
+                            <li>
+
+                            </li>
+                            <li>
+
+                                <div style="padding: 15xp 15px 0px 0px; text-align: center;">
+                                    <span
+                                        style="font-size:12px; width:70%">{{ $_data->staff->first_name . ' ' . $_data->staff->last_name }}</span>
+
+                                </div>
+
+                            </li>
+                        </ul>
+                    </div> --}}
                 </div>
             </div>
         </div>
