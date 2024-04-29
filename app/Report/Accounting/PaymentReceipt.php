@@ -26,6 +26,15 @@ class PaymentReceipt
 
         $pdf = PDF::loadView("widgets.report.accounting.receipt", compact('_data'));
         $file_name = "Accounting Receipt: " . $_data->or_number; // With Date now
-        return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
+        //return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    public function print_recipt($_data)
+    {
+
+        $pdf = PDF::loadView("widgets.report.accounting.receipt_v2", compact('_data'));
+        $file_name = "Accounting Receipt: " . $_data->or_number; // With Date now
+        //return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 }

@@ -453,8 +453,8 @@ class Staff extends Model
         }
         /* Checking if the decimal number is greater than 0, if it is, it will add the decimal number
         to the number_to_words variable. */
-        if ($_decimal_number > 0)  $number_to_words .= " and " . $_decimal_number . " / 100 only";
-        return $number_to_words;
+        if ($_decimal_number > 0)  $number_to_words .= " and " . $_decimal_number . " / 100";
+        return $number_to_words . ' pesos only';
     }
     public function curriculum_list()
     {
