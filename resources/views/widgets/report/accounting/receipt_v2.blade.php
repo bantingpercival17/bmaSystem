@@ -52,17 +52,15 @@
         .table,
         td,
         th {
-            /*  border: 1px solid; */
+            /*   border: 1px solid; */
             margin: 0px;
             padding: 0px;
         }
 
-        td {
-            padding: 0px 10px 0px 5px;
-        }
+
 
         .table {
-            width: 100%;
+            width: 85%;
             border-collapse: collapse;
         }
 
@@ -157,12 +155,15 @@
     <main class="content">
         <div class="row" style="padding-bottom:0px;">
             <div class="column-a">
-                <table class="table table-bordered" style="margin-top: 20px; margin-left:15px;">
+                <table class="table table-bordered" style="margin-top: 20px;">
                     <tbody>
                         @for ($i = 0; $i < $_rows; $i++)
                             @php
                                 if (count($_particular) > $i) {
-                                    if (strtolower(trim($_data->payment_transaction)) == strtolower(trim($_particular[$i]))) {
+                                    if (
+                                        strtolower(trim($_data->payment_transaction)) ==
+                                        strtolower(trim($_particular[$i]))
+                                    ) {
                                         // The the Particular in Database and the Receipt is match we will get the amount
                                         $_amount = explode('.', $_data->payment_amount);
                                         if (count($_amount) > 1) {
@@ -195,9 +196,10 @@
 
                             @endphp ?>
                             <tr>
-                                <td></td>
-                                <td style="text-align: right;"><label for="">{{ $_whole }}</label></td>
-                                <td style="text-align: right;"><label
+
+                                <td style="text-align: right;width:180px; "><label
+                                        for="">{{ $_whole }}</label></td>
+                                <td style="text-align: right;width:5px;"><label
                                         for="">{{ $_decimal }}</label></td>
                             </tr>
                         @endfor
