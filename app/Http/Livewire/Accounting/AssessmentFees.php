@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Accounting;
 
 use App\Models\AcademicYear;
 use App\Models\AdditionalFees;
+use App\Models\CourseSemestralFees;
 use App\Models\EnrollmentAssessment;
 use App\Models\PaymentAdditionalFees;
 use App\Models\PaymentAssessment;
@@ -25,6 +26,7 @@ class AssessmentFees extends Component
     public $particularLists = [];
     public $totalSemestralFees = 0;
     public $enrollmentAssessment = null;
+    public $tuitionFeeID = null;
     public function render()
     {
         $this->staff = Auth::user()->staff->id;
@@ -54,29 +56,7 @@ class AssessmentFees extends Component
                     if ($this->tempPaymentMode !== null) {
                         $this->paymentMode = $this->tempPaymentMode;
                     }
-                    $tags = $tuition_fees->semestral_fees();
-                    $total_tuition  = $tuition_fees->total_tuition_fees($enrollment_assessment);
-                    $total_tuition_with_interest  = $tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
-                    $upon_enrollment = 0;
-                    $upon_enrollment = $tuition_fees->upon_enrollment_v2($enrollment_assessment);
-                    $monthly = 0;
-                    $monthly = $tuition_fees->monthly_fees_v2($enrollment_assessment);
-                    $tuition_fees = array(
-                        'fee_amount' => $total_tuition,
-                        'upon_enrollment' => $total_tuition,
-                        'monthly' => 0.00,
-                        'total_fees' => $total_tuition
-                    );
-                    $this->totalSemestralFees = $total_tuition;
-                    if ($this->paymentMode == 1) {
-                        $tuition_fees = array(
-                            'fee_amount' => $total_tuition,
-                            'upon_enrollment' => $upon_enrollment,
-                            'monthly' => $monthly,
-                            'total_fees' => $total_tuition_with_interest
-                        );
-                        $this->totalSemestralFees = $total_tuition_with_interest;
-                    }
+                    $tuition_fees = $this->getTuitionFeeV2($enrollment_assessment);
                 }
             }
         }
@@ -126,6 +106,83 @@ class AssessmentFees extends Component
         }
         return $query->paginate(20);
     }
+    function getTuitionFee($enrollment_assessment)
+    {
+        $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
+        $total_tuition  = $tuition_fees->total_tuition_fees($enrollment_assessment);
+        $total_tuition_with_interest  = $tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
+        $upon_enrollment = 0;
+        $upon_enrollment = $tuition_fees->upon_enrollment_v2($enrollment_assessment);
+        $monthly = 0;
+        $monthly = $tuition_fees->monthly_fees_v2($enrollment_assessment);
+        $tuition_fees = array(
+            'fee_amount' => $total_tuition,
+            'upon_enrollment' => $total_tuition,
+            'monthly' => 0.00,
+            'total_fees' => $total_tuition,
+            'tuition_fee_list' => []
+        );
+        $this->totalSemestralFees = $total_tuition;
+        if ($this->paymentMode == 1) {
+            $tuition_fees = array(
+                'fee_amount' => $total_tuition,
+                'upon_enrollment' => $upon_enrollment,
+                'monthly' => $monthly,
+                'total_fees' => $total_tuition_with_interest,
+                'tuition_fee_list' => []
+            );
+            $this->totalSemestralFees = $total_tuition_with_interest;
+        }
+        return $tuition_fees;
+    }
+
+    function getTuitionFeeV2($enrollment_assessment)
+    {
+        // Get the Course Tuition
+        $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
+        // Check the Tuition Fee if more than 1 Tuition Fees
+        $tuition_fee_lists = $enrollment_assessment->course_level_tuition_fee_list();
+        // Get ID
+        $id = $this->tuitionFeeID != null ? $this->tuitionFeeID : $tuition_fees->id;
+        // Get the Tuition Fee
+        $course_tuition_fees = CourseSemestralFees::find($id);
+        // Get the Total Tuition Fees Amount
+        $fee_amount  =  $course_tuition_fees->total_tuition_fees($enrollment_assessment);
+        // Get the Total Tuition Fees with Interest Amount
+        $total_tuition_with_interest = $course_tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
+        // Get the Upon Enrollment Amount
+        $upon_enrollment = $tuition_fees->upon_enrollment_v2($enrollment_assessment);
+        // Get the Monthly Payment Amount
+        $monthly = $tuition_fees->monthly_fees_v2($enrollment_assessment);
+        // Total Semestral Tuition Fee Amount
+        $total_fees = $total_tuition_with_interest;
+        $this->totalSemestralFees = $total_tuition_with_interest;
+        /* $tuition_fees = array(
+            'fee_amount' => $total_tuition,
+            'upon_enrollment' => $total_tuition,
+            'monthly' => 0.00,
+            'total_fees' => $total_tuition,
+            'tuition_fee_list' => $tuition_fee_lists
+        );
+        $this->totalSemestralFees = $total_tuition;
+        if ($this->paymentMode == 1) {
+            $tuition_fees = array(
+                'fee_amount' => $total_tuition,
+                'upon_enrollment' => $upon_enrollment,
+                'monthly' => $monthly,
+                'total_fees' => $total_tuition_with_interest,
+                'tuition_fee_list' => $tuition_fee_lists
+            );
+            $this->totalSemestralFees = $total_tuition_with_interest;
+        } */
+        if ($this->paymentMode != 1) {
+            $this->totalSemestralFees = $fee_amount;
+            $upon_enrollment = $fee_amount;
+            $total_fees = $fee_amount;
+            $monthly = 0;
+        }
+        return compact('id', 'fee_amount', 'upon_enrollment', 'monthly', 'total_fees', 'tuition_fee_lists');
+    }
     function addFees($fee)
     {
         $fee = AdditionalFees::with('particular')->find($fee);
@@ -136,7 +193,11 @@ class AssessmentFees extends Component
     {
         try {
             $enrollment_assessment = EnrollmentAssessment::find($this->enrollmentAssessment);
-            $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
+            $tuition_fees_details = $this->getTuitionFeeV2($enrollment_assessment);
+            $total_tuitionfee =  $tuition_fees_details['total_fees'];
+            $upon_enrollment =  $tuition_fees_details['upon_enrollment'];
+            $monthly_payment = $tuition_fees_details['monthly'];
+            /*  $tuition_fees = $enrollment_assessment->course_level_tuition_fee();
             if ($this->paymentMode == 1) {
                 // Installment
                 $total_tuitionfee =  $tuition_fees->total_tuition_fees_with_interest($enrollment_assessment);
@@ -147,10 +208,10 @@ class AssessmentFees extends Component
                 $total_tuitionfee = $tuition_fees->total_tuition_fees($enrollment_assessment);;
                 $upon_enrollment = $tuition_fees->total_tuition_fees($enrollment_assessment);;
                 $monthly_payment = 0;
-            }
+            } */
             $_details = array(
                 'enrollment_id' => $this->enrollmentAssessment,
-                'course_semestral_fee_id' => $tuition_fees->id,
+                'course_semestral_fee_id' => $tuition_fees_details['id'],
                 'payment_mode' => $this->paymentMode,
                 'staff_id' => $this->staff,
                 'total_payment' => $total_tuitionfee,
@@ -179,7 +240,7 @@ class AssessmentFees extends Component
                 return redirect(route('accounting.payment-transactions-v2') . "?student=" . base64_encode($this->profile->id))->with('success', 'Payment Assessment Complete.');
             } else {
                 $this->forwardedPayment($_payment_assessment);
-                $_payment_assessment->course_semestral_fee_id =   $tuition_fees->id;
+                $_payment_assessment->course_semestral_fee_id = $tuition_fees_details['id'];
                 $_payment_assessment->payment_mode = $this->paymentMode;
                 $_payment_assessment->total_payment =  $total_tuitionfee;
                 $_payment_assessment->upon_enrollment =  $upon_enrollment;
@@ -217,7 +278,7 @@ class AssessmentFees extends Component
         //$profile->enrollment_assessment->over_payment();
         // Get the Previous Enrollment Semester
         $enrollment = EnrollmentAssessment::where('student_id', $this->profile->id)->where('academic_id', '!=', base64_decode($this->academic))->orderBy('id', 'desc')
-            ->first(); //Check if the Enrollment 
+            ->first(); //Check if the Enrollment
         if ($enrollment) {
             $paymentAssessment = $enrollment->payment_assessments;
             if ($paymentAssessment) {

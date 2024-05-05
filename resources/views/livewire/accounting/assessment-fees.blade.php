@@ -110,7 +110,19 @@
                                     <br>
                                     <label class="h5 text-primary form-label">
                                         @if ($tuition_fees)
-                                            {{ number_format($tuition_fees['fee_amount'], 2) }}
+                                            @if (count($tuition_fees['tuition_fee_lists']) > 1)
+                                                <select name="mode" wire:model="tuitionFeeID"
+                                                    class="form-select border border-primary"
+                                                    wire:change="">
+                                                    @foreach ($tuition_fees['tuition_fee_lists'] as $item)
+                                                        <option value="{{ $item->id }}">
+                                                            {{number_format( $item->total_tuition_fees($profile->enrollment_assessment),2) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                {{ number_format($tuition_fees['fee_amount'], 2) }}
+                                            @endif
                                         @else
                                             0.00
                                         @endif

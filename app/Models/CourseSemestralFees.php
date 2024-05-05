@@ -68,7 +68,7 @@ class CourseSemestralFees extends Model
     public function payment_amount($_data)
     {
         if ($_data->payment_mode == 1) {
-            // Installment 
+            // Installment
             // Get the Monthly Payment
             if ($_data->enrollment_assessment->course_id == 3) {
                 $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
@@ -94,7 +94,7 @@ class CourseSemestralFees extends Model
                 return $_total_fees / 5;
             }
         } else {
-            // Full-Payment 
+            // Full-Payment
             // Get the Payment
             $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
                 ->selectRaw("sum(pf.particular_amount) as fees")
@@ -160,7 +160,7 @@ class CourseSemestralFees extends Model
         } else {
             $_tuition = ($_tuition_fees[0]->fees * $_number_of_units) + $_miscellaneous[0]->fees;
             $_total_tuition = $_tuition + ($_tuition * 0.035);
-            // Old Formula 
+            // Old Formula
             $_old_upon_enrollment = $_total_tuition / 5;
             // New Formula
             $_new_upon_enrollment = $_tuition * 0.2;
@@ -211,7 +211,7 @@ class CourseSemestralFees extends Model
     public function total_tuition_fee($_data)
     {
         if ($_data->course_id == 3) {
-            # Sum all Particulars   
+            # Sum all Particulars
             $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
                 ->selectRaw("sum(pf.particular_amount) as fees")
                 ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
@@ -219,7 +219,7 @@ class CourseSemestralFees extends Model
             $_tuition_fee = $_tuition_fee[0]->fees;
         } else {
             //Get Semestral Fees
-            // Get Unit First 
+            // Get Unit First
             $_number_of_units = $_data->course->units($_data)->units;
             $_miscellaneous = SemestralFee::select('p.particular_tag')
                 ->selectRaw("sum(pf.particular_amount) as fees")
@@ -283,10 +283,10 @@ class CourseSemestralFees extends Model
     }
     public function total_tuition_fees($enrollment_assessment)
     {
-        // Get Unit First 
+        // Get Unit First
         $_number_of_units = $enrollment_assessment->course->units($enrollment_assessment)->units;
         if ($enrollment_assessment->course_id == 3) {
-            # Sum all Particulars   
+            # Sum all Particulars
             $_tuition_fee =  $this->hasMany(SemestralFee::class, 'course_semestral_fee_id')
                 ->selectRaw("sum(pf.particular_amount) as fees")
                 ->join('particular_fees as pf', 'semestral_fees.particular_fee_id', 'pf.id')
@@ -330,12 +330,12 @@ class CourseSemestralFees extends Model
         } else {
             // Total Tuition Fee
             $_tuition = ($_tuition_fees * $_number_of_units) + $_miscellaneous;
-            // Get the Interest 
+            // Get the Interest
             // interest = _tuition * .035;
             // _total = _tuition + interest;
             $_total_tuition = $_tuition + ($_tuition * 0.035); // Compute the total tuition fee plus the interest
-            $_upon_enrollment = $_tuition * 0.3; // On Total Tuition fee Get the 30 % for upon enrollment 
-            // Old Formula 
+            $_upon_enrollment = $_tuition * 0.3; // On Total Tuition fee Get the 30 % for upon enrollment
+            // Old Formula
             //$_old_upon_enrollment = $_total_tuition / 5;
             // New Formulaz
             //$_upon_enrollment = $_tuition * 0.2;
@@ -357,8 +357,8 @@ class CourseSemestralFees extends Model
         } else {
             $_tuition = ($_tuition_fees * $_number_of_units) + $_miscellaneous; // Total Tuition Fee
             $_total_tuition = $_tuition + ($_tuition * 0.035); // Compute the total tuition fee plus the interest
-            $_upon_enrollment = $_tuition * 0.3; // On Total Tuition fee Get the 30 % for upon enrollment 
-            //Get the Monthly Payment 
+            $_upon_enrollment = $_tuition * 0.3; // On Total Tuition fee Get the 30 % for upon enrollment
+            //Get the Monthly Payment
             $_monthly_fee = ($_total_tuition - $_upon_enrollment) / 4;
         }
         return $_monthly_fee;

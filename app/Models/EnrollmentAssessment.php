@@ -123,6 +123,16 @@ class EnrollmentAssessment extends Model
             'is_removed' => false
         ])->first();
     }
+    public function course_level_tuition_fee_list()
+    {
+        return CourseSemestralFees::where([
+            'course_id' => $this->course_id,
+            'curriculum_id' => $this->curriculum_id,
+            'academic_id' => $this->academic_id,
+            'year_level' => $this->year_level,
+            'is_removed' => false
+        ])->get();
+    }
     public function enrollment_cancellation()
     {
         return $this->hasOne(StudentCancellation::class, 'enrollment_id');
@@ -135,12 +145,13 @@ class EnrollmentAssessment extends Model
     function over_payment()
     {
         $enrollment = EnrollmentAssessment::where('student_id', $this->student_id)->orderBy('id', 'desc')
-        ->where('academic_id', '!=', $this->academic_id)->first();
-      /*   $previous =  AcademicYear::where('id', '<', $this->academic_id)
+            ->where('academic_id', '!=', $this->academic_id)->first();
+        /*   $previous =  AcademicYear::where('id', '<', $this->academic_id)
             ->orderBy('id', 'desc')
             ->first();
         $enrollment = EnrollmentAssessment::where('academic_id', $previous->id)->where('student_id', $this->student_id)->where('is_removed', false)->first();
-         */$value = 0;
+         */
+        $value = 0;
         if ($enrollment) {
             $paymentAssessment = $enrollment->payment_assessments;
             if ($paymentAssessment) {
