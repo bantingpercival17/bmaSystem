@@ -158,9 +158,6 @@
     <main class="content">
         <div class="row" style="padding-bottom:0px;">
             <div class="column-a">
-                @foreach ($data['transactions'] as $item)
-                    <p>{{ $item->payment_transaction . ' ' . $item->remarks }}</p>
-                @endforeach
                 <table class="table table-bordered" style="margin-top: 16px;">
                     <tbody>
                         @for ($i = 0; $i < $_rows; $i++)
@@ -190,6 +187,9 @@
                                             $_total_amount += $value->payment_amount;
                                             $_whole = $_whole_1 = $_amount[0] ?? '';
                                             $_decimal = $_decimal_1 = $_amount[1] ?? '00';
+                                        } else {
+                                           /*  $_whole = '';
+                                            $_decimal = ''; */
                                         }
                                     }
                                 } else {
