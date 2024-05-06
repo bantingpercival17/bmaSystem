@@ -7,6 +7,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class PaymentReceipt
 {
+    public $legal;
+    public $crosswise_short;
     public function __construct()
     {
         /* The paper size. */
@@ -16,9 +18,9 @@ class PaymentReceipt
     }
     /**
      * It's a function that generates a PDF file from a view
-     * 
+     *
      * @param _data The data that will be passed to the view
-     * 
+     *
      * @return The PDF file is being returned.
      */
     public function print($_data)
@@ -34,6 +36,15 @@ class PaymentReceipt
 
         $pdf = PDF::loadView("widgets.report.accounting.receipt_v2", compact('_data'));
         $file_name = "Accounting Receipt: " . $_data->or_number; // With Date now
+        //return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+
+    public function print_or_recipt($data)
+    {
+
+        $pdf = PDF::loadView("widgets.report.accounting.or_receipt", compact('data'));
+        $file_name = "Accounting Receipt: " . $data['orNumber']; // With Date now
         //return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }

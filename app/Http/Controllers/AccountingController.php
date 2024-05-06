@@ -68,7 +68,7 @@ class AccountingController extends Controller
     {
         $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
         $_total_population = Auth::user()->staff->enrollment_count();
-       // $_total_applicants = ApplicantAccount::join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
+        // $_total_applicants = ApplicantAccount::join('applicant_detials', 'applicant_detials.applicant_id', 'applicant_accounts.id')->where('academic_id', Auth::user()->staff->current_academic()->id)->where('applicant_accounts.is_removed', false)->get();
         return view('pages.accounting.dashboard.view', compact('_courses', '_total_population'));
     }
     public function payment_pending_view(Request $_request)
@@ -940,9 +940,40 @@ class AccountingController extends Controller
         try {
             $_payment = PaymentTransaction::find(base64_decode($_request->reciept));
             $_reciept_report = new AccountingPaymentReceipt();
-            return $_reciept_report->print_recipt($_payment);
+            return $_reciept_report->print($_payment);
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
+            // TODO:: Audit Error
+        }
+    }
+    public function payment_print_or_receipt(Request $request)
+    {
+        try {
+            $transactions = PaymentTransaction::where('or_number', base64_decode($request->orNumber))->get();
+            // GET THE STUDENT INFORMATION
+            $student = $transactions[0]->payment_assessment->enrollment_assessment->student;
+            $totalAmount = 0;
+            $remarks = '';
+            foreach ($transactions as $key => $value) {
+                $totalAmount += $value->payment_amount;
+                $temp = (($key + 1) >= count($transactions)) ? $remarks . ' & ' . $value->remarks : $value->remarks . '' . $remarks;
+                $remarks = $temp;
+            }
+            // Student Name and Student Number
+            $fullname = strtoupper($student->last_name . ', ' . $student->first_name);
+            $student_number = $student->account->student_number;
+            $staff = $transactions[0]->staff->first_name . ' ' . $transactions[0]->staff->last_name;
+            // OR NUMBER AND TRANSACTION DATE
+            $orNumber = base64_decode($request->orNumber);
+            $transactionDate = $transactions[0]->transaction_date;
+            $transactions = PaymentTransaction::where('or_number', base64_decode($request->orNumber))->get();
+            $receiptDetails =  compact('fullname', 'student_number', 'transactionDate', 'orNumber', 'totalAmount', 'remarks', 'transactions', 'staff');
+            //return $receiptDetails;
+            $_reciept_report = new AccountingPaymentReceipt();
+            return $_reciept_report->print_or_recipt($receiptDetails);
+        } catch (Exception $err) {
+            return $err->getMessage();
+            // return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
         }
     }
