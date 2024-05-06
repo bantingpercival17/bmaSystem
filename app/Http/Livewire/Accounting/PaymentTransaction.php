@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Accounting;
 use App\Models\AcademicYear;
 use App\Models\AdditionalFees;
 use App\Models\EnrollmentAssessment;
+use App\Models\Particulars;
 use App\Models\PaymentAdditionalFees;
 use App\Models\PaymentTransaction as ModelsPaymentTransaction;
 use App\Models\PaymentTrasanctionOnline;
@@ -46,6 +47,7 @@ class PaymentTransaction extends Component
     public $onlinePaymentTransaction = null;
     public $paymentDetails = [];
     public $particularId = null;
+    public $penaltyAmount = null;
     protected $rules = [
         'transactionOrNumber' => 'required',
         'transactionAmount' => 'required',
@@ -202,6 +204,8 @@ class PaymentTransaction extends Component
                 'staff_id' => $staff->id,
                 'is_removed' => false
             );
+            // For Additional Penalty Transaction
+            $this->penaltyAmountFunction($this->enrollmentAssessment, $this->paymentAssessment);
             if ($this->particularId) {
                 $fees = PaymentAdditionalFees::find($this->particularId);
                 $fees->status = $convertedAmount;
@@ -411,5 +415,32 @@ class PaymentTransaction extends Component
         $this->transactionAmount = $payment->amount_paid;
         $this->transactionRemarks =  str_replace('_', ' ', $payment->transaction_type);
         $this->onlinePaymentTransaction = $payment->id;
+    }
+    function penaltyAmountFunction($enrollment, $assessment)
+    {
+        if ($this->penaltyAmount != null) {
+            // Set the Surchange
+            $particular_fee = Particulars::where('particular_name', 'Surcharge')->first();
+            if (!$particular_fee) {
+                $particular_fee = Particulars::create(['particular_name' => 'Surcharge', 'particular_tag' => 'additional_type', 'particular_type' => 'other_tags', 'department' => 'college']);
+            }
+            $additional_fees =   AdditionalFees::create(['particular_id' => $particular_fee->id, 'amount' => $this->penaltyAmount, 'status' => $this->penaltyAmount]);
+            if ($additional_fees) {
+                $paymentAdditionalFee = PaymentAdditionalFees::create(['fees_id' => $additional_fees->id, 'enrollment_id' => $enrollment->id, 'assessment_id' => $assessment->id]);
+                $staff = Staff::where('user_id', Auth::user()->id)->first();
+                $paymentDetails = array(
+                    'assessment_id' => $this->paymentAssessment->id,
+                    'or_number' => $this->transactionOrNumber,
+                    'payment_transaction' => 'ADDITIONAL FEE',
+                    'payment_amount' => $this->penaltyAmount,
+                    'payment_method' =>  $this->transactionPaymentMethod,
+                    'remarks' => strtoupper($this->transactionRemarks . ' Surcharge'),
+                    'transaction_date' => $this->transactionDate ?: date('Y-m-d'),
+                    'staff_id' => $staff->id,
+                    'is_removed' => false
+                );
+                ModelsPaymentTransaction::create($paymentDetails);
+            }
+        }
     }
 }

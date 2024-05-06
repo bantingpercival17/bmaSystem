@@ -544,10 +544,14 @@
                                         @endif
                                     </div>
                                     <div class="col-md">
-                                        <div class="float-end mt-4">
-                                            <button type="submit" class="btn btn-primary btn-sm">ADD
-                                                TRANSACTION</button>
-                                        </div>
+                                        <small class="text-muted">PENALTY AMOUNT:</small>
+                                        <input type="text" wire:model="penaltyAmount"
+                                            class="form-control form-control-sm border border-primary"
+                                            placeholder="0.00">
+                                    </div>
+                                    <div class=" mt-4">
+                                        <button type="submit" class="btn btn-primary btn-sm float-end">ADD
+                                            TRANSACTION</button>
                                     </div>
                                 </div>
 
