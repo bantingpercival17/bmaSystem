@@ -956,7 +956,7 @@ class AccountingController extends Controller
             $remarks = '';
             foreach ($transactions as $key => $value) {
                 $totalAmount += $value->payment_amount;
-                $temp = (($key + 1) >= count($transactions)) ? $remarks . ' & ' . $value->remarks : $value->remarks . '' . $remarks;
+                $temp = count($transactions) > 0 ? (($key + 1) == count($transactions)) ? $remarks . ' & ' . $value->remarks : $value->remarks . '' . $remarks : $remarks;
                 $remarks = $temp;
             }
             // Student Name and Student Number

@@ -163,6 +163,8 @@
                         @for ($i = 0; $i < $_rows; $i++)
                             @php
                                 if (count($_particular) > $i) {
+                                    $_whole = '';
+                                    $_decimal = '';
                                     foreach ($data['transactions'] as $value) {
                                         $payment_transaction = strtolower(trim($value->payment_transaction));
                                         $remarks = strtolower(trim($value->remarks));
@@ -188,7 +190,7 @@
                                             $_whole = $_whole_1 = $_amount[0] ?? '';
                                             $_decimal = $_decimal_1 = $_amount[1] ?? '00';
                                         } else {
-                                           /*  $_whole = '';
+                                            /*  $_whole = '';
                                             $_decimal = ''; */
                                         }
                                     }
