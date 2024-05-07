@@ -970,7 +970,7 @@ class AccountingController extends Controller
             $receiptDetails =  compact('fullname', 'student_number', 'transactionDate', 'orNumber', 'totalAmount', 'remarks', 'transactions', 'staff');
             //return $receiptDetails;
             $_reciept_report = new AccountingPaymentReceipt();
-            return $_reciept_report->print_or_recipt($receiptDetails);
+            return $_reciept_report->print_or_recipt($receiptDetails, $request->printer);
         } catch (Exception $err) {
             return $err->getMessage();
             // return back()->with('error', $err->getMessage());

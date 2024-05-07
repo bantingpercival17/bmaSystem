@@ -601,7 +601,7 @@ class CourseOffer extends Model
                                         ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
                                         ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
                                 }, $operation, function ($query) {
-                                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+                                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 70, 100)'));
                                 })
                                 ->groupBy('applicant_accounts.id')->orderBy($tblApplicantExamination . '.updated_at', 'desc');
                         } else {
@@ -614,8 +614,11 @@ class CourseOffer extends Model
                                         ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
                                         ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
                                 }, '>=', function ($query) {
-                                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+                                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 70, 100)'));
                                 })->groupBy('applicant_accounts.id');
+                            $query = $query->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                                ->where($tblApplicantAlumia . '.is_removed', false);
+                            //$query = $query2->union($query);
                             if ($category === 'for_medical_schedule') {
                                 $query =  $query->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                                     ->whereNull('ama.applicant_id');

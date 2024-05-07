@@ -83,4 +83,22 @@ class ApplicantReport
         $file_name = 'APPLICANT LIST [VERIFIED] - ' . date('Ymd') . '.pdf';
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
+
+    function applicant_analytics($data)
+    {
+        $_layout = $this->path . '.applicant_analytics';
+        // Import PDF Class
+        $courses = CourseOffer::all();
+        $tableHeader = array(
+            array('Information Verification', array('registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni'), 'applicants.summary-reports'),
+            array('Entrance Examination', array('examination_payment', 'entrance_examination', 'passed', 'failed'), 'applicants.summary-reports'),
+            array('Medical Examination', array('for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending_result'), 'applicants.summary-reports'),
+            array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'), 'applicants.summary-reports')
+
+        );
+        $pdf = PDF::loadView($_layout, compact('courses', 'data','tableHeader'));
+        // Set the Filename of report
+        $file_name = 'ENTRANCE EXAMINATION ANALYTICS - ' . date('Ymd') . '.pdf';
+        return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
+    }
 }

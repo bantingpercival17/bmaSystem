@@ -40,10 +40,11 @@ class PaymentReceipt
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
 
-    public function print_or_recipt($data)
+    public function print_or_recipt($data, $printer)
     {
-
-        $pdf = PDF::loadView("widgets.report.accounting.or_receipt", compact('data'));
+        $pdfLayout = 'widgets.report.accounting.';
+        $layout = $printer == 'canon' ? 'or_receipt' : 'or_receipt_epson';
+        $pdf = PDF::loadView($pdfLayout . $layout, compact('data'));
         $file_name = "Accounting Receipt: " . $data['orNumber']; // With Date now
         //return $pdf->setPaper($this->crosswise_short, 'portrait')->stream($file_name . '.pdf');
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');

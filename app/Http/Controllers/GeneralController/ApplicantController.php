@@ -6,6 +6,7 @@ use App\Exports\ApplicantMedicalSchedule;
 use App\Http\Controllers\Controller;
 use App\Mail\ApplicantBriefingNotification;
 use App\Mail\ApplicantEmail;
+use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantAlumnia;
 use App\Models\ApplicantBriefing;
@@ -665,6 +666,20 @@ class ApplicantController extends Controller
             } else {
                 return back()->with('error', 'This Page is Ongoing Developement');
             }
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('error', $th->getMessage());
+        }
+    }
+    function applicant_analytics()
+    {
+        try {
+            $academic2022 = AcademicYear::where('semester', 'SECOND SEMESTER')->where('school_year', '2021-2022')->first();
+            $academic2023 = AcademicYear::where('semester', 'SECOND SEMESTER')->where('school_year', '2022-2023')->first();
+            $academic2024 = AcademicYear::where('semester', 'FIRST SEMESTER')->where('school_year', '2024-2025')->first();
+            $data = compact('academic2022', 'academic2023', 'academic2024');
+            $report = new ApplicantReport();
+            return $report->applicant_analytics($data);
         } catch (\Throwable $th) {
             $this->debugTracker($th);
             return back()->with('error', $th->getMessage());
