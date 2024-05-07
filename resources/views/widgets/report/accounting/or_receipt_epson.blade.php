@@ -251,7 +251,7 @@
                         </span>
                     </p>
 
-                    <p style="margin-top:10px;margin-right:8%; text-align:right;">
+                    <p style="margin-top:15px;margin-right:8%; text-align:right;">
                         {{ $data['staff'] }}
                     </p>
                 </div>
