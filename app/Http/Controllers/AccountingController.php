@@ -953,16 +953,26 @@ class AccountingController extends Controller
             // GET THE STUDENT INFORMATION
             $student = $transactions[0]->payment_assessment->enrollment_assessment->student;
             $totalAmount = 0;
-            $remarks = '';
+            $particularsDetails = [];
+            $particular = ['Uniform', 'Books', 'Forms'];
+            $temp = [];
             foreach ($transactions as $key => $value) {
                 $totalAmount += $value->payment_amount;
-                $temp = count($transactions) > 0 ? (($key + 1) == count($transactions)) ? $remarks . ' & ' . $value->remarks : $value->remarks . '' . $remarks : $remarks;
-                $remarks = $temp;
+                $temp[] = $value->remarks;
+                if ($value->payment_transaction === 'TUITION FEE') {
+                    $particularsDetails = array(
+                        'name' => 'TUITION FEE',
+                        'amount' => $value->payment_amount
+                    );
+                } else {
+
+                }
             }
+            $remarks = $this->arrayToSentence($temp);
             // Student Name and Student Number
             $fullname = strtoupper($student->last_name . ', ' . $student->first_name);
             $student_number = $student->account->student_number;
-            $staff = $transactions[0]->staff->first_name . ' ' . $transactions[0]->staff->last_name;
+            $staff = $this->getInitials($transactions[0]->staff->first_name) . ' ' . $transactions[0]->staff->last_name;
             // OR NUMBER AND TRANSACTION DATE
             $orNumber = base64_decode($request->orNumber);
             $transactionDate = $transactions[0]->transaction_date;
@@ -976,6 +986,39 @@ class AccountingController extends Controller
             // return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
         }
+    }
+    function arrayToSentence($array)
+    {
+        $count = count($array);
+
+        // If there's only one item in the array, return it directly
+        if ($count === 1) {
+            return $array[0];
+        }
+
+        // If there are two or more items, concatenate all but the last with commas,
+        // then add "and" before the last item
+        $lastItem = array_pop($array);
+        $sentence = implode(', ', $array) . " & " . $lastItem;
+
+        return $sentence;
+    }
+    function getInitials($name)
+    {
+        // Split the name into an array of words
+        $words = explode(' ', $name);
+
+        // Initialize an empty string to store initials
+        $initials = '';
+
+        // Loop through each word
+        foreach ($words as $word) {
+            // Add the first letter of each word to the initials string
+            $initials .= strtoupper(substr($word, 0, 1));
+        }
+
+        // Return the initials
+        return $initials;
     }
     public function student_card(Request $_request)
     {
