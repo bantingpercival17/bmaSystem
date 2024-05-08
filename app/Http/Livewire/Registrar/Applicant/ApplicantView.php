@@ -548,7 +548,7 @@ class ApplicantView extends Component
                 }
             }
         }
-        return $dataLists->limit(10)->get();
+        return $dataLists->get();
     }
     function filterData($search, $course, $category, $academic)
     {
@@ -741,7 +741,7 @@ class ApplicantView extends Component
                 }
             }
         }
-        return $query->limit(10)->get();
+        return $query->get();
     }
     // Sort Data
     function registered_appplicants()
