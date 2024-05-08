@@ -22,7 +22,7 @@ class ApplicantProfileView extends Component
     public $searchInput;
     public $academic;
     public $profile = [];
-    public $activeTab = 'profile';
+    public $activeTab = 'documents';
     protected $listeners = ['bmaAlumnia'];
     public $showModal = false;
 

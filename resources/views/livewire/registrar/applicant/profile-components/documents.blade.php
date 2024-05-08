@@ -10,14 +10,9 @@
             <div class="mt-5">
                 <div class="col-md-12">
                     <h5 class="fw-bolder text-muted">{{ $item->document_name }}</h5>
+
                     @if ($document = $item->applicant_requirements_v2)
                         @if ($document->is_approved == null)
-                          
-                            {{--  <button class="btn-photoviewer btn btn-sm btn-primary"
-                                data-link="http://one.bma.edu.ph/storage/bma-applicants//AN-240126312/documents/uqtsnw2S50h4.jpg"
-                                data-title="{{ $item->document_name }}">
-                                Testing Buttom
-                            </button> --}}
                             <form class="row" action="{{ route('document-verification') }}">
                                 @php
                                     $comments = [
@@ -113,10 +108,10 @@
                                         </span>
                                     </div>
                                     <div class="col-md">
-                                        <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2 w-100"
-                                            data-bs-target=".document-view-modal"
-                                            data-document-url="{{ json_decode($document->file_links)[0] }}"
-                                            data-bs-toggle="tooltip" title="" data-bs-original-title="View Image">
+                                        <a class="btn btn-outline-info btn-sm rounded-pill btn-form-document mt-2"
+                                            data-bs-toggle="modal" data-bs-target=".document-view-modal"
+                                            data-bs-toggle="tooltip" title="" data-bs-original-title="View Image"
+                                            data-document-url="{{ json_decode($document->file_links)[0] }}">
                                             <svg width="20" viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -128,7 +123,6 @@
                                                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                                     stroke-linejoin="round"></path>
                                             </svg>
-                                            View
                                         </a>
                                     </div>
                                 </div>

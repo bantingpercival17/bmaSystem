@@ -548,7 +548,7 @@ class ApplicantView extends Component
                 }
             }
         }
-        return $dataLists->limit(20)->get();
+        return $dataLists->limit(10)->get();
     }
     function filterData($search, $course, $category, $academic)
     {
