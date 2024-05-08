@@ -65,6 +65,9 @@
                                         </a>
                                         <div class="mt-0">
                                             <span>{{ $data ? $data->email : '-' }}</span> <br>
+                                            @if ($data->similar_account())
+                                                <span>SIMILAR APPLICATION</span>
+                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12">

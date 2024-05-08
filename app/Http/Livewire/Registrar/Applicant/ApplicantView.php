@@ -69,27 +69,19 @@ class ApplicantView extends Component
             $sortList = $reguralUser;
         }
         return $sortList;
-        return  array(
-            array('User Accounts', array('created_accounts', 'registered_applicants', 'total_registrants')),
-            array('Information Verification', array('for_checking', 'not_qualified', 'qualified', 'no_of_qualified_examinees')),
-            array('Aluminus', array('bma_senior_high')),
-            array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'took_the_exam')),
-            /*   array('Briefing Orientation', array('expected_attendees', 'total_attendees')), */
-            array('Medical Examination', array('for_medical_schedule', 'medical_schedule', 'waiting_for_medical_results', 'medical_result')),
-            array('Enrollment', array('qualified_to_enrollment'))
-        );
     }
     function academicValue()
     {
-        $data = $this->academic;
-        if ($this->academic == '') {
-            $_academic = AcademicYear::where('is_active', 1)->first();
-            $data = base64_encode($_academic->id);
+        if (empty($this->academic)) {
+            $activeAcademic = AcademicYear::where('is_active', 1)->first();
+            if ($activeAcademic) {
+                return base64_encode($activeAcademic->id);
+            }
         }
         if (request()->query('_academic')) {
-            $data = request()->query('_academic') ?: $this->academic;
+            return request()->query('_academic');
         }
-        return $data;
+        return $this->academic;
     }
     function getCourse()
     {
@@ -103,13 +95,13 @@ class ApplicantView extends Component
     {
         $data = $this->selectCategories ?: 'registered_applicants';
         if (request()->query('_category')) {
-            $data = request()->query('_category') ?: $this->selectCategories;
+            $data = request()->query('_category') ?: $data;
         }
         Cache::put('category', $data, 120);
-        if (Cache::has('category')) {
-            $data = Cache::get('category');
+        $cachedCategory = Cache::get('category');
+        if ($cachedCategory) {
+            $data = $cachedCategory;
         }
-        #$data = $data ?: 'created_accounts';
         return $data;
     }
     function categoryCourse()
@@ -556,7 +548,7 @@ class ApplicantView extends Component
                 }
             }
         }
-        return $dataLists->get();
+        return $dataLists->limit(20)->get();
     }
     function filterData($search, $course, $category, $academic)
     {
@@ -749,6 +741,10 @@ class ApplicantView extends Component
                 }
             }
         }
-        return $query->get();
+        return $query->limit(10)->get();
+    }
+    // Sort Data
+    function registered_appplicants()
+    {
     }
 }
