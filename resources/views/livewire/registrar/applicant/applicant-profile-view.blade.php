@@ -11,45 +11,57 @@
                     <div class="card mb-2">
                         <div class="row no-gutters">
                             <div class="col-md-3">
-                                @if ($profile->profile_picture())
+                                @if ($profile && $profile->profile_picture())
                                     <img src="{{ $profile->profile_picture() }}" class="avatar-130 rounded"
                                         alt="applicant-profile">
                                 @endif
                             </div>
                             <div class="col-md ps-0">
                                 <div class="card-body p-3 me-2">
-                                    <label for=""
-                                        class="fw-bolder text-primary h4">{{ $profile ? ($profile->applicant ? strtoupper($profile->applicant->last_name . ', ' . $profile->applicant->first_name) : strtoupper($profile->name)) : 'MIDSHIPMAN NAME' }}</label>
+                                    @php
+                                        $applicantName = $profile
+                                            ? ($profile->applicant
+                                                ? strtoupper(
+                                                    $profile->applicant->last_name .
+                                                        ', ' .
+                                                        $profile->applicant->first_name,
+                                                )
+                                                : strtoupper($profile->name))
+                                            : 'MIDSHIPMAN NAME';
+                                    @endphp
+                                    <label for="" class="fw-bolder text-primary h4">{{ $applicantName }}</label>
                                     <p class="mb-0">
-                                        <small class="fw-bolder badge {{ $profile->color_course() }}">
-                                            {{ $profile->course->course_name }}
-                                        </small> -
-                                        <small class="badge bg-primary">
-                                            {{ $profile->applicant_number }}
-                                        </small>
-                                        <small class="badge bg-primary">
-                                            {{ $profile->email }}
-                                        </small>
+                                        @if ($profile)
+                                            <small class="fw-bolder badge {{ $profile->color_course() }}">
+                                                {{ $profile->course->course_name }}
+                                            </small> -
+                                            <small class="badge bg-primary">
+                                                {{ $profile->applicant_number }}
+                                            </small>
+                                            <small class="badge bg-primary">
+                                                {{ $profile->email }}
+                                            </small>
+                                        @endif
                                     </p>
                                     <div class="mt-2">
-                                        <small class="badge  border border-secondary text-secondary"
-                                            data-bs-toggle="modal" data-bs-target=".modal-change-course"
-                                            data-bs-toggle="change course" title="">
-                                            CHANGE COURSE
-                                        </small>
-                                        @if ($profile->is_alumnia)
-                                            <span class="badge bg-primary float-end">
-                                                BMA SENIOR HIGH ALUMNUS
-                                            </span>
-                                        @else
-                                            @if ($profile->applicant)
-                                                @if ($profile->senior_high_school())
+                                        @if ($profile)
+                                            <small class="badge  border border-secondary text-secondary"
+                                                data-bs-toggle="modal" data-bs-target=".modal-change-course"
+                                                data-bs-toggle="change course" title="">
+                                                CHANGE COURSE
+                                            </small>
+                                            @if ($profile->is_alumnia)
+                                                <span class="badge bg-primary float-end">
+                                                    BMA SENIOR HIGH ALUMNUS
+                                                </span>
+                                            @else
+                                                @if ($profile->applicant && $profile->senior_high_school())
                                                     <button class="badge border border-primary text-primary"
                                                         id="btn-alumnia" data-id="{{ base64_encode($profile->id) }}">
-                                                        BMA
-                                                        SENIOR HIGH ALUMNUS</button>
+                                                        BMA SENIOR HIGH ALUMNUS
+                                                    </button>
                                                 @endif
-                                                @if (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph')
+                                                @if (Auth::user() && (Auth::user()->email == 'p.banting@bma.edu.ph' || Auth::user()->email == 'k.j.cruz@bma.edu.ph'))
                                                     <button class="badge border border-primary text-primary"
                                                         wire:click="dialogBoxSHS({{ $profile->id }})">BMA</button>
                                                 @endif
@@ -64,13 +76,10 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="table-responsive ">
                         <table class="nav nav-underline bg-soft-primary text-center" aria-label="Secondary navigation">
                             <thead class="d-flex">
-                                <tr>
-                                    <td class="nav-link {{ $activeTab == 'overiew' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('overiew')">OVERVIEW</td>
-                                </tr>
                                 <tr>
                                     <td class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
                                         wire:click="swtchTab('profile')">PROFILE</td>
@@ -84,11 +93,6 @@
                                         wire:click="swtchTab('examination')">
                                         ENTRANCE EXAMINATION
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</td>
-
                                 </tr>
                                 <tr>
                                     <td class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
@@ -134,7 +138,6 @@
             <div class="col-lg-4">
                 <div class="row">
                     <div class="col-12">
-                        {{ $academic }}
                         <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                         <div class="form-group search-input">
                             <input type="search" class="form-control border border-primary"
