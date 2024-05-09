@@ -158,7 +158,7 @@ class AccountingController extends Controller
     {
         $_course_fee = CourseSemestralFees::find(base64_decode($_request->_course_fee));
         return view('pages.accounting.fee.create_semestral_fee_list', compact('_course_fee'));
-        return $_course_fee->semestral_fee_list;
+        //return $_course_fee->semestral_fee_list;
     }
     public function course_change_fee(Request $_request)
     {
@@ -192,9 +192,9 @@ class AccountingController extends Controller
                 'academic_id' => $_request->_academic,
                 'is_removed' => false,
             ); // Set up the data content for storing Course Semestrarl Fees
-            $_course_semestral = CourseSemestralFees::where($_details)->first(); // Verify if the Content is already Store/Save
+            //$_course_semestral = CourseSemestralFees::where($_details)->first(); // Verify if the Content is already Store/Save
             // if the content get the detials or the id, if not the content store into database
-            $_course_semestral = $_course_semestral ?: CourseSemestralFees::create($_details);
+            $_course_semestral = /* $_course_semestral ?: */ CourseSemestralFees::create($_details);
 
             foreach ($_request->data as $key => $value) {
                 // Check if the Fees is have a valueƒ
