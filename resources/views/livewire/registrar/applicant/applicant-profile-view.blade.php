@@ -76,43 +76,48 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="table-responsive ">
-                        <table class="nav nav-underline bg-soft-primary text-center" aria-label="Secondary navigation">
-                            <thead class="d-flex">
-                                <tr>
-                                    <td class="nav-link {{ $activeTab == 'profile' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('profile')">PROFILE</td>
-                                </tr>
-                                <tr>
-                                    <td class="nav-link {{ $activeTab == 'documents' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('documents')">DOCUMENTS</td>
-                                </tr>
-                                <tr>
-                                    <td class="nav-link {{ $activeTab == 'examination' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('examination')">
-                                        ENTRANCE EXAMINATION
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="nav-link {{ $activeTab == 'medical' ? 'active' : 'text-muted' }}"
-                                        wire:click="swtchTab('medical')">ORIENTATION & MEDICAL</td>
-
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    <div class="mt-4">
-                        @if ($activeTab == 'profile')
+                    <ul class="nav nav-underline text-muted bg-soft-primary text-center mt-3" id="myTab-1"
+                        role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab"
+                                aria-controls="profile" aria-selected="false">PROFILE</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" id="documents-tab" data-bs-toggle="tab" href="#documents"
+                                role="tab" aria-controls="documents" aria-selected="true">DOCUMENTS</a>
+                        </li>
+                        <li class="nav-item text-muted">
+                            <a class="nav-link" id="examination-tab" data-bs-toggle="tab" href="#examination"
+                                role="tab" aria-controls="examination" aria-selected="false">EXAMINATION</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="medical-tab" data-bs-toggle="tab" href="#medical" role="tab"
+                                aria-controls="medical" aria-selected="false"> ORIENTATION & MEDICAL</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3" id="myTabContent-2">
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                             @include('livewire.registrar.applicant.profile-components.information')
-                        @endif
-                        @if ($activeTab == 'documents')
+                        </div>
+                        <div class="tab-pane fade  active show" id="documents" role="tabpanel"
+                            aria-labelledby="documents-tab">
                             @include('livewire.registrar.applicant.profile-components.documents')
-                        @endif
-                        @if ($activeTab == 'examination')
+                        </div>
+                        <div class="tab-pane fade" id="examination" role="tabpanel" aria-labelledby="examination-tab">
                             @include('livewire.registrar.applicant.profile-components.entrance-examination')
-                        @endif
+                        </div>
                     </div>
+                    {{--  <div class="mt-4">
+                    @if ($activeTab == 'profile')
+                    @include('livewire.registrar.applicant.profile-components.information')
+                    @endif
+                    @if ($activeTab == 'documents')
+                    @include('livewire.registrar.applicant.profile-components.documents')
+                    @endif
+                    @if ($activeTab == 'examination')
+                    @include('livewire.registrar.applicant.profile-components.entrance-examination')
+                    @endif
+                </div> --}}
                 @else
                     <div class="card mb-2">
                         <div class="row no-gutters">
@@ -164,8 +169,8 @@
                     <div class="col-12">
                         <small class="text-primary"><b>COURSE</b></small>
                         <div class="form-group search-input">
-                            <select wire:model="selectCourse" class="form-select form-select-sm border border-primary "
-                                wire:click="categoryCourse">
+                            <select wire:model="selectCourse"
+                                class="form-select form-select-sm border border-primary " wire:click="categoryCourse">
                                 <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
                                 @foreach ($filterCourses as $course)
                                     <option value="{{ $course->id }}">{{ ucwords($course->course_name) }}</option>

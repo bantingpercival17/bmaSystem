@@ -491,11 +491,6 @@ class ApplicantView extends Component
             ->where($tblApplicantMedicalResult . '.is_fit', $result)
             ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc');
     }
-    /*
-
-            array('Medical Examination', array('for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending')),
-            array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'))
-    */
     function filter_category($query, $search, $course, $category)
     {
         if ($course != 'ALL COURSE') {
