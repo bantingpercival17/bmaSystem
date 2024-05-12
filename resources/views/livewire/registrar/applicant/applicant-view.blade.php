@@ -8,8 +8,7 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="filter-section m-0 p-0">
-                    <small class="fw-bolder text-info">FILTER DETAILS:</small>
-                    {{ base64_decode($academic) }}
+                    <small class="fw-bolder text-muted">FILTER DETAILS:</small>
                     <div class="row">
                         <div class="col-md-6">
                             <small class="fw-bolder text-muted">CATEGORY : </small> <br>
@@ -65,8 +64,10 @@
                                         </a>
                                         <div class="mt-0">
                                             <span>{{ $data ? $data->email : '-' }}</span> <br>
-                                            @if ($data->similar_account())
-                                                <span>SIMILAR APPLICATION</span>
+                                            @if ($data->applicant)
+                                                @if ($data->similar_account())
+                                                    <span>SIMILAR APPLICATION</span>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>
@@ -116,7 +117,7 @@
                                             </div>
 
                                             <a href="{{ route('applicant-removed') }}?_applicant={{ base64_encode($data->id) }}"
-                                                class="badge bg-danger text-white w-100">REMOVE
+                                                class="btn btn-sm btn-outline-primary w-100 mt-2">REMOVE
                                             </a>
                                         @endif
 
@@ -209,7 +210,6 @@
                     </div>
                     <div class="col-12">
                         <small class="text-primary"><b>CATEGORY</b></small>
-                        {{ Cache::get('category') }}
                         <div class="form-group search-input">
                             <select class="form-select border border-primary" wire:model="selectCategories">
                                 @foreach ($filterContent as $item)

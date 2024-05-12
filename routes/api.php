@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ApplicantController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ExaminationController;
 use App\Http\Controllers\Api\ExportController;
@@ -39,6 +40,7 @@ Route::get('/form-recaptcha', function () {
     }
     /* return response()->json(['captcha' => Captcha::img()]); */
 });
+Route::get('/applicant-overview/overview', [ApplicantController::class, 'applicant_overview']);
 Route::post('/student/login', [AuthController::class, 'student_login']); // Login Api for Offical Student of the BMA
 Route::post('/student/forget-password', [AuthController::class, 'student_forget_password']);
 Route::get('/csrf-token', [VisitorController::class, 'visitor_logs']);

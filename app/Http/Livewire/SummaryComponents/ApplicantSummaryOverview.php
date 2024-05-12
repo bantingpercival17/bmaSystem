@@ -4,7 +4,7 @@ namespace App\Http\Livewire\SummaryComponents;
 
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
-use App\Models\CourseOffer;
+use App\Models\CourseOfferV2;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -14,11 +14,11 @@ class ApplicantSummaryOverview extends Component
     public $academic = null;
     public function render()
     {
-        $courses = CourseOffer::all();
+        $courses = CourseOfferV2::select('id', 'course_name', 'course_code')->get();
         $this->academic = $this->academicValue();
         $tableHeader = array(
             array('Information Verification', array('registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni'), 'applicants.summary-reports'),
-            array('Entrance Examination', array('examination_payment', 'entrance_examination', 'passed', 'failed'), 'applicants.summary-reports'),
+            array('Entrance Examination', array('waiting_examination_payment', 'examination_payment', 'entrance_examination', 'passed', 'failed'), 'applicants.summary-reports'),
             array('Medical Examination', array('for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending_result'), 'applicants.summary-reports'),
             array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'), 'applicants.summary-reports')
 

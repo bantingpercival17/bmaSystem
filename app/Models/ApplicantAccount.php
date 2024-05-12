@@ -187,7 +187,24 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     {
         return $this->hasOne(StudentApplicantDetails::class, 'applicant_id')->where('is_removed', false);
     }
-    function total_take_examination(){
-        
+    function total_take_examination()
+    {
+    }
+    public function documents()
+    {
+        return $this->hasMany(ApplicantDocuments::class, 'applicant_id');
+    }
+
+    // Define a scope to count approved documents
+    public function documentApproved()
+    {
+        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false)->where('is_approved', 1);
+    }
+
+    // Define a scope to count required documents
+    public function documentRequirements()
+    {
+        // Assuming the logic for required documents is similar to 'approvedDocuments'
+        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false);
     }
 }

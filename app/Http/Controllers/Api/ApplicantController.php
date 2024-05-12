@@ -14,6 +14,7 @@ use App\Models\ApplicantExaminationEssay;
 use App\Models\ApplicantExaminationSchedule;
 use App\Models\ApplicantMedicalAppointment;
 use App\Models\ApplicantPayment;
+use App\Models\CourseOfferV2;
 use App\Models\Documents;
 use App\Models\Examination;
 use App\Models\ExaminationCategory;
@@ -435,5 +436,18 @@ class ApplicantController extends Controller
         return [
             'message' => 'Logget out',
         ];
+    }
+    function applicant_overview()
+    {
+        try {
+            $data1 = ['registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni'];
+            $data2 = ['waiting_examination_payment', 'examination_payment', 'entrance_examination', 'passed', 'failed'];
+            $data3 = ['for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending_result'];
+            $courses = CourseOfferV2::with('waiting_for_medical_results')
+                ->get();
+            return compact('courses');
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
     }
 }
