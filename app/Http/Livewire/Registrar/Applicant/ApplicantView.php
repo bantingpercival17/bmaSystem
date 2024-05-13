@@ -72,16 +72,15 @@ class ApplicantView extends Component
     }
     function academicValue()
     {
+        if (request()->query('_academic')) {
+            return request()->query('_academic');
+        }
         if (empty($this->academic)) {
             $activeAcademic = AcademicYear::where('is_active', 1)->first();
             if ($activeAcademic) {
                 return base64_encode($activeAcademic->id);
             }
         }
-        if (request()->query('_academic')) {
-            return request()->query('_academic');
-        }
-        return $this->academic;
     }
     function getCourse()
     {
@@ -506,6 +505,10 @@ class ApplicantView extends Component
                 $_student = explode(',', $search); // Seperate the Sentence
                 $_count = count($_student);
                 $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
+                if ($category !== 'total_registrants' && $category !== 'registered_applicants_v1') {
+                    $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id');
+                }
+
                 if ($_count > 1) {
                     $query->where($tblApplicantDetails . '.last_name', 'like', '%' . $_student[0] . '%')
                         ->where($tblApplicantDetails . '.first_name', 'like', '%' . trim($_student[1]) . '%')

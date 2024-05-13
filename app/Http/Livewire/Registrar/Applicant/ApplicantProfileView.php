@@ -293,14 +293,16 @@ class ApplicantProfileView extends Component
         }
         // Search Sorting
         if ($search != '') {
-
+            $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
             if ($category == 'created_accounts') {
                 $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%')
                     ->orderBy('created_at', 'desc');
             } else {
                 $_student = explode(',', $search); // Seperate the Sentence
                 $_count = count($_student);
-                $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
+                if ($category !== 'total_registrants' && $category !== 'registered_applicants_v1') {
+                    $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id');
+                }
                 if ($_count > 1) {
                     $query->where($tblApplicantDetails . '.last_name', 'like', '%' . $_student[0] . '%')
                         ->where($tblApplicantDetails . '.first_name', 'like', '%' . trim($_student[1]) . '%')
