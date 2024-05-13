@@ -107,17 +107,6 @@
                             @include('livewire.registrar.applicant.profile-components.entrance-examination')
                         </div>
                     </div>
-                    {{--  <div class="mt-4">
-                    @if ($activeTab == 'profile')
-                    @include('livewire.registrar.applicant.profile-components.information')
-                    @endif
-                    @if ($activeTab == 'documents')
-                    @include('livewire.registrar.applicant.profile-components.documents')
-                    @endif
-                    @if ($activeTab == 'examination')
-                    @include('livewire.registrar.applicant.profile-components.entrance-examination')
-                    @endif
-                </div> --}}
                 @else
                     <div class="card mb-2">
                         <div class="row no-gutters">
@@ -276,35 +265,37 @@
         </div>
     </div>
 </div>
-<div class="modal fade modal-change-course" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bolder" id="exampleModalLabel1">Change Course</h5>
+@if ($profile)
+    <div class="modal fade modal-change-course" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bolder" id="exampleModalLabel1">Change Course</h5>
 
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="{{ route('applicant.applicant-change-course') }}" method="post">
-                    @csrf
-                    <input type="hidden" value="{{ $profile->id }}" name="applicant">
-                    <div class="form-group">
-                        <small class="fw-bolder">COURSE</small>
-                        <select name="course" id="" class="form-select">
-                            <option value="1" {{ $profile->course_id === 1 ? 'selected' : '' }}>BS
-                                MARINE
-                                ENGINEERING </option>
-                            <option value="2" {{ $profile->course_id === 2 ? 'selected' : '' }}>BS
-                                MARINE
-                                TRANSPORTATION </option>
-                            <option value="3" {{ $profile->course_id === 3 ? 'selected' : '' }}>PBM
-                                SPECIALIZATION </option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-sm">Update Course</button>
-                </form>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('applicant.applicant-change-course') }}" method="post">
+                        @csrf
+                        <input type="hidden" value="{{ $profile->id }}" name="applicant">
+                        <div class="form-group">
+                            <small class="fw-bolder">COURSE</small>
+                            <select name="course" id="" class="form-select">
+                                <option value="1" {{ $profile->course_id === 1 ? 'selected' : '' }}>BS
+                                    MARINE
+                                    ENGINEERING </option>
+                                <option value="2" {{ $profile->course_id === 2 ? 'selected' : '' }}>BS
+                                    MARINE
+                                    TRANSPORTATION </option>
+                                <option value="3" {{ $profile->course_id === 3 ? 'selected' : '' }}>PBM
+                                    SPECIALIZATION </option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Update Course</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+@endif
