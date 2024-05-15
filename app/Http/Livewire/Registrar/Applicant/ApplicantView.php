@@ -417,10 +417,36 @@ class ApplicantView extends Component
                     ->orderBy($tblApplicantExamination . '.updated_at', 'desc');
                 break;
             case 'for_medical_schedule':
-                $dataList = $dataList = $this->examination_result($dataList, '>=')->union($this->senior_high_alumia($dataList))
+                $dataList = $dataList = $this->examination_result($dataList, '>=')/* ->union($this->senior_high_alumia($dataList)) */
                     ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
                     ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
                     ->groupBy('applicant_accounts.id');
+                /*  $dataList = ApplicantAccount::select('applicant_accounts.*')
+                    ->where('applicant_accounts.is_removed', false)
+                    ->where('applicant_accounts.academic_id', base64_decode($academic))
+                    ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                    ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                    ->where(function ($query) use ($tblApplicantExamination, $tblApplicantAlumia, $operation) {
+                        $query->where(function ($query) use ($tblApplicantExamination, $operation) {
+                            $query->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                                ->where($tblApplicantExamination . '.is_removed', false)
+                                ->where($tblApplicantExamination . '.is_finish', true)
+                                ->where(function ($query) use ($operation) {
+                                    $query->select(DB::raw('COUNT(*)'))
+                                        ->from(env('DB_DATABASE_SECOND') . '.applicant_examination_answers')
+                                        ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.choices_id')
+                                        ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
+                                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
+                                }, $operation, function ($query) {
+                                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 70, 100)'));
+                                });
+                        })->orWhere(function ($query) use ($tblApplicantAlumia) {
+                            $query->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                                ->where($tblApplicantAlumia . '.is_removed', false);
+                        });
+                    })
+                    ->orderBy('applicant_accounts.created_at', 'desc')
+                    ->groupBy('applicant_accounts.id'); */
                 break;
             case 'waiting_for_medical_results':
                 $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')

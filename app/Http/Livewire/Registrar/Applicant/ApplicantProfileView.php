@@ -213,7 +213,7 @@ class ApplicantProfileView extends Component
                     ->orderBy($tblApplicantExamination . '.updated_at', 'desc');
                 break;
             case 'for_medical_schedule':
-                $dataList = $dataList = $this->examination_result($dataList, '>=')->union($this->senior_high_alumia($dataList))
+                $dataList = $dataList = $this->examination_result($dataList, '>=')/* ->union($this->senior_high_alumia($dataList)) */
                     ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
                     ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
                     ->groupBy('applicant_accounts.id');
