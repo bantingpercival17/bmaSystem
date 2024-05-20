@@ -940,7 +940,7 @@ class AccountingController extends Controller
         try {
             $_payment = PaymentTransaction::find(base64_decode($_request->reciept));
             $_reciept_report = new AccountingPaymentReceipt();
-            return $_reciept_report->print_recipt($_payment);
+            return $_reciept_report->print($_payment);
         } catch (Exception $err) {
             return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
