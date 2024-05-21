@@ -130,7 +130,7 @@ $pageTitle = 'Applicant Profile view';
                     <div class="col-12">
                         <small class="text-primary"><b>CATEGORY</b></small>
                         <div class="form-group search-input">
-                            <select class="form-select border border-primary form-select-sm" wire:model="selectCategories">
+                            <select class="form-select border border-primary form-select-sm" wire:model="selectCategories" wire:click="">
                                 @foreach ($filterContent as $item)
                                 <optgroup label="{{ $item[0] }}">
                                     @foreach ($item[1] as $item)
@@ -146,7 +146,7 @@ $pageTitle = 'Applicant Profile view';
                     <div class="col-12">
                         <small class="text-primary"><b>COURSE</b></small>
                         <div class="form-group search-input">
-                            <select wire:model="selectCourse" class="form-select form-select-sm border border-primary " wire:click="categoryCourse">
+                            <select wire:model="selectCourse" class="form-select form-select-sm border border-primary " wire:click="">
                                 <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
                                 @foreach ($filterCourses as $course)
                                 <option value="{{ $course->id }}">{{ ucwords($course->course_name) }}</option>

@@ -35,7 +35,7 @@ class ApplicantController extends Controller
         $_level = Auth::user()->course_id == 3 ? 11 : 4;
         $listOfDocuments =  Documents::where('year_level', $_level)
             ->where('documents.department_id', 2)
-            ->where('documents.is_removed', false)
+            #->where('documents.is_removed', false)
             ->get();
         $documents = $data->applicant_documents;
         $this->applicant_information_verification();
