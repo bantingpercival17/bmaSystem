@@ -68,7 +68,7 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
                 $query->where('applicant_id', $id);
             }])
             ->where('year_level', $_level)
-            ->where('is_removed', false)
+            #->where('is_removed', false)
             ->orderBy('id')->get();
     }
     public function empty_documents()

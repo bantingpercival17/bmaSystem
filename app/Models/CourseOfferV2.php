@@ -98,7 +98,7 @@ class CourseOfferV2 extends Model
                 DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND ' . $this->tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
                 DB::raw('(SELECT COUNT(*) FROM ' . $this->tblDocuments . ' WHERE ' . $this->tblDocuments . '.department_id = 2 AND ' . $this->tblDocuments . '.is_removed = false AND ' . $this->tblDocuments . '.year_level = (SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $this->applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) as documentCount')
             )
-            ->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments = documentCount')
+            ->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments >= documentCount')
             ->leftJoin($this->tblApplicantAlumia, $this->tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
             ->whereNull($this->tblApplicantAlumia . '.applicant_id');
     }

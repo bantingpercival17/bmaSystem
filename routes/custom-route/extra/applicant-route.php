@@ -43,4 +43,5 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/applicants/summary-report', [ApplicantController::class, 'applicant_summary_reports'])->name('applicants.summary-reports');
     Route::get('/applicants/analytics',[ApplicantController::class,'applicant_analytics'])->name('applicant.analytics');
+    Route::get('/applicant/notification/entrance-examination',[ApplicantController::class,'notification_entrance_examination'])->name('applicant.entrance-examination');
 });

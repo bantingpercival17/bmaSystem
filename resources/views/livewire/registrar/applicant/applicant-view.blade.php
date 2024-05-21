@@ -272,6 +272,13 @@
                             </select>
                         </div>
                     </div>
+                    @if ($selectCategories == 'waiting_examination_payment')
+                        <div class="col-12">
+                            <small class="text-primary"><b>EMAIL NOTIFICATION</b></small>
+                            <a href="{{ route('applicant.entrance-examination') . '?_academic=' . $academic }}{{ $selectCourse ? '&_course=' . base64_encode($selectCourse) : '' }}"
+                                class="btn btn-primary btn-sm w-100">SEND NOTIFICATION</a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

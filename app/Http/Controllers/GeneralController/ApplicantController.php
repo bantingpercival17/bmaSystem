@@ -685,4 +685,43 @@ class ApplicantController extends Controller
             return back()->with('error', $th->getMessage());
         }
     }
+    function notification_entrance_examination(Request $request)
+    {
+        try {
+            // return $request;
+            $applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
+            $tblDocuments = env('DB_DATABASE') . '.documents';
+            $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
+            $tblApplicantDocuments = env('DB_DATABASE_SECOND') . '.applicant_documents';
+            $tblApplicantNotQualifieds =  env('DB_DATABASE_SECOND') . '.applicant_not_qualifieds';
+            $tblApplicantPayment = env('DB_DATABASE_SECOND') . '.applicant_payments';
+            $tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
+            $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+            $tblApplicantMedicalScheduled = env('DB_DATABASE_SECOND') . '.applicant_medical_appointments';
+            $tblApplicantMedicalResult = env('DB_DATABASE_SECOND') . '.applicant_medical_results';
+            $dataList = ApplicantAccount::select('applicant_accounts.*')
+                ->where('applicant_accounts.is_removed', false)
+                ->where('applicant_accounts.academic_id', base64_decode($request->_academic))
+                ->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->select(
+                    'applicant_accounts.*',
+                    DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                    DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $applicantAccountTable . '.id = ' . $tblApplicantDocuments . '.applicant_id)) as documentCount')
+                )
+                ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments >= documentCount')
+                ->leftJoin($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                ->leftJoin($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantAlumia . '.applicant_id')
+                ->whereNull($tblApplicantPayment . '.applicant_id')
+                ->groupBy('applicant_accounts.id')
+                ->orderBy($tblApplicantDocuments . '.updated_at', 'desc')
+                ->get();
+
+            // Send an Email
+            return compact('dataList');
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('error', $th->getMessage());
+        }
+    }
 }
