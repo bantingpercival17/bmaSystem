@@ -80,6 +80,10 @@ class AuthController extends Controller
             $_account = ApplicantAccount::where('name', trim($_fields['firstName']) . ' ' . trim($_fields['lastName']))->where('academic_id', $_academic->id)->first();
             if ($_applicant || $_account) {
                 return response(['errors' => array('message' => 'You have already an existing account! Sign <a href="/#/applicant/login">here</a>')], 422);
+            } else if ($_request->course == 3) {
+                return response(['errors' => array('message' => 'The Senior High School program at Baliwag Maritime Academy, Inc. will temporarily cease accepting new
+                applicants until further notice.
+               ')], 422);
             }
             // Get the number of Applicant Per School Year
             $_transaction_number = ApplicantAccount::where('academic_id', $_academic->id)->count();
