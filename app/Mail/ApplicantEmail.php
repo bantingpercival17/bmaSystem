@@ -94,7 +94,7 @@ class ApplicantEmail extends Mailable
             );
             // If the Payment Transaction Transaction Date
             $date =  $applicantExamination->created_at;
-            // Rule to Create the Examination Scheduled 
+            // Rule to Create the Examination Scheduled
             // Monday, Wednesday and Friday 09:00 AM TO 11:00 and 02:00 TO 04:00 PM
             $scheduledDate = $this->examinationScheduled($date);
             $scheduleDetails = array(
@@ -147,6 +147,13 @@ class ApplicantEmail extends Mailable
         return $this->from(Auth::user()->email, "BMA SICKBAY'S OFFICE")
             ->subject("MEDICAL RESULT : " . $_applicant->applicant_number)
             ->markdown('widgets.mail.applicant-mail.medical-result-passed')
+            ->with(['data' => $_applicant]);
+    }
+    public function entrance_examination_notificaiton($_applicant)
+    {
+        return $this->from(Auth::user()->email, 'BALIWAG MARITIME ACADEMY, INC.')
+            ->subject("ENTRANCE EXAMINATION NOFICATION : " . $_applicant->applicant_number)
+            ->markdown('widgets.mail.applicant-mail.payment-notification')
             ->with(['data' => $_applicant]);
     }
 }

@@ -691,14 +691,10 @@ class ApplicantController extends Controller
             // return $request;
             $applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
             $tblDocuments = env('DB_DATABASE') . '.documents';
-            $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
             $tblApplicantDocuments = env('DB_DATABASE_SECOND') . '.applicant_documents';
             $tblApplicantNotQualifieds =  env('DB_DATABASE_SECOND') . '.applicant_not_qualifieds';
             $tblApplicantPayment = env('DB_DATABASE_SECOND') . '.applicant_payments';
             $tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
-            $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
-            $tblApplicantMedicalScheduled = env('DB_DATABASE_SECOND') . '.applicant_medical_appointments';
-            $tblApplicantMedicalResult = env('DB_DATABASE_SECOND') . '.applicant_medical_results';
             $dataList = ApplicantAccount::select('applicant_accounts.*')
                 ->where('applicant_accounts.is_removed', false)
                 ->where('applicant_accounts.academic_id', base64_decode($request->_academic))
@@ -717,8 +713,12 @@ class ApplicantController extends Controller
                 ->orderBy($tblApplicantDocuments . '.updated_at', 'desc')
                 ->get();
 
-            // Send an Email
-            return compact('dataList');
+            $applicantMail = new ApplicantEmail();
+            foreach ($dataList as $key => $value) {
+                echo $value->name . '<br>';
+                Mail::to('p.banting@bma.edu.ph')->bcc('email@bma.edu.ph')->send($applicantMail->entrance_examination_notificaiton($value));
+            }
+            //return compact('dataList');
         } catch (\Throwable $th) {
             $this->debugTracker($th);
             return back()->with('error', $th->getMessage());
