@@ -716,7 +716,7 @@ class ApplicantController extends Controller
             $applicantMail = new ApplicantEmail();
             foreach ($dataList as $key => $value) {
                 echo $value->name . '<br>';
-                Mail::to('p.banting@bma.edu.ph')->bcc('email@bma.edu.ph')->send($applicantMail->entrance_examination_notificaiton($value));
+                Mail::to($value->email)->bcc('email@bma.edu.ph')->send($applicantMail->entrance_examination_notificaiton($value));
             }
             //return compact('dataList');
         } catch (\Throwable $th) {
