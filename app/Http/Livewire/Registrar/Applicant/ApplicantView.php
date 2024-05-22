@@ -339,6 +339,8 @@ class ApplicantView extends Component
                         DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND (' . $tblApplicantDocuments . '.is_approved is null or ' . $tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
                         DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) as documentCount')
                     )->havingRaw('applicantDocuments >= documentCount and ApprovedDocuments < documentCount')
+                    ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
+                    ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
                     ->groupBy('applicant_accounts.id')
                     ->orderBy('applicant_accounts.updated_at', 'desc');
                 break;
@@ -518,33 +520,35 @@ class ApplicantView extends Component
     }
     function filter_category($query, $search, $course, $category)
     {
-        if ($course != 'ALL COURSE') {
+        // Course Filtering
+        if ($course !== 'ALL COURSE') {
             $query = $query->where('applicant_accounts.course_id', $course);
         }
+
         // Search Sorting
-        if ($search != '') {
-
-            if ($category == 'created_accounts') {
-                $query->where('name', 'like', '%' . $search . '%')->orWhere('email', 'like', '%' . $search . '%')
-                    ->orderBy('created_at', 'desc');
+        if ($search !== '') {
+            if ($category === 'created_accounts') {
+                return $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                })->orderBy('created_at', 'desc');
             } else {
-                $_student = explode(',', $search); // Seperate the Sentence
-                $_count = count($_student);
                 $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
-                if ($category !== 'total_registrants' && $category !== 'registered_applicants_v1') {
-                    $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id');
-                }
+                $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', '=', 'applicant_accounts.id');
 
-                if ($_count > 1) {
-                    $query->where($tblApplicantDetails . '.last_name', 'like', '%' . $_student[0] . '%')
-                        ->where($tblApplicantDetails . '.first_name', 'like', '%' . trim($_student[1]) . '%')
-                        ->orderBy($tblApplicantDetails . '.last_name', 'asc');
-                } else {
-                    $query->where($tblApplicantDetails . '.last_name', 'like', '%' . $_student[0] . '%')
-                        ->orderBy($tblApplicantDetails . '.last_name', 'asc');
-                }
+                $query = $query->where(function ($query) use ($search, $tblApplicantDetails) {
+                    $query->where($tblApplicantDetails . '.last_name', 'like', '%' . explode(',', $search)[0] . '%');
+                    if (strpos($search, ',') !== false) {
+                        $query->where($tblApplicantDetails . '.first_name', 'like', '%' . trim(explode(',', $search)[1]) . '%');
+                    }
+                });
+
+                return ($category !== 'total_registrants' && $category !== 'registered_applicants_v1') ?
+                    $query->orderBy($tblApplicantDetails . '.last_name', 'asc') :
+                    $query;
             }
         }
+
         return $query;
     }
 }

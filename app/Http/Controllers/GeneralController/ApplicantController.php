@@ -692,7 +692,6 @@ class ApplicantController extends Controller
             $applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
             $tblDocuments = env('DB_DATABASE') . '.documents';
             $tblApplicantDocuments = env('DB_DATABASE_SECOND') . '.applicant_documents';
-            $tblApplicantNotQualifieds =  env('DB_DATABASE_SECOND') . '.applicant_not_qualifieds';
             $tblApplicantPayment = env('DB_DATABASE_SECOND') . '.applicant_payments';
             $tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
             $dataList = ApplicantAccount::select('applicant_accounts.*')
@@ -716,7 +715,7 @@ class ApplicantController extends Controller
             $applicantMail = new ApplicantEmail();
             foreach ($dataList as $key => $value) {
                 echo $value->name . '<br>';
-                Mail::to($value->email)->bcc('email@bma.edu.ph')->send($applicantMail->entrance_examination_notificaiton($value));
+                Mail::to('p.banting@bma.edu.ph')->bcc('email@bma.edu.ph')->send($applicantMail->entrance_examination_notificaiton($value));
             }
             //return compact('dataList');
         } catch (\Throwable $th) {
