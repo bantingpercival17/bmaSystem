@@ -103,6 +103,29 @@
                                                 </div>
                                                 <a href="{{ route('applicant.orientation-attended') }}?applicant={{ $data->id }}"
                                                     class="btn btn-primary btn-sm w-100 mt-2">Present Participant</a>
+                                            @elseif($selectCategories == 'examination_payment')
+                                                <small>EXAMINATION PAYMENT</small> <br>
+                                                @if ($data->payment->is_approved === null)
+                                                    @php
+                                                        $content =
+                                                            'Upload Date: ' .
+                                                            $data->payment->created_at->format('F d,Y');
+                                                    @endphp
+
+                                                    <label class="badge bg-info" role="button" data-bs-toggle="popover"
+                                                        data-trigger="focus"
+                                                        title="Upload Date: {{ $data->payment->created_at->format('F d,Y') }}">
+                                                        FOR VERIFICATION
+                                                    </label>
+                                                @else
+                                                    <label class="badge bg-danger" role="button"
+                                                        data-bs-toggle="popover" data-trigger="focus"
+                                                        title="Upload Date: {{ $data->payment->created_at->format('F d, Y') }}, VERIFICATION DATE: {{ $data->payment->updated_at->format('F d, Y') }}">
+                                                        DISAPPROVED PAYMENT
+                                                    </label>
+                                                    {{--   <label for="" class="badge bg-primary">
+                                                        {{ $data->payment->is_approved }}</label> --}}
+                                                @endif
                                             @else
                                                 <small>APPLICATION DATE</small>
                                                 <div class="badge bg-primary w-100">
