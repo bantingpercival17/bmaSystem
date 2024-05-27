@@ -30,4 +30,8 @@ class ApplicantDocuments extends Model
     {
         return $this->belongsTo(Staff::class, 'staff_id');
     }
+    function documentsV2()
+    {
+        return $this->belongsTo(Documents::class, 'document_id')->where('is_removed', 'false');
+    }
 }

@@ -200,6 +200,10 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     {
         return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false)->where('is_approved', 1);
     }
+    public function documentApprovedV2()
+    {
+        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->with('documentsV2')->where('is_removed', false)->where('is_approved', 1);
+    }
 
     // Define a scope to count required documents
     public function documentRequirements()

@@ -85,11 +85,13 @@ class CourseOfferV2 extends Model
         return $this->applicant_account_v2()
             ->select(
                 'applicant_accounts.*',
-                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND ' . $this->tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' INNER JOIN ' . $this->tblDocuments . ' ON ' . $this->tblDocuments . '.id = ' . $this->tblApplicantDocuments . '.document_id WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND ' . $this->tblApplicantDocuments . '.is_approved = 1 AND ' . $this->tblDocuments . '.is_removed = false) AS ApprovedDocuments'),
                 DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND ' . $this->tblApplicantDocuments . '.is_approved = 2) AS DisapprovedDocuments'),
-                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND (' . $this->tblApplicantDocuments . '.is_approved is null or ' . $this->tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
-                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblDocuments . ' WHERE ' . $this->tblDocuments . '.department_id = 2 AND ' . $this->tblDocuments . '.is_removed = false AND ' . $this->tblDocuments . '.year_level = (SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $this->applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) as documentCount')
-            )->havingRaw('applicantDocuments >= documentCount and ApprovedDocuments <= documentCount and DisapprovedDocuments <= 0');
+                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND (' . $this->tblApplicantDocuments . '.is_approved IS NULL OR ' . $this->tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
+                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblDocuments . ' WHERE ' . $this->tblDocuments . '.department_id = 2 AND ' . $this->tblDocuments . '.is_removed = false AND ' . $this->tblDocuments . '.year_level = (SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $this->applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) AS documentCount')
+            )
+
+            ->havingRaw('applicantDocuments >= documentCount AND documentCount > ApprovedDocuments AND DisapprovedDocuments <= 0');
     }
     function approved()
     {

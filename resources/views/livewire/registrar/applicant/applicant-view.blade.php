@@ -288,7 +288,7 @@
                         <small class="text-primary"><b>COURSE</b></small>
                         <div class="form-group  search-input ">
                             <select wire:model="selectCourse" class="form-select border border-primary"
-                                wire:change="">
+                                wire:change="categoryCourse">
                                 <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
                                 @foreach ($filterCourses as $course)
                                     <option value="{{ $course->id }}">{{ ucwords($course->course_name) }}</option>

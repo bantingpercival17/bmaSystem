@@ -88,6 +88,8 @@ class ApplicantView extends Component
         if (request()->query('_course')) {
             $data = base64_decode(request()->query('_course')) ?: $this->selectCourse;
         }
+        $this->selectCourse  = $data;
+        $this->categoryCourse();
         return $data;
     }
     function getCategories()
@@ -320,174 +322,126 @@ class ApplicantView extends Component
         $dataList = ApplicantAccount::select('applicant_accounts.*')
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_accounts.academic_id', base64_decode($academic));
-
-        switch ($category) {
-            case 'total_registrants':
-                $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
-                    ->orderBy($tblApplicantDetails . '.created_at', 'desc');
-                break;
-            case 'registered_applicants_v1':
-                $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
-                    ->leftJoin($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
-                    ->whereNull($tblApplicantDocuments . '.applicant_id');
-                break;
-            case 'registered_applicants':
-                $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
-                    ->select(
-                        'applicant_accounts.*',
-                        DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
-                        DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 2) AS DisapprovedDocuments'),
-                        DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND (' . $tblApplicantDocuments . '.is_approved is null or ' . $tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
-                        DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) as documentCount')
-                    )->havingRaw('applicantDocuments >= documentCount and ApprovedDocuments <= documentCount and DisapprovedDocuments <= 0')
-                    ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
-                    ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
-                    ->groupBy('applicant_accounts.id')
-                    ->orderBy('applicant_accounts.updated_at', 'desc');
-                break;
-            case 'approved':
-                $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
-                    ->select(
-                        'applicant_accounts.*',
-                        DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
-                        DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $applicantAccountTable . '.id = ' . $tblApplicantDocuments . '.applicant_id)) as documentCount')
-                    )
-                    ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments >= documentCount')
-                    ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
-                    ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
-                    ->leftJoin($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
-                    ->whereNull($tblApplicantAlumia . '.applicant_id')
-                    ->groupBy('applicant_accounts.id')
-                    ->orderBy($tblApplicantDocuments . '.updated_at', 'desc');
-                break;
-            case 'pending':
-                $dataList = $dataList->join($tblApplicantDocuments, 'applicant_documents.applicant_id', '=', 'applicant_accounts.id')
-                    ->where($tblApplicantDocuments . '.is_approved', 2)
-                    ->where($tblApplicantDocuments . '.is_removed', false)
-                    ->groupBy('applicant_accounts.id')
-                    ->orderBy($tblApplicantDocuments . '.updated_at', 'desc');
-                break;
-            case 'disapproved':
-                $dataList =  $dataList->join($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
-                    ->where($tblApplicantNotQualifieds . '.is_removed', false)
-                    ->where($tblApplicantNotQualifieds . '.academic_id', base64_decode($academic))
-                    ->groupBy('applicant_accounts.id')
-                    ->orderBy($tblApplicantNotQualifieds . '.created_at', 'desc');
-                break;
-            case 'senior_high_school_alumni':
-                $dataList = $dataList->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
-                    ->where($tblApplicantAlumia . '.is_removed', false)
-                    ->orderBy('applicant_accounts.created_at', 'desc');
-                break;
-
-            case 'waiting_examination_payment':
-                $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
-                    ->select(
-                        'applicant_accounts.*',
-                        DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
-                        DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $applicantAccountTable . '.id = ' . $tblApplicantDocuments . '.applicant_id)) as documentCount')
-                    )
-                    ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments >= documentCount')
-                    ->leftJoin($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
-                    ->leftJoin($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
-                    ->whereNull($tblApplicantAlumia . '.applicant_id')
-                    ->whereNull($tblApplicantPayment . '.applicant_id')
-                    ->groupBy('applicant_accounts.id')
-                    ->orderBy($tblApplicantDocuments . '.updated_at', 'desc');
-                break;
-            case 'examination_payment';
-                $dataList = $dataList->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
-                    ->where(function ($query) {
-                        $query->whereNull(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved')
-                            ->orWhere(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', false);
-                    })
-                    ->where($tblApplicantPayment . '.is_removed', false)
-                    ->orderBy($tblApplicantPayment . '.updated_at', 'desc');
-                break;
-            case 'entrance_examination';
-                $dataList->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
-                    ->orderBy($tblApplicantExamination . '.created_at', 'desc')
-                    ->whereNull($tblApplicantExamination . '.is_finish');
-                /*  $dataList->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
-                    ->where($tblApplicantExamination . '.is_removed', false)
-                    ->where($tblApplicantExamination . '.is_finish', true)
-                    ->orderBy($tblApplicantExamination . '.created_at', 'desc'); */
-                break;
-            case 'passed';
-                $dataList = $this->examination_result($dataList, '>=')
-                    ->orderBy($tblApplicantExamination . '.updated_at', 'desc');
-                break;
-            case 'failed';
-                $dataList = $this->examination_result($dataList, '<')
-                    ->orderBy($tblApplicantExamination . '.updated_at', 'desc');
-                break;
-            case 'for_medical_schedule':
-                $dataList = $dataList = $this->examination_result($dataList, '>=')/* ->union($this->senior_high_alumia($dataList)) */
-                    ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
-                    ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
-                    ->groupBy('applicant_accounts.id');
-                /*  $dataList = ApplicantAccount::select('applicant_accounts.*')
-                    ->where('applicant_accounts.is_removed', false)
-                    ->where('applicant_accounts.academic_id', base64_decode($academic))
-                    ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
-                    ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
-                    ->where(function ($query) use ($tblApplicantExamination, $tblApplicantAlumia, $operation) {
-                        $query->where(function ($query) use ($tblApplicantExamination, $operation) {
-                            $query->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
-                                ->where($tblApplicantExamination . '.is_removed', false)
-                                ->where($tblApplicantExamination . '.is_finish', true)
-                                ->where(function ($query) use ($operation) {
-                                    $query->select(DB::raw('COUNT(*)'))
-                                        ->from(env('DB_DATABASE_SECOND') . '.applicant_examination_answers')
-                                        ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.choices_id')
-                                        ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
-                                        ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
-                                }, $operation, function ($query) {
-                                    $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 70, 100)'));
-                                });
-                        })->orWhere(function ($query) use ($tblApplicantAlumia) {
-                            $query->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
-                                ->where($tblApplicantAlumia . '.is_removed', false);
-                        });
-                    })
-                    ->orderBy('applicant_accounts.created_at', 'desc')
-                    ->groupBy('applicant_accounts.id'); */
-                break;
-            case 'waiting_for_medical_results':
-                $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
-                    ->where($tblApplicantMedicalScheduled . '.is_removed', false)
-                    ->leftJoin($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
-                    ->whereNull($tblApplicantMedicalResult . '.applicant_id')
-                    ->groupBy('applicant_accounts.id');
-                break;
-            case 'fit':
-                $dataList =  $this->medical_result($dataList, 1);
-                break;
-            case 'unfit':
-                $dataList =   $this->medical_result($dataList, 2);
-                break;
-            case 'pending_result':
-                $dataList->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
-                    ->where($tblApplicantMedicalResult . '.is_removed', false)
-                    ->where($tblApplicantMedicalResult . '.is_pending', 0)
-                    ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc');
-                break;
-            case 'qualified_for_enrollment':
-                $dataList =  $this->medical_result($dataList, 1);
-                break;
-            case 'non_pbm':
-                $dataList =  $this->medical_result($dataList, 1)
-                    ->where('applicant_accounts.strand', '!=', 'Pre-Baccalaureate Maritime Strand');
-                break;
-            case 'pbm':
-                $dataList =  $this->medical_result($dataList, 1)
-                    ->where('applicant_accounts.strand', 'Pre-Baccalaureate Maritime Strand');
-                break;
-            default:
-                $dataList;
-                break;
-        }
         $dataList = $this->filter_category($dataList, $search, $course, $category);
+
+        if ($category == 'total_registrants') {
+            $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->orderBy($tblApplicantDetails . '.created_at', 'desc');
+        } elseif ($category == 'registered_applicants_v1') {
+            $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->leftJoin($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantDocuments . '.applicant_id');
+        } elseif ($category == 'registered_applicants') {
+            $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+
+                ->select(
+                    'applicant_accounts.*',
+                    //DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' INNER JOIN ' . $tblDocuments . ' ON ' . $tblDocuments . '.id = ' . $tblApplicantDocuments . '.document_id WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1 AND ' . $tblDocuments . '.is_removed = false) AS ApprovedDocuments'),
+                    //DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                    DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 2) AS DisapprovedDocuments'),
+                    DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND (' . $tblApplicantDocuments . '.is_approved is null or ' . $tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
+                    DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) as documentCount')
+                )
+                ->withCount('documentApprovedV2')
+                ->havingRaw('applicantDocuments >= documentCount and documentCount > document_approved_v2_count and DisapprovedDocuments <= 0')
+                ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
+                ->groupBy('applicant_accounts.id')
+                ->orderBy('applicant_accounts.updated_at', 'desc');
+        } elseif ($category == 'approved') {
+            $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->select(
+                    'applicant_accounts.*',
+                    DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                    DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $applicantAccountTable . '.id = ' . $tblApplicantDocuments . '.applicant_id)) as documentCount')
+                )
+                ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments >= documentCount')
+                ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
+                ->leftJoin($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantAlumia . '.applicant_id')
+                ->groupBy('applicant_accounts.id')
+                ->orderBy($tblApplicantDocuments . '.updated_at', 'desc');
+        } elseif ($category == 'pending') {
+            $dataList = $dataList->join($tblApplicantDocuments, 'applicant_documents.applicant_id', '=', 'applicant_accounts.id')
+                ->where($tblApplicantDocuments . '.is_approved', 2)
+                ->where($tblApplicantDocuments . '.is_removed', false)
+                ->groupBy('applicant_accounts.id')
+                ->orderBy($tblApplicantDocuments . '.updated_at', 'desc');
+        } elseif ($category == 'disapproved') {
+            $dataList =  $dataList->join($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantNotQualifieds . '.is_removed', false)
+                ->where($tblApplicantNotQualifieds . '.academic_id', base64_decode($academic))
+                ->groupBy('applicant_accounts.id')
+                ->orderBy($tblApplicantNotQualifieds . '.created_at', 'desc');
+        } elseif ($category == 'senior_high_school_alumni') {
+            $dataList = $dataList->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantAlumia . '.is_removed', false)
+                ->orderBy('applicant_accounts.created_at', 'desc');
+        } elseif ($category == 'waiting_examination_payment') {
+            $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->select(
+                    'applicant_accounts.*',
+                    DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                    DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $applicantAccountTable . '.id = ' . $tblApplicantDocuments . '.applicant_id)) as documentCount')
+                )
+                ->havingRaw('COUNT(' . $tblApplicantDocuments . '.applicant_id) >= documentCount and ApprovedDocuments >= documentCount')
+                ->leftJoin($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                ->leftJoin($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantAlumia . '.applicant_id')
+                ->whereNull($tblApplicantPayment . '.applicant_id')
+                ->groupBy('applicant_accounts.id')
+                ->orderBy($tblApplicantDocuments . '.updated_at', 'desc');
+        } elseif ($category == 'examination_payment') {
+            $dataList = $dataList->join($tblApplicantPayment, $tblApplicantPayment . '.applicant_id', 'applicant_accounts.id')
+                ->where(function ($query) {
+                    $query->whereNull(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved')
+                        ->orWhere(env('DB_DATABASE_SECOND') . '.applicant_payments.is_approved', false);
+                })
+                ->where($tblApplicantPayment . '.is_removed', false)
+                ->orderBy($tblApplicantPayment . '.updated_at', 'desc');
+        } elseif ($category == 'entrance_examination') {
+            $dataList->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->orderBy($tblApplicantExamination . '.created_at', 'desc')
+                ->whereNull($tblApplicantExamination . '.is_finish');
+        } elseif ($category == 'passed') {
+            $dataList = $this->examination_result($dataList, '>=')
+                ->orderBy($tblApplicantExamination . '.updated_at', 'desc');
+        } elseif ($category == 'failed') {
+            $dataList = $this->examination_result($dataList, '<')
+                ->orderBy($tblApplicantExamination . '.updated_at', 'desc');
+        } elseif ($category == 'for_medical_schedule') {
+            $dataList = $dataList = $this->examination_result($dataList, '>=')/* ->union($this->senior_high_alumia($dataList)) */
+                ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                ->groupBy('applicant_accounts.id');
+        } elseif ($category == 'waiting_for_medical_results') {
+            $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantMedicalScheduled . '.is_removed', false)
+                ->leftJoin($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalResult . '.applicant_id')
+                ->groupBy('applicant_accounts.id');
+        } elseif ($category == 'fit') {
+            $dataList =  $this->medical_result($dataList, 1);
+        } elseif ($category == 'unfit') {
+            $dataList =   $this->medical_result($dataList, 2);
+        } elseif ($category == 'pending_result') {
+            $dataList->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantMedicalResult . '.is_removed', false)
+                ->where($tblApplicantMedicalResult . '.is_pending', 0)
+                ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc');
+        } elseif ($category == 'qualified_for_enrollment') {
+            $dataList =  $this->medical_result($dataList, 1);
+        } elseif ($category == 'non_pbm') {
+            $dataList =  $this->medical_result($dataList, 1)
+                ->where('applicant_accounts.strand', '!=', 'Pre-Baccalaureate Maritime Strand');
+        } elseif ($category ==  'pbm') {
+            $dataList =  $this->medical_result($dataList, 1)
+                ->where('applicant_accounts.strand', 'Pre-Baccalaureate Maritime Strand');
+        } else {
+            $dataList;
+        }
+
         return $dataList->get();
     }
     function senior_high_alumia($data)
