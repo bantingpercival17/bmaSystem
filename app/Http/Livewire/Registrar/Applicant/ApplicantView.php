@@ -322,7 +322,7 @@ class ApplicantView extends Component
         $dataList = ApplicantAccount::select('applicant_accounts.*')
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_accounts.academic_id', base64_decode($academic));
-        $dataList = $this->filter_category($dataList, $search, $course, $category);
+
 
         if ($category == 'total_registrants') {
             $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
@@ -441,7 +441,7 @@ class ApplicantView extends Component
         } else {
             $dataList;
         }
-
+        $dataList = $this->filter_category($dataList, $search, $course, $category);
         return $dataList->get();
     }
     function senior_high_alumia($data)
