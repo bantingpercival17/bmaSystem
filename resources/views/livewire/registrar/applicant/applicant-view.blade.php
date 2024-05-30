@@ -328,7 +328,8 @@
 @section('script')
     <script>
         function notification_v2(data) {
-            const dates = getDates();
+            //const dates = getDates();
+            const dates = '2024-05-31'
             const link = "{{ route('applicant.orientation-scheduled-v2') }}";
             data.forEach(async (element) => {
                 const data = {
@@ -359,48 +360,7 @@
                 }
             });
         }
-        /* function notification(data) {
 
-            const dates = getDates();
-            const csrfToken = "{{ csrf_field() }}";
-            const link = "{{ route('applicant.orientation-scheduled') }}";
-
-
-            data.map(async (element) => {
-                const payload = {
-                    applicant: encodeToBase64(element.id),
-                    date: dates,
-                    time: '10:00',
-                    category: 'in-person'
-                };
-
-                try {
-                    const response = await fetch(link, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
-                        },
-                        body: JSON.stringify(payload),
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`Network response was not ok: ${response.statusText}`);
-                    }
-
-                    const responseData = await response.json();
-                    alert('Success: ' + JSON.stringify(responseData));
-                } catch (error) {
-                    console.error('There was a problem with the fetch operation:', error);
-                    alert('Error: ' + error.message);
-                }
-            });
-
-            // Wait for all fetch calls to complete
-            //await Promise.all(promises);
-            console.log(csrfToken);
-            console.log(link);
-        } */
 
         function encodeToBase64(str) {
             return btoa(str);
