@@ -106,6 +106,14 @@ class Staff extends Model
     {
         return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'desc')->first();
     }
+    function daily_time_am($date)
+    {
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'asc')->first();
+    }
+    function daily_time_pm($date)
+    {
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'desc')->first();
+    }
     function compute_late_per_day($arrivalTime)
     {
         // Scheduled arrival time
@@ -138,6 +146,10 @@ class Staff extends Model
     public function date_attendance($date)
     {
         return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'desc')->first();
+    }
+    public function date_attendance_list($date)
+    {
+        return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'desc');
     }
     public function current_academic()
     {
@@ -251,7 +263,7 @@ class Staff extends Model
                 'role_id' => 1,
                 'role_name' => 'Administrator',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Applicants', 'applicant.overview'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Program of Studies', 'regsitrar.course-curriculum-subject'], ['Teaching Loads', 'registrar.course-subject-view-v2'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination'],['App Deployment', 'admin.mobile-application-deployment'], ['Revision Task', 'admin.request-task']],
+                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Applicants', 'applicant.overview'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Program of Studies', 'regsitrar.course-curriculum-subject'], ['Teaching Loads', 'registrar.course-subject-view-v2'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination'], ['App Deployment', 'admin.mobile-application-deployment'], ['Revision Task', 'admin.request-task']],
             ],
             [
                 'role_id' => 2,
@@ -301,7 +313,7 @@ class Staff extends Model
                 'role_id' => 9,
                 'role_name' => 'Department Head',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Grade Submission', 'department-head.grade-submission-v2'], ['E-Clearance', 'department-head.e-clearance'],['Comprehensive','department-head.compre-view']],
+                'role_routes' => [['Grade Submission', 'department-head.grade-submission-v2'], ['E-Clearance', 'department-head.e-clearance'], ['Comprehensive', 'department-head.compre-view']],
             ],
             [
                 'role_id' => 10,

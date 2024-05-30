@@ -965,7 +965,6 @@ class AccountingController extends Controller
                         'amount' => $value->payment_amount
                     );
                 } else {
-
                 }
             }
             $remarks = $this->arrayToSentence($temp);
@@ -1124,6 +1123,7 @@ class AccountingController extends Controller
             return $_report_pdf;
         } catch (\Throwable $th) {
             //throw $th;
+            return $th->getMessage();
         }
     }
     public function employee_attendace_report_v2(Request $request)

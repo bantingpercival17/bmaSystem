@@ -40,7 +40,14 @@
                 @endphp
                 <thead>
                     <tr>
-                        <th>DATE</th>
+                        <th rowspan="2">DATE</th>
+                        <th colspan="2">AM</th>
+                        <th colspan="2">PM</th>
+                        <th colspan="2">LATE / UNDER-TIME</th>
+                    </tr>
+                    <tr>
+                        <th>TIME-IN</th>
+                        <th>TIME-OUT</th>
                         <th>TIME-IN</th>
                         <th>TIME-OUT</th>
                         <th>TARDINES</th>
@@ -51,27 +58,75 @@
                     @foreach ($dateList as $date)
                         @php
                             $contentNumber += 1;
-                            $time_in = $employee->daily_time_in($date);
-                            $time_out = $employee->daily_time_out($date);
-                            $timeInDisplay = $time_in ? date_format(date_create($time_in->time_in), 'h:i:s a') : '-';
-                            $timeOutDisplay = $time_out ? ($time_out->time_out ? date_format(date_create($time_out->time_out), 'h:i:s a') : 'NO TIME OUT') : '-';
-                            $late = $timeInDisplay != '-' ? $employee->compute_late_per_day(date_format(date_create($time_in->time_in), 'H:i:s')) : '-';
-                            $tardines = $timeOutDisplay != '-' ? ($time_out->time_out ? $employee->compute_tardines_per_day(date_format(date_create($time_out->time_out), 'H:i:s')) : 'NO TIME OUT') : '-';
+                            $am_time = $employee->daily_time_am($date);
+                            $pm_time = $employee->daily_time_pm($date);
+                            //$time_in_am = date_format(date_create($am_time->time_in), 'h:i:s a');
+                            $time_in_am = $am_time
+                                ? ($am_time->time_in
+                                    ? date_format(date_create($am_time->time_in), 'h:i:s a')
+                                    : '-')
+                                : '-';
+
+                            $time_out_am = $am_time
+                                ? ($am_time->time_out
+                                    ? date_format(date_create($am_time->time_out), 'h:i:s a')
+                                    : '-')
+                                : '-';
+
+                            $time_in_pm = $pm_time
+                                ? ($pm_time->time_in
+                                    ? date_format(date_create($pm_time->time_in), 'h:i:s a')
+                                    : '-')
+                                : '-';
+
+                            $time_out_pm = $pm_time
+                                ? ($pm_time->time_out
+                                    ? date_format(date_create($pm_time->time_out), 'h:i:s a')
+                                    : '-')
+                                : '-';
+
+                            $late =
+                                $time_in_am != '-'
+                                    ? $employee->compute_late_per_day(
+                                        date_format(date_create($am_time->time_in), 'H:i:s'),
+                                    )
+                                    : '-';
+                            $tardines =
+                                $time_out_pm != '-'
+                                    ? ($pm_time->time_out
+                                        ? $employee->compute_tardines_per_day(
+                                            date_format(date_create($pm_time->time_out), 'H:i:s'),
+                                        )
+                                        : 'NO TIME OUT')
+                                    : '-';
 
                         @endphp
                         <tr class="{{ $contentNumber >= $contentCount ? 'page-break' : '' }}">
                             <td>{{ date('F d, Y', strtotime($date)) }}</td>
                             <td>
-                                {{ $timeInDisplay }}
+                                {{ $time_in_am }}
                             </td>
                             <td>
-                                {{ $timeOutDisplay }}
+                                {{ $time_out_am }}
                             </td>
+                            @if (count($employee->date_attendance_list($date)->get()) > 1)
+                                <td>
+                                    {{ $time_in_pm }}
+                                </td>
+                                <td>
+                                    {{ $time_out_pm }}
+                                </td>
+                            @else
+                                <td></td>
+                                <td></td>
+                            @endif
+
                             <td>
                                 {{ $late }}
                             </td>
                             <td>
                                 {{ $tardines }}
+                                {{--  {{ count($employee->date_attendance_list($date)->get()) }} --}}
                             </td>
                         </tr>
                         @if ($contentNumber >= $contentCount)
