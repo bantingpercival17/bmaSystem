@@ -37,6 +37,8 @@
                 @php
                     $contentNumber = 0;
                     $contentCount = 45;
+                    $totalLate = 0;
+                    $totalUnderTime = 0;
                 @endphp
                 <thead>
                     <tr>
@@ -100,6 +102,12 @@
                                         : 'NO TIME OUT')
                                     : '-';
 
+                            if ($late != '-') {
+                                $totalLate = $totalLate + $late;
+                            }
+                            if ($tardines != '-') {
+                                $totalUnderTime = $totalUnderTime + $tardines;
+                            }
                         @endphp
                         <tr class="{{ $contentNumber >= $contentCount ? 'page-break' : '' }}">
                             <td>{{ date('F d, Y', strtotime($date)) }}</td>
@@ -126,7 +134,6 @@
                             </td>
                             <td>
                                 {{ $tardines }}
-                                {{--  {{ count($employee->date_attendance_list($date)->get()) }} --}}
                             </td>
                         </tr>
                         @if ($contentNumber >= $contentCount)
@@ -135,8 +142,17 @@
                             @endphp
                         @endif
                     @endforeach
-
+                <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            TOTAL LATE / UNDER-TIME
+                        </td>
+                        <td>{{ $totalLate }}</td>
+                        <td>{{ $totalUnderTime }}</td>
+                    </tr>
+                </tfoot>
                 </tbody>
+
             </table>
             <div class="page-break"></div>
         @endforeach
