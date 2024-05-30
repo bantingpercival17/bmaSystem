@@ -7,6 +7,7 @@
         <p class="display-6 fw-bolder text-primary">{{ $pageTitle }}</p>
         <div class="row">
             <div class="col-lg-8">
+
                 <div class="filter-section m-0 p-0">
                     <small class="fw-bolder text-muted">FILTER DETAILS:</small>
                     <div class="row">
@@ -123,7 +124,7 @@
                                                         title="Upload Date: {{ $data->payment->created_at->format('F d, Y') }}, VERIFICATION DATE: {{ $data->payment->updated_at->format('F d, Y') }}">
                                                         DISAPPROVED PAYMENT
                                                     </label>
-                                                    {{--   <label for="" class="badge bg-primary">
+                                                    {{-- <label for="" class="badge bg-primary">
                                                         {{ $data->payment->is_approved }}</label> --}}
                                                 @endif
                                             @else
@@ -260,16 +261,16 @@
                 <p class="h4 text-info fw-bolder">FILTER SELECTION {{ $academic }}</p>
 
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-md-12">
                         <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
-                        <div class="form-group search-input">
+                        <div class="form-group">
                             <input type="search" class="form-control border border-primary"
                                 placeholder="Search Pattern: Lastname, Firstname" wire:model="searchInput">
                         </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-md-12">
                         <small class="text-primary"><b>CATEGORY</b></small>
-                        <div class="form-group search-input">
+                        <div class="form-group">
                             <select class="form-select border border-primary" wire:model="selectCategories"
                                 wire:change="">
                                 @foreach ($filterContent as $item)
@@ -284,9 +285,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-md-12">
                         <small class="text-primary"><b>COURSE</b></small>
-                        <div class="form-group  search-input ">
+                        <div class="form-group  ">
                             <select wire:model="selectCourse" class="form-select border border-primary"
                                 wire:change="categoryCourse">
                                 <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
@@ -297,19 +298,139 @@
                         </div>
                     </div>
                     @if ($selectCategories == 'waiting_examination_payment')
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <small class="text-primary"><b>EMAIL NOTIFICATION</b></small>
                             <a href="{{ route('applicant.entrance-examination') . '?_academic=' . $academic }}{{ $selectCourse ? '&_course=' . base64_encode($selectCourse) : '' }}"
                                 class="btn btn-primary btn-sm w-100">SEND NOTIFICATION</a>
                         </div>
                     @endif
+                    @if ($selectCategories == 'for_medical_schedule')
+                        <div class="col-md-12">
+                            <small class="text-primary"><b>MEDICAL ORIENTATION NOTIFICATION</b></small>
+                            <button class="btn btn-primary btn-sm w-100 btn-notification"
+                                onclick="notificationV2({{ $dataLists }})">SEND NOTIFICATION</button>
+                        </div>
+                    @endif
                 </div>
+                @if (Auth::user()->email === 'p.banting@bma.edu.ph')
+                    <div class="debug">
+                        {{ json_encode($filterData) }}
+                    </div>
+                @endif
+
             </div>
         </div>
 
     </div>
 </div>
 </div>
+@section('script')
+    <script>
+        function notificationV2(data) {
+            const dates = getDates();
+            const link = "{{ route('applicant.orientation-scheduled') }}";
+            console.log(link)
+        }
+
+        function notification(data) {
+            const dates = getDates();
+            const link = "{{ route('applicant.orientation-scheduled') }}";
+            data.forEach(element => {
+                const data = {
+                    applicant: encodeToBase64(element.id),
+                    date: dates,
+                    time: '10:00',
+                    category: 'in-person'
+                }
+                try {
+                    const response = await fetch(link, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const responseData = await response.json();
+                    alert('Success: ' + JSON.stringify(responseData));
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                    alert('Error: ' + error.message);
+                }
+            });
+
+            console.log(link)
+            // Date and Time
+        }
+
+        /* function notification(data) {
+
+            const dates = getDates();
+            const csrfToken = "{{ csrf_field() }}";
+            const link = "{{ route('applicant.orientation-scheduled') }}";
+
+
+            data.map(async (element) => {
+                const payload = {
+                    applicant: encodeToBase64(element.id),
+                    date: dates,
+                    time: '10:00',
+                    category: 'in-person'
+                };
+
+                try {
+                    const response = await fetch(link, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify(payload),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+
+                    const responseData = await response.json();
+                    alert('Success: ' + JSON.stringify(responseData));
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                    alert('Error: ' + error.message);
+                }
+            });
+
+            // Wait for all fetch calls to complete
+            //await Promise.all(promises);
+            console.log(csrfToken);
+            console.log(link);
+        } */
+
+        function encodeToBase64(str) {
+            return btoa(str);
+        }
+
+        function getDates() {
+            // Get the current date
+            const currentDate = new Date();
+
+            // Add 2 days
+            currentDate.setDate(currentDate.getDate() + 2);
+
+            // Format the date as YYYY-MM-DD
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+            const day = String(currentDate.getDate()).padStart(2, '0');
+
+            const formattedDate = `${year}-${month}-${day}`;
+            return formattedDate
+        }
+    </script>
+@endsection
 @push('scripts')
     <script src="{{ asset('assets\plugins\sweetalert2\sweetalert2.all.min.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('assets\plugins\sweetalert2\sweetalert2.min.css') }}">

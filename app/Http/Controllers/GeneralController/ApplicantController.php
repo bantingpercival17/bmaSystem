@@ -580,8 +580,8 @@ class ApplicantController extends Controller
             ]);
             $mail = new ApplicantEmail();
             $applicant = ApplicantAccount::find(base64_decode($request->applicant));
-            Mail::to($applicant->email)->bcc('registrar@bma.edu.ph')->send($mail->orientation_schedule($applicant));
-            // Mail::to('k.j.cruz@bma.edu.ph')->bcc('p.banting@bma.edu.ph')->send($mail->orientation_schedule($applicant));
+            //Mail::to($applicant->email)->bcc('registrar@bma.edu.ph')->send($mail->orientation_schedule($applicant));
+            Mail::to('banting.percival17@gmail.com')->bcc('p.banting@bma.edu.ph')->send($mail->orientation_schedule($applicant));
             return back()->with('success', 'Successfully Scheduled');
         } catch (Exception $err) {
             $this->debugTracker($err);
@@ -714,10 +714,8 @@ class ApplicantController extends Controller
 
             $applicantMail = new ApplicantEmail();
             foreach ($dataList as $key => $value) {
-                echo $value->name . '<br>';
-                Mail::to('p.banting@bma.edu.ph')->bcc('email@bma.edu.ph')->send($applicantMail->entrance_examination_notificaiton($value));
+                Mail::to($value->email)->bcc('email@bma.edu.ph')->send($applicantMail->entrance_examination_notificaiton($value));
             }
-            //return compact('dataList');
         } catch (\Throwable $th) {
             $this->debugTracker($th);
             return back()->with('error', $th->getMessage());

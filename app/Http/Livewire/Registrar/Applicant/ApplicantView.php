@@ -51,7 +51,8 @@ class ApplicantView extends Component
         $this->selectCourse = $this->getCourse();
         $this->selectCategories = $this->getCategories();
         $dataLists = $this->dataFilter($this->searchInput, $this->selectCourse, $this->selectCategories, $this->academic);
-        return view('livewire.registrar.applicant.applicant-view', compact('filterContent', 'filterCourses', 'dataLists'));
+        $filterData = [$this->searchInput, $this->selectCourse, $this->selectCategories, $this->academic];
+        return view('livewire.registrar.applicant.applicant-view', compact('filterContent', 'filterCourses', 'dataLists', 'filterData'));
     }
     function filterContent()
     {
@@ -74,11 +75,14 @@ class ApplicantView extends Component
     {
         if (request()->query('_academic')) {
             return request()->query('_academic');
-        }
-        if (empty($this->academic)) {
-            $activeAcademic = AcademicYear::where('is_active', 1)->first();
-            if ($activeAcademic) {
-                return base64_encode($activeAcademic->id);
+        } else {
+            if ($this->academic === null) {
+                $activeAcademic = AcademicYear::where('is_active', 1)->first();
+                if ($activeAcademic) {
+                    return base64_encode($activeAcademic->id);
+                }
+            } else {
+                return $this->academic;
             }
         }
     }
@@ -309,6 +313,7 @@ class ApplicantView extends Component
     }
     function dataFilter($search, $course, $category, $academic)
     {
+        $dataList = [];
         $applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
         $tblDocuments = env('DB_DATABASE') . '.documents';
         $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
@@ -322,15 +327,20 @@ class ApplicantView extends Component
         $dataList = ApplicantAccount::select('applicant_accounts.*')
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_accounts.academic_id', base64_decode($academic));
-
-
-        if ($category == 'total_registrants') {
-            $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
-                ->orderBy($tblApplicantDetails . '.created_at', 'desc');
-        } elseif ($category == 'registered_applicants_v1') {
+        // Course Filtering
+        if ($course !== 'ALL COURSE') {
+            $dataList = $dataList->where('applicant_accounts.course_id', $course);
+        }
+        if ($category === 'created_accounts') {
+            $dataList = $dataList->leftJoin($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantDetails . '.applicant_id');
+        } else if ($category === 'registered_applicants_v1') {
             $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->leftJoin($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantDocuments . '.applicant_id');
+        } elseif ($category == 'total_registrants') {
+            $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
+                ->orderBy($tblApplicantDetails . '.created_at', 'desc');
         } elseif ($category == 'registered_applicants') {
             $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
 
@@ -441,6 +451,7 @@ class ApplicantView extends Component
         } else {
             $dataList;
         }
+
         $dataList = $this->filter_category($dataList, $search, $course, $category);
         return $dataList->get();
     }
@@ -477,10 +488,7 @@ class ApplicantView extends Component
     }
     function filter_category($query, $search, $course, $category)
     {
-        // Course Filtering
-        if ($course !== 'ALL COURSE') {
-            $query = $query->where('applicant_accounts.course_id', $course);
-        }
+
 
         // Search Sorting
         if ($search !== '') {
@@ -491,7 +499,10 @@ class ApplicantView extends Component
                 })->orderBy('created_at', 'desc');
             } else {
                 $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
-                $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', '=', 'applicant_accounts.id');
+                if (($category !== 'total_registrants' && $category !== 'registered_applicants_v1')) {
+                    $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', '=', 'applicant_accounts.id');
+                }
+
 
                 $query = $query->where(function ($query) use ($search, $tblApplicantDetails) {
                     $query->where($tblApplicantDetails . '.last_name', 'like', '%' . explode(',', $search)[0] . '%');
