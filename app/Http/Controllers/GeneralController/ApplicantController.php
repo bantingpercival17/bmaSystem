@@ -580,8 +580,8 @@ class ApplicantController extends Controller
             ]);
             $mail = new ApplicantEmail();
             $applicant = ApplicantAccount::find(base64_decode($request->applicant));
-            //Mail::to($applicant->email)->bcc('registrar@bma.edu.ph')->send($mail->orientation_schedule($applicant));
-            Mail::to('banting.percival17@gmail.com')->bcc('p.banting@bma.edu.ph')->send($mail->orientation_schedule($applicant));
+            Mail::to($applicant->email)->bcc('registrar@bma.edu.ph')->send($mail->orientation_schedule($applicant));
+            //Mail::to('banting.percival17@gmail.com')->bcc('p.banting@bma.edu.ph')->send($mail->orientation_schedule($applicant));
             return back()->with('success', 'Successfully Scheduled');
         } catch (Exception $err) {
             $this->debugTracker($err);
