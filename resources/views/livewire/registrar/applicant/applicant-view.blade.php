@@ -307,8 +307,9 @@
                     @if ($selectCategories == 'for_medical_schedule')
                         <div class="col-md-12">
                             <small class="text-primary"><b>MEDICAL ORIENTATION NOTIFICATION</b></small>
-                            <button class="btn btn-primary btn-sm w-100 btn-notification"
-                                onclick="notificationV2({{ $dataLists }})">SEND NOTIFICATION</button>
+                            <button onclick="notification_v2({{ $dataLists }})"
+                                class="btn btn-primary btn-sm w-100 btn-notification">SEND
+                                NOTIFICATION</button>
                         </div>
                     @endif
                 </div>
@@ -326,16 +327,10 @@
 </div>
 @section('script')
     <script>
-        function notificationV2(data) {
+        function notification_v2(data) {
             const dates = getDates();
-            const link = "{{ route('applicant.orientation-scheduled') }}";
-            console.log(link)
-        }
-
-        function notification(data) {
-            const dates = getDates();
-            const link = "{{ route('applicant.orientation-scheduled') }}";
-            data.forEach(element => {
+            const link = "{{ route('applicant.orientation-scheduled-v2') }}";
+            data.forEach(async (element) => {
                 const data = {
                     applicant: encodeToBase64(element.id),
                     date: dates,
@@ -343,30 +338,27 @@
                     category: 'in-person'
                 }
                 try {
-                    const response = await fetch(link, {
-                        method: 'POST',
+                    const queryString = new URLSearchParams(data).toString();
+                    const urlWithParams = `${link}?${queryString}`;
+                    const response = await fetch(urlWithParams, {
+                        method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(data),
                     });
 
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new console.log('Network response was not ok');
                     }
 
                     const responseData = await response.json();
-                    alert('Success: ' + JSON.stringify(responseData));
+                    alert('Successful Sent to  ' + data.name);
                 } catch (error) {
                     console.error('There was a problem with the fetch operation:', error);
-                    alert('Error: ' + error.message);
+                    console.log('Error: ' + error.message);
                 }
             });
-
-            console.log(link)
-            // Date and Time
         }
-
         /* function notification(data) {
 
             const dates = getDates();

@@ -721,4 +721,40 @@ class ApplicantController extends Controller
             return back()->with('error', $th->getMessage());
         }
     }
+    public function applicant_orientation_schedule_v2(Request $request)
+    {
+        $request->validate([
+            'date' => 'required',
+            'time' => 'required',
+            'category' => 'required'
+        ]);
+        try {
+            $applicant = ApplicantBriefing::where('applicant_id', base64_decode($request->applicant))->get();
+            if (count($applicant) > 0) {
+                ApplicantBriefing::where('applicant_id', base64_decode($request->applicant))->update(['is_removed' => true]);
+            }
+            ApplicantBriefing::create([
+                'applicant_id'  => base64_decode($request->applicant),
+                'is_completed' => false,
+                'is_removed' => false
+            ]);
+            ApplicantBriefingSchedule::create([
+                'applicant_id' => base64_decode($request->applicant),
+                'schedule_date' => $request->date,
+                'schedule_time' => $request->time,
+                'category' => $request->category,
+                'staff_id' => 7
+            ]);
+            $mail = new ApplicantEmail();
+            $applicant = ApplicantAccount::find(base64_decode($request->applicant));
+            Mail::to($applicant->email)->bcc('email@bma.edu.ph')->send($mail->orientation_schedule($applicant));
+            //Mail::to('banting.percival17@gmail.com')->bcc('p.banting@bma.edu.ph')->send($mail->orientation_schedule($applicant));
+            return response(['data' => 'Success'], 200);
+        } catch (Exception $err) {
+            $this->debugTracker($err);
+            return response([
+                'message' => $err->getMessage()
+            ], 500);
+        }
+    }
 }
