@@ -300,8 +300,11 @@
                     @if ($selectCategories == 'waiting_examination_payment')
                         <div class="col-md-12">
                             <small class="text-primary"><b>EMAIL NOTIFICATION</b></small>
-                            <a href="{{ route('applicant.entrance-examination') . '?_academic=' . $academic }}{{ $selectCourse ? '&_course=' . base64_encode($selectCourse) : '' }}"
-                                class="btn btn-primary btn-sm w-100">SEND NOTIFICATION</a>
+                            {{--    <a href="{{ route('applicant.entrance-examination') . '?_academic=' . $academic }}{{ $selectCourse ? '&_course=' . base64_encode($selectCourse) : '' }}"
+                                class="btn btn-primary btn-sm w-100">SEND NOTIFICATION</a> --}}
+                            <button onclick="payment_notification({{ $dataLists }})"
+                                class="btn btn-primary btn-sm w-100 btn-notification">SEND
+                                NOTIFICATION</button>
                         </div>
                     @endif
                     @if ($selectCategories == 'for_medical_schedule')
@@ -327,6 +330,36 @@
 </div>
 @section('script')
     <script>
+        function payment_notification(data) {
+            const link = "{{ route('applicant.entrance-examination-v2') }}";
+            data.forEach(async (element) => {
+                const data = {
+                    applicant: encodeToBase64(element.id),
+                }
+                try {
+                    const queryString = new URLSearchParams(data).toString();
+                    const urlWithParams = `${link}?${queryString}`;
+                    console.log(urlWithParams)
+                    const response = await fetch(urlWithParams, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new console.log('Network response was not ok');
+                    }
+
+                    const responseData = await response.json();
+                    console.log('Successful Sent to  ' + element.name);
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                    console.log('Error: ' + error.message);
+                }
+            })
+        }
+
         function notification_v2(data) {
             //const dates = getDates();
             const dates = '2024-05-31'
@@ -353,7 +386,7 @@
                     }
 
                     const responseData = await response.json();
-                    alert('Successful Sent to  ' + data.name);
+                    console.log('Successful Sent to  ' + element.name);
                 } catch (error) {
                     console.error('There was a problem with the fetch operation:', error);
                     console.log('Error: ' + error.message);

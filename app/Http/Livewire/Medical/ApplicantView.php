@@ -121,15 +121,15 @@ class ApplicantView extends Component
                     ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
                     ->whereColumn($this->tblApplicantExaminationAnswer . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
             }, '>=', function ($query) {
-                $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 20, 100)'));
+                $query->select(DB::raw('IF(applicant_accounts.course_id = 3,70, 100)'));
             })
             ->groupBy('applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false);
-        $query2 = ApplicantAccount::select('applicant_accounts.*')
+        /* $query2 = ApplicantAccount::select('applicant_accounts.*')
             ->join('bma_website.applicant_alumnias', 'bma_website.applicant_alumnias.applicant_id', '=', 'applicant_accounts.id')
             ->where('applicant_accounts.academic_id', base64_decode($this->academic))
             ->where('applicant_accounts.is_removed', 0);
-        $query = $query->union($query2);
+        $query = $query->union($query2); */
         // Sort By Courses
         if ($this->selectCourse != 'ALL COURSE') {
             $query = $query->where('applicant_accounts.course_id', $this->selectCourse);

@@ -757,4 +757,20 @@ class ApplicantController extends Controller
             ], 500);
         }
     }
+    function notification_entrance_examination_v2(Request $request)
+    {
+        try {
+            //return $request;
+            $applicantMail = new ApplicantEmail();
+            $applicant = ApplicantAccount::find(base64_decode($request->applicant));
+            Mail::to($applicant->email)->bcc('email@bma.edu.ph')->send($applicantMail->entrance_examination_notificaiton($applicant));
+            //Mail::to('banting.percival17@gmail.com')->bcc('email@bma.edu.ph')->send($applicantMail->entrance_examination_notificaiton($applicant));
+            return response(['data' => 'Success'], 200);
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return response([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
 }
