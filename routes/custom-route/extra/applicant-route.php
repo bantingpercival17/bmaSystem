@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/applicants/summary-report', [ApplicantController::class, 'applicant_summary_reports'])->name('applicants.summary-reports');
     Route::get('/applicants/analytics', [ApplicantController::class, 'applicant_analytics'])->name('applicant.analytics');
     Route::get('/applicant/notification/entrance-examination', [ApplicantController::class, 'notification_entrance_examination'])->name('applicant.entrance-examination');
+    Route::get('/applicant/entrance-examination-result', [ApplicantController::class, 'entrance_examination_result'])->name('applicant.entrance-examination-result');
 });
 Route::get('/applicant/orientation-scheduled-v2', [ApplicantController::class, 'applicant_orientation_schedule_v2'])->name('applicant.orientation-scheduled-v2');
 Route::get('/applicant/notification/entrance-examination-v2', [ApplicantController::class, 'notification_entrance_examination_v2'])->name('applicant.entrance-examination-v2');

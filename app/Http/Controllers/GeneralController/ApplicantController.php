@@ -773,4 +773,16 @@ class ApplicantController extends Controller
             ], 500);
         }
     }
+    function entrance_examination_result()
+    {
+        $applicants = ApplicantAccount::join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', env('DB_DATABASE') . ".applicant_accounts.id")
+            ->groupBy(env('DB_DATABASE') . '.applicant_accounts.id')
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish', true)
+            ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            ->where(env('DB_DATABASE') . '.applicant_accounts.is_removed', false)
+            ->where(env('DB_DATABASE') . '.applicant_accounts.academic_id', 10)
+            ->get();
+
+        return count($applicants);
+    }
 }
