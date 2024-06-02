@@ -64,7 +64,7 @@ class ApplicantView extends Component
         $selectContent = array(
             array('shs Alumia For Medical Schedule', 'shs_alumia_for_medical_schedule'),
             array('for medical Schedule', 'waiting_for_scheduled'),
-            array('scheduled', 'medical_scheduled'),
+            //array('scheduled', 'medical_scheduled'),
             array('waiting for Medical result', 'waiting_for_medical_result'),
             array('passed', 'medical_result_passed'),
             array('pending', 'medical_result_pending'),
@@ -83,7 +83,7 @@ class ApplicantView extends Component
         } else {
             $this->filtered();
         } */
-        $this->applicants = $this->filter_data($this->selecteCategories, $this->academic, $this->selectCourse);
+        $this->applicants = $this->filter_data($this->selecteCategories, $this->academic, $this->selectCourse, $this->searchInput);
         return view('livewire.medical.applicant-view', compact('courseDashboard', 'selectContent', 'dates', 'courses'));
     }
 
@@ -119,7 +119,40 @@ class ApplicantView extends Component
         }
         $this->selectedCourse = strtoupper($course);
     }
-    function filter_data($category, $academic, $course)
+    function filter_category($query, $search, $category)
+    {
+
+
+        // Search Sorting
+        if ($search !== '') {
+            if ($category === 'created_accounts') {
+                return $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%');
+                })->orderBy('created_at', 'desc');
+            } else {
+                $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
+                if (($category !== 'total_registrants' && $category !== 'registered_applicants_v1')) {
+                    $query = $query->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', '=', 'applicant_accounts.id');
+                }
+
+
+                $query = $query->where(function ($query) use ($search, $tblApplicantDetails) {
+                    $query->where($tblApplicantDetails . '.last_name', 'like', '%' . explode(',', $search)[0] . '%');
+                    if (strpos($search, ',') !== false) {
+                        $query->where($tblApplicantDetails . '.first_name', 'like', '%' . trim(explode(',', $search)[1]) . '%');
+                    }
+                });
+
+                return ($category !== 'total_registrants' && $category !== 'registered_applicants_v1') ?
+                    $query->orderBy($tblApplicantDetails . '.last_name', 'asc') :
+                    $query;
+            }
+        }
+
+        return $query;
+    }
+    function filter_data($category, $academic, $course, $search)
     {
         $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
         $tblApplicantExaminationResult = env('DB_DATABASE_SECOND') . '.applicant_entrance_examination_results';
@@ -156,9 +189,43 @@ class ApplicantView extends Component
                 ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
                 ->groupBy('applicant_accounts.id');
+        } elseif ($category == 'waiting_for_medical_result') {
+            $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantMedicalScheduled . '.is_removed', false)
+                ->leftJoin($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalResult . '.applicant_id')
+                ->groupBy('applicant_accounts.id');
+        } elseif ($category == 'medical_result_passed' || $category == 'medical_result_pending' || $category == 'medical_result_failed') {
+            if ($category == 'medical_result_passed') {
+                $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalScheduled . '.is_removed', false)
+                    ->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalResult . '.is_fit', 1)
+                    ->where($tblApplicantMedicalResult . '.is_removed', false)
+                    ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
+                    ->groupBy('applicant_accounts.id');
+            } elseif ($category == 'medical_result_pending') {
+                $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalScheduled . '.is_removed', false)
+                    ->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalResult . '.is_pending', false)
+                    ->where($tblApplicantMedicalResult . '.is_removed', false)
+                    ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
+                    ->groupBy('applicant_accounts.id');
+            } elseif ($category == 'medical_result_failed') {
+                $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalScheduled . '.is_removed', false)
+                    ->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalResult . '.is_fit', 2)
+                    ->where($tblApplicantMedicalResult . '.is_removed', false)
+                    ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
+                    ->groupBy('applicant_accounts.id');
+            }
+        } else {
+            $dataList;
         }
 
-
+        $dataList = $this->filter_category($dataList, $search, $category);
 
         return $dataList->get();
     }

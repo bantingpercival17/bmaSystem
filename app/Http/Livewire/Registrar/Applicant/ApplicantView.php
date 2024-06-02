@@ -425,13 +425,19 @@ class ApplicantView extends Component
             $dataList = // $this->examination_result($dataList, '<')
                 $this->examination_result_v2($dataList, false)
                 ->orderBy($tblApplicantExamination . '.examination_start', 'desc');
-        } elseif ('shs_alumia_for_medical_schedule') {
+        }
+        /*  elseif ('shs_alumia_for_medical_schedule') {
+            $dataList = $this->senior_high_alumia($dataList)
+                ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                ->groupBy('applicant_accounts.id');
+        } */ elseif ($category == 'shs_alumia_for_medical_schedule') {
             $dataList = $this->senior_high_alumia($dataList)
                 ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
                 ->groupBy('applicant_accounts.id');
         } elseif ($category == 'for_medical_schedule') {
-            $dataList = $dataList =  $this->examination_result_v2($dataList, true)/* ->union($this->senior_high_alumia($dataList)) */
+            $dataList = $this->examination_result_v2($dataList, true)/* ->union($this->senior_high_alumia($dataList)) */
                 ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
                 ->orderBy($tblApplicantExamination . '.examination_start', 'desc')
