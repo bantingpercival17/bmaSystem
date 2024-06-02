@@ -56,7 +56,7 @@ class ApplicantController extends Controller
                 $user = auth()->user();
                 $department = $user->course_id === 3 ? 'SENIOR HIGHSCHOOL' : 'COLLEGE';
                 $examinationCategory = Examination::where('examination_name', 'ENTRANCE EXAMINATION')->where('department', $department)->with('categories')->first();
-                $finalResult = $examinationDetails->examination_result();
+                $finalResult = $examinationDetails->examination_result_v2;
                 foreach ($examinationCategory->categories as $key => $value) {
                     $score = ApplicantExaminationAnswer::join(env('DB_DATABASE') . '.examination_questions as examination_question', 'examination_question.id', 'applicant_examination_answers.question_id')
                         ->join(env('DB_DATABASE') . '.examination_question_choices as choices', 'choices.id', 'applicant_examination_answers.choices_id')
