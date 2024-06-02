@@ -133,7 +133,32 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($tableHeader as $index => $headers)
+                        @foreach ($headerContent as $headers)
+                            <tr>
+                                <th colspan="4" class="text-center fw-bolder text-primary">
+                                    <a target="_blank"
+                                        href="{{ route($headers['headerLink']) }}?category={{ str_replace(' ', '-', strtolower($headers['headerTitle'])) }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                        {{ strtoupper($headers['headerTitle']) }}
+                                    </a>
+
+                                </th>
+
+                            </tr>
+                            @foreach ($headers['content'] as $item)
+                                <tr>
+                                    <th>{{ strtoupper(str_replace('_', ' ', $item['subHeader'])) }}</th>
+                                    @foreach ($item['subHeaderContent'] as $item1)
+                                        <td>
+                                            <a target="_blank"
+                                                href="{{ route('applicant.overview') . '?_course=' . base64_encode($item1[1]) . '&_category=' . $item['subHeader'] }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
+                                                {{ $item1[0] }}
+                                            </a>
+                                        </td>
+                                    @endforeach
+                                </tr>
+                            @endforeach
+                        @endforeach
+                        {{--  @foreach ($tableHeader as $index => $headers)
                             <tr>
                                 <th colspan="4" class="text-center fw-bolder text-primary">
                                     <a target="_blank"
@@ -156,29 +181,8 @@
                                     @endforeach
                                 </tr>
                             @endforeach
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
-                    {{-- <tbody>
-                        @foreach ($_courses as $_course)
-                            <tr>
-                                <td class="course-btn" data-course="{{ $_course->id }}">
-                    {{ $_course->course_name }}
-                    </td>
-                    @foreach ($tableHeader as $index => $headers)
-                    @if ($index > 0)
-                    @foreach ($headers[1] as $index => $item)
-                    <td class="text-center">
-                        <a href="{{ route('applicant.overview') . '?_course=' . base64_encode($_course->id) . '&_category=' . $item }}{{ request()->input('_academic') ? '&_academic=' . request()->input('_academic') : '' }}">
-                            {{ count($_course->applicant_count_per_category($item)) }}
-                        </a>
-
-                    </td>
-                    @endforeach
-                    @endif
-                    @endforeach
-                    </tr>
-                    @endforeach
-                    </tbody> --}}
                 </table>
             </div>
         </div>

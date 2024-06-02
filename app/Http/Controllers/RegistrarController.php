@@ -54,17 +54,6 @@ class RegistrarController extends Controller
             $_courses = CourseOffer::where('is_removed', false)->orderBy('id', 'desc')->get();
             $_total_population = Auth::user()->staff->enrollment_count();
             $_total_applicants = ApplicantAccount::where('academic_id', Auth::user()->staff->current_academic()->id)->get();
-
-            $tableHeader = array(
-                array('Course', array('')),
-                array('', array('registered_applicants')),
-                array('Information Verification', array('for_checking', 'not_qualified', 'qualified')),
-                array('', array('bma_senior_high')),
-                array('Entrance Examination', array('examination_payment', 'entrance_examination', 'examination_passed', 'examination_failed', 'no_of_qualified_examinees')),
-                array('Briefing Orientation', array('expected_attendees', 'total_attendees')),
-                array('Medical Examination', array('for_medical_schedule', 'medical_schedule', 'waiting_for_medical_results', 'medical_result')),
-                array('Enrollment', array('qualified_to_enrollment'))
-            );
             $tableHeader = array(
                 array('Information Verification', array('registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni')),
                 array('Entrance Examination', array('examination_payment', 'entrance_examination', 'passed', 'failed')),
@@ -419,7 +408,7 @@ class RegistrarController extends Controller
             $_course = CourseOffer::find(base64_decode($_request->course));
             //return  $_subject = $_course->course_subject(json_decode(base64_decode($_request->data)));
             $data = json_decode(base64_decode($_request->data));
-            // Find Curriculum 
+            // Find Curriculum
             $curriculum = Curriculum::find($data[0]);
             $level = Auth::user()->staff->convert_year_level($data[1]);
             $filename = strtoupper($level . "-" . $_course->course_code . "-" . $curriculum->curriculum_name . "-SUBJECT-SCHEDULE");

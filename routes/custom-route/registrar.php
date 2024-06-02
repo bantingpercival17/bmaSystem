@@ -17,9 +17,9 @@ Route::prefix('registrar')->group(function () {
     // Dashboard
     Route::get('/', DashboardView::class)->name('registrar.dashboard');
     Route::get('/dashboard', DashboardView::class)->name('registrar.dashboard');
-    /* Route::get('/', [RegistrarController::class, 'index'])->name('registrar.dashboard');
-    Route::get('/dashboard', [RegistrarController::class, 'index'])->name('registrar.dashboard');
- */
+    //Route::get('/', [RegistrarController::class, 'index'])->name('registrar.dashboard');
+    //Route::get('/dashboard', [RegistrarController::class, 'index'])->name('registrar.dashboard');
+
     Route::get('/dashboard/payment-assessment', [RegistrarController::class, 'dashboard_payment_assessment'])->name('registrar.dashboard-payment-assessment');
     Route::get('/dashboard/student-clearance-list', [RegistrarController::class, 'dashboard_student_clearance_list'])->name('registrar.dashboard-student-clearance-list');
     // Applicants

@@ -22,6 +22,7 @@ class CourseOfferV2 extends Model
     public $tblApplicantPayment;
     public $tblApplicantAlumia;
     public $tblApplicantExamination;
+    public $tblApplicantExaminationResult;
     public $tblApplicantExaminationAnswer;
     public $tblApplicantOrientationScheduled;
     public $tblApplicantOrientation;
@@ -43,6 +44,7 @@ class CourseOfferV2 extends Model
         $this->tblApplicantOrientation = env('DB_DATABASE_SECOND') . '.applicant_briefings';
         $this->tblApplicantMedicalScheduled = env('DB_DATABASE_SECOND') . '.applicant_medical_appointments';
         $this->tblApplicantMedicalResult = env('DB_DATABASE_SECOND') . '.applicant_medical_results';
+        $this->tblApplicantExaminationResult = env('DB_DATABASE_SECOND') . '.applicant_entrance_examination_results';
     }
 
     function headers()
@@ -80,6 +82,13 @@ class CourseOfferV2 extends Model
             ->groupBy('applicant_accounts.id')
             ->join($this->tblApplicantDocuments, $this->tblApplicantDocuments . '.applicant_id', '=', 'applicant_accounts.id');
     }
+    /*  function registered_applicants()
+    {
+        return $this->applicant_account_v2()
+            ->where($this->tblApplicantDocuments . '.is_approved', '!=', 2)
+            ->where($this->tblApplicantDocuments . '.is_removed', false)
+            ->groupBy('applicant_accounts.id');
+    } */
     function registered_applicants()
     {
         return $this->applicant_account_v2()
@@ -158,37 +167,24 @@ class CourseOfferV2 extends Model
     function passed()
     {
         return $this->entrance_examination_query()
-            ->where(function ($query) {
-                $query->select(DB::raw('COUNT(*)'))
-                    ->from(env('DB_DATABASE_SECOND') . '.applicant_examination_answers')
-                    ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.choices_id')
-                    ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
-                    ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
-            }, '>=', function ($query) {
-                $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 70, 100)'));
-            })
-            ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.updated_at', 'desc');
+            ->join($this->tblApplicantExaminationResult, $this->tblApplicantExaminationResult . '.examination_id', $this->tblApplicantExamination . '.id')
+            ->where($this->tblApplicantExaminationResult . '.result', true)
+            ->where($this->tblApplicantExaminationResult . '.is_removed', false)
+            ->groupBy('applicant_accounts.id')
+            ->orderBy($this->tblApplicantExamination . '.updated_at', 'desc');
     }
     function failed()
     {
         return $this->entrance_examination_query()
-            ->where(function ($query) {
-                $query->select(DB::raw('COUNT(*)'))
-                    ->from(env('DB_DATABASE_SECOND') . '.applicant_examination_answers')
-                    ->join(env('DB_DATABASE') . '.examination_question_choices', env('DB_DATABASE') . '.examination_question_choices.id', '=', env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.choices_id')
-                    ->where(env('DB_DATABASE') . '.examination_question_choices.is_answer', true)
-                    ->whereColumn(env('DB_DATABASE_SECOND') . '.applicant_examination_answers' . '.examination_id', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.id');
-            }, '<', function ($query) {
-                $query->select(DB::raw('IF(applicant_accounts.course_id = 3, 70, 100)'));
-            })
+            ->join($this->tblApplicantExaminationResult, $this->tblApplicantExaminationResult . '.examination_id', $this->tblApplicantExamination . '.id')
+            ->where($this->tblApplicantExaminationResult . '.result', false)
+            ->where($this->tblApplicantExaminationResult . '.is_removed', false)
             ->groupBy('applicant_accounts.id')->orderBy($this->tblApplicantExamination . '.updated_at', 'desc');
     }
     function for_medical_schedule()
     {
         $applicant_passed = $this->passed();
-        $shs_applicant = $this->senior_high_school_alumni();
-        return $applicant_passed->union($shs_applicant)
-            ->leftJoin($this->tblApplicantMedicalScheduled, $this->tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+        return $applicant_passed->leftJoin($this->tblApplicantMedicalScheduled, $this->tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
             ->whereNull($this->tblApplicantMedicalScheduled . '.applicant_id');
     }
     function waiting_for_medical_results()

@@ -805,4 +805,32 @@ class ApplicantController extends Controller
             echo "<br>";
         }
     }
+    function entrance_examination_reconsideration(Request $request)
+    {
+        try {
+            $applicant = ApplicantAccount::find($request->applicant);
+            $examination = $applicant->applicant_examination;
+            $examinationResult = $examination->examination_result_v2;
+            $newResult = array(
+                'examination_id' => $examinationResult->examination_id,
+                'applicant_id' => $examinationResult->applicant_id,
+                'score' => $examinationResult->score,
+                'examination_date' => $examinationResult->examination_date,
+                'result' => $request->result,
+                'remarks' => $request->remarks
+            );
+            ApplicantEntranceExaminationResult::create($newResult);
+            //return compact('newResult', 'examinationResult');
+            if ($examinationResult) {
+                $examinationResult->is_removed = true;
+                $examinationResult->save();
+            }
+            return back()->with('success', 'Successfully Transact');
+        } catch (\Throwable $err) {
+            $this->debugTracker($err);
+            return response([
+                'message' => $err->getMessage()
+            ], 500);
+        }
+    }
 }

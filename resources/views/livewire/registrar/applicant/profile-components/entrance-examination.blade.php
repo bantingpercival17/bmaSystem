@@ -65,10 +65,13 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('applicant-examination-result-v2') }}?examination={{ base64_encode($item->id) }}"
-                                                class="btn btn-primary btn-sm">Text
-                                                Exam</a>
+                                                class="btn btn-primary btn-sm">Test Questioner</a>
                                             <a href="{{ route('applicant-examination-log-v2') }}?examination={{ base64_encode($item->id) }}"
                                                 class="btn btn-outline-primary btn-sm">Logs</a>
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target=".examination-view-modal" data-bs-toggle="tooltip"
+                                                title="" data-bs-original-title="View Modal">PASSED BY
+                                                INTERVIEW</button>
                                             @foreach (Auth::user()->roles as $role)
                                                 @if ($role->id == 1)
                                                     @if ($item->is_removed == false)
@@ -118,5 +121,39 @@
                 <p class="text-muted">Documents Requirments is not all Approved</p>
             @endif
         @endif
+    </div>
+</div>
+<div class="modal fade examination-view-modal" id="examination-view-modal" tabindex="-1" role="dialog"
+    aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-primary fw-bolder" id="exampleModalLabel1">EXAMINATION </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('applicant.examination-reconsideration') }}" method="post">
+                    @csrf
+
+                    <div class="form-group">
+                        <small class="fw-bolder text-muted">REMARKS</small>
+                        <input type="text" class="form-control border border-primary" name="remarks">
+                    </div>
+                    <div class="form-group">
+                        <small class="fw-bolder text-muted">REMARKS</small>
+                        <select name="result" class="form-select border border-primary">
+                            <option value="{{ false }}">PASSED</option>
+                            <option value="{{ true }}">FAILED</option>
+                        </select>
+
+                    </div>
+                    @if ($profile)
+                        <input type="hidden" name="applicant" value="{{ $profile->id }}">
+                        <button type="submit" class="btn btn-primary float-end">SUBMIT</button>
+                    @endif
+                </form>
+            </div>
+        </div>
     </div>
 </div>

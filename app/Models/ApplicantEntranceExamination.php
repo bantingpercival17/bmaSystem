@@ -99,4 +99,8 @@ class ApplicantEntranceExamination extends Model
     {
         return UserDeviceDetails::where('client_name', $email)->where('created_at', 'like', '%' . $date . '%')->orderBy('id', 'desc')->first();
     }
+    function examination_result_v2()
+    {
+        return $this->hasOne(ApplicantEntranceExaminationResult::class, 'examination_id')->where('is_removed', false);
+    }
 }

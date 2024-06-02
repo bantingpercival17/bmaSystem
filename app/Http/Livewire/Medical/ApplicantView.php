@@ -72,17 +72,6 @@ class ApplicantView extends Component
         );
         $dates = MedicalAppointmentSchedule::orderBy('date', 'asc')->where('is_close', false)->get();
         $this->academic = $this->academicValue();
-
-        /* if ($this->selecteCategories == '') {
-            $this->applicants = ApplicantAccount::select('applicant_accounts.*')
-                ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
-                ->where('applicant_accounts.is_removed', false)
-                ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
-                ->groupBy('applicant_accounts.id')
-                ->whereNull('ama.applicant_id')->get();
-        } else {
-            $this->filtered();
-        } */
         $this->applicants = $this->filter_data($this->selecteCategories, $this->academic, $this->selectCourse, $this->searchInput);
         return view('livewire.medical.applicant-view', compact('courseDashboard', 'selectContent', 'dates', 'courses'));
     }
@@ -156,12 +145,6 @@ class ApplicantView extends Component
     {
         $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
         $tblApplicantExaminationResult = env('DB_DATABASE_SECOND') . '.applicant_entrance_examination_results';
-        $applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
-        $tblDocuments = env('DB_DATABASE') . '.documents';
-        $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
-        $tblApplicantDocuments = env('DB_DATABASE_SECOND') . '.applicant_documents';
-        $tblApplicantNotQualifieds =  env('DB_DATABASE_SECOND') . '.applicant_not_qualifieds';
-        $tblApplicantPayment = env('DB_DATABASE_SECOND') . '.applicant_payments';
         $tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
         $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
         $tblApplicantMedicalScheduled = env('DB_DATABASE_SECOND') . '.applicant_medical_appointments';
@@ -248,11 +231,6 @@ class ApplicantView extends Component
             })
             ->groupBy('applicant_accounts.id')
             ->where('applicant_accounts.is_removed', false);
-        /* $query2 = ApplicantAccount::select('applicant_accounts.*')
-            ->join('bma_website.applicant_alumnias', 'bma_website.applicant_alumnias.applicant_id', '=', 'applicant_accounts.id')
-            ->where('applicant_accounts.academic_id', base64_decode($this->academic))
-            ->where('applicant_accounts.is_removed', 0);
-        $query = $query->union($query2); */
         // Sort By Courses
         if ($this->selectCourse != 'ALL COURSE') {
             $query = $query->where('applicant_accounts.course_id', $this->selectCourse);
