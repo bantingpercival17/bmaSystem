@@ -14,6 +14,7 @@ use App\Models\ApplicantBriefingSchedule;
 use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
 use App\Models\ApplicantEntranceExamination;
+use App\Models\ApplicantEntranceExaminationResult;
 use App\Models\ApplicantExaminationAnswer;
 use App\Models\ApplicantMedicalAppointment;
 use App\Models\ApplicantMedicalResult;
@@ -775,14 +776,33 @@ class ApplicantController extends Controller
     }
     function entrance_examination_result()
     {
-        $applicants = ApplicantAccount::join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', env('DB_DATABASE') . ".applicant_accounts.id")
+        $applicants = ApplicantAccount::select(env('DB_DATABASE') . '.applicant_accounts.*')
+            ->join(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations', env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.applicant_id', env('DB_DATABASE') . ".applicant_accounts.id")
             ->groupBy(env('DB_DATABASE') . '.applicant_accounts.id')
             ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_finish', true)
             ->where(env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations.is_removed', false)
+            //->where(env('DB_DATABASE') . '.applicant_accounts.course_id', '!=', 3)
             ->where(env('DB_DATABASE') . '.applicant_accounts.is_removed', false)
             ->where(env('DB_DATABASE') . '.applicant_accounts.academic_id', 10)
             ->get();
+        foreach ($applicants as $key => $value) {
+            $examination_result = $value->applicant_examination->examination_result();
+            $examination = $value->applicant_examination;
+            $details = array(
+                'applicant_id' => $value->id,
+                'examination_id' => $examination->id,
+                'examination_date' => $examination->examination_start,
+                'score' => $examination_result[0],
+                'result' => $examination_result[2],
+            );
 
-        return count($applicants);
+            echo $value->name;
+            ApplicantEntranceExaminationResult::create($details);
+            echo ":Saved";
+            echo "<br>";
+            echo json_encode($details);
+
+            echo "<br>";
+        }
     }
 }

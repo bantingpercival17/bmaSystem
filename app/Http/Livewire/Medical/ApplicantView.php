@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Medical;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ApplicantEmail;
+use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantMedicalAppointment;
 use App\Models\ApplicantMedicalResult;
@@ -61,6 +62,7 @@ class ApplicantView extends Component
         $courseDashboard = CourseOffer::all();
         $courses = CourseOffer::all();
         $selectContent = array(
+            array('shs Alumia For Medical Schedule', 'shs_alumia_for_medical_schedule'),
             array('for medical Schedule', 'waiting_for_scheduled'),
             array('scheduled', 'medical_scheduled'),
             array('waiting for Medical result', 'waiting_for_medical_result'),
@@ -69,24 +71,37 @@ class ApplicantView extends Component
             array('failed', 'medical_result_failed')
         );
         $dates = MedicalAppointmentSchedule::orderBy('date', 'asc')->where('is_close', false)->get();
-        $this->academic =  request()->query('_academic') ?: $this->academic;
+        $this->academic = $this->academicValue();
 
-        if ($this->selecteCategories == '') {
+        /* if ($this->selecteCategories == '') {
             $this->applicants = ApplicantAccount::select('applicant_accounts.*')
                 ->where('applicant_accounts.academic_id', Auth::user()->staff->current_academic()->id)
-                /* ->where(env('DB_DATABASE') . '.applicant_accounts.id false)
-                ->join(env('DB_DATABASE') . '.applicant_accounts'idTABASE') . '.applicant_accounts.id', 'applicant_accounts.id')*/
                 ->where('applicant_accounts.is_removed', false)
                 ->leftJoin(env('DB_DATABASE_SECOND') . '.applicant_medical_appointments as ama', 'ama.applicant_id', 'applicant_accounts.id')
                 ->groupBy('applicant_accounts.id')
                 ->whereNull('ama.applicant_id')->get();
         } else {
             $this->filtered();
-        }
-
+        } */
+        $this->applicants = $this->filter_data($this->selecteCategories, $this->academic, $this->selectCourse);
         return view('livewire.medical.applicant-view', compact('courseDashboard', 'selectContent', 'dates', 'courses'));
     }
 
+    function academicValue()
+    {
+        if (request()->query('_academic')) {
+            return request()->query('_academic');
+        } else {
+            if ($this->academic === null) {
+                $activeAcademic = AcademicYear::where('is_active', 1)->first();
+                if ($activeAcademic) {
+                    return base64_encode($activeAcademic->id);
+                }
+            } else {
+                return $this->academic;
+            }
+        }
+    }
     function searchStudents()
     {
         $this->filtered();
@@ -104,13 +119,54 @@ class ApplicantView extends Component
         }
         $this->selectedCourse = strtoupper($course);
     }
+    function filter_data($category, $academic, $course)
+    {
+        $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+        $tblApplicantExaminationResult = env('DB_DATABASE_SECOND') . '.applicant_entrance_examination_results';
+        $applicantAccountTable = env('DB_DATABASE') . '.applicant_accounts';
+        $tblDocuments = env('DB_DATABASE') . '.documents';
+        $tblApplicantDetails = env('DB_DATABASE_SECOND') . '.applicant_detials';
+        $tblApplicantDocuments = env('DB_DATABASE_SECOND') . '.applicant_documents';
+        $tblApplicantNotQualifieds =  env('DB_DATABASE_SECOND') . '.applicant_not_qualifieds';
+        $tblApplicantPayment = env('DB_DATABASE_SECOND') . '.applicant_payments';
+        $tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
+        $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+        $tblApplicantMedicalScheduled = env('DB_DATABASE_SECOND') . '.applicant_medical_appointments';
+        $tblApplicantMedicalResult = env('DB_DATABASE_SECOND') . '.applicant_medical_results';
+        $dataList = ApplicantAccount::select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
+            ->where('applicant_accounts.academic_id', base64_decode($academic));
+        if ($course != 'ALL COURSE') {
+            $dataList = $dataList->where('applicant_accounts.course_id', $course);
+        }
+        if ($category == 'waiting_for_scheduled') {
+            $dataList->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->join($tblApplicantExaminationResult, $tblApplicantExaminationResult . '.examination_id', $tblApplicantExamination . '.id')
+                ->where($tblApplicantExamination . '.is_removed', false)
+                ->where($tblApplicantExamination . '.is_finish', true)
+                ->where($tblApplicantExaminationResult . '.result', true)
+                ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                ->orderBy($tblApplicantExamination . '.examination_start', 'desc')
+                ->groupBy('applicant_accounts.id');
+        } elseif ($category == 'shs_alumia_for_medical_schedule') {
+            $dataList->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantAlumia . '.is_removed', false)
+                ->orderBy('applicant_accounts.created_at', 'desc')
+                ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                ->groupBy('applicant_accounts.id');
+        }
+
+
+
+        return $dataList->get();
+    }
     function filtered()
     {
         $this->applicants = [];
         $query =  ApplicantAccount::select('applicant_accounts.*')
             ->where('applicant_accounts.academic_id', base64_decode($this->academic))
-            /*  ->where(env('DB_DATABASE') . '.applicant_accounts.id false)
-            ->join(env('DB_DATABASE') . '.applicant_accounts'idTABASE') . '.applicant_accounts.id', 'applicant_accounts.id') */
             ->join($this->tblApplicantExamination, $this->tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
             ->where($this->tblApplicantExamination . '.is_removed', false)
             ->where($this->tblApplicantExamination . '.is_finish', true)

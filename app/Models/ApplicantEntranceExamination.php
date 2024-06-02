@@ -82,7 +82,7 @@ class ApplicantEntranceExamination extends Model
             $_percentage = $_grade >= $value[0]  && $_grade <= $value[1] ? $value[2] : $_percentage;
         }
         #$percent = ($_grade / $_item) * 100;
-        $passing = $this->applicant->course_id == 3 ? 20 : 70;
+        $passing = $this->applicant->course_id == 3 ? 70 : 70;
         $examinationResult = $_percentage >= $passing ? true : false;
         return [$_grade, $_percentage, $examinationResult];
     }

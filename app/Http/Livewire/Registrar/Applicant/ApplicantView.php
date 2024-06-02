@@ -58,8 +58,8 @@ class ApplicantView extends Component
     {
         $reguralUser =  array(
             array('Information Verification', array('registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni')),
-            array('Entrance Examination', array('waiting_examination_payment', 'examination_payment', 'entrance_examination', 'passed', 'failed')),
-            array('Medical Examination', array('for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending_result')),
+            array('Entrance Examination', array('waiting_examination_payment', 'examination_payment', 'entrance_examination', 'passed', 'passed_v2', 'failed')),
+            array('Medical Examination', array('shs_alumia_for_medical_schedule', 'for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending_result')),
             array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'))
         );
         $admin = array('User Accounts', array('created_accounts', 'registered_applicants_v1', 'total_registrants'));
@@ -415,15 +415,26 @@ class ApplicantView extends Component
                 ->orderBy($tblApplicantExamination . '.created_at', 'desc')
                 ->whereNull($tblApplicantExamination . '.is_finish');
         } elseif ($category == 'passed') {
-            $dataList = $this->examination_result($dataList, '>=')
-                ->orderBy($tblApplicantExamination . '.updated_at', 'desc');
+            $dataList = //$this->examination_result($dataList, '>=')
+                $this->examination_result_v2($dataList, true)
+                ->orderBy($tblApplicantExamination . '.examination_start', 'desc');
+        } elseif ($category == 'passed_v2') {
+            $dataList = $this->examination_result_v2($dataList, true)
+                ->orderBy($tblApplicantExamination . '.examination_start', 'desc');
         } elseif ($category == 'failed') {
-            $dataList = $this->examination_result($dataList, '<')
-                ->orderBy($tblApplicantExamination . '.updated_at', 'desc');
-        } elseif ($category == 'for_medical_schedule') {
-            $dataList = $dataList = $this->examination_result($dataList, '>=')/* ->union($this->senior_high_alumia($dataList)) */
+            $dataList = // $this->examination_result($dataList, '<')
+                $this->examination_result_v2($dataList, false)
+                ->orderBy($tblApplicantExamination . '.examination_start', 'desc');
+        } elseif ('shs_alumia_for_medical_schedule') {
+            $dataList = $this->senior_high_alumia($dataList)
                 ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                ->groupBy('applicant_accounts.id');
+        } elseif ($category == 'for_medical_schedule') {
+            $dataList = $dataList =  $this->examination_result_v2($dataList, true)/* ->union($this->senior_high_alumia($dataList)) */
+                ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                ->orderBy($tblApplicantExamination . '.examination_start', 'desc')
                 ->groupBy('applicant_accounts.id');
         } elseif ($category == 'waiting_for_medical_results') {
             $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
@@ -461,6 +472,16 @@ class ApplicantView extends Component
         return $data->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
             ->where($tblApplicantAlumia . '.is_removed', false)
             ->orderBy('applicant_accounts.created_at', 'desc');
+    }
+    function examination_result_v2($data, $status)
+    {
+        $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+        $tblApplicantExaminationResult = env('DB_DATABASE_SECOND') . '.applicant_entrance_examination_results';
+        return $data->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+            ->join($tblApplicantExaminationResult, $tblApplicantExaminationResult . '.examination_id', $tblApplicantExamination . '.id')
+            ->where($tblApplicantExamination . '.is_removed', false)
+            ->where($tblApplicantExamination . '.is_finish', true)
+            ->where($tblApplicantExaminationResult . '.result', $status);
     }
     function examination_result($data, $operation)
     {
