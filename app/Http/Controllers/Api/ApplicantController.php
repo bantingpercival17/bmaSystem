@@ -9,6 +9,7 @@ use App\Models\ApplicantAccount;
 use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
 use App\Models\ApplicantEntranceExamination;
+use App\Models\ApplicantEntranceExaminationResult;
 use App\Models\ApplicantExaminationAnswer;
 use App\Models\ApplicantExaminationEssay;
 use App\Models\ApplicantExaminationSchedule;
@@ -378,6 +379,16 @@ class ApplicantController extends Controller
             $examination = ApplicantEntranceExamination::find($request->examination);
             $examination->is_finish = true;
             $examination->save();
+            // Examination Result
+            $result = $examination->examination_result();
+            $examinationDetails = array(
+                'applicant_id' => $examination->applicant_id,
+                'examination_id' => $examination->examination_id,
+                'examination_date' => $examination->examination_start,
+                'score' => $result[0],
+                'result' => $result[2],
+            );
+            ApplicantEntranceExaminationResult::create($examinationDetails);
             // If the Student Finish the Examination On Essay
             $essay = ApplicantExaminationEssay::where('examination_id', $request->examination)->first();
             if ($essay) {
