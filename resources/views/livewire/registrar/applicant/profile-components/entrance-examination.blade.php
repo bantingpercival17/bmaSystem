@@ -68,10 +68,14 @@
                                                 class="btn btn-primary btn-sm">Test Questioner</a>
                                             <a href="{{ route('applicant-examination-log-v2') }}?examination={{ base64_encode($item->id) }}"
                                                 class="btn btn-outline-primary btn-sm">Logs</a>
-                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                            <!-- <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                                 data-bs-target=".examination-view-modal" data-bs-toggle="tooltip"
                                                 title="" data-bs-original-title="View Modal">PASSED BY
-                                                INTERVIEW</button>
+                                                INTERVIEW</button> -->
+                                            <a href="{{ route('applicant.examination-reconsideration') }}?applicant={{ $profile->id }}"
+                                                class="btn btn-primary btn-sm">
+                                                PASSED BY INTERVIEW
+                                            </a>
                                             @foreach (Auth::user()->roles as $role)
                                                 @if ($role->id == 1)
                                                     @if ($item->is_removed == false)

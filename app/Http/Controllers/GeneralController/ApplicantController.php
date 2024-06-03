@@ -816,8 +816,8 @@ class ApplicantController extends Controller
                 'applicant_id' => $examinationResult->applicant_id,
                 'score' => $examinationResult->score,
                 'examination_date' => $examinationResult->examination_date,
-                'result' => $request->result,
-                'remarks' => $request->remarks
+                'result' => true,
+                'remarks' => 'PASSED DUE TO INTERVIEW'
             );
             ApplicantEntranceExaminationResult::create($newResult);
             //return compact('newResult', 'examinationResult');
