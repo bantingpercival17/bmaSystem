@@ -143,8 +143,8 @@
                     <div class="form-group">
                         <small class="fw-bolder text-muted">REMARKS</small>
                         <select name="result" class="form-select border border-primary">
-                            <option value="{{ 0 }}">PASSED</option>
-                            <option value="{{ 1 }}">FAILED</option>
+                            <option value="{{ 1 }}">PASSED</option>
+                            <option value="{{ 0 }}">FAILED</option>
                         </select>
 
                     </div>
