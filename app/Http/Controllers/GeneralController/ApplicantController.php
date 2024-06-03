@@ -828,9 +828,7 @@ class ApplicantController extends Controller
             return back()->with('success', 'Successfully Transact');
         } catch (\Throwable $err) {
             $this->debugTracker($err);
-            return response([
-                'message' => $err->getMessage()
-            ], 500);
+            return back()->with('error', $err->getMessage());
         }
     }
 }
