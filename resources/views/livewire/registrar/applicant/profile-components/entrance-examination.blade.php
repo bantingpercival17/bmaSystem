@@ -141,7 +141,7 @@
                         <input type="text" class="form-control border border-primary" name="remarks">
                     </div>
                     <div class="form-group">
-                        <small class="fw-bolder text-muted">REMARKS</small>
+                        <small class="fw-bolder text-muted">RESULT</small>
                         <select name="result" class="form-select border border-primary">
                             <option value="{{ 1 }}">PASSED</option>
                             <option value="{{ 0 }}">FAILED</option>
