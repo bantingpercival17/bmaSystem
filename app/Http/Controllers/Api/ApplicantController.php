@@ -383,7 +383,7 @@ class ApplicantController extends Controller
             $result = $examination->examination_result();
             $examinationDetails = array(
                 'applicant_id' => $examination->applicant_id,
-                'examination_id' => $examination->examination_id,
+                'examination_id' => $examination->id,
                 'examination_date' => $examination->examination_start,
                 'score' => $result[0],
                 'result' => $result[2],
