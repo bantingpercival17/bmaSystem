@@ -329,6 +329,15 @@
 
                 </div>
                 @if (Auth::user()->email === 'p.banting@bma.edu.ph')
+                    @if ($selectCategories == 'registered_applicant_v1')
+                        <div class="col-md-12">
+                            <small class="text-primary"><b>EMAIL NOTIFICATION</b></small>
+                            <button onclick="document_notification({{ $dataLists }})"
+                                class="btn btn-primary btn-sm w-100 btn-notification">
+                                SEND NOTIFICATION
+                            </button>
+                        </div>
+                    @endif
                     @if ($selectCategories == 'passed')
                         <div class="col-md-12">
                             <small class="text-primary"><b>MEDICAL ORIENTATION NOTIFICATION</b></small>
@@ -349,8 +358,7 @@
 </div>
 @section('script')
     <script>
-        function payment_notification(data) {
-            const link = "{{ route('applicant.entrance-examination-v2') }}";
+        function mail_notification(data, link) {
             data.forEach(async (element) => {
                 const data = {
                     applicant: encodeToBase64(element.id),
@@ -377,6 +385,15 @@
                     console.log('Error: ' + error.message);
                 }
             })
+        }
+        function document_notification(data) {
+            const link = "{{ route('applicant.notification-upload-documents') }}";
+            mail_notification(data, link)
+        }
+
+        function payment_notification(data) {
+            const link = "{{ route('applicant.entrance-examination-v2') }}";
+            mail_notification(data, link)
         }
 
         function notification_v2(data) {

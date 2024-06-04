@@ -156,4 +156,11 @@ class ApplicantEmail extends Mailable
             ->markdown('widgets.mail.applicant-mail.payment-notification')
             ->with(['data' => $_applicant]);
     }
+    function documents_notification($applicant)
+    {
+        return $this->from(Auth::user()->email, "BMA REGISTRAR'S OFFICE")
+            ->subject("PENDING DOCUMENTARY REQUIREMENTS : " . $applicant->applicant_number)
+            ->markdown('widgets.mail.applicant-mail.documentary-requirements-notification')
+            ->with(['data' => $applicant]);
+    }
 }
