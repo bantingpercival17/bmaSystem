@@ -331,9 +331,9 @@
 
                 </div>
                 @if (Auth::user()->email === 'p.banting@bma.edu.ph')
-                    @if ($selectCategories == 'registered_applicants_v1')
+                    @if ($selectCategories == 'registered_applicants_v1' || $selectCategories == 'pending')
                         <div class="col-md-12">
-                            <small class="text-primary"><b>EMAIL NOTIFICATION</b></small>
+                            <small class="text-primary"><b>DOCUMENTRARY NOTIFICATION</b></small>
                             <button onclick="document_notification({{ $dataLists }})"
                                 class="btn btn-primary btn-sm w-100 btn-notification">
                                 SEND NOTIFICATION
