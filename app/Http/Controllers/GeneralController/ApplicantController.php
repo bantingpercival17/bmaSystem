@@ -831,4 +831,14 @@ class ApplicantController extends Controller
             return back()->with('error', $err->getMessage());
         }
     }
+    function admission_slip(Request $request)
+    {
+        try {
+            $applicant = ApplicantAccount::find($request->applicant);
+            return $applicant;
+        } catch (\Throwable $err) {
+            $this->debugTracker($err);
+            return back()->with('error', $err->getMessage());
+        }
+    }
 }

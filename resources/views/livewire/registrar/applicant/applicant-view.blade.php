@@ -96,6 +96,11 @@
                                                             </h3>
                                                         </div>
                                                     </div>
+                                                    <a target="_blank"
+                                                        href="{{ route('applicant.admission-slip') . '?applicant=' . base64_encode($data->id) }}"
+                                                        class="btn btn-primary btn-sm">
+                                                        ADMISSION SLIP
+                                                    </a>
                                                 </div>
                                             @elseif($selectCategories == 'expected_attendees')
                                                 <small>BRIEFING DATE</small>
