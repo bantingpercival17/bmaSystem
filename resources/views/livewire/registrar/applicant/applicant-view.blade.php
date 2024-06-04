@@ -65,6 +65,8 @@
                                             {{ $data->applicant ? strtoupper($data->applicant->last_name . ', ' . $data->applicant->first_name) : $data->name }}
                                         </a>
                                         <div class="mt-0">
+                                            <span
+                                                class="fw-bolder text-muted">{{ $data ? $data->contact_number : '-' }}</span>
                                             <span>{{ $data ? $data->email : '-' }}</span> <br>
                                             @if ($data->applicant)
                                                 @if ($data->similar_account())
@@ -329,7 +331,7 @@
 
                 </div>
                 @if (Auth::user()->email === 'p.banting@bma.edu.ph')
-                    @if ($selectCategories == 'registered_applicant_v1')
+                    @if ($selectCategories == 'registered_applicants_v1')
                         <div class="col-md-12">
                             <small class="text-primary"><b>EMAIL NOTIFICATION</b></small>
                             <button onclick="document_notification({{ $dataLists }})"
@@ -386,6 +388,7 @@
                 }
             })
         }
+
         function document_notification(data) {
             const link = "{{ route('applicant.notification-upload-documents') }}";
             mail_notification(data, link)
