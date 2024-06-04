@@ -180,7 +180,9 @@ class ApplicantView extends Component
                 ->groupBy('applicant_accounts.id')
                 ->orderBy($tblApplicantDocuments . '.updated_at', 'desc');
         } elseif ($category == 'pending') {
-            $dataList = $dataList->join($tblApplicantDocuments, 'applicant_documents.applicant_id', '=', 'applicant_accounts.id')
+            $dataList = $dataList->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
+                ->join($tblApplicantDocuments, 'applicant_documents.applicant_id', '=', 'applicant_accounts.id')
                 ->where($tblApplicantDocuments . '.is_approved', 2)
                 ->where($tblApplicantDocuments . '.is_removed', false)
                 ->groupBy('applicant_accounts.id')

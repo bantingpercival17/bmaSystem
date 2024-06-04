@@ -125,6 +125,8 @@ class CourseOfferV2 extends Model
     function pending()
     {
         return $this->applicant_account()
+            ->leftJoin($this->tblApplicantNotQualifieds, $this->tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
+            ->whereNull($this->tblApplicantNotQualifieds . '.applicant_id')
             ->join($this->tblApplicantDocuments, 'applicant_documents.applicant_id', '=', 'applicant_accounts.id')
             ->where($this->tblApplicantDocuments . '.is_approved', 2)
             ->where($this->tblApplicantDocuments . '.is_removed', false)->groupBy('applicant_accounts.id');
