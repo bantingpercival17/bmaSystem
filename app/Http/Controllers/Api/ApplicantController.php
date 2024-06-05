@@ -388,7 +388,7 @@ class ApplicantController extends Controller
                 'score' => $result[0],
                 'result' => $result[2],
             );
-            if ($examination->examination_result_v2) {
+            if (!$examination->examination_result_v2) {
                 ApplicantEntranceExaminationResult::create($examinationDetails);
             }
             // If the Student Finish the Examination On Essay
