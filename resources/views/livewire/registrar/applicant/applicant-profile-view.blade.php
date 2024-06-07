@@ -259,7 +259,7 @@ $pageTitle = 'Applicant Profile view';
             <div class="modal-body">
                 <form action="{{ route('applicant.applicant-change-course') }}" method="post">
                     @csrf
-                    <input type="hidden" value="{{ $profile->id }}" name="applicant">
+                    <input type="hidden" value="{{ base64_encode($profile->id )}}" name="applicant">
                     <div class="form-group">
                         <small class="fw-bolder">COURSE</small>
                         <select name="course" id="" class="form-select">
