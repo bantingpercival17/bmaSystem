@@ -137,14 +137,83 @@ class MedicalController extends Controller
     {
         $report = new MedicalReport();
         $dataContent = array(
-            array('name' => 'waiting_for_scheduled', 'value' => $this->applicant_medical('waiting_for_scheduled', $request->_academic)),
-            array('name' => 'medical_scheduled', 'value' => $this->applicant_medical('medical_scheduled', $request->_academic)),
-            array('name' => 'waiting_for_medical_result', 'value' => $this->applicant_medical('waiting_for_medical_result', $request->_academic)),
-            array('name' => 'medical_result_passed', 'value' => $this->applicant_medical('medical_result_passed', $request->_academic)),
-            array('name' => 'medical_result_pending', 'value' => $this->applicant_medical('medical_result_pending', $request->_academic)),
-            array('name' => 'medical_result_failed', 'value' => $this->applicant_medical('medical_result_failed', $request->_academic))
+            array('name' => 'waiting_for_scheduled', 'value' => $this->applicant_medical_version_2('waiting_for_scheduled', $request->_academic)),
+            array('name' => 'medical_scheduled', 'value' => $this->applicant_medical_version_2('medical_scheduled', $request->_academic)),
+            array('name' => 'waiting_for_medical_result', 'value' => $this->applicant_medical_version_2('waiting_for_medical_result', $request->_academic)),
+            array('name' => 'medical_result_passed', 'value' => $this->applicant_medical_version_2('medical_result_passed', $request->_academic)),
+            array('name' => 'medical_result_pending', 'value' => $this->applicant_medical_version_2('medical_result_pending', $request->_academic)),
+            array('name' => 'medical_result_failed', 'value' => $this->applicant_medical_version_2('medical_result_failed', $request->_academic))
         );
+        //return $dataContent;
         return $report->applicant_medical_report($dataContent);
+    }
+    function applicant_medical_version_2($category, $academic)
+    {
+        $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+        $tblApplicantExaminationResult = env('DB_DATABASE_SECOND') . '.applicant_entrance_examination_results';
+        $tblApplicantAlumia = env('DB_DATABASE_SECOND') . '.applicant_alumnias';
+        $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
+        $tblApplicantMedicalScheduled = env('DB_DATABASE_SECOND') . '.applicant_medical_appointments';
+        $tblApplicantMedicalResult = env('DB_DATABASE_SECOND') . '.applicant_medical_results';
+        $dataList = ApplicantAccount::select('applicant_accounts.*')
+            ->where('applicant_accounts.is_removed', false)
+            ->where('applicant_accounts.academic_id', base64_decode($academic));
+        /*  if ($course != 'ALL COURSE') {
+            $dataList = $dataList->where('applicant_accounts.course_id', $course);
+        } */
+        if ($category == 'waiting_for_scheduled') {
+            $dataList->join($tblApplicantExamination, $tblApplicantExamination . '.applicant_id', 'applicant_accounts.id')
+                ->join($tblApplicantExaminationResult, $tblApplicantExaminationResult . '.examination_id', $tblApplicantExamination . '.id')
+                ->where($tblApplicantExamination . '.is_removed', false)
+                ->where($tblApplicantExamination . '.is_finish', true)
+                ->where($tblApplicantExaminationResult . '.result', true)
+                ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                ->orderBy($tblApplicantExamination . '.examination_start', 'desc')
+                ->groupBy('applicant_accounts.id');
+        } elseif ($category == 'shs_alumia_for_medical_schedule') {
+            $dataList->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantAlumia . '.is_removed', false)
+                ->orderBy('applicant_accounts.created_at', 'desc')
+                ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                ->groupBy('applicant_accounts.id');
+        } elseif ($category == 'waiting_for_medical_result') {
+            $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                ->where($tblApplicantMedicalScheduled . '.is_removed', false)
+                ->leftJoin($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantMedicalResult . '.applicant_id')
+                ->groupBy('applicant_accounts.id');
+        } elseif ($category == 'medical_result_passed' || $category == 'medical_result_pending' || $category == 'medical_result_failed') {
+            if ($category == 'medical_result_passed') {
+                $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalScheduled . '.is_removed', false)
+                    ->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalResult . '.is_fit', 1)
+                    ->where($tblApplicantMedicalResult . '.is_removed', false)
+                    ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
+                    ->groupBy('applicant_accounts.id');
+            } elseif ($category == 'medical_result_pending') {
+                $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalScheduled . '.is_removed', false)
+                    ->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalResult . '.is_pending', false)
+                    ->where($tblApplicantMedicalResult . '.is_removed', false)
+                    ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
+                    ->groupBy('applicant_accounts.id');
+            } elseif ($category == 'medical_result_failed') {
+                $dataList->join($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalScheduled . '.is_removed', false)
+                    ->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
+                    ->where($tblApplicantMedicalResult . '.is_fit', 2)
+                    ->where($tblApplicantMedicalResult . '.is_removed', false)
+                    ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
+                    ->groupBy('applicant_accounts.id');
+            }
+        } else {
+            $dataList;
+        }
+        return $dataList->get();
     }
     function applicant_medical($data, $academic)
     {
@@ -204,6 +273,5 @@ class MedicalController extends Controller
     {
         $report = new MedicalReport();
         return $report->student_medical_report($request->academic);
-
     }
 }

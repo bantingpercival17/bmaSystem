@@ -15,6 +15,7 @@
                             <tr>
                                 <th>NO.</th>
                                 <th>APPLICANT NAME</th>
+                                <th>CONTACT NUMBER</th>
                                 <th>COURSE</th>
                                 <th>DATE OF SCHEDULE</th>
                                 <th>MEDICAL RESULT</th>
@@ -34,7 +35,15 @@
                                         <th>
                                             {{ $key + 1 }}
                                         </th>
-                                        <td>{{ strtoupper($value->applicant->last_name . ', ' . $value->applicant->first_name . ' ' . $value->applicant->middle_name) }}
+                                        <td>
+                                            @if ($value->applicant)
+                                                {{ strtoupper($value->applicant->last_name . ', ' . $value->applicant->first_name . ' ' . $value->applicant->middle_name) }}
+                                            @else
+                                                {{ $value->name }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{ $value->contact_number }}
                                         </td>
                                         <td>{{ $value->course->course_code }}</td>
                                         <td>
@@ -59,7 +68,7 @@
                                                     {{ $value->medical_result->created_at->format('F d,y') }}
                                                 @else
                                                     @if ($value->medical_result->is_pending == 0)
-                                                        {{ $value->medical_result->remarks }} 
+                                                        {{ $value->medical_result->remarks }}
                                                         {{ $value->medical_result->created_at->format('F d,y') }}
                                                     @endif
                                                 @endif

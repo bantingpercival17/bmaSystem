@@ -7,6 +7,9 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class MedicalReport
 {
+    public $legal;
+    public $super_legal;
+    public $path;
     public function __construct()
     {
         $this->legal = [0, 0, 612.00, 1008.00];
