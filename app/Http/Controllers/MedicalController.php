@@ -174,11 +174,13 @@ class MedicalController extends Controller
                 ->where($tblApplicantExaminationResult . '.result', true)
                 ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
+                ->orderBy('applicant_accounts.course_id', 'asc')
                 ->orderBy($tblApplicantExamination . '.examination_start', 'desc')
                 ->groupBy('applicant_accounts.id');
         } elseif ($category == 'shs_alumia_for_medical_schedule') {
             $dataList->join($tblApplicantAlumia, $tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
                 ->where($tblApplicantAlumia . '.is_removed', false)
+                ->orderBy('applicant_accounts.course_id', 'asc')
                 ->orderBy('applicant_accounts.created_at', 'desc')
                 ->leftJoin($tblApplicantMedicalScheduled, $tblApplicantMedicalScheduled . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantMedicalScheduled . '.applicant_id')
@@ -196,6 +198,7 @@ class MedicalController extends Controller
                     ->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
                     ->where($tblApplicantMedicalResult . '.is_fit', 1)
                     ->where($tblApplicantMedicalResult . '.is_removed', false)
+                    ->orderBy('applicant_accounts.course_id', 'asc')
                     ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
                     ->groupBy('applicant_accounts.id');
             } elseif ($category == 'medical_result_pending') {
@@ -204,6 +207,7 @@ class MedicalController extends Controller
                     ->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
                     ->where($tblApplicantMedicalResult . '.is_pending', false)
                     ->where($tblApplicantMedicalResult . '.is_removed', false)
+                    ->orderBy('applicant_accounts.course_id', 'asc')
                     ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
                     ->groupBy('applicant_accounts.id');
             } elseif ($category == 'medical_result_failed') {
@@ -212,6 +216,7 @@ class MedicalController extends Controller
                     ->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
                     ->where($tblApplicantMedicalResult . '.is_fit', 2)
                     ->where($tblApplicantMedicalResult . '.is_removed', false)
+                    ->orderBy('applicant_accounts.course_id', 'asc')
                     ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
                     ->groupBy('applicant_accounts.id');
             }

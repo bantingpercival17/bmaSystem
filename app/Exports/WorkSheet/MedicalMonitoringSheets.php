@@ -28,6 +28,7 @@ class MedicalMonitoringSheets implements FromCollection, ShouldAutoSize,  WithMa
         return [
             'APPLICANT NUMBER',
             'APPLICANT NAME',
+            'COURSE',
             'CONTACT NUMBER',
             'MEDICAL SCHEDULED',
             'REMARKS',
@@ -49,6 +50,7 @@ class MedicalMonitoringSheets implements FromCollection, ShouldAutoSize,  WithMa
         $dataList = array(
             $data->applicant_number,
             $data->applicant ? $data->applicant->last_name . ', ' . $data->applicant->first_name : $data->email,
+            $data->course->course_name,
             $data->contact_number,
             $data->medical_appointment ? $data->medical_appointment->appointment_date : '',
             $medicalRemarks
