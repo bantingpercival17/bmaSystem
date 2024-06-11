@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\CourseApplicantMedicalList;
 use App\Exports\CourseStudentMedicalList;
+use App\Exports\WorkBook\MedicalMonitoringBook;
 use App\Models\ApplicantAccount;
 use App\Models\CourseOffer;
 use App\Models\MedicalAppointmentSchedule;
@@ -138,14 +139,18 @@ class MedicalController extends Controller
         $report = new MedicalReport();
         $dataContent = array(
             array('name' => 'waiting_for_scheduled', 'value' => $this->applicant_medical_version_2('waiting_for_scheduled', $request->_academic)),
-            array('name' => 'medical_scheduled', 'value' => $this->applicant_medical_version_2('medical_scheduled', $request->_academic)),
+            // array('name' => 'medical_scheduled', 'value' => $this->applicant_medical_version_2('medical_scheduled', $request->_academic)),
             array('name' => 'waiting_for_medical_result', 'value' => $this->applicant_medical_version_2('waiting_for_medical_result', $request->_academic)),
             array('name' => 'medical_result_passed', 'value' => $this->applicant_medical_version_2('medical_result_passed', $request->_academic)),
             array('name' => 'medical_result_pending', 'value' => $this->applicant_medical_version_2('medical_result_pending', $request->_academic)),
             array('name' => 'medical_result_failed', 'value' => $this->applicant_medical_version_2('medical_result_failed', $request->_academic))
         );
-        //return $dataContent;
-        return $report->applicant_medical_report($dataContent);
+        $fileExport = new MedicalMonitoringBook($dataContent);
+        $fileName = "MEDICAL MONITORING - " . Auth::user()->staff->current_academic()->school_year . '_' . strtoupper(str_replace(' ', '_', Auth::user()->staff->current_academic()->semester));
+        $_respond =  Excel::download($fileExport, $fileName . '.xlsx', \Maatwebsite\Excel\Excel::XLSX); // Download the File
+        ob_end_clean();
+        return $_respond;
+        /*  return $report->applicant_medical_report($dataContent); */
     }
     function applicant_medical_version_2($category, $academic)
     {

@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
 class MonthlyPaymentMonitoring implements WithMultipleSheets
 {
+    public $sections;
     public function __construct($_section)
     {
         $this->sections = $_section;

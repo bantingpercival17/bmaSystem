@@ -11,6 +11,8 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 
 class MonthlyPaymentMonitoringSheet implements FromCollection, ShouldAutoSize,  WithMapping,  WithHeadings, WithTitle
 {
+
+    public $section;
     public function __construct($_section)
     {
         $this->section = $_section;
