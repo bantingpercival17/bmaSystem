@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ApplicantDocuments extends Model
 {
@@ -32,6 +33,17 @@ class ApplicantDocuments extends Model
     }
     function documentsV2()
     {
-        return $this->belongsTo(Documents::class, 'document_id')->where('is_removed', 'false');
+        return $this->belongsTo(Documents::class, 'document_id');
+    }
+    public function scopeWithDocuments($query)
+    {
+        $databaseName = env('DB_DATABASE');
+        $documentsTable = "{$databaseName}.documents";
+
+        return $query->join(DB::raw($documentsTable), function ($join) {
+            $join->on('documents.id', '=', 'applicant_documents.documents_id');
+        })
+            ->where('documents.is_removed', false)
+            ->where('applicant_documents.is_removed', false);
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
@@ -204,11 +205,24 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     {
         return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->with('documentsV2')->where('is_removed', false)->where('is_approved', 1);
     }
-
+    public function uploadedDocuments()
+    {
+        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')/* ->where('is_approved', 1) */
+            /*  ->whereNull('is_approved') */->where('is_removed', false)->with('documentsV2');
+    }
     // Define a scope to count required documents
     public function documentRequirements()
     {
-        // Assuming the logic for required documents is similar to 'approvedDocuments'
-        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false);
+        $databaseName = env('DB_DATABASE');
+        $documentsTable = "{$databaseName}.documents";
+
+        // Define the relationship to applicant documents with necessary conditions
+        return $this->hasMany(ApplicantDocuments::class, 'applicant_id')
+            ->where('applicant_documents.is_removed', false)
+            ->join(DB::raw($documentsTable), function ($join) {
+                $join->on('documents.id', '=', 'applicant_documents.document_id');
+            })
+            ->where('documents.is_removed', false)
+            ->select('applicant_documents.*', 'documents.*');
     }
 }
