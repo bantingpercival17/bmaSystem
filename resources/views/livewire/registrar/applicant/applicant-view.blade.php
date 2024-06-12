@@ -76,7 +76,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12">
-                                        @if ($selectCategories != 'created_accounts' && $selectCategories != 'registered_applicants')
+                                        @if ($selectCategories != 'created_accounts' && $selectCategories != 'registered_applicants' && $selectCategories !='total_registrants')
                                             @if ($selectCategories == 'passed' || $selectCategories == 'failed' || $selectCategories == 'took_the_exam')
                                                 <div class="form-view">
                                                     <small class="text-muted fw-bolder">EXAMINATION DATE:</small>
