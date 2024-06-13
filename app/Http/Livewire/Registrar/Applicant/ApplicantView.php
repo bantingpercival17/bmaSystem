@@ -144,7 +144,8 @@ class ApplicantView extends Component
         } else if ($category === 'registered_applicants_v1') {
             $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->leftJoin($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
-                ->whereNull($tblApplicantDocuments . '.applicant_id');
+                ->whereNull($tblApplicantDocuments . '.applicant_id')
+                ->orderBy($tblApplicantDetails . '.last_name', 'desc');
         } elseif ($category == 'total_registrants') {
             $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->orderBy($tblApplicantDetails . '.created_at', 'desc');
