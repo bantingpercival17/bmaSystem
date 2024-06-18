@@ -230,14 +230,17 @@ class ApplicantView extends Component
         } elseif ($category == 'passed') {
             $dataList = //$this->examination_result($dataList, '>=')
                 $this->examination_result_v2($dataList, true)
-                ->orderBy($tblApplicantExamination . '.examination_start', 'desc');
+                ->orderBy($tblApplicantExamination . '.examination_start', 'desc')
+                ->groupBy('applicant_accounts.id');
         } elseif ($category == 'passed_v2') {
             $dataList = $this->examination_result_v2($dataList, true)
-                ->orderBy($tblApplicantExamination . '.examination_start', 'desc');
+                ->orderBy($tblApplicantExamination . '.examination_start', 'desc')
+                ->groupBy('applicant_accounts.id');
         } elseif ($category == 'failed') {
             $dataList = // $this->examination_result($dataList, '<')
                 $this->examination_result_v2($dataList, false)
-                ->orderBy($tblApplicantExamination . '.examination_start', 'desc');
+                ->orderBy($tblApplicantExamination . '.examination_start', 'desc')
+                ->groupBy('applicant_accounts.id');
         }
         /*  elseif ('shs_alumia_for_medical_schedule') {
             $dataList = $this->senior_high_alumia($dataList)
@@ -309,7 +312,8 @@ class ApplicantView extends Component
         return $query->join($tblApplicantMedicalResult, $tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
             ->where($tblApplicantMedicalResult . '.is_removed', false)
             ->where($tblApplicantMedicalResult . '.is_fit', $result)
-            ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc');
+            ->orderBy($tblApplicantMedicalResult . '.created_at', 'desc')
+            ->groupBy('applicant_accounts.id');
     }
     function filter_category($query, $search, $course, $category)
     {
