@@ -207,6 +207,7 @@ class CourseOfferV2 extends Model
             ->join($this->tblApplicantMedicalResult, $this->tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
             ->where($this->tblApplicantMedicalResult . '.is_removed', false)
             ->where($this->tblApplicantMedicalResult . '.is_fit', 1)
+            ->groupBy('applicant_accounts.id')
             ->orderBy($this->tblApplicantMedicalResult . '.created_at', 'desc');
     }
     function unfit()
@@ -215,6 +216,7 @@ class CourseOfferV2 extends Model
             ->join($this->tblApplicantMedicalResult, $this->tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
             ->where($this->tblApplicantMedicalResult . '.is_removed', false)
             ->where($this->tblApplicantMedicalResult . '.is_fit', 2)
+            ->groupBy('applicant_accounts.id')
             ->orderBy($this->tblApplicantMedicalResult . '.created_at', 'desc');
     }
     function pending_result()
@@ -223,6 +225,7 @@ class CourseOfferV2 extends Model
             ->join($this->tblApplicantMedicalResult, $this->tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
             ->where($this->tblApplicantMedicalResult . '.is_removed', false)
             ->where($this->tblApplicantMedicalResult . '.is_pending', 0)
+            ->groupBy('applicant_accounts.id')
             ->orderBy($this->tblApplicantMedicalResult . '.created_at', 'desc');
     }
     //array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'))
@@ -232,6 +235,7 @@ class CourseOfferV2 extends Model
             ->join($this->tblApplicantMedicalResult, $this->tblApplicantMedicalResult . '.applicant_id', 'applicant_accounts.id')
             ->where($this->tblApplicantMedicalResult . '.is_removed', false)
             ->where($this->tblApplicantMedicalResult . '.is_fit', 1)
+            ->groupBy('applicant_accounts.id')
             ->orderBy($this->tblApplicantMedicalResult . '.created_at', 'desc');
     }
     function non_pbm()
@@ -241,6 +245,7 @@ class CourseOfferV2 extends Model
             ->where($this->tblApplicantMedicalResult . '.is_removed', false)
             ->where('applicant_accounts.strand', '!=', 'Pre-Baccalaureate Maritime Strand')
             ->where($this->tblApplicantMedicalResult . '.is_fit', 1)
+            ->groupBy('applicant_accounts.id')
             ->orderBy($this->tblApplicantMedicalResult . '.created_at', 'desc');
     }
     function pbm()
@@ -250,6 +255,7 @@ class CourseOfferV2 extends Model
             ->where('applicant_accounts.strand', 'Pre-Baccalaureate Maritime Strand')
             ->where($this->tblApplicantMedicalResult . '.is_removed', false)
             ->where($this->tblApplicantMedicalResult . '.is_fit', 1)
+            ->groupBy('applicant_accounts.id')
             ->orderBy($this->tblApplicantMedicalResult . '.created_at', 'desc');
     }
 }
