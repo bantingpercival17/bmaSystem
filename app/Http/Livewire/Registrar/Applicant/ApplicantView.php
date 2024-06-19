@@ -150,7 +150,7 @@ class ApplicantView extends Component
             $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->orderBy($tblApplicantDetails . '.created_at', 'desc');
         } elseif ($category == 'registered_applicants') {
-            $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+            /*    $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
 
                 ->select(
                     'applicant_accounts.*',
@@ -166,6 +166,47 @@ class ApplicantView extends Component
                 //->withCount('documentApprovedV2')
                 ->havingRaw('applicantDocuments >= documentCount and documentCount > document_approved_v2_count and DisapprovedDocuments <= 0')
                 ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
+                ->groupBy('applicant_accounts.id')
+                ->orderBy('applicant_accounts.updated_at', 'desc'); */
+            $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->select(
+                    'applicant_accounts.id',
+                    'applicant_accounts.name',
+                    'applicant_accounts.email',
+                    'applicant_accounts.course_id',
+                    'applicant_accounts.academic_id',
+                    'applicant_accounts.created_at'
+                )
+                ->withCount([
+                    'documentApproved',
+                    'applicantDocuments as applicant_documents_count' => function ($query) {
+                        $query->where('applicant_documents.is_removed', 0)
+                            ->join('documents', 'documents.id', '=', 'applicant_documents.document_id')
+                            ->where('documents.is_removed', false)
+                            ->where(function ($query) {
+                                $query->where('applicant_documents.is_approved', 1)
+                                    ->orWhereNull('applicant_documents.is_approved');
+                            });
+                    },
+                    'applicantDocuments as disapproved_documents_count' => function ($query) {
+                        $query->where('is_removed', 0)
+                            ->where('is_approved', 2);
+                    },
+                ])->havingRaw('applicant_documents_count >= 6')
+                ->havingRaw('document_approved_count < 6')->havingRaw('disapproved_documents_count <= 0') /* ->select(
+                'applicant_accounts.*',
+                //DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' INNER JOIN ' . $tblDocuments . ' ON ' . $tblDocuments . '.id = ' . $tblApplicantDocuments . '.document_id WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1 AND ' . $tblDocuments . '.is_removed = false) AS ApprovedDocuments'),
+                //DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = false AND ' . $tblApplicantDocuments . '.is_approved = 2) AS DisapprovedDocuments'),
+                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' INNER JOIN ' . $this->tblDocuments . ' ON ' . $this->tblDocuments . '.id = ' . $this->tblApplicantDocuments . '.document_id WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND ' . $this->tblDocuments . '.is_removed = false AND (' . $this->tblApplicantDocuments . '.is_approved IS NULL OR ' . $this->tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
+
+                //DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' INNWHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = false AND (' . $tblApplicantDocuments . '.is_approved is null or ' . $tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
+                DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) as documentCount')
+                )
+                //->withCount('applicantDocuments')
+                ->withCount('documentApprovedV2')
+                ->havingRaw('applicantDocuments >= documentCount and documentCount > document_approved_v2_count and DisapprovedDocuments <= 0') */->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
                 ->groupBy('applicant_accounts.id')
                 ->orderBy('applicant_accounts.updated_at', 'desc');
