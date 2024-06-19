@@ -151,6 +151,7 @@ class ApplicantView extends Component
                 ->orderBy($tblApplicantDetails . '.created_at', 'desc');
         } elseif ($category == 'registered_applicants') {
             $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+
                 ->select(
                     'applicant_accounts.*',
                     //DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' INNER JOIN ' . $tblDocuments . ' ON ' . $tblDocuments . '.id = ' . $tblApplicantDocuments . '.document_id WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1 AND ' . $tblDocuments . '.is_removed = false) AS ApprovedDocuments'),
@@ -162,7 +163,7 @@ class ApplicantView extends Component
                     DB::raw('(SELECT COUNT(*) FROM ' . $tblDocuments . ' WHERE ' . $tblDocuments . '.department_id = 2 AND ' . $tblDocuments . '.is_removed = false AND ' . $tblDocuments . '.year_level = (SELECT IF(' . $applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) as documentCount')
                 )
                 //->withCount('applicantDocuments')
-                ->withCount('documentApprovedV2')
+                //->withCount('documentApprovedV2')
                 ->havingRaw('applicantDocuments >= documentCount and documentCount > document_approved_v2_count and DisapprovedDocuments <= 0')
                 ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantNotQualifieds . '.applicant_id')

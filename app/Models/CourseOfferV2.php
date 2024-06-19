@@ -105,7 +105,7 @@ class CourseOfferV2 extends Model
                 DB::raw('(SELECT COUNT(*) FROM ' . $this->tblDocuments . ' WHERE ' . $this->tblDocuments . '.department_id = 2 AND ' . $this->tblDocuments . '.is_removed = false AND ' . $this->tblDocuments . '.year_level = (SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $this->applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) AS documentCount')
             )
             //->withCount('documentRequirements')
-            ->withCount('documentApprovedV2')
+            //->withCount('documentApprovedV2')
             ->havingRaw('applicantDocuments >= documentCount AND documentCount > document_approved_v2_count AND DisapprovedDocuments <= 0');
     }
     function approved()
