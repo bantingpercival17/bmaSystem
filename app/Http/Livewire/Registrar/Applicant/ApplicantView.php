@@ -151,8 +151,26 @@ class ApplicantView extends Component
                 ->orderBy($tblApplicantDetails . '.created_at', 'desc');
         } elseif ($category == 'registered_applicants') {
             $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
-
-                ->select(
+                ->select('applicant_accounts.id',
+                'applicant_accounts.name', 'applicant_accounts.email', 'applicant_accounts.course_id',
+                'applicant_accounts.academic_id','applicant_accounts.created_at')
+                ->withCount([
+                    'documentApproved',
+                    'applicantDocuments as applicant_documents_count' => function ($query) {
+                        $query->where('is_removed', 0)
+                            ->where(function ($query) {
+                                $query->where('is_approved', 1)
+                                    ->orWhereNull('is_approved');
+                            });
+                    },
+                    'applicantDocuments as disapproved_documents_count' => function ($query) {
+                        $query->where('is_removed', 0)
+                            ->where('is_approved', 2);
+                    },
+                ])->havingRaw('applicant_documents_count >= 6')
+                ->havingRaw('document_approved_count < 6')
+                ->havingRaw('disapproved_documents_count <= 0')
+                /* ->select(
                     'applicant_accounts.*',
                     //DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' INNER JOIN ' . $tblDocuments . ' ON ' . $tblDocuments . '.id = ' . $tblApplicantDocuments . '.document_id WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1 AND ' . $tblDocuments . '.is_removed = false) AS ApprovedDocuments'),
                     //DB::raw('(SELECT COUNT(*) FROM ' . $tblApplicantDocuments . ' WHERE ' . $tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $tblApplicantDocuments . '.is_removed = 0 AND ' . $tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
@@ -165,7 +183,7 @@ class ApplicantView extends Component
                 //->withCount('applicantDocuments')
                 ->withCount('documentApprovedV2')
                 ->havingRaw('applicantDocuments >= documentCount and documentCount > document_approved_v2_count and DisapprovedDocuments <= 0')
-                ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
+                 */->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
                 ->groupBy('applicant_accounts.id')
                 ->orderBy('applicant_accounts.updated_at', 'desc');

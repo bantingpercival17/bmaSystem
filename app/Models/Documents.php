@@ -43,4 +43,9 @@ class Documents extends Model
     {
         return $this->hasOne(DocumentRequirements::class, 'document_id')->where('student_id', auth()->user()->student_id)->where('is_removed', false)->with('staff');
     }
+    // In Document model
+    public function applicantAccounts()
+    {
+        return $this->belongsToMany(ApplicantAccount::class, 'applicant_documents', 'document_id', 'applicant_id');
+    }
 }

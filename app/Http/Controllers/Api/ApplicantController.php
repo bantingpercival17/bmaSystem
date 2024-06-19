@@ -456,8 +456,7 @@ class ApplicantController extends Controller
             $data1 = ['registered_applicants', 'approved', 'disapproved', 'pending', 'senior_high_school_alumni'];
             $data2 = ['waiting_examination_payment', 'examination_payment', 'entrance_examination', 'passed', 'failed'];
             $data3 = ['for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending_result'];
-            $courses = CourseOfferV2::with('registered_applicants')
-                ->get();
+            $courses = CourseOfferV2::with('registered_applicants')->get();
             return compact('courses');
         } catch (\Throwable $th) {
             return $th->getMessage();

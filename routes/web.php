@@ -65,3 +65,6 @@ Route::get('/cache-clear', function () {
 });
 
 Route::get('/send-email', [Controller::class, 'send_email']);
+Route::get('network-error', function () {
+    return view('errors.500');
+});

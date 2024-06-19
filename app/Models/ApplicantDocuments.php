@@ -46,4 +46,8 @@ class ApplicantDocuments extends Model
             ->where('documents.is_removed', false)
             ->where('applicant_documents.is_removed', false);
     }
+    public function applicantAccount()
+    {
+        return $this->belongsTo(ApplicantAccount::class, 'applicant_id');
+    }
 }

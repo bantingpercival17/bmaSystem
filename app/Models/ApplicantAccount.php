@@ -201,10 +201,10 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
     {
         return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->where('is_removed', false)->where('is_approved', 1);
     }
-    public function documentApprovedV2()
+    /*  public function documentApprovedV2()
     {
         return $this->hasMany(ApplicantDocuments::class, 'applicant_id')->with('documentsV2')->where('is_removed', false)->where('is_approved', 1);
-    }
+    } */
     public function uploadedDocuments()
     {
         return $this->hasMany(ApplicantDocuments::class, 'applicant_id')/* ->where('is_approved', 1) */
@@ -224,5 +224,41 @@ class ApplicantAccount extends  Authenticatable /* implements MustVerifyEmail */
             })
             ->where('documents.is_removed', false)
             ->select('applicant_documents.*', 'documents.*');
+    }
+    public function applicantDocuments()
+    {
+        return $this->hasMany(ApplicantDocuments::class, 'applicant_id');
+    }
+    public function departmentDocuments()
+    {
+        return $this->hasOneThrough(
+            Documents::class,
+            ApplicantDocuments::class,
+            'applicant_id',
+            'id',
+            'id',
+            'document_id'
+        )->where('documents.department_id', '=', 2)
+            ->where('documents.is_removed', '=', false)
+            ->where('documents.year_level', '=', function ($query) {
+                $query->selectRaw('IF(course_id = 3, 11, 4)')
+                    ->from('applicant_accounts')
+                    ->whereColumn('applicant_accounts.id', 'applicant_documents.applicant_id');
+            });
+    }
+    function documentCount()
+    {
+        $_level = $this->course_id == 3 ? 11 : 4;
+
+        return $this->hasManyThrough(
+            Documents::class,
+            ApplicantDocuments::class,
+            'applicant_id',
+            'id',
+            'id',
+            'document_id'
+        )->where('documents.department_id', 2)
+            ->where('documents.year_level', $_level)
+            ->where('documents.is_removed', false);
     }
 }
