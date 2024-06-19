@@ -95,11 +95,13 @@ class CourseOfferV2 extends Model
             ->select('applicant_accounts.id', 'applicant_accounts.name', 'applicant_accounts.email', 'applicant_accounts.course_id', 'applicant_accounts.academic_id')
             ->withCount([
                 'documentApproved',
-                'applicantDocuments as applicant_documents_count' => function ($query) {
-                    $query->where('is_removed', 0)
+                'applicantDocuments as applicant_documents_count'  => function ($query) {
+                    $query->where('applicant_documents.is_removed', 0)
+                        ->join('documents', 'documents.id', '=', 'applicant_documents.document_id')
+                        ->where('documents.is_removed', false)
                         ->where(function ($query) {
-                            $query->where('is_approved', 1)
-                                ->orWhereNull('is_approved');
+                            $query->where('applicant_documents.is_approved', 1)
+                                ->orWhereNull('applicant_documents.is_approved');
                         });
                 },
                 'applicantDocuments as disapproved_documents_count' => function ($query) {
