@@ -92,25 +92,21 @@ class CourseOfferV2 extends Model
     function registered_applicants()
     {
         return $this->applicant_account_v2()
-            ->select('applicant_accounts.id', 'applicant_accounts.name', 'applicant_accounts.email', 'applicant_accounts.course_id', 'applicant_accounts.academic_id')
-            ->withCount([
-                'documentApproved',
-                'applicantDocuments as applicant_documents_count'  => function ($query) {
-                    $query->where('applicant_documents.is_removed', 0)
-                        ->join('documents', 'documents.id', '=', 'applicant_documents.document_id')
-                        ->where('documents.is_removed', false)
-                        ->where(function ($query) {
-                            $query->where('applicant_documents.is_approved', 1)
-                                ->orWhereNull('applicant_documents.is_approved');
-                        });
-                },
-                'applicantDocuments as disapproved_documents_count' => function ($query) {
-                    $query->where('is_removed', 0)
-                        ->where('is_approved', 2);
-                },
-            ])->havingRaw('applicant_documents_count >= 6')
-            ->havingRaw('document_approved_count < 6')
-            ->havingRaw('disapproved_documents_count <= 0');
+            ->select(
+                'applicant_accounts.id',
+                'applicant_accounts.name',
+                'applicant_accounts.email',
+                'applicant_accounts.course_id',
+                'applicant_accounts.academic_id',
+                'applicant_accounts.created_at',
+                //DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' INNER JOIN ' . $this->tblDocuments . ' ON ' . $this->tblDocuments . '.id = ' . $this->tblApplicantDocuments . '.document_id WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND ' . $this->tblApplicantDocuments . '.is_approved = 1 AND ' . $this->tblDocuments . '.is_removed = false) AS ApprovedDocuments'),
+                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND ' . $this->tblApplicantDocuments . '.is_approved = 2) AS DisapprovedDocuments'),
+                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' INNER JOIN ' . $this->tblDocuments . ' ON ' . $this->tblDocuments . '.id = ' . $this->tblApplicantDocuments . '.document_id WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND ' . $this->tblDocuments . '.is_removed = false AND (' . $this->tblApplicantDocuments . '.is_approved IS NULL OR ' . $this->tblApplicantDocuments . '.is_approved = 1)) AS applicantDocuments'),
+                DB::raw('(SELECT COUNT(*) FROM ' . $this->tblDocuments . ' WHERE ' . $this->tblDocuments . '.department_id = 2 AND ' . $this->tblDocuments . '.is_removed = false AND ' . $this->tblDocuments . '.year_level = (SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $this->applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) AS documentCount')
+            )
+            //->withCount('documentRequirements')
+            ->withCount('documentApprovedV2')
+            ->havingRaw('applicantDocuments >= documentCount AND documentCount > document_approved_v2_count AND DisapprovedDocuments <= 0');
     }
     function approved()
     {
