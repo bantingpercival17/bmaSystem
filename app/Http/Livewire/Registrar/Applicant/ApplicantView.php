@@ -151,7 +151,6 @@ class ApplicantView extends Component
             $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
                 ->leftJoin($tblApplicantDocumentVerification, $tblApplicantDocumentVerification . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantDocumentVerification . '.applicant_id')
-                //->where($tblApplicantDocuments . '.is_approved', '!=', 2)
                 ->whereNotIn($tblApplicantDocuments . '.is_approved', [1, 2])
                 ->where($tblApplicantDocumentVerification . '.is_removed', false)
                 ->groupBy('applicant_accounts.id')

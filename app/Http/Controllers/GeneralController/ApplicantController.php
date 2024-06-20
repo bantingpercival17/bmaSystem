@@ -148,8 +148,8 @@ class ApplicantController extends Controller
         try {
             $_document = ApplicantDocuments::find(base64_decode($_request->_document));
             $_email_model = new ApplicantEmail();
-            $_applicant_email = 'p.banting@bma.edu.ph';
-            //$_applicant_email = $_document->account->email;
+            //$_applicant_email = 'p.banting@bma.edu.ph';
+            $_applicant_email = $_document->account->email;
             if ($_request->_verification_status) {
                 $_document->is_approved = 1;
                 $_document->staff_id = Auth::user()->staff->id;
