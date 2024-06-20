@@ -96,6 +96,7 @@ class ApplicantEmail extends Mailable
             $date =  $applicantExamination->created_at;
             // Rule to Create the Examination Scheduled
             // Monday, Wednesday and Friday 09:00 AM TO 11:00 and 02:00 TO 04:00 PM
+            // Revise this Scheduled (Tuesday, Wednesday, Thursday, Saturday) 09:00 AM
             $scheduledDate = $this->examinationScheduled($date);
             $scheduleDetails = array(
                 'examination_id' => $applicantExamination->id, 'applicant_id' => $_applicant->id, 'schedule_date' => $scheduledDate->format('Y-m-d H:i:s')
@@ -107,7 +108,7 @@ class ApplicantEmail extends Mailable
             ->markdown('widgets.mail.applicant-mail.entrance-examination-payment-approved')
             ->with(['data' => $_applicant, 'exam_code' => $_exam_code, 'examinationDetails' => $applicantExamination, 'data1' => $scheduleDetails]);
     }
-    function examinationScheduled($currentDate)
+    /*  function examinationScheduled($currentDate)
     {
         $plusOne = "+1 days";
         $plusTwo = "+2 days";
@@ -119,6 +120,24 @@ class ApplicantEmail extends Mailable
         } else {
             $modDate = $currentDate->modify($plusOne);
         }
+        return $modDate;
+    } */
+    function examinationScheduled($currentDate)
+    {
+        // Array of allowed days (Tuesday, Wednesday, Thursday, Saturday)
+        $allowedDays = [2, 3, 4, 6];
+
+        // Clone the current date to avoid modifying the original
+        $modDate = clone $currentDate;
+
+        // Loop until we find an allowed day
+        while (!in_array($modDate->format('N'), $allowedDays)) {
+            $modDate->modify('+2 day');
+        }
+
+        // Set the time to 9:00 AM
+        $modDate->setTime(9, 0);
+
         return $modDate;
     }
     public function orientation_schedule($_applicant)

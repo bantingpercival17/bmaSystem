@@ -13,6 +13,7 @@ use App\Models\ApplicantBriefing;
 use App\Models\ApplicantBriefingSchedule;
 use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
+use App\Models\ApplicantDocumentVerification;
 use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantEntranceExaminationResult;
 use App\Models\ApplicantExaminationAnswer;
@@ -147,15 +148,17 @@ class ApplicantController extends Controller
         try {
             $_document = ApplicantDocuments::find(base64_decode($_request->_document));
             $_email_model = new ApplicantEmail();
-            //$_applicant_email = 'p.banting@bma.edu.ph';
-            $_applicant_email = $_document->account->email;
+            $_applicant_email = 'p.banting@bma.edu.ph';
+            //$_applicant_email = $_document->account->email;
             if ($_request->_verification_status) {
                 $_document->is_approved = 1;
                 $_document->staff_id = Auth::user()->staff->id;
                 $_document->save();
+                $this->checkApplicantDocuments($_document->account);
+                // Send Email for Qualified to Entrance Examination
                 if (count($_document->account->applicant_documents) == count($_document->account->document_status)) {
                     if (!$_document->account->is_alumnia) {
-                        Mail::to($_applicant_email)->send($_email_model->document_verified($_document));
+                        Mail::to($_applicant_email)->bcc('email@bma.edu.ph')->send($_email_model->document_verified($_document));
                     }
                 }
                 return back()->with('success', 'Approved.');
@@ -176,7 +179,7 @@ class ApplicantController extends Controller
                         ]);
                     }
                 }
-                Mail::to($_applicant_email)->send($_email_model->document_disapproved($_document));
+                Mail::to($_applicant_email)->bcc('email@bma.edu.ph')->send($_email_model->document_disapproved($_document));
                 return back()->with('success', 'Disapproved.');
                 //echo "Disapproved";
             }
@@ -184,6 +187,32 @@ class ApplicantController extends Controller
             return back()->with('error', $error->getMessage());
         }
     }
+    // Check Applicant Document Approved
+    function checkApplicantDocuments($applicant)
+    {
+        // Get the required Document Pre Course
+        $level = $applicant->course_id == 3 ? 11 : 4;
+        $requredDocuments = Documents::select('id')->where('year_level', $level)->where('is_removed', false)->get();
+        // Get the List of the Uploaded and Approved Documents of Applicants
+        $document = ApplicantDocuments::join(env('DB_DATABASE') . '.documents', env('DB_DATABASE') . '.documents.id', 'applicant_documents.document_id')
+            ->where('applicant_documents.applicant_id', $applicant->id)
+            ->where('applicant_documents.is_approved', true)
+            ->where('applicant_documents.is_removed', false)
+            ->get();
+        // Get the Applicant Document Status
+        $applicant = ApplicantDocumentVerification::where('applicant_id', $applicant->id)->where('is_removed', false)->first();
+        // Compre the count number of approved document to the required documents
+        if (count($document) == count($requredDocuments)) {
+            // Validate if the Applicant is exiting
+            if ($applicant) {
+                // Updated the Columns
+                $applicant->is_approved = true;
+                $applicant->staff_id = Auth::user()->staff->id;
+                $applicant->save(); // Save Changes
+            }
+        }
+    }
+    // Applicant Not Qualified
     public function applicant_not_qualified(Request $request)
     {
         $applicant = ApplicantAccount::find(base64_decode($request->applicant));
@@ -854,6 +883,52 @@ class ApplicantController extends Controller
         } catch (\Throwable $err) {
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
+        }
+    }
+    function appplicant_document_verification()
+    {
+        try {
+            $tblApplicantDocuments = env('DB_DATABASE_SECOND') . '.applicant_documents';
+            $tblApplicantDocumentVerification = env('DB_DATABASE_SECOND') . '.applicant_document_verifications';
+            $dataList = ApplicantAccount::select('applicant_accounts.*')
+                ->where('applicant_accounts.is_removed', false)
+                ->where('applicant_accounts.academic_id', 10);
+            $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->leftJoin($tblApplicantDocumentVerification, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantDocumentVerification . '.applicant_id')
+                ->where($tblApplicantDocuments . '.is_approved', null)
+                ->groupBy('applicant_accounts.id')
+                ->orderBy('applicant_accounts.created_at', 'desc')->get();
+            // Fetch all the Applicant who have Documents
+            //return $dataList;
+            foreach ($dataList as $key => $value) {
+                $level = $value->course_id == 3 ? 11 : 4;
+                // Get Required Documnet Per Course
+                $requredDocuments = Documents::select('id')
+                    ->where('year_level', $level)
+                    ->where('is_removed', false)
+                    ->get();
+                $applicantDocumentCount = 0;
+                //echo $value->name;
+                foreach ($requredDocuments as $key => $document) {
+                    $applicantDocument = ApplicantDocuments::where('applicant_id', $value->id)
+                        ->where('document_id', $document->id)
+                        ->first();
+                    if ($applicantDocument) {
+                        $applicantDocumentCount += 1;
+                    }
+                }
+
+                if ($applicantDocumentCount == count($requredDocuments)) {
+                    echo $value->name;
+                    echo "<br><br>";
+                    ApplicantDocumentVerification::firstOrCreate(['applicant_id' => $value->id]);
+                }
+                //echo "<br><br>";
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            return back()->with('error', $th->getMessage());
         }
     }
 }

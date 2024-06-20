@@ -62,7 +62,7 @@ class ApplicantView extends Component
             array('Medical Examination', array('shs_alumia_for_medical_schedule', 'for_medical_schedule', 'waiting_for_medical_results', 'fit', 'unfit', 'pending_result')),
             array('Enrollment', array('qualified_for_enrollment', 'non_pbm', 'pbm'))
         );
-        $admin = array('User Accounts', array('created_accounts', 'registered_applicants_v1', 'total_registrants'));
+        $admin = array('User Accounts', array('created_accounts', 'applicants_with_documents', 'registered_applicants_v1', 'total_registrants'));
         $adminRole = StaffDepartment::where('role_id', 1)->where('staff_id', auth()->user()->staff->id)->first();
         if ($adminRole) {
             $sortList = array_merge($reguralUser, array($admin));
@@ -131,6 +131,7 @@ class ApplicantView extends Component
         $tblApplicantExamination = env('DB_DATABASE_SECOND') . '.applicant_entrance_examinations';
         $tblApplicantMedicalScheduled = env('DB_DATABASE_SECOND') . '.applicant_medical_appointments';
         $tblApplicantMedicalResult = env('DB_DATABASE_SECOND') . '.applicant_medical_results';
+        $tblApplicantDocumentVerification = env('DB_DATABASE_SECOND') . '.applicant_document_verifications';
         $dataList = ApplicantAccount::select('applicant_accounts.*')
             ->where('applicant_accounts.is_removed', false)
             ->where('applicant_accounts.academic_id', base64_decode($academic));
@@ -146,10 +147,25 @@ class ApplicantView extends Component
                 ->leftJoin($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantDocuments . '.applicant_id')
                 ->orderBy('applicant_accounts.created_at', 'desc');
+        } else if ($category === 'applicants_with_documents') {
+            $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->leftJoin($tblApplicantDocumentVerification, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantDocumentVerification . '.applicant_id')
+                ->where($tblApplicantDocuments . '.is_approved', null)
+                ->groupBy('applicant_accounts.id')
+                ->orderBy('applicant_accounts.created_at', 'desc');
         } elseif ($category == 'total_registrants') {
             $dataList = $dataList->join($tblApplicantDetails, $tblApplicantDetails . '.applicant_id', 'applicant_accounts.id')
                 ->orderBy($tblApplicantDetails . '.created_at', 'desc');
-        } elseif ($category == 'registered_applicants') {
+        } else if ($category == 'registered_applicants') {
+            $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
+                ->join($tblApplicantDocumentVerification, $tblApplicantDocumentVerification . '.applicant_id', 'applicant_accounts.id')
+                ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
+                ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
+                ->whereNull($tblApplicantDocumentVerification . '.is_approved')
+                ->groupBy('applicant_accounts.id')
+                ->orderBy('applicant_accounts.updated_at', 'desc');
+        } elseif ($category == 'registered_applicants_') {
             /*    $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
 
                 ->select(

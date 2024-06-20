@@ -28,6 +28,7 @@ class CourseOfferV2 extends Model
     public $tblApplicantOrientation;
     public $tblApplicantMedicalScheduled;
     public $tblApplicantMedicalResult;
+    public $tblApplicantDocumentVerification;
     public function __construct()
     {
         $this->tblApplicantAccount = env('DB_DATABASE') . '.applicant_accounts';
@@ -45,6 +46,7 @@ class CourseOfferV2 extends Model
         $this->tblApplicantMedicalScheduled = env('DB_DATABASE_SECOND') . '.applicant_medical_appointments';
         $this->tblApplicantMedicalResult = env('DB_DATABASE_SECOND') . '.applicant_medical_results';
         $this->tblApplicantExaminationResult = env('DB_DATABASE_SECOND') . '.applicant_entrance_examination_results';
+        $this->tblApplicantDocumentVerification = env('DB_DATABASE_SECOND') . '.applicant_document_verifications';
     }
 
     function headers()
@@ -92,24 +94,16 @@ class CourseOfferV2 extends Model
     function registered_applicants()
     {
         return $this->applicant_account_v2()
-            ->select('applicant_accounts.id', 'applicant_accounts.name', 'applicant_accounts.email', 'applicant_accounts.course_id', 'applicant_accounts.academic_id')
-            ->withCount([
-                'documentApproved',
-                'applicantDocuments as applicant_documents_count' => function ($query) {
-                    $query->where('applicant_documents.is_removed', 0)
-                        ->join('documents', 'documents.id', '=', 'applicant_documents.document_id')
-                        ->where('documents.is_removed', false)
-                        ->where(function ($query) {
-                            $query->where('applicant_documents.is_approved', 1)
-                                ->orWhereNull('applicant_documents.is_approved');
-                        });
-                },
-                'applicantDocuments as disapproved_documents_count' => function ($query) {
-                    $query->where('is_removed', 0)
-                        ->where('is_approved', 2);
-                },
-            ])->havingRaw('applicant_documents_count >= 6')
-            ->havingRaw('document_approved_count < 6')->havingRaw('disapproved_documents_count <= 0');
+            ->join($this->tblApplicantDocumentVerification, $this->tblApplicantDocumentVerification . '.applicant_id', 'applicant_accounts.id')
+            ->groupBy('applicant_accounts.id');
+        /*   ->select(
+                'applicant_accounts.*',
+                // DB::raw('(SELECT COUNT(*) FROM ' . $this->tblApplicantDocuments . ' WHERE ' . $this->tblApplicantDocuments . '.applicant_id = applicant_accounts.id AND ' . $this->tblApplicantDocuments . '.is_removed = 0 AND ' . $this->tblApplicantDocuments . '.is_approved = 1) AS ApprovedDocuments'),
+                //DB::raw('(SELECT COUNT(*) FROM ' . $this->tblDocuments . ' WHERE ' . $this->tblDocuments . '.department_id = 2 AND ' . $this->tblDocuments . '.is_removed = false AND ' . $this->tblDocuments . '.year_level = (SELECT IF(' . $this->applicantAccountTable . '.course_id = 3, 11, 4) FROM ' . $this->applicantAccountTable . ' WHERE ' . $this->applicantAccountTable . '.id = ' . $this->tblApplicantDocuments . '.applicant_id)) as documentCount')
+            )
+            //->havingRaw('COUNT(' . $this->tblApplicantDocuments . '.applicant_id) <= documentCount and ApprovedDocuments <= documentCount')
+            ->leftJoin($this->tblApplicantAlumia, $this->tblApplicantAlumia . '.applicant_id', 'applicant_accounts.id')
+            ->whereNull($this->tblApplicantAlumia . '.applicant_id'); */
         /*   return $this->applicant_account_v2()
             ->select(
                 'applicant_accounts.id',
