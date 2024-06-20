@@ -95,6 +95,10 @@ class CourseOfferV2 extends Model
     {
         return $this->applicant_account_v2()
             ->join($this->tblApplicantDocumentVerification, $this->tblApplicantDocumentVerification . '.applicant_id', 'applicant_accounts.id')
+            ->where($this->tblApplicantDocumentVerification . '.is_removed', false)
+            ->whereNull($this->tblApplicantDocumentVerification . '.is_approved')
+            ->groupBy('applicant_accounts.id')
+            ->orderBy('applicant_accounts.updated_at', 'desc')
             ->groupBy('applicant_accounts.id');
         /*   ->select(
                 'applicant_accounts.*',

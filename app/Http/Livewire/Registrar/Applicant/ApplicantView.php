@@ -152,6 +152,7 @@ class ApplicantView extends Component
                 ->leftJoin($tblApplicantDocumentVerification, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantDocumentVerification . '.applicant_id')
                 ->where($tblApplicantDocuments . '.is_approved', null)
+                ->where($tblApplicantDocumentVerification . '.is_removed',false)
                 ->groupBy('applicant_accounts.id')
                 ->orderBy('applicant_accounts.created_at', 'desc');
         } elseif ($category == 'total_registrants') {
