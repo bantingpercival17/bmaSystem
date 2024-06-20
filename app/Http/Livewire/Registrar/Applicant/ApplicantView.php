@@ -147,7 +147,7 @@ class ApplicantView extends Component
                 ->leftJoin($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantDocuments . '.applicant_id')
                 ->orderBy('applicant_accounts.created_at', 'desc');
-        } else if ($category === 'applicants_with_documents') {
+        } else if ($category === 'applicants_with_documents_v') {
             $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
                 ->leftJoin($tblApplicantDocumentVerification, $tblApplicantDocumentVerification . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantDocumentVerification . '.applicant_id')
@@ -166,7 +166,7 @@ class ApplicantView extends Component
                 ->whereNull($tblApplicantDocumentVerification . '.is_approved')
                 ->groupBy('applicant_accounts.id')
                 ->orderBy('applicant_accounts.updated_at', 'desc');
-        } elseif ($category == 'registered_applicants_') {
+        } elseif ($category == 'applicants_with_documents') {
             /*    $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
 
                 ->select(
