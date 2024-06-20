@@ -150,10 +150,10 @@ class ApplicantView extends Component
         } else if ($category === 'applicants_with_documents') {
             $dataList = $dataList->join($tblApplicantDocuments, $tblApplicantDocuments . '.applicant_id', 'applicant_accounts.id')
                 ->leftJoin($tblApplicantDocumentVerification, $tblApplicantDocumentVerification . '.applicant_id', 'applicant_accounts.id')
-                 ->whereNull($tblApplicantDocumentVerification . '.applicant_id')
+                ->whereNull($tblApplicantDocumentVerification . '.applicant_id')
                 //->where($tblApplicantDocuments . '.is_approved', '!=', 2)
-                ->where($tblApplicantDocuments . '.is_approved', '!=', 1)
-                //->where($tblApplicantDocumentVerification . '.is_removed', false)
+                ->whereNotIn($tblApplicantDocuments . '.is_approved', [1, 2])
+                ->where($tblApplicantDocumentVerification . '.is_removed', false)
                 ->groupBy('applicant_accounts.id')
                 ->orderBy('applicant_accounts.created_at', 'desc');
         } elseif ($category == 'total_registrants') {
