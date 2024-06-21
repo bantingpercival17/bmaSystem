@@ -8,6 +8,7 @@ use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDetials;
 use App\Models\ApplicantDocuments;
+use App\Models\ApplicantDocumentVerification;
 use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantEntranceExaminationResult;
 use App\Models\ApplicantExaminationAnswer;
@@ -234,12 +235,49 @@ class ApplicantController extends Controller
                 'is_removed' => 0,
             ];
             $data = ApplicantDocuments::create($_data);
+            $this->applicant_document_verification();
             return $data;
         } catch (\Throwable $error) {
             $this->debugTrackerApplicant($error);
             return response([
                 'message' => $error->getMessage()
             ], 500);
+        }
+    }
+    function applicant_document_verification()
+    {
+        // Applicant Details
+        $applicant = Auth::user();
+        // Get the Required Documents
+        $level = $applicant->course_id == 3 ? 11 : 4;
+        // Get Required Documnet Per Course
+        $requredDocuments = Documents::select('id')
+            ->where('year_level', $level)
+            ->where('is_removed', false)
+            ->get();
+        $applicantDocumentCount = 0; // Set the applicant document count
+        // Document Checker
+        foreach ($requredDocuments as $key => $document) {
+            $applicantDocument = ApplicantDocuments::where('applicant_id', $applicant->id)
+                ->where('document_id', $document->id)
+                ->where('is_removed', false)
+                ->first();
+            if ($applicantDocument) {
+                $applicantDocumentCount += 1;
+            }
+        }
+        // Check the if the Applicant Document Count and Required Document is Equal
+        if ($applicantDocumentCount == count($requredDocuments)) {
+            // Then Create Applicant Document Verification
+            $valdation = ApplicantDocumentVerification::where('applicant_id', $applicant->id)->where('is_removed', false)->first();
+            if ($valdation) {
+                $valdation->is_removed = true;
+                $valdation->save();
+                ApplicantDocumentVerification::create(['applicant_id' => $applicant->id]);
+            } else {
+                ApplicantDocumentVerification::create(['applicant_id' => $applicant->id]);
+            }
+            //ApplicantDocumentVerification::firstOrCreate(['applicant_id' => $applicant->id]);
         }
     }
     function payment_transaction(Request $request)
