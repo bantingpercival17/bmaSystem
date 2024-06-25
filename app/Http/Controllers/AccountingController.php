@@ -770,8 +770,8 @@ class AccountingController extends Controller
             $_payment->or_number = $_request->or_number;
             $_payment->save();
             //return $_payment->account->email;
-            //Mail::to($_payment->account->email)->send($_applicant->payment_approved(ApplicantAccount::find($_payment->applicant_id)));
-            Mail::to('banting.percival17@gmail.com')->send($_applicant->payment_approved(ApplicantAccount::find($_payment->applicant_id)));
+            Mail::to($_payment->account->email)->send($_applicant->payment_approved(ApplicantAccount::find($_payment->applicant_id)));
+            //Mail::to('banting.percival17@gmail.com')->send($_applicant->payment_approved(ApplicantAccount::find($_payment->applicant_id)));
             // $_applicant->payment_approved(ApplicantAccount::find($_payment->applicant_id));
         }
         if ($_request->status == 'disapproved') {
@@ -799,8 +799,8 @@ class AccountingController extends Controller
         // Send Email Notification
         $_applicant = new ApplicantEmail();
         $applicant = ApplicantAccount::find($_request->applicant);
-        Mail::to('banting.percival17@gmail.com')->send($_applicant->payment_approved($applicant));
-        //Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
+        //Mail::to('banting.percival17@gmail.com')->send($_applicant->payment_approved($applicant));
+        Mail::to($applicant->email)->send($_applicant->payment_approved($applicant));
         return back()->with('success', 'Successfully Transact!');
     }
     public function staff_payroll_view(Request $_request)
