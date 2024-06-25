@@ -9,7 +9,7 @@ Good day! <br>
 Thank you for your payment. We have received Php 300.00 as payment for the Entrance Examination.
 </p>
 <p>Kindly login to your Applicant Portal to Proceed to the Entrance Examination. </p>
-@component('mail::button', ['url' => env('APP_STUDENT_URL')])
+@component('mail::button', ['url' =>'http://bma.edu.ph/#/applicant/login'])
 LOG IN NOW
 @endcomponent
 @php

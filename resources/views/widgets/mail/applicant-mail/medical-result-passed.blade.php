@@ -9,7 +9,7 @@ Maritime
 Academy.
 </p>
 <p>Click here to Enroll</p>
-@component('mail::button', ['url' => env('APP_STUDENT_URL')])
+@component('mail::button', ['url' =>'http://bma.edu.ph/#/applicant/login'])
 LOG IN NOW
 @endcomponent
 @elseif($data->medical_result->is_fit === null)

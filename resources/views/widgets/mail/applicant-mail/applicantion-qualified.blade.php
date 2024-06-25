@@ -20,7 +20,7 @@ BANK : **_Bank of Commerce_** <br>
 ACCOUNT NAME : **_BALIWAG MARITIME ACADEMY, INC_** <br>
 ACCOUNT NUMBER : **_062000001037_** <br><br>
 
-@component('mail::button', ['url' => env('APP_STUDENT_URL')])
+@component('mail::button', ['url' =>'http://bma.edu.ph/#/applicant/login'])
 LOG IN NOW
 @endcomponent
 @include('widgets.mail.footer')

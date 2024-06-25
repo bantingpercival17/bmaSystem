@@ -14,7 +14,7 @@ If you have any questions or need assistance, please do not hesitate to contact 
 <p>
 Thank you for your prompt attention to this matter. We look forward to receiving your completed application.
 </p>
-@component('mail::button', ['url' => env('APP_STUDENT_URL')])
+@component('mail::button', ['url' =>'http://bma.edu.ph/#/applicant/login'])
 LOG IN NOW
 @endcomponent
 @include('widgets.mail.footer')
