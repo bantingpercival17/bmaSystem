@@ -164,6 +164,7 @@ class ApplicantView extends Component
                 ->leftJoin($tblApplicantNotQualifieds, $tblApplicantNotQualifieds . '.applicant_id', 'applicant_accounts.id')
                 ->whereNull($tblApplicantNotQualifieds . '.applicant_id')
                 ->whereNull($tblApplicantDocumentVerification . '.is_approved')
+                ->where($tblApplicantDocumentVerification . '.is_removed', false)
                 ->groupBy('applicant_accounts.id')
                 ->orderBy('applicant_accounts.updated_at', 'desc');
         } elseif ($category == 'applicants_with_documents') {
