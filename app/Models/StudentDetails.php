@@ -559,9 +559,9 @@ class StudentDetails extends Model
                 if ($_period == 'finals' && $this->total_final_grade($subjectClass) === '') {
                     $final_grade = 'INC';
                 }
-            } /* else {
+            } else {
                 $final_grade = 'INC';
-            } */
+            }
         } else {
             // Laboratory
             if ($subjectClass->curriculum_subject->subject->laboratory_hours > 0) {
@@ -570,9 +570,9 @@ class StudentDetails extends Model
                     if ($_period == 'finals' && $this->total_final_grade($subjectClass) === '') {
                         $final_grade = 'INC';
                     }
-                } /* else {
+                } else {
                     $final_grade = 'INC';
-                } */
+                }
             }
             // Lecture
             if ($subjectClass->curriculum_subject->subject->lecture_hours > 0) {
@@ -581,9 +581,9 @@ class StudentDetails extends Model
                     if ($_period == 'finals' && $this->total_final_grade($subjectClass) === '') {
                         $final_grade = 'INC';
                     }
-                } /* else {
+                } else {
                     $final_grade = 'INC';
-                } */
+                }
             }
         }
 
