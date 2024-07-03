@@ -274,29 +274,34 @@ class DepartmentHeadController extends Controller
     }
     function store_comprehensive(Request $request)
     {
+        $request->validate([
+            'upload-file' => 'required|file|mimes:zip',
+        ]);
         try {
-            /*  if ($request->file('upload-file')) {
-                $originalFilename = $request->file('upload-file')->getClientOriginalName();
-
-                    $filename = '/comprehensive-examination/' . base64_encode($request->course) . '/' . $originalFilename;
-                $filePath = Storage::disk('bma-students')->put($filename, $request->file('upload-file')->getRealPath());
-                $filePath = Storage::disk('bma-students')->url($filename);
-            } */
-            $fileName = '';
             if ($request->hasFile('upload-file')) {
+                $department = $request->course == 2 ? 'DECK-' : 'ENGINE-';
                 $file = $request->file('upload-file');
                 $fileName = $file->getClientOriginalName();
-                Storage::disk('local')->putFileAs('scorm', $file, $fileName);
-                return response()->json(['message' => 'File uploaded successfully']);
+                $name = explode(' ', $fileName);
+                $fileName = $department . $name[0];
+                /*   $fileName = str_replace(' ', '', $fileName); */
+                $path = $file->storeAs('upload-file', $fileName);
+                // Unzip the SCORM package
+                $zip = new \ZipArchive;
+                if ($zip->open(storage_path('app/' . $path)) === TRUE) {
+                    $zip->extractTo(storage_path('app/scorm/' . pathinfo($fileName, PATHINFO_FILENAME)));
+                    $zip->close();
+                }
+                $data = array(
+                    'function' => $request->function,
+                    'competence_name' => $request->name,
+                    'competence_code' => $request->code,
+                    'file_name' => 'scorm/' . pathinfo($fileName, PATHINFO_FILENAME),
+                    'course_id' => $request->course
+                );
+                ComprehensiveExamination::create($data);
+                return back()->with('success', 'Examination Added.');
             }
-            $data = array(
-                'competence_name' => $request->name,
-                'competence_code' => $request->code,
-                'file_name' => $fileName,
-                'course_id' => $request->course
-            );
-            ComprehensiveExamination::create($data);
-            return back()->with('success', 'Examination Added.');
             //code...
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());

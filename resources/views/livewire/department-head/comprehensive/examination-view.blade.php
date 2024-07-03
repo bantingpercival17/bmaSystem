@@ -45,6 +45,12 @@
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
+                            <small class="text-primary fw-bolder">FUNCTION</small>
+                            <input type="text" name="function"
+                                class="form-control form-control-sm border border-primary">
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <small class="text-primary fw-bolder">COURSE</small>
                             <select name="course" id=""
                                 class="form-select form-select-sm border border-primary">

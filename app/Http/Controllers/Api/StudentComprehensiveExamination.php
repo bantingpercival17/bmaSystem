@@ -14,7 +14,7 @@ class StudentComprehensiveExamination extends Controller
             $user = auth()->user();
             $course = $user->student->enrollment_assessment;
             $examination = ComprehensiveExamination::select('id', 'competence_code', 'competence_name', 'file_name')->where('course_id', $course->course_id)->get();
-            return response(compact('examination'));
+            return response(compact('examination'), 200);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([
@@ -35,4 +35,22 @@ class StudentComprehensiveExamination extends Controller
             ], 500);
         }
     }
+    /*  function retrive_comprehensive_examination(Request $request)
+    {
+        try {
+            $comprehensiveList = ComprehensiveExamination::where('course_id', $request->course)->where('is_removed', false)->get();
+            return response(compact('comprehensiveList'), 200);
+        } catch (\Throwable $th) {
+            return response(['message' => $th->getMessage()], 503);
+        }
+    }
+    function comprehensive_examination(Request $request)
+    {
+        try {
+            $comprehensive = ComprehensiveExamination::find($request->id);
+            return response(compact('comprehensive'), 200);
+        } catch (\Throwable $th) {
+            return response(['message' => $th->getMessage()], 503);
+        }
+    } */
 }

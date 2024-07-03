@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class ComprehensiveExamination extends Model
 {
     use HasFactory;
-    protected $fillable = ['competence_name', 'competence_code', 'file_name', 'course_id'];
+    protected $fillable = ['function', 'competence_name', 'competence_code', 'file_name', 'course_id'];
 }

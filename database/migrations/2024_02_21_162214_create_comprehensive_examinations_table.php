@@ -15,6 +15,7 @@ class CreateComprehensiveExaminationsTable extends Migration
     {
         Schema::create('comprehensive_examinations', function (Blueprint $table) {
             $table->id();
+            $table->text('function');
             $table->string('competence_code');
             $table->string('competence_name');
             $table->text('file_name');
