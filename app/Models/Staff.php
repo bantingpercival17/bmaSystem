@@ -263,7 +263,7 @@ class Staff extends Model
                 'role_id' => 1,
                 'role_name' => 'Administrator',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Applicants', 'applicant.overview'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Program of Studies', 'regsitrar.course-curriculum-subject'], ['Teaching Loads', 'registrar.course-subject-view-v2'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination'], ['App Deployment', 'admin.mobile-application-deployment'], ['Revision Task', 'admin.request-task']],
+                'role_routes' => [['Dashboard', 'admin.dashboard'], ['Semestral Clearance', 'admin.semestral-clearance'], ['Students', 'admin.students'], ['Applicants', 'applicant.overview'], ['Accounts', 'admin.accounts'], ['Attendance', 'admin.attendance'], ['Program of Studies', 'regsitrar.course-curriculum-subject'], ['Teaching Loads', 'registrar.course-subject-view-v2'], ['Section', 'admin.sections'], ['Setting', 'admin.setting'], ['Ticketing', 'admin.ticket'], ['Examination', 'admin.examination'], ['Comprehensive', 'department-head.compre-view'], ['App Deployment', 'admin.mobile-application-deployment'], ['Revision Task', 'admin.request-task']],
             ],
             [
                 'role_id' => 2,
@@ -288,7 +288,7 @@ class Staff extends Model
                 'role_id' => 5,
                 'role_name' => 'Onboard Training',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Dashboard', 'onboard.dashboard'], ['Midshipman', 'onboard.midshipman-v2'], ['MOPM', 'onboard.shipboard-monitoring']],
+                'role_routes' => [['Dashboard', 'onboard.dashboard'], ['Midshipman', 'onboard.midshipman-v2'], ['MOPM', 'onboard.shipboard-monitoring'], ['Comprehensive Examination', 'onboard.comprehensive-examination']],
             ],
             [
                 'role_id' => 6,
@@ -313,7 +313,7 @@ class Staff extends Model
                 'role_id' => 9,
                 'role_name' => 'Department Head',
                 'role_icon' => 'icon-job',
-                'role_routes' => [['Grade Submission', 'department-head.grade-submission-v2'], ['E-Clearance', 'department-head.e-clearance'], ['Comprehensive', 'department-head.compre-view']],
+                'role_routes' => [['Grade Submission', 'department-head.grade-submission-v2'], ['E-Clearance', 'department-head.e-clearance']],
             ],
             [
                 'role_id' => 10,
