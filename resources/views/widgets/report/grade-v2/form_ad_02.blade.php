@@ -135,7 +135,7 @@
                                     <td class="text-center fw-bolder">
                                         <b>
                                             @if ($subject->academic_id >= 5)
-                                                {{ $_student->student->total_final_grade($subject) !== '' ? ($_student->student->point_grade('finals', $subject) >= 5 ? 'FAILED' : 'PASSED') : '' }}
+                                                {{ $_student->student->total_final_grade($subject) !== '' ? ($_student->student->point_grade('finals', $subject) >= 5 ? 'FAILED' : 'PASSED') : 'FAILED' }}
                                             @else
                                                 {{ $_student->student->point_grade('finals', $subject) >= 5 ? 'FAILED' : 'PASSED' }}
                                             @endif
