@@ -17,6 +17,7 @@ use App\Models\ApplicantDocumentVerification;
 use App\Models\ApplicantEntranceExamination;
 use App\Models\ApplicantEntranceExaminationResult;
 use App\Models\ApplicantExaminationAnswer;
+use App\Models\ApplicantExaminationSchedule;
 use App\Models\ApplicantMedicalAppointment;
 use App\Models\ApplicantMedicalResult;
 use App\Models\ApplicantNoDocumentNotification;
@@ -928,6 +929,21 @@ class ApplicantController extends Controller
             }
         } catch (\Throwable $th) {
             //throw $th;
+            return back()->with('error', $th->getMessage());
+        }
+    }
+    function examination_rescheduled(Request $request)
+    {
+        try {
+            //return $request;
+            $examination = ApplicantExaminationSchedule::where('applicant_id', $request->applicant)
+                ->where('is_removed', false)
+                ->orderBy('id', 'desc')
+                ->first();
+            $examination->schedule_date = $request->date . " " . $request->time . ":00";
+            $examination->save();
+            return back()->with('success', 'Successfully Transact');
+        } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
     }

@@ -52,3 +52,5 @@ Route::get('/applicant/orientation-scheduled-v2', [ApplicantController::class, '
 Route::get('/applicant/notification/entrance-examination-v2', [ApplicantController::class, 'notification_entrance_examination_v2'])->name('applicant.entrance-examination-v2');
 Route::get('/applicant/notification/documentary-requirements', [ApplicantController::class, 'notification_upload_documents'])->name('applicant.notification-upload-documents');
 Route::get('/applicant/document-verification', [ApplicantController::class, 'appplicant_document_verification']);
+
+Route::post('/applicant/examination/resheduled',[ApplicantController::class,'examination_rescheduled'])->name('applicant.examination-rescheduled-date');

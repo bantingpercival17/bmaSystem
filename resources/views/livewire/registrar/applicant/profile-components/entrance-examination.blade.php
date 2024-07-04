@@ -65,26 +65,32 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('applicant-examination-result-v2') }}?examination={{ base64_encode($item->id) }}"
-                                                class="btn btn-primary btn-sm">Test Questioner</a>
-                                            <a href="{{ route('applicant-examination-log-v2') }}?examination={{ base64_encode($item->id) }}"
-                                                class="btn btn-outline-primary btn-sm">Logs</a>
-                                            <!-- <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target=".examination-view-modal" data-bs-toggle="tooltip"
-                                                title="" data-bs-original-title="View Modal">PASSED BY
-                                                INTERVIEW</button> -->
+                                                class="btn btn-primary btn-sm w-100 mt-2">Test Questioner</a>
+                                            <br>
+
+
                                             <a href="{{ route('applicant.examination-reconsideration') }}?applicant={{ $profile->id }}"
-                                                class="btn btn-primary btn-sm">
+                                                class="btn btn-primary btn-sm w-100 mt-2">
                                                 PASSED BY INTERVIEW
                                             </a>
+                                            <br>
                                             @foreach (Auth::user()->roles as $role)
                                                 @if ($role->id == 1)
+                                                    <button class="btn btn-info btn-sm w-100  mt-2 text-white"
+                                                        data-bs-toggle="modal" data-bs-target=".examination-view-modal"
+                                                        data-bs-toggle="tooltip" title=""
+                                                        data-bs-original-title="Change Examination Date">CHANGE
+                                                        EXAMINATION
+                                                        DATE</button>
+                                                    <br>
+                                                    <a href="{{ route('applicant-examination-log-v2') }}?examination={{ base64_encode($item->id) }}"
+                                                        class="btn btn-outline-primary btn-sm w-100 mt-2 ">Logs</a>
+                                                    <br>
                                                     @if ($item->is_removed == false)
-                                                        <br>
                                                         <a href="{{ route('examination.remove') }}?examination={{ $item->id }}"
-                                                            class="btn btn-sm btn-outline-danger">remove</a>
+                                                            class="btn btn-sm btn-outline-danger mt-2">remove</a>
                                                     @else
-                                                        <br>
-                                                        <span class="badge bg-info">REMOVED</span>
+                                                        <span class="badge bg-info mt-2">REMOVED</span>
                                                     @endif
                                                 @endif
                                             @endforeach
@@ -132,25 +138,26 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-primary fw-bolder" id="exampleModalLabel1">EXAMINATION </h5>
+                <h5 class="modal-title text-primary fw-bolder" id="exampleModalLabel1">EXAMINATION DATE</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('applicant.examination-reconsideration') }}" method="post">
+                <form action="{{ route('applicant.examination-rescheduled-date') }}" method="post">
                     @csrf
 
                     <div class="form-group">
-                        <small class="fw-bolder text-muted">REMARKS</small>
-                        <input type="text" class="form-control border border-primary" name="remarks">
+                        <small class="fw-bolder text-muted">EXAMINATION DATE</small>
+                        <lable class="form-control form-control-sm border border-primary">
+                            @if ($profile->examination_schedule)
+                                {{ $profile->examination_schedule->schedule_date }}
+                            @endif
+                        </lable>
                     </div>
                     <div class="form-group">
-                        <small class="fw-bolder text-muted">RESULT</small>
-                        <select name="result" class="form-select border border-primary">
-                            <option value="{{ 1 }}">PASSED</option>
-                            <option value="{{ 0 }}">FAILED</option>
-                        </select>
-
+                        <small class="fw-bolder text-muted">CHOICE DATE</small>
+                        <input type="date" class="form-control form-control-sm border border-primary" name="date">
+                        <input type="time" class="form-control form-control-sm border border-primary" name="time">
                     </div>
                     @if ($profile)
                         <input type="hidden" name="applicant" value="{{ $profile->id }}">
