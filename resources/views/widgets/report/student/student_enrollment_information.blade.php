@@ -29,13 +29,13 @@
                             <td class="text-fill-in"><b>{{ strtoupper($_student->last_name) }},</b> </td>
                             <td class="text-fill-in"> <b>{{ strtoupper($_student->first_name) }}</b></td>
                             <td class="text-fill-in">
-                                <b>{{ strtoupper($_student->middle_initial) !== 'NA' ? strtoupper($_student->middle_initial) : '' }}</b>
+                                <b>{{ strtoupper($_student->middle_initial) !== 'NA' || strtoupper($_student->middle_initial) !== 'NONE' || strtoupper($_student->middle_initial) !== '1' ? strtoupper($_student->middle_initial) : '' }}</b>
                             </td>
                             <td class="text-fill-in">
-                                <b>{{ strtoupper($_student->middle_name) !== 'N/A' ? strtoupper($_student->middle_name) : '' }}</b>
+                                <b>{{ strtoupper($_student->middle_name) !== 'N/A' || strtoupper($_student->middle_name) !== 'NONE' || strtoupper($_student->middle_name) !== '1' ? strtoupper($_student->middle_name) : '' }}</b>
                             </td>
                             <td class="text-fill-in">
-                                <b>{{ strtoupper($_student->extention_name) !== 'N/A' ? strtoupper($_student->extention_name) : '' }}</b>
+                                <b>{{ strtoupper($_student->extention_name) !== 'N/A' || strtoupper($_student->extention_name) !== 'NONE' || strtoupper($_student->extention_name) !== '1' ? strtoupper($_student->extention_name) : '' }}</b>
                             </td>
 
                             <td>
@@ -112,7 +112,10 @@
                             <td width="3%"><small> AGE:</small></td>
                             <td width="15%" class="text-fill-in">
                                 <b>@php
-                                    echo date_diff(date_create($_student->birthday), date_create(date('Y-m-d')))->format('%y');
+                                    echo date_diff(
+                                        date_create($_student->birthday),
+                                        date_create(date('Y-m-d')),
+                                    )->format('%y');
                                 @endphp
                                     years old
                                 </b>
@@ -250,18 +253,58 @@
                 <h5 for="" class="text-header">B. PARENT / GUARDIAN INFOMATION</h5>
                 @php
                     $_parent = $_student->parent_details;
-                    $_educational_attainment = ['Elementary Graduate', 'High School Graduate', 'College', 'Vocational', "Master's / Doctorate Degree", 'Did not attend school', 'Other: ________'];
-                    $_employment_status = ['Full Time', 'Part Time', 'Self-employed (i.e. Family Business)', 'Unemployed due to community quarantine', 'Not Working'];
+                    $_educational_attainment = [
+                        'Elementary Graduate',
+                        'High School Graduate',
+                        'College',
+                        'Vocational',
+                        "Master's / Doctorate Degree",
+                        'Did not attend school',
+                        'Other: ________',
+                    ];
+                    $_employment_status = [
+                        'Full Time',
+                        'Part Time',
+                        'Self-employed (i.e. Family Business)',
+                        'Unemployed due to community quarantine',
+                        'Not Working',
+                    ];
                     $_arrangement = ['WFH', 'Office', 'Field Work'];
                     $_income = ['Below 10,000', '10,000-20,000', '20,000-40,000', '40,000-60,000', '60,000 Above'];
                     $_dswd = ['Yes', 'No'];
                     $_homeownership = ['Owned', 'Mortgaged', 'Rented'];
                     $_cars = ['0', '1', '2', '3', 'Others'];
-                    $_device = ['Cable TV', 'Non-Cable TV', 'Basic Cellphone', 'Smartphone', 'Tablet', 'Radio', 'Desktop Computer', 'Laptop', 'None', 'Others ______'];
+                    $_device = [
+                        'Cable TV',
+                        'Non-Cable TV',
+                        'Basic Cellphone',
+                        'Smartphone',
+                        'Tablet',
+                        'Radio',
+                        'Desktop Computer',
+                        'Laptop',
+                        'None',
+                        'Others ______',
+                    ];
                     $_connect = ['Yes', 'No'];
-                    $_provider = ['own mobile data', 'own broadband (DSL, Wireless Fiber, Satellite)', 'computer shop', 'other places outside the home with internet connection (library, barangay,municipal hall neighbor, relatives)', 'none'];
+                    $_provider = [
+                        'own mobile data',
+                        'own broadband (DSL, Wireless Fiber, Satellite)',
+                        'computer shop',
+                        'other places outside the home with internet connection (library, barangay,municipal hall neighbor, relatives)',
+                        'none',
+                    ];
                     $_learning_modality = ['online learning', 'Blended', 'Face-to-Face'];
-                    $_inputs = ['lack of available gadgets / equipment', 'insufficient load/data allowance', 'existing health condition/s', 'difficulty in independent learning', 'conflict with other activities (i.e. house chores)', 'none or lack of available space for studying', 'distractions (i.e. social media, noise from community/ neighbor)', 'none'];
+                    $_inputs = [
+                        'lack of available gadgets / equipment',
+                        'insufficient load/data allowance',
+                        'existing health condition/s',
+                        'difficulty in independent learning',
+                        'conflict with other activities (i.e. house chores)',
+                        'none or lack of available space for studying',
+                        'distractions (i.e. social media, noise from community/ neighbor)',
+                        'none',
+                    ];
 
                 @endphp
                 <table class="form-rg-table">
@@ -625,8 +668,10 @@
                         <td colspan="{{ $_enrollment_assessment->bridging_program == 'with' ? 2 : 1 }}">
                             <small>STUDENT NAME: </small>
                             @php
-                                $middleName = strtoupper($_student->middle_name) !== 'N/A' ? $_student->middle_name : '';
-                                $extensionName = strtoupper($_student->extention_name) !== 'N/A' ? $_student->extention_name : '';
+                                $middleName =
+                                    strtoupper($_student->middle_name) !== 'N/A' ? $_student->middle_name : '';
+                                $extensionName =
+                                    strtoupper($_student->extention_name) !== 'N/A' ? $_student->extention_name : '';
                             @endphp
                             <b>{{ strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $middleName . ' ' . $extensionName) }}</b>
                         </td>
@@ -754,7 +799,10 @@
                                     </td>
                                     <td class="text-center">
                                         @php
-                                            $_particular_amount = $_enrollment_assessment->course_id == 3 ? $item->fees : $_course_semestral_fee->particular_tags($item->particular_tag);
+                                            $_particular_amount =
+                                                $_enrollment_assessment->course_id == 3
+                                                    ? $item->fees
+                                                    : $_course_semestral_fee->particular_tags($item->particular_tag);
 
                                             $_total_payment += $_particular_amount;
                                         @endphp
