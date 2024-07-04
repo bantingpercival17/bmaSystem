@@ -669,9 +669,17 @@
                             <small>STUDENT NAME: </small>
                             @php
                                 $middleName =
-                                    strtoupper($_student->middle_name) !== 'N/A' ? $_student->middle_name : '';
+                                    strtoupper($_student->middle_initial) !== 'NA' &&
+                                    strtoupper($_student->middle_initial) !== 'NONE' &&
+                                    strtoupper($_student->middle_initial) !== 1
+                                        ? $_student->middle_name
+                                        : '';
                                 $extensionName =
-                                    strtoupper($_student->extention_name) !== 'N/A' ? $_student->extention_name : '';
+                                    strtoupper($_student->middle_initial) !== 'NA' &&
+                                    strtoupper($_student->middle_initial) !== 'NONE' &&
+                                    strtoupper($_student->middle_initial) !== 1
+                                        ? $_student->extention_name
+                                        : '';
                             @endphp
                             <b>{{ strtoupper($_student->last_name . ', ' . $_student->first_name . ' ' . $middleName . ' ' . $extensionName) }}</b>
                         </td>
