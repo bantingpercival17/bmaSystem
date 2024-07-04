@@ -29,13 +29,13 @@
                             <td class="text-fill-in"><b>{{ strtoupper($_student->last_name) }},</b> </td>
                             <td class="text-fill-in"> <b>{{ strtoupper($_student->first_name) }}</b></td>
                             <td class="text-fill-in">
-                                <b>{{ strtoupper($_student->middle_initial) !== 'NA' || strtoupper($_student->middle_initial) !== 'NONE' || strtoupper($_student->middle_initial) !== '1' ? strtoupper($_student->middle_initial) : '' }}</b>
+                                <b>{{ strtoupper($_student->middle_initial) !== 'NA' && strtoupper($_student->middle_initial) !== 'NONE' && strtoupper($_student->middle_initial) !== '1' ? strtoupper($_student->middle_initial) : '' }}</b>
                             </td>
                             <td class="text-fill-in">
-                                <b>{{ strtoupper($_student->middle_name) !== 'N/A' || strtoupper($_student->middle_name) !== 'NONE' || strtoupper($_student->middle_name) !== '1' ? strtoupper($_student->middle_name) : '' }}</b>
+                                <b>{{ strtoupper($_student->middle_name) !== 'N/A' && strtoupper($_student->middle_name) !== 'NONE' && strtoupper($_student->middle_name) !== '1' ? strtoupper($_student->middle_name) : '' }}</b>
                             </td>
                             <td class="text-fill-in">
-                                <b>{{ strtoupper($_student->extention_name) !== 'N/A' || strtoupper($_student->extention_name) !== 'NONE' || strtoupper($_student->extention_name) !== '1' ? strtoupper($_student->extention_name) : '' }}</b>
+                                <b>{{ strtoupper($_student->extention_name) !== 'N/A' && strtoupper($_student->extention_name) !== 'NONE' && strtoupper($_student->extention_name) !== '1' ? strtoupper($_student->extention_name) : '' }}</b>
                             </td>
 
                             <td>
