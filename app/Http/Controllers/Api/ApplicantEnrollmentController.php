@@ -117,6 +117,8 @@ class ApplicantEnrollmentController extends Controller
                     'student_id' => $studentDetails->id,
                     'applicant_id' => $account->id
                 ]);
+            } else {
+                $studentDetails->update($studentData);
             }
             // Set the Educational  Attainment
             $elementary = ['student_id' => $studentDetails->id, 'school_level' => 'Elementary School', 'school_name' => trim(ucwords(mb_strtolower($request->elementary_school_name))), 'school_address' => trim(ucwords(mb_strtolower($request->elementary_school_address))), 'graduated_year' => trim(ucwords(mb_strtolower($request->elementary_school_year))), 'school_category' => 'n/a', 'is_removed' => false];
