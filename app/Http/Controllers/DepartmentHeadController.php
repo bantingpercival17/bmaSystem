@@ -272,39 +272,5 @@ class DepartmentHeadController extends Controller
         }
         return back()->with('success', $_subject . " " . $_section . " Verified.."); */
     }
-    function store_comprehensive(Request $request)
-    {
-        $request->validate([
-            'upload-file' => 'required|file|mimes:zip',
-        ]);
-        try {
-            if ($request->hasFile('upload-file')) {
-                $department = $request->course == 2 ? 'DECK-' : 'ENGINE-';
-                $file = $request->file('upload-file');
-                $fileName = $file->getClientOriginalName();
-                $name = explode(' ', $fileName);
-                $fileName = $department . $name[0];
-                /*   $fileName = str_replace(' ', '', $fileName); */
-                $path = $file->storeAs('upload-file', $fileName);
-                // Unzip the SCORM package
-                $zip = new \ZipArchive;
-                if ($zip->open(storage_path('app/' . $path)) === TRUE) {
-                    $zip->extractTo(storage_path('app/scorm/' . pathinfo($fileName, PATHINFO_FILENAME)));
-                    $zip->close();
-                }
-                $data = array(
-                    'function' => $request->function,
-                    'competence_name' => $request->name,
-                    'competence_code' => $request->code,
-                    'file_name' => 'scorm/' . pathinfo($fileName, PATHINFO_FILENAME),
-                    'course_id' => $request->course
-                );
-                ComprehensiveExamination::create($data);
-                return back()->with('success', 'Examination Added.');
-            }
-            //code...
-        } catch (\Throwable $th) {
-            return back()->with('error', $th->getMessage());
-        }
-    }
+
 }

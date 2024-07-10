@@ -92,6 +92,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/student/subject-lists/view', [StudentSubjectsController::class, 'subject_view']);
     Route::get('/student/semestral-grade', [StudentController::class, 'semestral_grade']);
     // COMPREHENSIVE EXAMINATION
+    Route::get('/student/comprehensive-examination-approved', [StudentComprehensiveExamination::class, 'comprehensive_examination_status']);
     Route::get('/student/comprehensive-examination', [StudentComprehensiveExamination::class, 'comprehensive_examination']);
     Route::get('/student/comprehensive-examination/view', [StudentComprehensiveExamination::class, 'examination_view']);
     // LOGOUT

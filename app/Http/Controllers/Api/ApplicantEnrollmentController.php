@@ -118,7 +118,7 @@ class ApplicantEnrollmentController extends Controller
                     'applicant_id' => $account->id
                 ]);
             }
-            // Set the Educational  Attainment 
+            // Set the Educational  Attainment
             $elementary = ['student_id' => $studentDetails->id, 'school_level' => 'Elementary School', 'school_name' => trim(ucwords(mb_strtolower($request->elementary_school_name))), 'school_address' => trim(ucwords(mb_strtolower($request->elementary_school_address))), 'graduated_year' => trim(ucwords(mb_strtolower($request->elementary_school_year))), 'school_category' => 'n/a', 'is_removed' => false];
             $high_school = ['student_id'  => $studentDetails->id, 'school_level' => 'Junior High School', 'school_name' => trim(ucwords(mb_strtolower($request->junior_high_school_name))), 'school_address' => trim(ucwords(mb_strtolower($request->junior_high_school_address))), 'graduated_year' => trim(ucwords(mb_strtolower($request->junior_high_school_year))), 'school_category' => 'n/a', 'is_removed' => false];
             $senior_high_school = ['student_id'  => $studentDetails->id, 'school_level' => 'Senior High School', 'school_name' => trim(ucwords(mb_strtolower($request->senior_high_school_name))), 'school_address' => trim(ucwords(mb_strtolower($request->senior_high_school_address))), 'graduated_year' => trim(ucwords(mb_strtolower($request->senior_high_school_year))), 'school_category' => 'n/a', 'is_removed' => false];
@@ -237,9 +237,9 @@ class ApplicantEnrollmentController extends Controller
         $_fields = [
             'first_name' => 'required',
             'last_name' => 'required',
-            'middle_name' => 'required',
-            'middle_initial' => 'required',
-            'extension_name' => 'required | min:2',
+            //'middle_name' => 'required',
+            //'middle_initial' => 'required',
+            //'extension_name' => 'required | min:2',
             'birth_date' => 'required',
             'birth_place' => 'required',
             'gender' => 'required',

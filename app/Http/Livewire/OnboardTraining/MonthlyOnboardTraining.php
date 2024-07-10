@@ -19,6 +19,7 @@ class MonthlyOnboardTraining extends Component
         $subHeaders = array(
             array('profile', $component_path . 'information'),
             array('performance-monitoring-report', $component_path . 'performance-monitoring-report'),
+            array('assessments', $component_path . 'onboard-training-assessments')
         );
         $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->onboard_monitoring_list()->paginate(10);
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
@@ -65,5 +66,4 @@ class MonthlyOnboardTraining extends Component
         $this->subCardContent = $data;
         Cache::put('menu-sub', $data, 60);
     }
-
 }

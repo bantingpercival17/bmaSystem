@@ -20,6 +20,5 @@ Route::prefix('department-head')->middleware(['auth', 'department-head'])->group
     Route::get('/semestral-clearance/uncleared', [DepartmentHeadController::class, 'update_student_clearance'])->name('department-head.uncleared-clearance');
     Route::get('/semestral-clearance/cleared', [DepartmentHeadController::class, 'save_student_clearance'])->name('department-head.cleared-clearance');
 
-    Route::get('/comprehensive-examination', ExaminationView::class)->name('department-head.compre-view');
-    Route::post('/comprehensive-examination', [DepartmentHeadController::class, 'store_comprehensive'])->name('department-head.store-compre');
+
 });

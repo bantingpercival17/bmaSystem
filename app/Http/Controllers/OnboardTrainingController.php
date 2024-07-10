@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ComprehensiveExaminationExaminee;
 use App\Models\DeploymentAssesment;
 use App\Models\DocumentRequirements;
 use App\Models\Documents;
@@ -356,6 +357,16 @@ class OnboardTrainingController extends Controller
         } catch (Exception $error) {
             $this->debugTracker($error);
             return back()->with('error', $error->getMessage());
+        }
+    }
+    function comprehensive_examination_approved($data)
+    {
+        try {
+            ComprehensiveExaminationExaminee::create(['student_id' => base64_decode($data), 'approved_staff_id' => Auth::user()->staff->id]);
+            return back()->with('success', 'Approved Comprehesive Examination');
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('th', $th->getMessage());
         }
     }
 }

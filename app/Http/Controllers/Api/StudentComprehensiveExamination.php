@@ -35,6 +35,22 @@ class StudentComprehensiveExamination extends Controller
             ], 500);
         }
     }
+    function comprehensive_examination_status()
+    {
+        try {
+            $user = auth()->user();
+            $examinee = $user->student->comprehensive_examination;
+            if ($examinee) {
+                return response(['data' => true], 200);
+            }
+            return response(['data' => false], 200);
+        } catch (\Throwable $error) {
+            $this->debugTrackerStudent($error);
+            return response([
+                'message' => $error->getMessage()
+            ], 500);
+        }
+    }
     /*  function retrive_comprehensive_examination(Request $request)
     {
         try {

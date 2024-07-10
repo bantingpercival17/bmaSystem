@@ -59,6 +59,24 @@ class StudentDetails extends Model
         }
         return $_image;
     }
+    function complete_name()
+    {
+        $middleName =
+            strtoupper($this->middle_initial) !== 'NA' &&
+            strtoupper($this->middle_initial) !== 'N/A' &&
+            strtoupper($this->middle_initial) !== 'NONE' &&
+            strtoupper($this->middle_initial) !== 1
+            ? $this->middle_initial
+            : '';
+        $extensionName =
+            strtoupper($this->extention_name) !== 'NA' &&
+            strtoupper($this->extention_name) !== 'N/A' &&
+            strtoupper($this->extention_name) !== 'NONE' &&
+            strtoupper($this->extention_name) !== 1
+            ? $this->extention_name
+            : '';
+        return    strtoupper($this->last_name . ', ' . $this->first_name . ' ' . $middleName . ' ' . $extensionName);
+    }
     /* Latest Enrollment Assessment */
     public function enrollment_assessment()
     {
@@ -659,9 +677,9 @@ class StudentDetails extends Model
     {
         $id = $this->id;
         return Documents::where('document_propose', 'DOCUMENTS-MONITORING')
-        ->with(['student_onboard_requirements' => function ($query) use ($id) {
-            $query->where('student_id', $id);
-        }])
+            ->with(['student_onboard_requirements' => function ($query) use ($id) {
+                $query->where('student_id', $id);
+            }])
             ->where('department_id', 4)
             ->where('is_removed', false)
             ->orderBy('id')->get();
@@ -1329,5 +1347,9 @@ class StudentDetails extends Model
     function onboard_profile()
     {
         return $this->hasOne(OnboardStudentProfile::class, 'student_id');
+    }
+    function comprehensive_examination()
+    {
+        return $this->hasOne(ComprehensiveExaminationExaminee::class, 'student_id')->where('is_removed', false);
     }
 }

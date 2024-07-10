@@ -17,6 +17,8 @@ use App\Mail\StudentEnrollmentMail;
 use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDocuments;
+use App\Models\ComprehensiveExamination;
+use App\Models\ComprehensiveExaminationScheduled;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
 use App\Models\CurriculumSubject;
@@ -722,7 +724,7 @@ class AdministratorController extends Controller
         $request->validate([
             'files' => 'required|mimes:xlsx',
         ]);
-        $_file_name ='/examination-files/'. date('dmyhis');
+        $_file_name = '/examination-files/' . date('dmyhis');
         $_file_extention =  $request->file('files')->getClientOriginalExtension();
         $_file_name = $_file_name . "." . $_file_extention;
         //return  $_request->file('files');
@@ -890,6 +892,56 @@ class AdministratorController extends Controller
         } catch (\Throwable $err) {
             $this->debugTracker($err);
             return back()->with('error', $err->getMessage());
+        }
+    }
+    function store_comprehensive(Request $request)
+    {
+        $request->validate([
+            'upload-file' => 'required|file|mimes:zip',
+        ]);
+        try {
+            if ($request->hasFile('upload-file')) {
+                $department = $request->course == 2 ? 'DECK-' : 'ENGINE-';
+                $file = $request->file('upload-file');
+                $fileName = $file->getClientOriginalName();
+                $name = explode(' ', $fileName);
+                $fileName = $department . $name[0];
+                /*   $fileName = str_replace(' ', '', $fileName); */
+                $path = $file->storeAs('upload-file', $fileName);
+                // Unzip the SCORM package
+                $zip = new \ZipArchive;
+                if ($zip->open(storage_path('app/' . $path)) === TRUE) {
+                    $zip->extractTo(storage_path('app/scorm/' . pathinfo($fileName, PATHINFO_FILENAME)));
+                    $zip->close();
+                }
+                $data = array(
+                    'function' => $request->function,
+                    'competence_name' => $request->name,
+                    'competence_code' => $request->code,
+                    'file_name' => 'scorm/' . pathinfo($fileName, PATHINFO_FILENAME),
+                    'course_id' => $request->course
+                );
+                ComprehensiveExamination::create($data);
+                return back()->with('success', 'Examination Added.');
+            }
+            //code...
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+    }
+    function store_comprehensive_scheduled(Request $request)
+    {
+        try {
+            ComprehensiveExaminationScheduled::create([
+                'student_id' => $request->student,
+                'examinee_id' => $request->examinee,
+                'scheduled' => $request->date . '09:00:00',
+                'scheduled_staff_id' => Auth::user()->staff->id,
+            ]);
+            return back()->with('success', 'Successfully Scheduled Examination');
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('error', $th->getMessage());
         }
     }
 }

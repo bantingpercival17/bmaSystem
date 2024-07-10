@@ -672,12 +672,12 @@
                                     strtoupper($_student->middle_initial) !== 'NA' &&
                                     strtoupper($_student->middle_initial) !== 'NONE' &&
                                     strtoupper($_student->middle_initial) !== 1
-                                        ? $_student->middle_name
+                                        ? $_student->middle_initial
                                         : '';
                                 $extensionName =
-                                    strtoupper($_student->middle_initial) !== 'NA' &&
-                                    strtoupper($_student->middle_initial) !== 'NONE' &&
-                                    strtoupper($_student->middle_initial) !== 1
+                                    strtoupper($_student->extention_name) !== 'NA' &&
+                                    strtoupper($_student->extention_name) !== 'NONE' &&
+                                    strtoupper($_student->extention_name) !== 1
                                         ? $_student->extention_name
                                         : '';
                             @endphp
