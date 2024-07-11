@@ -14,7 +14,8 @@ class StudentComprehensiveExamination extends Controller
             $user = auth()->user();
             $course = $user->student->enrollment_assessment;
             $examination = ComprehensiveExamination::select('id', 'competence_code', 'competence_name', 'file_name')->where('course_id', $course->course_id)->get();
-            return response(compact('examination'), 200);
+            $comprehensive_details = $user->student->comprehensive_examination->examination_scheduled;
+            return response(compact('examination', 'comprehensive_details'), 200);
         } catch (\Throwable $error) {
             $this->debugTrackerStudent($error);
             return response([

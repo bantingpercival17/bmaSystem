@@ -932,12 +932,13 @@ class AdministratorController extends Controller
     function store_comprehensive_scheduled(Request $request)
     {
         try {
-            ComprehensiveExaminationScheduled::create([
+            $data = [
                 'student_id' => $request->student,
                 'examinee_id' => $request->examinee,
-                'scheduled' => $request->date . '09:00:00',
+                'scheduled' => $request->date,
                 'scheduled_staff_id' => Auth::user()->staff->id,
-            ]);
+            ];
+            ComprehensiveExaminationScheduled::create($data);
             return back()->with('success', 'Successfully Scheduled Examination');
         } catch (\Throwable $th) {
             $this->debugTracker($th);

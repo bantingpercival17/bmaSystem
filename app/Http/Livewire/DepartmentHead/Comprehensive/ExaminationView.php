@@ -16,4 +16,8 @@ class ExaminationView extends Component
         $courses = CourseOffer::where('id', '!=', '3')->get();
         return view('livewire.department-head.comprehensive.examination-view', compact('courses', 'examinees'));
     }
+    function openAddContent()
+    {
+        $this->addExaminationContent = true;
+    }
 }

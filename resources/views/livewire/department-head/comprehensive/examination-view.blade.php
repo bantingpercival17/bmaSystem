@@ -90,14 +90,14 @@
                                             <div class="col-md">
                                                 <small class="badge bg-primary">
                                                     {{ $data ? ($data->enrollment_status ? strtoupper($data->enrollment_status->curriculum->curriculum_name) : 'CURRICULUM') : 'CURRICULUM' }}
-                                                </small>
-                                            </div>
-                                            <div class="col-md">
-                                                <small class="badge bg-primary">
-                                                    {{ $data ? ($data->enrollment_status ? strtoupper($data->enrollment_status->academic->semester . ' | ' . $data->enrollment_status->academic->school_year) : 'SECTION') : 'SECTION' }}
-                                                </small>
-                                            </div>
-                                        </div> --}}
+                                </small>
+                            </div>
+                            <div class="col-md">
+                                <small class="badge bg-primary">
+                                    {{ $data ? ($data->enrollment_status ? strtoupper($data->enrollment_status->academic->semester . ' | ' . $data->enrollment_status->academic->school_year) : 'SECTION') : 'SECTION' }}
+                                </small>
+                            </div>
+                        </div> --}}
                                     </div>
                                 </div>
                             </div>
@@ -154,6 +154,9 @@
                                 <button type="submit" class="btn btn-primary">CREATE</button>
                             </div>
                         </form>
+                    @else
+                        <button class="btn btn-primary btn-sm" wire:click="openAddContent">ADD COMPREHENSIVE
+                            EXAM</button>
                     @endif
 
                 </div>
