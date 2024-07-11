@@ -52,7 +52,10 @@ class Staff extends Model
         }
         return  $_image;
     }
-
+    function full_name()
+    {
+        return $this->first_name . " " . $this->last_name;
+    }
     public function subject_handles()
     {
         return $this->hasMany(SubjectClass::class, 'staff_id')

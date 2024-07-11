@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\OnboardTraining;
 
+use App\Models\Staff;
 use App\Models\StudentDetails;
 use Livewire\Component;
 use Illuminate\Support\Facades\Cache;
@@ -23,7 +24,12 @@ class MonthlyOnboardTraining extends Component
         );
         $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->onboard_monitoring_list()->paginate(10);
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
-        return view('livewire.onboard-training.monthly-onboard-training', compact('studentLists', 'subHeaders'));
+        $assessors = [];
+        if ($this->profile) {
+            $department = $this->profile->enrollment_assessment->course_id == 1 ? "BSMARE" : "BSMT";
+            $assessors = Staff::where('department', $department)->where('is_removed', false)->get();
+        }
+        return view('livewire.onboard-training.monthly-onboard-training', compact('studentLists', 'subHeaders', 'assessors'));
     }
     function findStudent($data)
     {

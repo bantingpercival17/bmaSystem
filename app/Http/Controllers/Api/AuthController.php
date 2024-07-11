@@ -142,9 +142,9 @@ class AuthController extends Controller
             $_data = Auth::guard('student')->user();
             $_student = StudentAccount::find($_data->id);
             $account = StudentAccount::where('id', $_data->id)->with('student')->first();
-            $student = StudentDetails::find($_data->student_id);
+            $student = StudentDetails::with('enrollment_assessment')->with('comprehensive_examination')->find($_data->student_id);
             $profile_picture =  $student->profile_picture();
-            $student = compact('account', 'profile_picture');
+            //$student = compact('account', 'profile_picture');
             if ($_request->app == true) {
                 // Set the Student Device and Accesss Logs
                 // Access Logs
@@ -152,13 +152,8 @@ class AuthController extends Controller
                 // Device Logs
                 $this->student_device($_data->student_id);
             }
-            return response(
-                [
-                    'student' => $student,
-                    'token' => $_student->createToken('studentToken')->plainTextToken
-                ],
-                200
-            );
+            $token = $_student->createToken('studentToken')->plainTextToken;
+            return response(compact('account', 'student', 'token', 'profile_picture'), 200);
         } catch (\Throwable $error) {
             $this->debugTrackerUser($error);
             return response([

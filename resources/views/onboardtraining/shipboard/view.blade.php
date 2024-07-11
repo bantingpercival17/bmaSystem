@@ -151,7 +151,7 @@
                                                             if ($_journal->document_attachments->count() > 0) {
                                                                 $percentage = ($_journal->approved_document_attachments->count() / $_journal->document_attachments->count()) * 100;
                                                             }
-                                                            
+
                                                         @endphp
                                                         <div class="d-flex align-items-center mb-2">
                                                             <h6>{{ $percentage }}%

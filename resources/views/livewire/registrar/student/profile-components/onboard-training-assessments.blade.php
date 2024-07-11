@@ -4,78 +4,122 @@
     </div>
     <div class="card-body p-3">
         @if ($profile->onboard_examination)
-            <form action="" method="post">
-                @csrf
-                <div class="row">
-                    <div class="col-md">
-                        <small for=""class="text-muted fw-bolder">WRITEN EXAM SCORE</small>
-                        @if ($profile->onboard_examination->is_finish)
-                            <label type="text" class="form-control form-control-sm border border-primary">
-                                {{ $profile->onboard_examination->result->count() }}
-                            </label>
-                            <input type="hidden" name="_assessment_score"
-                                value="{{ $profile->onboard_examination->result->count() }}">
-                        @else
+            @if ($profile->assessment_details)
+                {{ $profile->assessment_details }}
+                <form>
+
+                    <div class="row">
+                        <div class="col-md">
+                            <small for=""class="text-muted fw-bolder">WRITEN EXAM SCORE</small>
+                            <label for=""
+                                class="form-control form-contrl-sm border border-primary">{{ $profile->onboard_examination->result->count() }}</label>
+                        </div>
+                        <div class="col-md">
                             <div class="form-group">
-                                <small for="" class="form-label fw-bolder">EXAMINATION
-                                    CODE</small> <br>
-                                <span
-                                    class="text-primary h6 fw-bolder">{{ $profile->onboard_examination->examination_code }}</span>
+                                <small class="fw-bolder text-muted">PRACTICAL ASSESSMENT</small>
+                                <label for=""
+                                    class="form-control form-contrl-sm border border-primary">{{ $profile->assessment_details->practical_score }}</label>
                             </div>
-                        @endif
+                        </div>
                     </div>
-                    <div class="col-md">
-                        <div class="form-group">
-                            <small class="fw-bolder text-muted">PRACTICAL ASSESSMENT</small>
-                            @if ($profile->assessment_details)
-                                <input type="text" class="form-control form-control-sm border border-primary"
-                                    name="_practical_score" value="{{ $profile->assessment_details->practical_score }}">
+                    <div class="row">
+                        <div class="col-md">
+                            <div class="form-group">
+                                <small>ORAL ASSESSMENT</small>
+                                <label for="" class="form-control form-contrl-sm border border-primary">
+                                    {{ $profile->assessment_details->oral_score }}
+                                </label>
+
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-group">
+                                <small>ASSESSOR</small>
+                                <label for=""
+                                    class="form-control form-contrl-sm border border-primary">{{ $profile->assessment_details->staff->full_name() }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ route('onboard.assessment-report-v2') }}?_midshipman={{ base64_encode($profile->id) }}"
+                        class="btn btn-primary btn-sm">
+                        GENERATE REPORT OBT-12
+                    </a>
+                </form>
+            @else
+                <form action="{{ route('onboard.assessment-report') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="_midshipman" value="{{ base64_encode($profile->id) }}">
+                    <div class="row">
+                        <div class="col-md">
+                            <small for=""class="text-muted fw-bolder">WRITEN EXAM SCORE</small>
+                            @if ($profile->onboard_examination->is_finish)
+                                <label type="text" class="form-control form-control-sm border border-primary">
+                                    {{ $profile->onboard_examination->result->count() }}
+                                </label>
+                                <input type="hidden" name="_assessment_score"
+                                    value="{{ $profile->onboard_examination->result->count() }}">
                             @else
-                                <input type="text" class="form-control  form-control-sm border border-primary"
-                                    name="_practical_score" value="{{ old('_practical_score') }}">
-                                @error('_practical_score')
-                                    <span class="badge bg-danger mt-2">{{ $message }}</span>
-                                @enderror
+                                <div class="form-group">
+                                    <small for="" class="form-label fw-bolder">EXAMINATION
+                                        CODE</small> <br>
+                                    <span
+                                        class="text-primary h6 fw-bolder">{{ $profile->onboard_examination->examination_code }}</span>
+                                </div>
                             @endif
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md">
-                        <div class="form-group">
-                            <small>ORAL ASSESSMENT</small>
-                            @if ($profile->assessment_details)
-                                <input type="text" class="form-control form-control-sm border border-primary "
-                                    name="_oral_score" value="{{ $profile->assessment_details->oral_score }}">
-                            @else
-                                <input type="text" class="form-control form-control-sm border border-primary "
-                                    name="_oral_score" value="{{ old('_oral_score') }}">
-                                @error('_oral_score')
-                                    <span class="badge bg-danger mt-2">{{ $message }}</span>
-                                @enderror
-                            @endif
-
+                        <div class="col-md">
+                            <div class="form-group">
+                                <small class="fw-bolder text-muted">PRACTICAL ASSESSMENT</small>
+                                @if ($profile->assessment_details)
+                                    <input type="text" class="form-control form-control-sm border border-primary"
+                                        name="_practical_score"
+                                        value="{{ $profile->assessment_details->practical_score }}">
+                                @else
+                                    <input type="text" class="form-control  form-control-sm border border-primary"
+                                        name="_practical_score" value="{{ old('_practical_score') }}">
+                                    @error('_practical_score')
+                                        <span class="badge bg-danger mt-2">{{ $message }}</span>
+                                    @enderror
+                                @endif
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md">
-                        <div class="form-group">
-                            <small>ASSESSOR</small>
-                            <select name="_assessor" class="form-select form-select-sm border border-primary">
-                                {{--  @foreach ($_assessors as $item)
-                                    <option value="{{ $item->id }}">
-                                        {{ strtoupper($item->first_name . ' ' . $item->last_name) }}
-                                    </option>
-                                @endforeach --}}
+                    <div class="row">
+                        <div class="col-md">
+                            <div class="form-group">
+                                <small>ORAL ASSESSMENT</small>
+                                @if ($profile->assessment_details)
+                                    <input type="text" class="form-control form-control-sm border border-primary "
+                                        name="_oral_score" value="{{ $profile->assessment_details->oral_score }}">
+                                @else
+                                    <input type="text" class="form-control form-control-sm border border-primary "
+                                        name="_oral_score" value="{{ old('_oral_score') }}">
+                                    @error('_oral_score')
+                                        <span class="badge bg-danger mt-2">{{ $message }}</span>
+                                    @enderror
+                                @endif
 
-                            </select>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-group">
+                                <small>ASSESSOR</small>
+                                <select name="_assessor" class="form-select form-select-sm border border-primary">
+                                    @foreach ($assessors as $item)
+                                        <option value="{{ $item->id }}">
+                                            {{ strtoupper($item->first_name . ' ' . $item->last_name) }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <button class="btn btn-primary btn-sm float-end generate-report-button"
-                    data-url="{{ base64_encode($profile->id) }}">GENERATE
-                    REPORT
-                    OBT-12</button>
-            </form>
+                    <button class="btn btn-primary btn-sm float-end generate-report-button" type="submit">GENERATE
+                        REPORT
+                        OBT-12</button>
+                </form>
+            @endif
         @else
             <button class="btn btn-primary btn-sm btn-onboard-examination w-100"
                 data-url="{{ route('onboard.examination') . '?_midshipman=' . base64_encode($profile->id) }}">APPROVE
