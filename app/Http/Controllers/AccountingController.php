@@ -951,7 +951,7 @@ class AccountingController extends Controller
     public function payment_print_or_receipt(Request $request)
     {
         try {
-            $transactions = PaymentTransaction::where('or_number', base64_decode($request->orNumber))->get();
+            $transactions = PaymentTransaction::where('or_number', base64_decode($request->orNumber))->where('is_removed', false)->get();
             // GET THE STUDENT INFORMATION
             $student = $transactions[0]->payment_assessment->enrollment_assessment->student;
             $totalAmount = 0;
