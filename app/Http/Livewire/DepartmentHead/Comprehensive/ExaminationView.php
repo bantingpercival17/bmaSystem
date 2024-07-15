@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\DepartmentHead\Comprehensive;
 
 use App\Models\ComprehensiveExaminationExaminee;
+use App\Models\ComprehensiveExaminationScheduled;
 use App\Models\CourseOffer;
 use Livewire\Component;
 
@@ -17,8 +18,9 @@ class ExaminationView extends Component
     {
         $examinees = $this->dataFilter($this->searchInput, $this->category, $this->course);
         $courses = CourseOffer::where('id', '!=', '3')->get();
+        $scheduled_date = ComprehensiveExaminationScheduled::groupBy('scheduled')->where('is_removed', false)->orderBy('scheduled', 'desc')->get();
         $categories = array('for_examination_schedule', 'for_examination', 'examination_complete');
-        return view('livewire.department-head.comprehensive.examination-view', compact('courses', 'examinees', 'categories'));
+        return view('livewire.department-head.comprehensive.examination-view', compact('courses', 'examinees', 'categories','scheduled_date'));
     }
     function openAddContent()
     {

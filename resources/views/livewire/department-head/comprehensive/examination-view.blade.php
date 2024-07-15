@@ -84,6 +84,35 @@
 
                 </div>
             </div>
+            <div class="generate-report card">
+
+                <div class="card-body">
+                    <lable class="fw-bolder text-primary h6">GENERATE EXAMINATION REPORT</lable>
+                    <form action="{{ route('admin.comprehensive-examination-report') }}" method="post">
+                        @csrf
+                        <div class="form-group">
+                            <small class="fw-bolder text-primary">LIST OF EXAMINATION DATE</small>
+                            <select name="date" class="form-select form-select-sm border border-primary">
+                                <option selected>Select Examination Date</option>
+                                @foreach ($scheduled_date as $item)
+                                    <option value="{{ $item->scheduled }}">{{ $item->scheduled }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <small class="fw-bolder text-primary">COURSE</small>
+                            <select name="course" class="form-select form-select-sm border border-primary">
+                                <option value="0">Select Course</option>
+                                @foreach ($courses as $item)
+                                    <option value="{{ $item->id }}">{{ $item->course_name }}</option>
+                                @endforeach
+                            </select>
+
+                        </div>
+                        <button class="btn btn-primary btn-sm" type="submit">GENERATE REPORT</button>
+                    </form>
+                </div>
+            </div>
         </div>
         <div class="col-lg-8">
             <p class="display-6 fw-bolder text-primary">{{ strtoupper($pageTitle) }}</p>
@@ -119,6 +148,45 @@
                     @endforeach
                 </div>
             @else
+                <div class="filter-details">
+                    <div class="filter-section m-0 p-0">
+                        <small class="fw-bolder text-muted">FILTER DETAILS:</small>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="fw-bolder text-muted">CATEGORY : </small> <br>
+                                <label for=""
+                                    class="fw-bolder text-primary">{{ str_replace('_', ' ', strtoupper($category)) }}</label>
+                            </div>
+                            {{-- <div class="col-md-6">
+                                <small class="fw-bolder text-muted">COURSE : </small> <br>
+                                <label for="" class="fw-bolder text-primary">{{ $selectedCourse }}</label>
+                            </div> --}}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        @if ($searchInput != '')
+                            <div>
+                                <p for="" class="h5">
+                                    <small class="text-muted"> Search Result:</small>
+                                    <span class="fw-bolder h6 text-primary"> {{ strtoupper($searchInput) }}</span>
+                                </p>
+                            </div>
+                            <div>
+                                No. Result: <b>{{ count($examinees) }}</b>
+                            </div>
+                        @else
+                            <div>
+                                <span class="fw-bolder">
+                                    RECENT DATA
+                                </span>
+                            </div>
+                            <div>
+                                No. Result: <b>{{ count($examinees) }}</b>
+                            </div>
+                        @endif
+
+                    </div>
+                </div>
                 <div class="data-list">
                     @forelse ($examinees as $item)
                         <a

@@ -3,6 +3,7 @@
 namespace App\Report;
 
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 
 class OnboardTrainingReport
 {
@@ -85,5 +86,15 @@ class OnboardTrainingReport
         // Set the Filename of report
         $file_name = 'BMA OBT-20: ' . strtoupper($_data->last_name . ', ' . $_data->first_name) . '.pdf';
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
+    function comprehensive_examination_report($examinee, $course, $comprehensive, $date)
+    {
+        $_layout = $this->path . '.comprehensive-examination-result';
+        $date = Carbon::parse($date);
+        // Import PDF Class
+        $pdf = PDF::loadView($_layout, compact('examinee', 'course', 'date', 'comprehensive'));
+        // Set the Filename of report
+        $file_name = 'COMPRE-RESULT: ' . strtoupper($course->course_name) . '.pdf';
+        return $pdf->setPaper($this->legal, 'landscape')->stream($file_name . '.pdf');
     }
 }

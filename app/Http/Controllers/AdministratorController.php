@@ -51,6 +51,7 @@ use App\Models\ThirdDatabase\MobileApplicationVersions;
 use App\Models\User;
 use App\Models\UserPasswordReset;
 use App\Report\AttendanceSheetReport;
+use App\Report\OnboardTrainingReport;
 use App\Report\StudentListReport;
 use App\Report\StudentLogs;
 use Illuminate\Http\Request;
@@ -940,6 +941,29 @@ class AdministratorController extends Controller
             ];
             ComprehensiveExaminationScheduled::create($data);
             return back()->with('success', 'Successfully Scheduled Examination');
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('error', $th->getMessage());
+        }
+    }
+    function comprehensive_examination_report(Request $request)
+    {
+        try {
+            $examiee = ComprehensiveExaminationScheduled::select('comprehensive_examination_scheduleds.*')
+                ->join('student_details', 'student_details.id', 'comprehensive_examination_scheduleds.student_id')
+                ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'comprehensive_examination_scheduleds.student_id')
+                ->where('comprehensive_examination_scheduleds.scheduled', $request->date)
+                ->where('comprehensive_examination_scheduleds.is_removed', false)
+                ->where('enrollment_assessments.course_id', $request->course)
+                ->groupBy('comprehensive_examination_scheduleds.student_id')
+                ->orderBy('student_details.last_name', 'asc')
+                ->orderBy('student_details.first_name', 'asc')
+                ->get();
+            $course = CourseOffer::find($request->course);
+            $comprehensive = ComprehensiveExamination::where('course_id', $request->course)->orderBy('id', 'asc')->get();
+            $pdfReport = new OnboardTrainingReport();
+            return  $pdfReport->comprehensive_examination_report($examiee, $course, $comprehensive, $request->date);
+            return $examiee;
         } catch (\Throwable $th) {
             $this->debugTracker($th);
             return back()->with('error', $th->getMessage());
