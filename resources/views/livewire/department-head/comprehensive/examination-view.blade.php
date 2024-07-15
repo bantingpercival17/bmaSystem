@@ -4,6 +4,87 @@
 @section('page-title', $pageTitle)
 <div>
     <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    @if ($addExaminationContent)
+                        <lable class="fw-bolder text-primary">ADD COMPENTENCE</lable>
+                        <form action="{{ route('department-head.store-compre') }}" method="post"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <div class="form-group">
+                                <small class="text-primary fw-bolder">FUNCTION</small>
+                                <input type="text" name="function"
+                                    class="form-control form-control-sm border border-primary">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <small class="text-primary fw-bolder">COURSE</small>
+                                <select name="course" id=""
+                                    class="form-select form-select-sm border border-primary">
+                                    @foreach ($courses as $item)
+                                        <option value="{{ $item->id }}">{{ $item->course_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <small class="text-primary fw-bolder">COMPETENCE CODE</small>
+                                <input type="text" name="code"
+                                    class="form-control form-control-sm border border-primary">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <small class="text-primary fw-bolder">COMPETENCE NAME</small>
+                                <input type="text" name="name"
+                                    class="form-control form-control-sm border border-primary">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <small class="text-primary fw-bolder">ATTACH FILES</small>
+                                <input type="file" name="upload-file"
+                                    class="form-control form-control-sm border border-primary">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">CREATE</button>
+                            </div>
+                        </form>
+                    @else
+                        <button class="btn btn-primary btn-sm" wire:click="openAddContent">ADD COMPREHENSIVE
+                            EXAM</button>
+                    @endif
+
+                </div>
+            </div>
+            <div class="filter-section">
+                <lable class="fw-bolder text-primary h6">FILTER SECTION</lable>
+                <div class="form-group">
+                    <small class="fw-bolder text-primary">SEARCH STUDENT</small>
+                    <input type="text" wire:model="searchInput"
+                        class="form-control form-control-sm border border-primary">
+                </div>
+                <div class="form-group">
+                    <small class="fw-bolder text-primary">CATEGORY</small>
+                    <select wire:model="category" wire:change class="form-select form-select-sm border border-primary">
+                        @foreach ($categories as $item)
+                            <option value="{{ $item }}">{{ strtoupper(str_replace('_', ' ', $item)) }}</option>
+                        @endforeach
+
+                    </select>
+
+                </div>
+                <div class="form-group">
+                    <small class="fw-bolder text-primary">COURSE</small>
+                    <select wire:model="course" wire:change class="form-select form-select-sm border border-primary">
+                        <option value="0">Select Course</option>
+                        @foreach ($courses as $item)
+                            <option value="{{ $item->id }}">{{ $item->course_name }}</option>
+                        @endforeach
+                    </select>
+
+                </div>
+            </div>
+        </div>
         <div class="col-lg-8">
             <p class="display-6 fw-bolder text-primary">{{ strtoupper($pageTitle) }}</p>
             @if ($addExaminationContent)
@@ -11,7 +92,8 @@
                     @foreach ($courses as $course)
                         <div class="card">
                             <div class="card-header">
-                                <label for="" class="fw-bolder text-primary h4">{{ $course->course_name }}</label>
+                                <label for=""
+                                    class="fw-bolder text-primary h4">{{ $course->course_name }}</label>
                             </div>
                             <div class="card-body">
                                 @if ($course->comprehensive_examination)
@@ -117,60 +199,7 @@
 
         </div>
 
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-body">
-                    @if ($addExaminationContent)
-                        <lable class="fw-bolder text-primary">ADD COMPENTENCE</lable>
-                        <form action="{{ route('department-head.store-compre') }}" method="post"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div class="form-group">
-                                <small class="text-primary fw-bolder">FUNCTION</small>
-                                <input type="text" name="function"
-                                    class="form-control form-control-sm border border-primary">
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <small class="text-primary fw-bolder">COURSE</small>
-                                <select name="course" id=""
-                                    class="form-select form-select-sm border border-primary">
-                                    @foreach ($courses as $item)
-                                        <option value="{{ $item->id }}">{{ $item->course_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <small class="text-primary fw-bolder">COMPETENCE CODE</small>
-                                <input type="text" name="code"
-                                    class="form-control form-control-sm border border-primary">
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <small class="text-primary fw-bolder">COMPETENCE NAME</small>
-                                <input type="text" name="name"
-                                    class="form-control form-control-sm border border-primary">
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <small class="text-primary fw-bolder">ATTACH FILES</small>
-                                <input type="file" name="upload-file"
-                                    class="form-control form-control-sm border border-primary">
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">CREATE</button>
-                            </div>
-                        </form>
-                    @else
-                        <button class="btn btn-primary btn-sm" wire:click="openAddContent">ADD COMPREHENSIVE
-                            EXAM</button>
-                    @endif
 
-                </div>
-            </div>
-
-        </div>
     </div>
     {{-- Care about people's approval and you will be their prisoner. --}}
 </div>
