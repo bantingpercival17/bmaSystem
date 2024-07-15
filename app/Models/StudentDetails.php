@@ -1350,6 +1350,6 @@ class StudentDetails extends Model
     }
     function comprehensive_examination()
     {
-        return $this->hasOne(ComprehensiveExaminationExaminee::class, 'student_id')->where('is_removed', false);
+        return $this->hasOne(ComprehensiveExaminationExaminee::class, 'student_id')->with('examination_scheduled')->where('is_removed', false);
     }
 }

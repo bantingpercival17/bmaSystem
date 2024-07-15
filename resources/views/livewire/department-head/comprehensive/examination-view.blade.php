@@ -39,69 +39,77 @@
             @else
                 <div class="data-list">
                     @forelse ($examinees as $item)
-                        <div class="card">
-                            <div class="row no-gutters">
-                                <div class="col-md-3">
-                                    <img src="{{ $item->student ? $item->student->profile_picture() : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
-                                        class="card-img" alt="#">
+                        <a
+                            href="{{ route('admin.comprhensive-examinee') }}?student={{ base64_encode($item->student->id) }}">
+                            <div class="card">
+                                <div class="row no-gutters">
+                                    <div class="col-md-3">
+                                        <img src="{{ $item->student ? $item->student->profile_picture() : 'http://bma.edu.ph/img/student-picture/midship-man.jpg' }}"
+                                            class="card-img" alt="#">
+                                    </div>
+                                    <div class="col-md">
+                                        <div class="card-body p-3 me-2">
+
+                                            <label for=""
+                                                class="fw-bolder text-primary h4">{{ $item->student ? $item->student->complete_name() : 'MIDSHIPMAN NAME' }}</label>
+                                            <p class="mb-0">
+                                                <small class="fw-bolder badge bg-secondary">
+                                                    {{ $item->student ? ($item->student->account ? $item->student->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
+                                                </small> |
+                                                <small class="fw-bolder badge bg-secondary">
+                                                    {{ $item->student ? ($item->student->enrollment_status ? $item->student->enrollment_status->course->course_name : 'COURSE') : 'COURSE' }}
+                                                </small>
+                                            </p>
+                                            @if ($item->examination_scheduled)
+                                                <lable class="fw-bolder text-primary">READY FOR EXAMINATION</lable>
+                                            @else
+                                                <div class="form-scheduled">
+                                                    <form
+                                                        action="{{ route('admin.comprehensive-examination-scheduled') }}"
+                                                        method="post">
+                                                        @csrf
+                                                        <input type="hidden" value="{{ $item->student->id }}"
+                                                            name="student">
+                                                        <input type="hidden" value="{{ $item->id }}"
+                                                            name="examinee">
+
+                                                        <div class="row">
+                                                            <div class="col-md">
+                                                                <small class="fw-bolder text-muted">SET EXAMINATION
+                                                                    DATE</small>
+                                                                <input type="date"
+                                                                    class="form-control form-control-sm border border-primary"
+                                                                    name="date">
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <button
+                                                                    class="btn btn-primary btn-sm mt-4">SUBMIT</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            @endif
+
+                                            {{-- <div class="row mt-0">
+
+                                                <div class="col-md">
+                                                    <small class="badge bg-primary">
+                                                        {{ $data ? ($data->enrollment_status ? strtoupper($data->enrollment_status->curriculum->curriculum_name) : 'CURRICULUM') : 'CURRICULUM' }}
+                                    </small>
                                 </div>
                                 <div class="col-md">
-                                    <div class="card-body p-3 me-2">
-
-                                        <label for=""
-                                            class="fw-bolder text-primary h4">{{ $item->student ? $item->student->complete_name() : 'MIDSHIPMAN NAME' }}</label>
-                                        <p class="mb-0">
-                                            <small class="fw-bolder badge bg-secondary">
-                                                {{ $item->student ? ($item->student->account ? $item->student->account->student_number : 'STUDENT NO.') : 'NEW STUDENT' }}
-                                            </small> |
-                                            <small class="fw-bolder badge bg-secondary">
-                                                {{ $item->student ? ($item->student->enrollment_status ? $item->student->enrollment_status->course->course_name : 'COURSE') : 'COURSE' }}
-                                            </small>
-                                        </p>
-                                        @if ($item->examination_scheduled)
-                                            <lable class="fw-bolder text-primary">READY FOR EXAMINATION</lable>
-                                        @else
-                                            <div class="form-scheduled">
-                                                <form action="{{ route('admin.comprehensive-examination-scheduled') }}"
-                                                    method="post">
-                                                    @csrf
-                                                    <input type="hidden" value="{{ $item->student->id }}"
-                                                        name="student">
-                                                    <input type="hidden" value="{{ $item->id }}" name="examinee">
-
-                                                    <div class="row">
-                                                        <div class="col-md">
-                                                            <small class="fw-bolder text-muted">SET EXAMINATION
-                                                                DATE</small>
-                                                            <input type="date"
-                                                                class="form-control form-control-sm border border-primary"
-                                                                name="date">
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <button class="btn btn-primary btn-sm mt-4">SUBMIT</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        @endif
-
-                                        {{-- <div class="row mt-0">
-
-                                            <div class="col-md">
-                                                <small class="badge bg-primary">
-                                                    {{ $data ? ($data->enrollment_status ? strtoupper($data->enrollment_status->curriculum->curriculum_name) : 'CURRICULUM') : 'CURRICULUM' }}
-                                </small>
-                            </div>
-                            <div class="col-md">
-                                <small class="badge bg-primary">
-                                    {{ $data ? ($data->enrollment_status ? strtoupper($data->enrollment_status->academic->semester . ' | ' . $data->enrollment_status->academic->school_year) : 'SECTION') : 'SECTION' }}
-                                </small>
-                            </div>
-                        </div> --}}
+                                    <small class="badge bg-primary">
+                                        {{ $data ? ($data->enrollment_status ? strtoupper($data->enrollment_status->academic->semester . ' | ' . $data->enrollment_status->academic->school_year) : 'SECTION') : 'SECTION' }}
+                                    </small>
+                                </div>
+                            </div> --}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+
+                        </a>
+
                     @empty
                     @endforelse
                 </div>

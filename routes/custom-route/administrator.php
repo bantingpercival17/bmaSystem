@@ -6,6 +6,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\GeneralController\ApplicantController;
 use App\Http\Controllers\GeneralController\EnrollmentController;
 use App\Http\Controllers\PaymongoApi;
+use App\Http\Livewire\Administrator\Comprehensive\ExamineeView;
 use App\Http\Livewire\Administrator\MobileApplication;
 use App\Http\Livewire\Administrator\MobileApplicationVersionView;
 use App\Http\Livewire\DepartmentHead\Comprehensive\ExaminationView;
@@ -127,7 +128,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::get('/comprehensive-examination', ExaminationView::class)->name('department-head.compre-view');
   Route::post('/comprehensive-examination', [AdministratorController::class, 'store_comprehensive'])->name('department-head.store-compre');
   Route::post('/comprehensive-examination-scheduled', [AdministratorController::class, 'store_comprehensive_scheduled'])->name('admin.comprehensive-examination-scheduled');
-
+  Route::get('/comprehensive-examination/examinee', ExamineeView::class)->name('admin.comprhensive-examinee');
   // Livewire
   Route::get('/mobile-applicantion-deployment', MobileApplication::class)->name('admin.mobile-application-deployment'); // List of Application
   Route::get('/mobile-applicantion-deployment/view', MobileApplicationVersionView::class)->name('admin.application-version'); // View Application
