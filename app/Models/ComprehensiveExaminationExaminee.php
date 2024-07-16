@@ -17,4 +17,8 @@ class ComprehensiveExaminationExaminee extends Model
     {
         return $this->hasOne(ComprehensiveExaminationScheduled::class, 'examinee_id')->orderBy('id', 'desc')->where('is_removed', false);
     }
+    function competence_result($data)
+    {
+        return $this->hasOne(ComprehensiveExaminationResult::class, 'examinee_id')->where('comprehensive_id', $data)->orderBy('result', 'asc')->where('is_removed', false)->first();
+    }
 }

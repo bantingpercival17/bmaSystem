@@ -29,8 +29,9 @@
                             <td>
                                 <b>{{ strtoupper($item->compre_examinee->student->first_name) }}</b>
                             </td>
-                            @foreach ($comprehensive as $item)
-                                <th>{{ $item->competence_code }}</th>
+                            @foreach ($comprehensive as $item1)
+                                <th>{{ $item->compre_examinee->competence_result($item1->id) ? $item->compre_examinee->competence_result($item1->id)->result : '-' }}
+                                </th>
                             @endforeach
                         </tr>
                     @empty
