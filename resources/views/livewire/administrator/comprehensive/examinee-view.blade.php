@@ -42,17 +42,22 @@
                                     {{ strtoupper($item->competence_code . ' - ' . $item->competence_name) }}
                                 </p>
                                 <div class="examination-result">
-                                    @foreach ($item->examination_details as $key => $results)
-                                        <div class="row">
-                                            <div class="col-md">
-                                                Attemp {{ $key + 1 }} : <b>{{ $results->result }}</b>
+                                    @if ($profile->comprehensive_examination->examination_attemp($item->id)->get())
+                                        @foreach ($profile->comprehensive_examination->examination_attemp($item->id)->get() as $key => $results)
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    Attemp {{ $key + 1 }} : <b>{{ $results->result }}</b>
+                                                </div>
+                                                <div class="col-md">
+                                                    <button class="btn btn-sm btn-secondary">ACTION</button>
+                                                </div>
                                             </div>
-                                            <div class="col-md">
-                                                <button class="btn btn-sm btn-secondary">ACTION</button>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                    @endforeach
+                                            <hr>
+                                        @endforeach
+                                    @else
+                                        No Attemps
+                                    @endif
+
                                 </div>
                             </div>
                         </div>

@@ -19,6 +19,13 @@ class ComprehensiveExaminationExaminee extends Model
     }
     function competence_result($data)
     {
-        return $this->hasOne(ComprehensiveExaminationResult::class, 'examinee_id')->where('comprehensive_id', $data)->orderBy('result', 'asc')->where('is_removed', false)->first();
+        return $this->hasOne(ComprehensiveExaminationResult::class, 'examinee_id')->where('comprehensive_id', $data)->orderBy('result', 'desc')->where('is_removed', false)->first();
     }
+
+    // examination_attemp
+    function examination_attemp($data)
+    {
+        return $this->hasMany(ComprehensiveExaminationResult::class, 'examinee_id')->where('comprehensive_id', $data)->orderBy('result', 'desc')->where('is_removed', false);
+    }
+
 }
