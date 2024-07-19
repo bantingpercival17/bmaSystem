@@ -95,7 +95,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/student/comprehensive-examination-approved', [StudentComprehensiveExamination::class, 'comprehensive_examination_status']);
     Route::get('/student/comprehensive-examination', [StudentComprehensiveExamination::class, 'comprehensive_examination']);
     Route::get('/student/comprehensive-examination/view', [StudentComprehensiveExamination::class, 'examination_view']);
-    Route::post('/student/comprehensive-examination/', [StudentComprehensiveExamination::class, 'comprehensive_examination_store_result']);
+    Route::post('/student/comprehensive-examination/store-result', [StudentComprehensiveExamination::class, 'comprehensive_examination_store_result']);
     // LOGOUT
     Route::post('/student/logout', [StudentController::class, 'student_logout']);
     // Route::
