@@ -18,6 +18,7 @@ use App\Models\AcademicYear;
 use App\Models\ApplicantAccount;
 use App\Models\ApplicantDocuments;
 use App\Models\ComprehensiveExamination;
+use App\Models\ComprehensiveExaminationResult;
 use App\Models\ComprehensiveExaminationScheduled;
 use App\Models\CourseOffer;
 use App\Models\Curriculum;
@@ -964,6 +965,18 @@ class AdministratorController extends Controller
             $pdfReport = new OnboardTrainingReport();
             return  $pdfReport->comprehensive_examination_report($examiee, $course, $comprehensive, $request->date);
             return $examiee;
+        } catch (\Throwable $th) {
+            $this->debugTracker($th);
+            return back()->with('error', $th->getMessage());
+        }
+    }
+    function student_comprehensive_examination_remove(Request $request)
+    {
+        try {
+            $exam = ComprehensiveExaminationResult::find(base64_decode($request->examinee));
+            $exam->is_removed = true;
+            $exam->save();
+            return back();
         } catch (\Throwable $th) {
             $this->debugTracker($th);
             return back()->with('error', $th->getMessage());

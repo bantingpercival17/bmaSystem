@@ -129,6 +129,7 @@ Route::prefix('administrator')->middleware(['auth', 'administrator'])->group(fun
   Route::post('/comprehensive-examination', [AdministratorController::class, 'store_comprehensive'])->name('department-head.store-compre');
   Route::post('/comprehensive-examination-scheduled', [AdministratorController::class, 'store_comprehensive_scheduled'])->name('admin.comprehensive-examination-scheduled');
   Route::post('/comprehensive-examination/report', [AdministratorController::class, 'comprehensive_examination_report'])->name('admin.comprehensive-examination-report');
+  Route::get('/comprehensive-examination/removed', [AdministratorController::class, 'student_comprehensive_examination_remove'])->name('admin.comprehensive-examination-removed');
 
   Route::get('/comprehensive-examination/examinee', ExamineeView::class)->name('admin.comprhensive-examinee');
   // Livewire

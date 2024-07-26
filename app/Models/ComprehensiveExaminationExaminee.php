@@ -25,7 +25,7 @@ class ComprehensiveExaminationExaminee extends Model
     // examination_attemp
     function examination_attemp($data)
     {
-        return $this->hasMany(ComprehensiveExaminationResult::class, 'examinee_id')->where('comprehensive_id', $data)->orderBy('result', 'desc')->where('is_removed', false);
+        return $this->hasMany(ComprehensiveExaminationResult::class, 'examinee_id')->where('comprehensive_id', $data)/* ->orderBy('result', 'desc') */->where('is_removed', false);
     }
 
 }

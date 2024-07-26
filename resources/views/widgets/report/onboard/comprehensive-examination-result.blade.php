@@ -18,25 +18,53 @@
                         @foreach ($comprehensive as $item)
                             <th>{{ $item->competence_code }}</th>
                         @endforeach
+                        <th>REMARKS</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($examinee as $item)
+                        @php
+                            $resultRemarks = 0;
+                        @endphp
                         <tr>
-                            <td>
+                            <th>
                                 <b>{{ strtoupper($item->compre_examinee->student->last_name) }}</b>
-                            </td>
-                            <td>
+                            </th>
+                            <th>
                                 <b>{{ strtoupper($item->compre_examinee->student->first_name) }}</b>
-                            </td>
+                            </th>
                             @foreach ($comprehensive as $item1)
-                                <th>{{ $item->compre_examinee->competence_result($item1->id) ? $item->compre_examinee->competence_result($item1->id)->result : '-' }}
+                                @php
+                                    $borderStyle = '';
+                                    $result = 0;
+                                    if ($item->compre_examinee->competence_result($item1->id)) {
+                                        $result = $item->compre_examinee->competence_result($item1->id)->result;
+                                        $result = (int) str_replace('%', '', $result);
+                                        if ($result < 60) {
+                                            $borderStyle = 'failed-color';
+                                            $resultRemarks += 1;
+                                        }
+                                    }
+                                @endphp
+                                <th class="{{ $borderStyle }}">
+                                    {{ $result }}
+                                    {{ $item->compre_examinee->competence_result($item1->id) ? $item->compre_examinee->competence_result($item1->id)->result : '-' }}
                                 </th>
                             @endforeach
+                            <th class="{{ $resultRemarks > 0 ? 'failed-color' : '' }}">
+                                {{ $resultRemarks > 0 ? 'FAILED' : 'PASSED' }}
+                            </th>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="2">NO DATA</td>
+                            @foreach ($comprehensive as $item1)
+                                <th>
+                                </th>
+                            @endforeach
+                            <th>
+
+                            </th>
                         </tr>
                     @endforelse
 
@@ -49,6 +77,11 @@
     <style>
         .content-header {
             margin: 5px;
+        }
+
+        .failed-color {
+            background-color: rgb(255, 73, 7);
+            color: white;
         }
     </style>
 @endsection

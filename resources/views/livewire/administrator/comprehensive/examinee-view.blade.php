@@ -42,22 +42,48 @@
                                     {{ strtoupper($item->competence_code . ' - ' . $item->competence_name) }}
                                 </p>
                                 <div class="examination-result">
-                                    @if ($profile->comprehensive_examination->examination_attemp($item->id)->get())
-                                        @foreach ($profile->comprehensive_examination->examination_attemp($item->id)->get() as $key => $results)
-                                            <div class="row">
-                                                <div class="col-md">
-                                                    Attemp {{ $key + 1 }} : <b>{{ $results->result }}</b>
-                                                </div>
-                                                <div class="col-md">
-                                                    <button class="btn btn-sm btn-secondary">ACTION</button>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                        @endforeach
-                                    @else
-                                        No Attemps
-                                    @endif
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>ATTEMP NO.</th>
+                                                <th>RESULT</th>
+                                                <th>DATE</th>
+                                                <th>ACTION</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if ($profile->comprehensive_examination->examination_attemp($item->id)->get())
+                                                @foreach ($profile->comprehensive_examination->examination_attemp($item->id)->get() as $key => $results)
+                                                    <tr>
+                                                        <td>{{ $key + 1 }}</td>
+                                                        <td><b>{{ $results->result }}</b></td>
+                                                        <td>{{ $results->created_at }}</td>
+                                                        <td>
+                                                            @if (Auth::user()->email == 'p.banting@bma.edu.ph')
+                                                                <a href="{{ route('admin.comprehensive-examination-removed') }}?examinee={{ base64_encode($results->id) }}"
+                                                                    class="badge bg-secondary">remove</a>
+                                                            @endif
 
+                                                        </td>
+                                                    </tr>
+                                                    {{--  <div class="row">
+                                                        <div class="col-md">
+                                                            Attemp {{ $key + 1 }} : <b>{{ $results->result }}</b>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <button class="btn btn-sm btn-secondary">ACTION</button>
+                                                        </div>
+                                                    </div>
+                                                    <hr> --}}
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="4">NO ATTEMP</td>
+                                                </tr>
+                                                No Attemps
+                                            @endif
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
