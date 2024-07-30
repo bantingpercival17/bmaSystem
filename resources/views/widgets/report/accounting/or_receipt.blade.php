@@ -165,33 +165,27 @@
                                 if (count($_particular) > $i) {
                                     $_whole = '';
                                     $_decimal = '';
-                                    foreach ($data['transactions'] as $value) {
-                                        $payment_transaction = strtolower(trim($value->payment_transaction));
-                                        $remarks = strtolower(trim($value->remarks));
-                                        $particular = strtolower(trim($_particular[$i]));
-
-                                        /* if ($payment_transaction == $particular || $remarks == $particular) {
-                                            $_amount = explode('.', $value->payment_amount);
-                                            $_total_amount += $value->payment_amount;
-                                            $_whole = $_whole_1 = $_amount[0] ?? '';
-                                            $_decimal = $_decimal_1 = $_amount[1] ?? '00';
-                                            break; // Break the loop once found
-                                        } */
-                                        if ($payment_transaction == $particular) {
-                                            $amount = $value->payment_amount;
-                                        } elseif ($remarks == $particular) {
-                                            $amount = $value->payment_amount;
-                                        } else {
-                                            $amount = 0;
-                                        }
-                                        if ($amount != 0) {
-                                            $_amount = explode('.', $value->payment_amount);
-                                            $_total_amount += $value->payment_amount;
-                                            $_whole = $_whole_1 = $_amount[0] ?? '';
-                                            $_decimal = $_decimal_1 = $_amount[1] ?? '00';
-                                        } else {
-                                            /*  $_whole = '';
-                                            $_decimal = ''; */
+                                    foreach ($data['transactions'] as $key => $value) {
+                                        if ($_particular[$i] == $key) {
+                                            if ($key == 'Others') {
+                                                if (count($value) > 0) {
+                                                    foreach ($value as $key => $amount) {
+                                                        if ($amount != 0) {
+                                                            $_amount = explode('.', $amount);
+                                                            $_total_amount += $amount;
+                                                            $_whole = $_whole_1 = $_amount[0] ?? '';
+                                                            $_decimal = $_decimal_1 = $_amount[1] ?? '00';
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                if ($value != 0) {
+                                                    $_amount = explode('.', $value);
+                                                    $_total_amount += $value;
+                                                    $_whole = $_whole_1 = $_amount[0] ?? '';
+                                                    $_decimal = $_decimal_1 = $_amount[1] ?? '00';
+                                                }
+                                            }
                                         }
                                     }
                                 } else {

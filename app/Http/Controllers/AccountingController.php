@@ -978,8 +978,9 @@ class AccountingController extends Controller
             $orNumber = base64_decode($request->orNumber);
             $transactionDate = $transactions[0]->transaction_date;
             $transactions = PaymentTransaction::where('or_number', base64_decode($request->orNumber))->get();
+            $transactions =  $this->checkTransaction($transactions);
             $receiptDetails =  compact('fullname', 'student_number', 'transactionDate', 'orNumber', 'totalAmount', 'remarks', 'transactions', 'staff');
-            //return $receiptDetails;
+            $receiptDetails;
             $_reciept_report = new AccountingPaymentReceipt();
             return $_reciept_report->print_or_recipt($receiptDetails, $request->printer);
         } catch (Exception $err) {
@@ -987,6 +988,27 @@ class AccountingController extends Controller
             // return back()->with('error', $err->getMessage());
             // TODO:: Audit Error
         }
+    }
+    function checkTransaction($data)
+    {
+        $remarks = array('Tuition Fee' => 0, 'Uniform' => 0, 'Books' => 0, 'Forms' => 0, 'Others' => []);
+        foreach ($data as $key => $value) {
+            if ($value->payment_transaction == 'TUITION FEE') {
+                $remarks['Tuition Fee'] += $value->payment_amount;
+            }
+            if ($value->payment_transaction == 'ADDITIONAL FEE') {
+                if (str_contains($value->remarks, 'UNIFORM')) {
+                    $remarks['Uniform'] += $value->payment_amount;
+                } elseif (str_contains($value->remarks, 'BOOKS')) {
+                    $remarks['Books'] += $value->payment_amount;
+                } elseif (str_contains($value->remarks, 'FORMS')) {
+                    $remarks['Forms'] += $value->payment_amount;
+                } else {
+                    array_push($remarks['Others'], $value->payment_amount);
+                }
+            }
+        }
+        return $remarks;
     }
     function arrayToSentence($array)
     {
