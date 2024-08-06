@@ -154,8 +154,28 @@
                 </tbody>
 
             </table>
+            <br>
 
             <table class="table-outline-2 table-student-content">
+                <thead>
+                    <tr>
+                        <th>DATE</th>
+                        <th>15th</th>
+                        <th>30th</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>TARDINESS</th>
+                        <td>{{ $employee->attendance_summary_tardiness($start_date, true) }} minutes</td>
+                        <td>{{ $employee->attendance_summary_tardiness($start_date, false) }} minutes</td>
+                    </tr>
+                    <tr>
+                        <th>UNDER-TIME</th>
+                        <td>{{ $employee->attendance_summary_undertime($start_date, true) }} minutes</td>
+                        <td>{{ $employee->attendance_summary_undertime($start_date, false) }} minutes</td>
+                    </tr>
+                </tbody>
 
             </table>
             <div class="page-break"></div>

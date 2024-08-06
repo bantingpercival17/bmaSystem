@@ -58,7 +58,11 @@ class PaymentTransaction extends Component
         $this->staff = auth()->user()->staff->id;
         $this->academic =  $this->academicValue();
         $studentLists = $this->inputStudent != '' ? $this->findStudent($this->inputStudent) : $this->recentStudent(base64_decode($this->academic));
-        $particularFees = AdditionalFees::where('is_removed', false)->get();
+        $particularFees = AdditionalFees::select('additional_fees.*')
+            ->join('particulars', 'particulars.id', 'additional_fees.particular_id')
+            ->where('additional_fees.is_removed', false)
+            ->where('particulars.particular_name', '!=', 'Surcharge')
+            ->get();
         $scholarshipList = [];
         $additional_fees = [];
         $this->profile = request()->query('student') ? StudentDetails::find(base64_decode(request()->query('student'))) : $this->profile;
@@ -231,7 +235,7 @@ class PaymentTransaction extends Component
                 'text' => 'Successfully Transact!',
                 'type' => 'success',
             ]);
-            $this->swtchTab('overview');
+            $this->swtchTab('history');
         } catch (\Throwable $th) {
             $this->dispatchBrowserEvent('swal:alert', [
                 'title' => 'System Bug!',

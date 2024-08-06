@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -127,7 +128,7 @@ class Staff extends Model
             $latenessInSeconds = ($actualTime - $scheduledTime) / 60;
             return number_format($latenessInSeconds, 1);
         } else {
-            return '-';
+            return 0;
         }
     }
     function compute_tardines_per_day($arrivalTime)
@@ -139,7 +140,7 @@ class Staff extends Model
             $undertimeInMinutes = ($scheduledEndTime - $actualEndTime) / 60;
             return number_format($undertimeInMinutes, 1);
         } else {
-            return '-';
+            return 0;
         }
     }
     public function attendance_list()
@@ -154,6 +155,66 @@ class Staff extends Model
     {
         return $this->hasOne(EmployeeAttendance::class, 'staff_id')->where('time_in', 'like', '%' . $date . '%')->orderBy('id', 'desc');
     }
+
+    public function attendance_summary_tardiness($data, $type)
+    {
+        $rangeDate = $type ? [1, 15] : [16, 31];
+        $date = new DateTime($data);
+        $totalTime = 0;
+        $current = strtotime($date->format('Y-m-') . $rangeDate[0]);
+        $end = strtotime($date->format('Y-m-') . $rangeDate[1]);
+        $dateList = array();
+        while ($current <= $end) {
+            // Check if the current day is not a weekend (Saturday or Sunday)
+            if (date('N', $current) < 6) {
+                $dateList[] = date('Y-m-d', $current);
+            }
+            $current = strtotime('+1 days', $current);
+        }
+        $totalDate = array();
+        foreach ($dateList as $key => $dataDate) {
+            $daily_time =   $this->daily_time_am($dataDate);
+            // Validate the the Date if Exisiting the Value / Data
+            if ($daily_time) {
+                // If true compute the late
+                $value =  $this->compute_late_per_day(date_format(date_create($daily_time->time_in), 'H:i:s'));
+                if ($value != 0) {
+                    $totalTime += $value;
+                }
+            }
+        }
+        return $totalTime;
+    }
+    public function attendance_summary_undertime($data, $type)
+    {
+        $rangeDate = $type ? [1, 15] : [16, 31];
+        $date = new DateTime($data);
+        $totalTime = 0;
+        $current = strtotime($date->format('Y-m-') . $rangeDate[0]);
+        $end = strtotime($date->format('Y-m-') . $rangeDate[1]);
+        $dateList = array();
+        while ($current <= $end) {
+            // Check if the current day is not a weekend (Saturday or Sunday)
+            if (date('N', $current) < 6) {
+                $dateList[] = date('Y-m-d', $current);
+            }
+            $current = strtotime('+1 days', $current);
+        }
+        $totalDate = array();
+        foreach ($dateList as $key => $dataDate) {
+            $daily_time =   $this->daily_time_pm($dataDate);
+            // Validate the the Date if Exisiting the Value / Data
+            if ($daily_time) {
+                // If true compute the late
+                $value =  $this->compute_tardines_per_day(date_format(date_create($daily_time->time_out), 'H:i:s'));
+                if ($value != 0) {
+                    $totalTime += $value;
+                }
+            }
+        }
+        return $totalTime;
+    }
+
     public function current_academic()
     {
         $academic = AcademicYear::where('is_active', 1)->first();
