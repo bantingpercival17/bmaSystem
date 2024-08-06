@@ -50,7 +50,7 @@ class StudentView extends Component
     {
         $students = StudentDetails::select('student_details.id', 'student_details.first_name', 'student_details.last_name', 'student_details.middle_initial', 'enrollment_assessments.id as enrollment_id')
             ->join('enrollment_assessments', 'enrollment_assessments.student_id', 'student_details.id')
-            ->where('enrollment_assessments.academic_id',  base64_decode($this->academic))
+            /* ->where('enrollment_assessments.academic_id',  base64_decode($this->academic)) */
             ->where('enrollment_assessments.is_removed', false);
         // Filtering Student by Name
         if ($this->searchInput != '') {
@@ -110,7 +110,7 @@ class StudentView extends Component
                 # code...
                 break;
         }
-        $this->dataLists = $students->orderBy('student_details.last_name', 'asc')->get();
+        $this->dataLists = $students->groupBy('enrollment_assessments.student_id')->orderBy('student_details.last_name', 'asc')->get();
     }
     function sectionFilteration()
     {

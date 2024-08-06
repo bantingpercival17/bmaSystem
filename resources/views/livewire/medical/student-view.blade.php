@@ -12,14 +12,15 @@
                     <div class="col-12">
                         <small class="text-primary"><b>SEARCH STUDENT NAME</b></small>
                         <div class="form-group search-input">
-                            <input type="search" class="form-control border border-primary" placeholder="Search Pattern: Lastname, Firstname"
-                                wire:model="searchInput">
+                            <input type="search" class="form-control border border-primary"
+                                placeholder="Search Pattern: Lastname, Firstname" wire:model="searchInput">
                         </div>
                     </div>
                     <div class="col-12">
                         <small class="text-primary"><b>CATEGORY</b></small>
                         <div class="form-group search-input">
-                            <select class="form-select form-select-sm border border-primary" wire:model="selectCategories">
+                            <select class="form-select form-select-sm border border-primary"
+                                wire:model="selectCategories">
                                 @foreach ($selectContent as $item)
                                     <option value="{{ $item[1] }}">{{ ucwords($item[0]) }}</option>
                                 @endforeach
@@ -29,7 +30,8 @@
                     <div class="col-12">
                         <small class="text-primary"><b>COURSE</b></small>
                         <div class="form-group search-input">
-                            <select wire:model="selectCourse" class="form-select form-select-sm border border-primary" wire:click="chooseCourse">
+                            <select wire:model="selectCourse" class="form-select form-select-sm border border-primary"
+                                wire:click="chooseCourse">
                                 <option value="ALL COURSE">{{ ucwords('all courses') }}</option>
                                 @foreach ($courses as $course)
                                     <option value="{{ $course->id }}">{{ ucwords($course->course_name) }}</option>
@@ -69,11 +71,11 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                        <small class="text-primary"><b>GENERATE REPORT</b></small>
-                        <div class="form-group search-input">
-                            <button class="btn btn-primary w-100" wire:click="generateReport">PDF REPORT</button>
-                        </div>
+                    <small class="text-primary"><b>GENERATE REPORT</b></small>
+                    <div class="form-group search-input">
+                        <button class="btn btn-primary w-100" wire:click="generateReport">PDF REPORT</button>
                     </div>
+                </div>
             </div>
             <div class="col-lg-8">
                 <div class="filter-section m-0 p-0">
@@ -131,7 +133,7 @@
                                             <span
                                                 class="badge {{ $data->enrollment_assessment->color_course() }}">{{ $data->enrollment_assessment->course->course_code }}</span>
                                             -
-                                            <span><b>{{ $data ? $data->account->student_number : '-' }}</b></span>
+                                            <span><b>{{ $data ? ($data->account ? $data->account->student_number : '-') : '-' }}</b></span>
                                             <a
                                                 href="{{ route('applicant-profile') }}?_student={{ base64_encode($data->id) }}">
                                                 <div class="mt-2 h4 fw-bolder text-primary">
