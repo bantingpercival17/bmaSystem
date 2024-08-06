@@ -80,6 +80,9 @@ class AuthController extends Controller
             $_account = ApplicantAccount::where('name', trim($_fields['firstName']) . ' ' . trim($_fields['lastName']))->where('academic_id', $_academic->id)->first();
             if ($_applicant || $_account) {
                 return response(['errors' => array('message' => 'You have already an existing account! Sign <a href="/#/applicant/login">here</a>')], 422);
+            } else if ($_request->course == 1 || $_request->course == 2) {
+                return response(['errors' => array('message' => 'Thank you for your interest. The application process for the academic year 2024-2025 is now closed. Please check back later for information on the next application cycle.
+               ')], 422);
             } else if ($_request->course == 3) {
                 return response(['errors' => array('message' => 'The Senior High School program at Baliwag Maritime Academy, Inc. will temporarily cease accepting new
                 applicants until further notice.
