@@ -1158,7 +1158,13 @@ class AccountingController extends Controller
         ]);
         try {
             $_report = new AttendanceSheetReport();
-            $_report_pdf = $request->format == 'daily' ? $_report->daily_time_record_report_v2($request->department, $request->start_date, $request->end_date) :  $_report->monthly_time_record_report_v2($request->department, $request->start_date, $request->end_date);
+            if ($request->format == 'daily') {
+                $_report_pdf = $_report->daily_time_record_report_v2($request->department, $request->start_date, $request->end_date);
+            } elseif ($request->format == 'monthly') {
+                $_report_pdf = $_report->monthly_time_record_report_v2($request->department, $request->start_date, $request->end_date);
+            } else {
+                $_report_pdf = $_report->monthly_summary_late($request->department, $request->start_date, $request->end_date);
+            }
             return $_report_pdf;
         } catch (\Throwable $th) {
             //throw $th;

@@ -140,6 +140,7 @@
                             <select name="format" class="form-select form-select-sm border border-primary">
                                 <option value="daily">Daily Attendance</option>
                                 <option value="monthly">Monthly Attendance</option>
+                                <option value="summary-late">Summary of Late/Undertime Monthly</option>
                             </select>
                         </div>
                         <div class="form-group">

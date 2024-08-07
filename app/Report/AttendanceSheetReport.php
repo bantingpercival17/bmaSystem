@@ -100,4 +100,19 @@ class AttendanceSheetReport
         $pdf = PDF::loadView("widgets.report.employee.daily_time_record_v2", compact('employees', 'start_date', 'end_date', 'dateList'));
         return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
     }
+    function monthly_summary_late($department, $start_date, $end_date)
+    {
+
+        $employees = Staff::select('staff.*')->where('staff.is_removed', false);
+        if ($department != 0) {
+            $employees = $employees->join('staff_departments', 'staff_departments.staff_id', 'staff.id')
+                ->where('staff_departments.department_id', $department);
+        }
+        $date = date_format(date_create($start_date), 'y-m-d');
+        $employees = $employees->orderBy('staff.last_name', 'asc')->groupBy('staff.id')->get();
+        $file_name = "EMPLOYEE ATTENDANCE: MONTHLY SUMMARY OF LATE & UNDERTIME - ".date_format(date_create($start_date), 'M-Y'); // With Date now
+        # return $employees;
+        $pdf = PDF::loadView("widgets.report.employee.summary_of_monthly_late", compact('employees', 'date'));
+        return $pdf->setPaper($this->legal, 'portrait')->stream($file_name . '.pdf');
+    }
 }
