@@ -1237,4 +1237,54 @@ class AccountingController extends Controller
             //throw $th;
         }
     }
+    function bulk_reassessments(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+            'academic' => 'required',
+            'course' => 'required',
+            'level' => 'required'
+        ]);
+        try {
+            $enrollment_assessment = EnrollmentAssessment::where('course_id', $request->course)->where('year_level', $request->level)->where('academic_id', base64_decode($request->academic))->get();
+
+            echo "BULK RE-ASSESSMENT";
+            echo "<br>Waiting, don't back.... <br>";
+            echo "NUMBER OF REASSESSMENT: " . count($enrollment_assessment);
+            foreach ($enrollment_assessment as $key => $assessment) {
+                echo "<br>" . strtoupper($assessment->student->complete_name()) . "<br>";
+                echo "Starting to Re-assessments <br>";
+                $tuition_fees = $assessment->course_level_tuition_fee();
+                $payment_assessment = $assessment->payment_assessments;
+                if ($payment_assessment) {
+                    if ($payment_assessment->payment_mode == 1) {
+                        // Installment
+                        $total_tuitionfee =  $tuition_fees->total_tuition_fees_with_interest($assessment);
+                        $upon_enrollment = $tuition_fees->upon_enrollment_v2($assessment);
+                        $monthly_payment = $tuition_fees->monthly_fees_v2($assessment);
+                    } else {
+                        //FullPayment
+                        $total_tuitionfee = $tuition_fees->total_tuition_fees($assessment);;
+                        $upon_enrollment = $tuition_fees->total_tuition_fees($assessment);;
+                        $monthly_payment = 0;
+                    }
+                    try {
+                        $payment_assessment->course_semestral_fee_id =  $tuition_fees->id;
+                        $payment_assessment->total_payment =  $total_tuitionfee;
+                        $payment_assessment->upon_enrollment =  $upon_enrollment;
+                        $payment_assessment->monthly_payment =  $monthly_payment;
+                        $payment_assessment->save();
+                        echo "<label> Successfull Reassessments</label><br>";
+                    } catch (\Throwable $th) {
+                        echo "<label>Error: " . $th->getMessage() . "</label><br>";
+                    }
+                }else{
+
+                }
+            }
+            //return compact('enrollment_assessment');
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+    }
 }

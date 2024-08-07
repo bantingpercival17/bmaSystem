@@ -319,6 +319,78 @@
                                     </form>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <b>BULK RE-ASSESSMENTS</b>
+                                    <ul>
+                                        <li>You can Bulk Re-assessments per course and Year Level</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <form action="{{ route('accounting.bulk-reassessments') }}" method="post">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <small class="fw-bolder text-muted">ACADEMIC YEAR</small>
+                                                    <select name="academic"
+                                                        class="form-select form-select-sm border border-primary">
+                                                        @foreach ($_academic as $academic)
+                                                            <option value="{{ base64_encode($academic->id) }}">
+                                                                {{ $academic->semester }} | {{ $academic->school_year }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <small class="fw-bolder text-muted">COURSE</small>
+                                                    <select name="course"
+                                                        class="form-select form-select-sm border border-primary">
+                                                        <option value="1">BSME</option>
+                                                        <option value="2">BSMT</option>
+                                                        <option value="3">PBM SPECIALIZATION</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <small class="fw-bolder text-muted">YEAR LEVEL</small>
+                                                    <select name="level" id=""
+                                                        class="form-select form-select-sm border border-primary">
+                                                        <option value="" selected>SELECT YEAR LEVEL</option>
+                                                        <option value="11">Grade 11</option>
+                                                        <option value="12">Grade 12</option>
+                                                        <option value="1"> 1ST CLASS</option>
+                                                        <option value="2"> 2ND CLASS</option>
+                                                        <option value="3"> 3RD CLASS</option>
+                                                        <option value="4"> 4TH CLASS</option>
+
+
+                                                    </select>
+                                                    @error('level')
+                                                        <small class="badge bg-danger mt-2">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <small class="fw-bolder text-muted">ENTER YOUR PASSWORD</small>
+                                            <input type="password"
+                                                class="form-control form-control-sm border border-primary"
+                                                name="password">
+                                            @error('password')
+                                                <small class="badge bg-danger mt-2">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-outline-primary btn-sm w-100" type="submit">BULK RE-ASSESS </button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
                             {{--  <tr>
                                 <td>Import Transaction</td>
                                 <td>

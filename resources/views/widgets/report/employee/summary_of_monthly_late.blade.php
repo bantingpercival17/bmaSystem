@@ -48,51 +48,6 @@
                         @endphp
                     @endif
                 @endforeach
-
-                {{--    @foreach ($employees as $employee)
-                    @php
-                        $contentNumber += 1;
-                        $time_in = $employee->daily_time_in($date);
-                        $time_out = $employee->daily_time_out($date);
-                        $timeInDisplay = $time_in ? date_format(date_create($time_in->time_in), 'h:i:s a') : '-';
-                        $timeOutDisplay = $time_out
-                            ? ($time_out->time_out
-                                ? date_format(date_create($time_out->time_out), 'h:i:s a')
-                                : 'NO TIME OUT')
-                            : '-';
-                        $late =
-                            $timeInDisplay != '-'
-                                ? $employee->compute_late_per_day(
-                                    date_format(date_create($time_in->time_in), 'H:i:s'),
-                                )
-                                : '-';
-                        $tardines =
-                            $timeOutDisplay != '-'
-                                ? ($time_out->time_out
-                                    ? $employee->compute_tardines_per_day(
-                                        date_format(date_create($time_out->time_out), 'H:i:s'),
-                                    )
-                                    : 'NO TIME OUT')
-                                : '-';
-                    @endphp
-                    <tr class="{{ $contentNumber >= $contentCount ? 'page-break' : '' }}">
-                        <td></td>
-                        <td>
-                            {{ $timeInDisplay }}
-                        </td>
-                        <td>
-                            {{ $timeOutDisplay }}
-                        </td>
-                        <td>
-                            {{ $late }}
-                        </td>
-                        <td>
-                            {{ $tardines }}
-                        </td>
-                    </tr>
-
-                @endforeach --}}
-
             </tbody>
         </table>
     </div>

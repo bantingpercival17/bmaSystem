@@ -93,7 +93,7 @@ Route::prefix('accounting')->group(function () {
     Route::post('/payment-transaction/payment-void', [AccountingController::class, 'payment_transaction_void'])->name('accounting.transaction-void');
     Route::get('/payment-void-transaction', [AccountingController::class, 'void_view'])->name('accounting.payment-void');
     Route::post('/payment-void-transaction', [AccountingController::class, 'void_transaction'])->name('accounting.void-transaction');
-
+    Route::post('/bulk-reassessments',[AccountingController::class,'bulk_reassessments'])->name('accounting.bulk-reassessments');
 
     Route::post('/fees/additional-fee', [AccountingController::class, 'particular_additional_fee'])->name('acounting.addtional-fee');
     /* Laravel Livewire Route*/
