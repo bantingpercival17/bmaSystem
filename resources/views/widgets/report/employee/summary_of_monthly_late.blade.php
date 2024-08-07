@@ -34,13 +34,12 @@
                     @endphp
                     <tr class="{{ $contentNumber >= $contentCount ? 'page-break' : '' }}">
                         <td>{{ strtoupper($employee->last_name . ', ' . $employee->first_name) }}</td>
-                        <td>{{ $employee->attendance_summary_tardiness($date, true) ?: '-' }}
-                        </td>
+                        <td>{{ $employee->attendance_summary_tardiness($date, true) ?: '-' }}</td>
                         <td>{{ $employee->attendance_summary_undertime($date, true) ?: '-' }}</td>
-                        <td></td>
+                        <td>{{ $employee->total_attendance_deducation($date, true) }}</td>
                         <td>{{ $employee->attendance_summary_tardiness($date, false) ?: '-' }}</td>
                         <td>{{ $employee->attendance_summary_undertime($date, false) ?: '-' }}</td>
-                        <td></td>
+                        <td>{{ $employee->total_attendance_deducation($date, false) }}</td>
                     </tr>
                     @if ($contentNumber >= $contentCount)
                         @php

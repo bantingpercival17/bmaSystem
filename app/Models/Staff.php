@@ -214,7 +214,25 @@ class Staff extends Model
         }
         return $totalTime;
     }
+    function total_attendance_deducation($data, $type)
+    {
+        $late = $this->attendance_summary_tardiness($data, $type);
+        $undertime =  $this->attendance_summary_undertime($data, $type);
+        $totalMinutes = $late + $undertime;
+        $minutes = floor($totalMinutes / 60);
+        $remaining_seconds = $totalMinutes % 60;
 
+        // Convert to hours, minutes, and seconds
+        $hours = floor($totalMinutes / 3600);
+        $remaining_minutes = floor(($totalMinutes % 3600) / 60);
+        $remaining_seconds_for_hours = $totalMinutes % 60;
+        if ($hours) {
+            return $hours . ' hr/s ' . $remaining_minutes . ' min/s ' . $remaining_seconds_for_hours . ' sec/s';
+        } else {
+            return  $remaining_minutes . ' min/s ' . $remaining_seconds_for_hours . ' sec/s';
+        }
+        return $totalMinutes;
+    }
     public function current_academic()
     {
         $academic = AcademicYear::where('is_active', 1)->first();
