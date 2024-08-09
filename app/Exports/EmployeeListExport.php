@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Role;
 use App\Models\Staff;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -19,7 +20,12 @@ class EmployeeListExport implements FromCollection, ShouldAutoSize, WithMapping,
      */
     public function collection()
     {
-        return Staff::where('is_removed', false)->get();
+        $role = Role::where('name', 'teacher')->first();
+        return Staff::select('staff.*')
+            ->join('users', 'users.id', 'staff.user_id')
+            ->join('role_user', 'role_user.user_id', 'staff.user_id')
+            ->where('role_user.role_id', $role->id)
+            ->where('staff.is_removed', false)->get();
     }
     public function headings(): array
     {
